@@ -41,6 +41,250 @@ export type BlogPost = {
 
 export const POSTS: BlogPost[] = [
   {
+    slug: "lake-louise-opening-day-november-1-2026",
+    title: "Lake Louise Opens Early: Canada's Ski Season Starts November 1, Five Days Ahead of Schedule",
+    seoTitle: "Lake Louise Opens Early Nov 1 | WorldEye Blog",
+    date: "2026-11-01",
+    excerpt:
+      "Lake Louise Ski Resort opened its 2026-27 season on Sunday, November 1 — five days ahead of schedule, its second-earliest opening on record and its earliest in five years. The Juniper Express Chair and Easy Street carry day one, with two small terrain parks and lift tickets discounted by more than 60 percent.",
+    seoDescription:
+      "Lake Louise opened Nov 1, five days early: its second-earliest opening on record, with Juniper Express, Easy Street and two terrain parks in Alberta.",
+    tags: ["ski", "canada", "alberta", "events", "opening day"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "Canada's ski season has an early first chapter. Lake Louise Ski Resort, in Alberta, opened for the 2026-27 winter season on Sunday, November 1 — five days ahead of its planned November 6 start. The resort calls it its second-earliest opening on record and its earliest opening in five years, a start it credits to help from Mother Nature: cold October temperatures, favourable natural snowfall, and around-the-clock work by its snowmaking and mountain crews.",
+          "The surprise opening was announced on October 30, and it lands in the middle of a fast-moving North American opening race. Colorado already has three resorts turning lifts — Arapahoe Basin on October 28, Keystone on October 30 and [Wolf Creek on Halloween](/blog/wolf-creek-opening-day-halloween-2026) — and Lake Louise now gives Canadian skiers and riders their own first turns on the same weekend, rather than a week later as planned.",
+        ],
+      },
+      {
+        heading: "What is open on day one",
+        body: [
+          "Opening terrain is deliberately simple. The Juniper Express Chair serves Easy Street, a gentle run suited to warming up ski legs and finding a rhythm, and two small early-season terrain parks with jumps and rails are set up alongside it. The Snow School is running lessons with the beginner area open, and rentals, retail and tuning services are operating for anyone whose kit spent the summer in storage.",
+          "On the lodge side, the Lodge of Ten Peaks Cafeteria, Slopeside Coffee and the Powder Keg Lounge are open for meals, coffee and après. The resort is direct about the limits: terrain will be limited at the start of the season, and additional lifts and runs will open as conditions allow. Opening day here is a chance to get back on snow, not a claim that the mountain is in midwinter shape.",
+        ],
+      },
+      {
+        heading: "New hours, and a discount for being early",
+        body: [
+          "Lifts run daily from 9:30 a.m. to 4:30 p.m. That is a change for this winter, not just an opening-day schedule: Lake Louise has shifted both first chair and last chair half an hour later while keeping seven hours of lift access, a schedule it will carry through the season. Anyone used to a 9:00 a.m. first chair in Alberta should reset their alarm before driving up.",
+          "Early birds are paid for their timing. Opening-day lift tickets are discounted by more than 60 percent under early-season pricing, available online and at the resort, with online tickets released in one-week booking windows. The resort warns that prices will increase as more lifts open — the discount is explicitly the price of skiing one lift and one main run in November, and it shrinks as the mountain grows.",
+        ],
+      },
+      {
+        heading: "A bigger mountain waiting behind the rope",
+        body: [
+          "The early opening follows the resort's snowiest season on record, and a summer of work that will matter once terrain expands. At Richardson's Ridge, crews added new runs, expanded glading and more snowmaking. New connecting runs, including Prunepickers and Pikaboo, are meant to help skiers and riders move between areas, with improvements to Good Intentions and other busy trails alongside them.",
+          "The Top of the World Chair has also been upgraded over the summer, with increased loading capacity, upgraded electrical and control systems, and a more energy-efficient drive system. None of that changes Easy Street on November 1 — but it frames what the rest of the season is supposed to look like once the snow that made this early start possible keeps building.",
+        ],
+      },
+      {
+        heading: "Watch the Canadian Rockies open up",
+        body: [
+          "Lake Louise will not hold the early-season spotlight alone for long: its Banff-area neighbours are close behind, and every cold October night decides how fast limited terrain becomes a real mountain. You can watch that progression on WorldEye's [ski webcams](/ski-webcams), which gather live resort views across Canada, Colorado and beyond, and plan a first trip with our guide to the [best ski webcams](/blog/best-ski-webcams).",
+          "The resort's own advice for Sunday was simple: check the conditions page for the latest lift, terrain and operating updates before you visit. Five days early is a gift from the weather — the rest of November still has to be earned storm by storm, and the [Colorado ski season opener](/blog/colorado-ski-season-opens-keystone-arapahoe-basin) shows how quickly that race is moving on the other side of the border.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When did Lake Louise open for the 2026-27 season?",
+        a: "On Sunday, November 1, 2026 — five days ahead of its planned November 6 opening. The resort describes it as its second-earliest opening on record and its earliest opening in five years.",
+      },
+      {
+        q: "What lifts and terrain are open at Lake Louise on opening day?",
+        a: "The Juniper Express Chair serving Easy Street, plus two small early-season terrain parks with jumps and rails. Snow School lessons and the beginner area are also open, and more lifts and runs will follow as conditions allow.",
+      },
+      {
+        q: "What are Lake Louise's lift hours this winter?",
+        a: "9:30 a.m. to 4:30 p.m. daily — a new schedule for 2026-27 that shifts first and last chair half an hour later while keeping seven hours of lift access.",
+      },
+      {
+        q: "Are Lake Louise opening-day lift tickets discounted?",
+        a: "Yes. The resort offered savings of more than 60 percent on opening-day tickets under early-season pricing, sold online in one-week booking windows and at the resort, with prices set to rise as more lifts open.",
+      },
+      {
+        q: "Why was Lake Louise able to open early?",
+        a: "The resort credits cold October temperatures and favourable natural snowfall, combined with around-the-clock work by its snowmaking and mountain crews — following what it describes as its snowiest season on record.",
+      },
+    ],
+    sources: [
+      {
+        name: "Lake Louise Ski Resort — We're Open Early for the 2026/27 Season! (official, Nov 1, 2026)",
+        url: "https://www.skilouise.com/things-to-do/were-opening-early-on-november-1/",
+      },
+      {
+        name: "SnowBrains — Lake Louise, AB, Opening Early on November 1 (Oct 31, 2026)",
+        url: "https://snowbrains.com/lake-louise-ski-resort-ab-to-open-november-1-five-days-ahead-of-schedule/",
+      },
+    ],
+  },
+  {
+    slug: "mayon-alert-level-3-eruption-evacuation",
+    title: "Mayon Erupts and Rises to Alert Level 3: More Than 2,000 People Leave the Danger Zone",
+    seoTitle: "Mayon Erupts, Alert Level 3 | WorldEye Blog",
+    date: "2026-11-01",
+    excerpt:
+      "A moderately explosive eruption at Mayon in the Philippines on October 30 sent ash 3,000 metres above the crater and pushed PHIVOLCS to raise the volcano to Alert Level 3. By Friday evening 746 families — 2,041 people — had left the six-kilometre danger zone, and a smaller ash emission on Saturday morning showed the episode is not over.",
+    seoDescription:
+      "Mayon erupted Oct 30 with a 3,000 m ash plume; PHIVOLCS raised Alert Level 3 and 2,041 people left the 6 km danger zone in Albay, Philippines.",
+    tags: ["volcano", "philippines", "events", "eruption"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "Mayon, the near-perfect cone that towers over Albay province in the Philippines, entered a more dangerous phase this week. At 11:53 a.m. local time on Friday, October 30, a moderately explosive eruption sent a dense ash plume 3,000 metres (9,843 feet) above the summit crater, and the Philippine Institute of Volcanology and Seismology (PHIVOLCS) raised the volcano from Alert Level 2 to Alert Level 3.",
+          "PHIVOLCS describes the change in plain terms: Alert Level 3 means an increased tendency toward a hazardous eruption. The agency calls the October 30 activity a new phase of magmatic eruption within Mayon's ongoing episode, with increased chances of lava flows and hazardous pyroclastic density currents — the fast-moving clouds of hot gas, ash and rock known locally as uson — affecting the upper to middle slopes in the immediate days to weeks.",
+        ],
+      },
+      {
+        heading: "Ash over Albay, and an aviation warning",
+        body: [
+          "Moderate winds carried the plume west-southwest, and PHIVOLCS expected ashfall in Daraga, Guinobatan, Camalig and adjacent municipalities in Albay. The ash hazard outlasted the eruption itself: the Tokyo Volcanic Ash Advisory Center, in advisory 2026/813 issued at 8:00 p.m. on October 30, said satellite imagery from Himawari-9 was still detecting volcanic ash at 7:20 p.m., with the cloud extending from the surface to flight level 180 — about 5.5 kilometres — and moving south at 20 knots, forecast to reach flight level 190 by the early hours of October 31.",
+          "That is why the warnings extend beyond the slopes. PHIVOLCS said civil aviation authorities must advise pilots to avoid flying close to the summit, because volcanic ash can endanger aircraft, and it urged increased vigilance along channels draining the volcano for pyroclastic currents, lahars and sediment-laden streamflows, especially if heavy rain follows.",
+        ],
+      },
+      {
+        heading: "The build-up the instruments saw",
+        body: [
+          "The eruption did not arrive unannounced. Volcanic earthquakes climbed through the week — 4 in the October 28 monitoring period, 35 in the October 29 period and 101 in the October 30 period, the last including 18 volcanic tremors lasting between one and eight minutes. Ground-deformation measurements showed continued inflation of the volcano's edifice, with short-term deflation on its northeastern sector, and crater glow remained visible to the naked eye.",
+          "Gas told a more complicated story, which is why agencies read it alongside everything else: sulfur dioxide flux measured 1,413 tonnes per day on October 29, down from 3,360 tonnes per day on October 28. Before the blast, moderate emissions had produced a plume only about 100 metres above the crater. PHIVOLCS stresses that no single number decides the alert level — seismicity, deformation, gas and direct observation are assessed together.",
+        ],
+      },
+      {
+        heading: "2,041 people out of the danger zone",
+        body: [
+          "PHIVOLCS recommended evacuation of the six-kilometre (3.7-mile) Permanent Danger Zone, and Albay moved the same afternoon. The Albay Public Safety and Emergency Management Office's 5 p.m. report on October 30 counted 746 families, or 2,041 people, already in evacuation centres: 531 families from Tabaco City, 205 from Camalig and 10 from Barangay Baligang in Ligao City. Malilipot, Legazpi City, Sto. Domingo, Daraga and Guinobatan were monitoring conditions on standby for possible evacuation.",
+          "The province's health office raised its own alert from Code White to Code Blue, mobilising additional resources, round-the-clock health emergency operations and standby response teams, and 22,000 surgical masks were distributed to health facilities and local governments against ashfall. The volcano answered overnight with a reminder that the story is live: at 5:17 a.m. on Saturday, October 31, Mayon emitted ash again, about 200 metres above the crater, drifting west-southwest — far smaller than Friday's plume, but enough to keep Alert Level 3 firmly in place. PHIVOLCS' latest monitoring counted 15 volcanic earthquakes and 30 rockfall events, crater glow still observed, and sulfur dioxide at 988 tonnes per day.",
+        ],
+      },
+      {
+        heading: "Watching a volcano that is not finished",
+        body: [
+          "Mayon's current eruptive episode has been running since January 6, 2026, through lava-dome growth and collapse, lava flows and minor Strombolian activity — October 30 was an escalation inside that episode, not its beginning. What happens next is genuinely open: PHIVOLCS' Level 3 framing covers days to weeks, and the difference between a one-off blast and a sustained hazardous eruption will show first in the seismic counts, the deformation trend and the crater itself.",
+          "WorldEye's [volcano webcams](/volcano-webcams) collect live views of active craters around the world, the same kind of direct observation volcanologists pair with their instrument networks — and our coverage of [Kilauea's shifting episode 56 window](/blog/kilauea-episode-56-window-november-2-9) shows the other way a volcano keeps the world waiting. For anyone in Albay, though, the instruction is not to watch: it is to stay out of the Permanent Danger Zone and follow PHIVOLCS and local evacuation orders.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "What happened at Mayon volcano on October 30, 2026?",
+        a: "A moderately explosive eruption at 11:53 a.m. local time sent a dense ash plume 3,000 metres (9,843 feet) above the summit crater, and PHIVOLCS raised Mayon from Alert Level 2 to Alert Level 3, describing a new phase of magmatic eruption.",
+      },
+      {
+        q: "What does Alert Level 3 mean for Mayon?",
+        a: "PHIVOLCS defines it as an increased tendency toward a hazardous eruption: in the immediate days to weeks there are increased chances of lava flows and pyroclastic density currents on the upper to middle slopes. Entry into the six-kilometre Permanent Danger Zone should be prohibited.",
+      },
+      {
+        q: "How many people evacuated from Mayon's danger zone?",
+        a: "The Albay Public Safety and Emergency Management Office counted 746 families, or 2,041 people, in evacuation centres by 5 p.m. on October 30 — 531 families from Tabaco City, 205 from Camalig and 10 from Barangay Baligang in Ligao City — with five more towns on standby.",
+      },
+      {
+        q: "Did Mayon stay quiet after the October 30 eruption?",
+        a: "No. At 5:17 a.m. on October 31 it emitted ash again, about 200 metres above the crater and drifting west-southwest. PHIVOLCS kept Alert Level 3 in place, reporting 15 volcanic earthquakes, 30 rockfall events, visible crater glow and sulfur dioxide emissions of 988 tonnes per day.",
+      },
+      {
+        q: "Why is Mayon's ash a problem for aircraft?",
+        a: "Volcanic ash can endanger aircraft, and this eruption's ash lingered for hours: Tokyo VAAC advisory 2026/813 reported ash from the surface to flight level 180 moving south on October 30, forecast to reach flight level 190. PHIVOLCS said pilots must be advised to avoid flying close to the summit.",
+      },
+    ],
+    sources: [
+      {
+        name: "U.S. Embassy in the Philippines — Natural Disaster Alert: Mayon Volcano Alert Level Raised to 3 (PHIVOLCS)",
+        url: "https://ph.usembassy.gov/natural-disaster-alert-mayon-volcano-raised-at-alert-level-3/",
+      },
+      {
+        name: "The Watchers — Mayon erupts as Alert Level rises to 3 and ash spreads south, Philippines (Oct 30, 2026)",
+        url: "https://watchers.news/2026/10/30/mayon-erupts-as-alert-level-rises-to-3-and-ash-spreads-south-philippines/",
+      },
+      {
+        name: "Astig — Over 2,000 people are out of Mayon's danger zone and Albay's health office is on Code Blue (Oct 31, 2026)",
+        url: "https://astig.ph/mayon-evacuation-2041-code-blue-albay-october-31-2026/",
+      },
+    ],
+  },
+  {
+    slug: "cyclone-murasu-forms-andhra-pradesh-landfall",
+    title: "Cyclone Murasu Forms Over the Bay of Bengal and Aims at Andhra Pradesh",
+    seoTitle: "Cyclone Murasu Aims at Andhra | WorldEye Blog",
+    date: "2026-11-01",
+    excerpt:
+      "A deep depression over the Bay of Bengal intensified into Cyclonic Storm Murasu at 11:30 a.m. IST on Sunday, November 1, the India Meteorological Department said. Murasu is expected to become a severe cyclonic storm by Monday morning and cross the south Andhra Pradesh coast between Nellore and Narsapur around midnight Monday with winds of 100–110 km/h.",
+    seoDescription:
+      "Cyclone Murasu formed Nov 1 over the Bay of Bengal; IMD expects a severe storm crossing Andhra Pradesh near Nellore–Narsapur with 100–110 km/h winds.",
+    tags: ["cyclone", "india", "weather", "events", "storm"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "India's east coast is bracing for its second cyclone in a week. A deep depression over the southwest and adjoining southeast Bay of Bengal moved west-northwest at 23 km/h and intensified into Cyclonic Storm Murasu at 11:30 a.m. IST on Sunday, November 1, according to the India Meteorological Department (IMD). The name Murasu was contributed by India under the regional naming protocol.",
+          "At that hour the storm was centred near latitude 12.1°N and longitude 85.3°E, over the southwest and adjoining west-central Bay of Bengal — about 560 kilometres east-southeast of Chennai, 660 kilometres south-southeast of Visakhapatnam, 630 kilometres east-southeast of Nellore, 640 kilometres southeast of Machilipatnam and 680 kilometres east-southeast of Ongole. The IMD issued a cyclone alert for the Andhra Pradesh and adjoining north Tamil Nadu coasts.",
+        ],
+      },
+      {
+        heading: "Severe by Monday, ashore around midnight",
+        body: [
+          "The IMD expects Murasu to keep intensifying as it moves west-northwest, becoming a severe cyclonic storm over the west-central Bay of Bengal around Monday morning, November 2. From there it is forecast to turn northwest and cross the south Andhra Pradesh coast between Nellore and Narsapur during the midnight hours of Monday into Tuesday — from 11:30 p.m. IST on November 2 to 4:00 a.m. on November 3.",
+          "At landfall the IMD expects maximum sustained winds of 100 to 110 km/h, gusting to 120 km/h. Forecasters note the storm is drawing on a favourable environment — sea-surface temperatures of 29–30°C, low to moderate easterly wind shear and good upper-level outflow — although model guidance differed on whether strengthening would be rapid overnight or more gradual into Monday morning. As with every landfall forecast, the exact crossing point and hour can still shift with each new bulletin.",
+        ],
+      },
+      {
+        heading: "The coast Arnab just hit",
+        body: [
+          "What makes Murasu's timing hard is where it is going. It would be the second cyclone over the Bay of Bengal during the ongoing northeast monsoon, and its predecessor, the very severe Cyclone Arnab, made landfall near Narsapur on October 28 — the northern end of the very stretch Murasu is now forecast to cross. Coastal districts are still contending with Arnab's aftermath and recovery work.",
+          "A second severe landfall within days raises the stakes beyond wind speed alone: saturated ground, weakened structures and already-strained local response teams all change what the same rainfall does. The IMD's warning is aimed at a coast that has had almost no recovery window, which is why preparations are starting while the storm is still hundreds of kilometres offshore.",
+        ],
+      },
+      {
+        heading: "Rain is the widest part of the forecast",
+        body: [
+          "Coastal Andhra Pradesh faces the greatest rainfall threat. The IMD expects light to moderate rain at many places on Sunday with heavy rain at isolated places, intensifying on Monday to heavy to very heavy rainfall at a few places and extremely heavy rainfall at isolated places, then heavy to very heavy rain at isolated places on Tuesday and heavy rain at isolated places on Wednesday.",
+          "The rain shield extends well beyond the landfall district: Rayalaseema is in line for heavy to very heavy rain at isolated places on Monday and Tuesday, Tamil Nadu and Telangana for heavy rain at isolated places on those days, and south Odisha for an expanding area of heavy to very heavy rain into Tuesday and Wednesday. Fishermen and coastal residents should follow IMD bulletins and local administration instructions as the warnings step up from alert toward landfall.",
+        ],
+      },
+      {
+        heading: "Track Murasu to landfall",
+        body: [
+          "Murasu's next 48 hours will be told bulletin by bulletin: each IMD update will either confirm the severe-cyclone track toward Nellore–Narsapur or bend it, and the difference matters street by street at the coast. WorldEye's [hurricane tracker](/hurricane-tracker) follows active tropical cyclones on one globe — hurricanes, typhoons and cyclones are the same phenomenon in different ocean basins — and the [weather radar](/weather-radar) pages show the rain bands as they come ashore. The IMD's bulletins remain the authoritative forecast; the globe is where you watch the system itself.",
+          "Our report on [Super Typhoon In-fa in the Pacific](/blog/super-typhoon-in-fa-northern-mariana-islands) followed the same pattern on the other side of Asia this week: a powerful storm, a narrow landfall window, and coasts preparing in daylight for a midnight arrival. For Andhra Pradesh, that arrival is now about a day away.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When did Cyclone Murasu form?",
+        a: "On Sunday, November 1, 2026. The IMD said a deep depression over the Bay of Bengal, moving west-northwest at 23 km/h, intensified into Cyclonic Storm Murasu at 11:30 a.m. IST, centred near 12.1°N, 85.3°E — about 560 km east-southeast of Chennai.",
+      },
+      {
+        q: "Where and when is Murasu expected to make landfall?",
+        a: "The IMD forecasts a crossing of the south Andhra Pradesh coast between Nellore and Narsapur from 11:30 p.m. IST on November 2 to 4:00 a.m. on November 3, after the storm intensifies into a severe cyclonic storm over the west-central Bay of Bengal around Monday morning.",
+      },
+      {
+        q: "How strong will Murasu be at landfall?",
+        a: "The IMD expects maximum sustained winds of 100 to 110 km/h, gusting to 120 km/h, at the crossing — severe cyclonic storm strength.",
+      },
+      {
+        q: "Why is Murasu's timing especially difficult for Andhra Pradesh?",
+        a: "It is the second Bay of Bengal cyclone of the northeast monsoon, arriving days after the very severe Cyclone Arnab made landfall near Narsapur on October 28. Murasu threatens a stretch of coast immediately by the areas Arnab battered, while recovery efforts are still under way.",
+      },
+      {
+        q: "Which areas face the heaviest rain from Murasu?",
+        a: "Coastal Andhra Pradesh faces the greatest threat, with extremely heavy rainfall possible at isolated places on Monday. Heavy to very heavy rain is also forecast at isolated places in Rayalaseema, and heavy rain in Tamil Nadu, Telangana and south Odisha across Monday to Wednesday, per the IMD outlook.",
+      },
+    ],
+    sources: [
+      {
+        name: "The Hindu BusinessLine — IMD update: Andhra Pradesh coast now faces a second severe cyclone (Nov 1, 2026)",
+        url: "https://www.thehindubusinessline.com/economy/agri-business/imd-update-andhra-pradesh-coast-now-faces-a-second-severe-cyclone/article71652107.ece",
+      },
+      {
+        name: "ANI via APNA MA TV — Days after Cyclone Arnab, eastern coast gears up for Cyclone 'Murasu' (Nov 1, 2026)",
+        url: "https://apnamatvchannel.com/india/days-after-cyclone-arnab-eastern-coast-gears-up-for-cyclone-murasu/",
+      },
+    ],
+  },
+  {
     slug: "wolf-creek-opening-day-halloween-2026",
     title: "Wolf Creek Opens on Halloween: Colorado's Third Resort Drops the Rope With 30% of the Mountain",
     seoTitle: "Wolf Creek Opens on Halloween | WorldEye Blog",

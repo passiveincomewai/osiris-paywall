@@ -103,7 +103,7 @@ describe("sitemap URL set", () => {
           !u.startsWith(`${BASE}/wildfires/`),
       )
       .sort();
-    expect(nonTransit.length).toBe(1115);
+    expect(nonTransit.length).toBe(1118);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     // Hash history: 6d75d0de… until the SEO audit fix #3 (2026-10-27)
     // normalised the es homepage entry from /es/ to its final /es
@@ -240,8 +240,18 @@ describe("sitemap URL set", () => {
     // satisfies this suite's other structural assertions (6 es
     // entries, 12 with alternates, /pricing undated), and the new
     // hash is exactly that set plus /powder-pass.
+    // The Daily Blog 2026-11-01 batch (2026-11-01) then added
+    // the three sourced news posts
+    // (lake-louise-opening-day-november-1-2026,
+    // mayon-alert-level-3-eruption-evacuation,
+    // cyclone-murasu-forms-andhra-pradesh-landfall) → 1,118.
+    // Delta hand-verified against the production sitemap: its
+    // non-transit set measures 1,114 (d7099eda…); adding exactly
+    // /powder-pass reproduces the 1,115 set and the 72f775c4…
+    // hash byte-for-byte, and adding exactly the 3 new blog URLs
+    // to that set gives 1,118 / 6fda17cc….
     expect(hash).toBe(
-      "72f775c4e8568cc5d246f90b3aa7c05d5c6613899621c36e7830a48019413aa5",
+      "6fda17cc2116fb7a8df1bcb3ee9354a9089cdb0399a91888f97951148a5a0f7c",
     );
   });
 
