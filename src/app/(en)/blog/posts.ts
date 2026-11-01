@@ -166,15 +166,21 @@ export const POSTS: BlogPost[] = [
       {
         heading: "Watch the crater while it recharges",
         body: [
-          "The glow HVO describes is exactly what the summit cameras show on a clear night. WorldEye's [volcano webcams](/volcano-webcams) collect live views of active craters worldwide, and the dedicated [Kilauea volcano webcam page](/volcano-webcams/kilauea) is the one to keep open from November 2: if fountaining starts, it will be visible there as it happens, day or night.",
+          "The glow HVO describes is exactly what the summit cameras show on a clear night. WorldEye's [volcano webcams](/volcano-webcams) collect live views of active craters worldwide, and the dedicated [Kilauea volcano webcam page](/volcano-webcams/kilauea) is the one to keep open from November 3: if fountaining starts, it will be visible there as it happens, day or night.",
           "Until then, the story is a tiltmeter creeping upward at a pace the observatory calls slow and steady — and a window, November 2–9, that the mountain will either keep or move again.",
+        ],
+      },
+      {
+        heading: "Update — November 1, 2026",
+        body: [
+          "The window has moved again. In its daily update of October 31, 2026 (10:36 a.m. HST), the Hawaiian Volcano Observatory revised the forecast window for episode 56 fountaining to November 3–10, 2026, after fluctuations in summit tilt rates adjusted the model; slow, steady inflation continues at the summit. The eruption remains paused after episode 55, and the alert level stays ADVISORY / YELLOW. As this post said when the last slip landed: if inflation stalls again, the window will move again — the observatory's morning update is the source to check.",
         ],
       },
     ],
     faqs: [
       {
         q: "When is Kilauea episode 56 now expected?",
-        a: "Between November 2 and November 9, 2026, according to the USGS Hawaiian Volcano Observatory's daily update of October 30, 2026 (8:42 a.m. HST). The forecast is based on current summit deformation trends and assumes magma chamber inflation follows patterns from previous episodes, so it can move again.",
+        a: "Between November 2 and November 9, 2026, according to the USGS Hawaiian Volcano Observatory's daily update of October 30, 2026 (8:42 a.m. HST). The forecast is based on current summit deformation trends and assumes magma chamber inflation follows patterns from previous episodes, so it can move again — and it did: HVO's October 31 update moved the window to November 3–10 (see the update at the end of this post).",
       },
       {
         q: "Has episode 56 started yet?",
@@ -1283,14 +1289,14 @@ export const POSTS: BlogPost[] = [
     seoTitle: "Kīlauea Episode 56: How to Watch Live | WorldEye Blog",
     date: "2026-10-27",
     excerpt:
-      "Kīlauea is paused — but the USGS Hawaiian Volcano Observatory's October 27 update puts the Episode 56 fountaining window at November 1–7, already slipped a day from the first forecast. How the episode pattern works, which cameras actually show the crater, and how to be watching when it starts.",
+      "Kīlauea is paused — but the USGS Hawaiian Volcano Observatory's October 31 update puts the Episode 56 fountaining window at November 3–10, after several slips from the first forecast. How the episode pattern works, which cameras actually show the crater, and how to be watching when it starts.",
     seoDescription:
-      "Kīlauea Episode 56 is expected Nov 1–7, 2026 (USGS). How the episode pattern works, which webcams show Halemaʻumaʻu, and how to watch the eruption live.",
+      "Kīlauea Episode 56 is expected Nov 3–10, 2026 (USGS). How the episode pattern works, which webcams show Halemaʻumaʻu, and how to watch the eruption live.",
     tags: ["volcanoes", "hawaii", "live cams", "events"],
     sections: [
       {
         body: [
-          "Kīlauea is quiet right now — and that is exactly why this week matters. The summit eruption inside Halemaʻumaʻu crater has run in episodes since December 23, 2024: a burst of lava fountaining, then a pause while the summit recharges. Episode 55 ended on October 17, 2026, its fountains having reached about 720 feet. The USGS Hawaiian Volcano Observatory's daily update of October 27 reports the summit tilting upward again after a brief plateau, and puts the forecast window for Episode 56 at November 1 – 7 — a day later than the first forecast, because the recharge paused before it resumed.",
+          "Kīlauea is quiet right now — and that is exactly why this week matters. The summit eruption inside Halemaʻumaʻu crater has run in episodes since December 23, 2024: a burst of lava fountaining, then a pause while the summit recharges. Episode 55 ended on October 17, 2026, its fountains having reached about 720 feet. The USGS Hawaiian Volcano Observatory's daily update of October 31 reports slow, steady summit inflation, and puts the forecast window for Episode 56 at November 3 – 10 — several days later than the first forecast, after repeated stalls and resumptions in the recharge.",
           "Read that the way the observatory means it: an expected window, not a scheduled start. The volcano alert level is ADVISORY, the aviation color code YELLOW, and windows move with the mountain. What you can do is be ready — know the pattern, know which cameras matter, and know where the authoritative word comes from. That is this guide.",
         ],
       },
@@ -1327,11 +1333,11 @@ export const POSTS: BlogPost[] = [
     faqs: [
       {
         q: "When is Kīlauea Episode 56 expected?",
-        a: "The USGS Hawaiian Volcano Observatory's daily update of October 27, 2026 puts the forecast window for Episode 56 fountaining at November 1–7, 2026 — pushed a day later than the October 26 forecast after a brief plateau in summit tilt. It is an expected window, not a scheduled time — the eruption is paused after Episode 55 (October 17), and the alert level is ADVISORY / aviation color code YELLOW.",
+        a: "The USGS Hawaiian Volcano Observatory's daily update of October 31, 2026 puts the forecast window for Episode 56 fountaining at November 3–10, 2026 — pushed later than the earlier forecasts as summit tilt rates fluctuated. It is an expected window, not a scheduled time — the eruption is paused after Episode 55 (October 17), and the alert level is ADVISORY / aviation color code YELLOW.",
       },
       {
         q: "Is Kīlauea erupting right now?",
-        a: "As of the October 27, 2026 observatory update, the summit eruption is paused: Episode 55 ended on October 17 and no fountaining is underway — though moderate-to-strong glow persisted at the west vent overnight, the sign of a crater recharging rather than finished. The eruption itself — episodic activity at Halemaʻumaʻu since December 23, 2024 — is ongoing, which is why a next episode is forecast rather than a new eruption announced.",
+        a: "As of the October 31, 2026 observatory update, the summit eruption is paused: Episode 55 ended on October 17 and no fountaining is underway — though intermittent strong glow persisted at the summit vents overnight, the sign of a crater recharging rather than finished. The eruption itself — episodic activity at Halemaʻumaʻu since December 23, 2024 — is ongoing, which is why a next episode is forecast rather than a new eruption announced.",
       },
       {
         q: "Why do Kīlauea's forecast windows keep moving?",
