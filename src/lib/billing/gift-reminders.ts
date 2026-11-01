@@ -40,7 +40,7 @@ export async function runGiftReminders(
       where: { id: gift.buyerUserId },
       select: { id: true, email: true, emailOptOut: true },
     });
-    if (!buyer || buyer.emailOptOut) continue;
+    if (!buyer || !buyer.email || buyer.emailOptOut) continue;
     const already = await db.lifecycleEmailLog.findUnique({
       where: {
         userId_template_contextKey: {
@@ -62,7 +62,7 @@ export async function runGiftReminders(
     const ok = await sendEmail(buyer.email, mail.subject, mail.html);
     if (!ok) continue; // no log row on failure — next run retries
     await db.lifecycleEmailLog.create({
-      data: { userId: buyer.id, template: GIFT_REMINDER_TEMPLATE, contextKey: gift.id },
+      data: { userId: buyer.id, recipientEmail: buyer.email, template: GIFT_REMINDER_TEMPLATE, contextKey: gift.id, kind: "marketing", subject: mail.subject, status: "sent" },
     });
     sent++;
   }

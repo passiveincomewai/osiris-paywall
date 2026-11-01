@@ -69,7 +69,7 @@ export async function runCardExpiryNotices(
         where: { id: row.userId },
         select: { id: true, email: true, name: true },
       });
-      if (!user || isExcludedEmail(user.email)) continue;
+      if (!user || !user.email || isExcludedEmail(user.email)) continue;
       const contextKey = `${row.stripeSubscriptionId}:${pm.card.exp_year}-${String(pm.card.exp_month).padStart(2, "0")}`;
       const already = await db.lifecycleEmailLog.findUnique({
         where: {
@@ -97,7 +97,7 @@ export async function runCardExpiryNotices(
       const ok = await sendEmail(user.email, mail.subject, mail.html);
       if (!ok) continue;
       await db.lifecycleEmailLog.create({
-        data: { userId: user.id, template: CARD_EXPIRY_TEMPLATE, contextKey },
+        data: { userId: user.id, recipientEmail: user.email, template: CARD_EXPIRY_TEMPLATE, contextKey, kind: "transactional", subject: mail.subject, status: "sent" },
       });
       sent++;
     } catch (err) {

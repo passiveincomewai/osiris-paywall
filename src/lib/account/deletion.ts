@@ -49,7 +49,7 @@ export async function requestDeletion(userId: string) {
       timeZone: "UTC",
     });
     const mail = deletionScheduledEmail({ name: user.name, scheduledForLabel, subscriptionNote });
-    await sendEmail(user.email, mail.subject, mail.html);
+    if (user.email) await sendEmail(user.email, mail.subject, mail.html);
   } catch {
     /* best-effort */
   }
@@ -110,7 +110,7 @@ export async function processDueDeletions(now: Date = new Date()): Promise<{ del
       // has actually happened, to the address captured before it.
       try {
         const mail = deletionCompletedEmail({ name });
-        await sendEmail(email, mail.subject, mail.html);
+        if (email) await sendEmail(email, mail.subject, mail.html);
       } catch {
         /* best-effort */
       }

@@ -74,7 +74,7 @@ export async function createPublicKey(
         keyPrefix: row.keyPrefix,
         whenLabel,
       });
-      await sendEmail(owner.email, mail.subject, mail.html);
+      if (owner.email) await sendEmail(owner.email, mail.subject, mail.html);
     }
   } catch {
     /* best-effort */

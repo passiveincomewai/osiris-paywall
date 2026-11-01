@@ -794,10 +794,10 @@ export async function runLifecycleEmails(
       orderBy: { createdAt: "asc" },
       take: 200,
     });
-    const planLines = (["weekly", "monthly", "annual"] as const).map((k) => {
-      const s = checkoutPlanSummary(k);
-      return `${s.planName} — ${s.priceLine} · ${s.trialLine}`;
-    });
+    const planLines = (["weekly", "monthly", "annual"] as const)
+      .map((k) => checkoutPlanSummary(k))
+      .filter((s): s is NonNullable<typeof s> => s !== null)
+      .map((s) => `${s.name} — ${s.price}${s.per}${s.trialLabel ? ` · ${s.trialLabel}` : ""}`);
     for (const u of candidates) {
       const dbSub = await db.subscription.findUnique({
         where: { userId: u.id },

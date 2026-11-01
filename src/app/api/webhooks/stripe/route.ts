@@ -104,7 +104,7 @@ async function sendOncePerKey(input: {
   const ok = await sendEmail(input.to, input.subject, input.html);
   if (ok) {
     await db.lifecycleEmailLog.create({
-      data: { userId: input.userId, template: input.template, contextKey: input.contextKey },
+      data: { userId: input.userId, recipientEmail: input.to, template: input.template, contextKey: input.contextKey, kind: "transactional", subject: input.subject, status: "sent" },
     });
   }
 }
@@ -574,7 +574,7 @@ export async function POST(req: NextRequest) {
                       select: { currentPeriodEnd: true },
                     });
                     const price = stripeSub.items.data[0]?.price;
-                    if (buyer && subRow && price && !isExcludedEmail(buyer.email)) {
+                    if (buyer && subRow && price && buyer.email && !isExcludedEmail(buyer.email)) {
                       const desc = describeStripePrice(
                         {
                           id: price.id,
@@ -670,7 +670,7 @@ export async function POST(req: NextRequest) {
               where: { id: updatedUserId },
               select: { email: true, name: true },
             });
-            if (user && !isExcludedEmail(user.email)) {
+            if (user && user.email && !isExcludedEmail(user.email)) {
               const s = stripe();
               const planByPriceId = planByPriceIdFromEnv(process.env);
               const labelFor = async (priceId: string) => {
@@ -725,7 +725,7 @@ export async function POST(req: NextRequest) {
                   select: { email: true, name: true },
                 })
               : null;
-            if (subRow && user && !isExcludedEmail(user.email)) {
+            if (subRow && user && user.email && !isExcludedEmail(user.email)) {
               const cardLabel = pm.card
                 ? `${pm.card.brand ? pm.card.brand[0].toUpperCase() + pm.card.brand.slice(1) : "Card"} ending ${pm.card.last4}`
                 : null;

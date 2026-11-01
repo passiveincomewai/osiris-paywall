@@ -133,7 +133,7 @@ export async function runAccountDigest(
       continue;
     }
     const recentMarketing = await db.lifecycleEmailLog.findFirst({
-      where: { userId: user.id, sentAt: { gt: capSince } },
+      where: { userId: user.id, createdAt: { gt: capSince } },
       select: { id: true },
     });
     if (recentMarketing) {
@@ -188,7 +188,7 @@ export async function runAccountDigest(
       continue;
     }
     await db.lifecycleEmailLog.create({
-      data: { userId: user.id, template: ACCOUNT_DIGEST_TEMPLATE, contextKey: issueKey },
+      data: { userId: user.id, recipientEmail: user.email, template: ACCOUNT_DIGEST_TEMPLATE, contextKey: issueKey, kind: "marketing", subject: rendered.subject, status: "sent" },
     });
     await db.userPreference.update({
       where: { userId: user.id },

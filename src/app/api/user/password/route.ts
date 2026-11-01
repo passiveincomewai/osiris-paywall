@@ -50,7 +50,7 @@ export async function POST(req: Request) {
   try {
     const whenLabel = `${new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" })} at ${new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", timeZone: "UTC" })} UTC`;
     const mail = passwordChangedEmail({ name: user.name, whenLabel });
-    await sendEmail(user.email, mail.subject, mail.html);
+    if (user.email) await sendEmail(user.email, mail.subject, mail.html);
   } catch {
     /* best-effort */
   }

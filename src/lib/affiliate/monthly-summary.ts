@@ -83,7 +83,7 @@ export async function runAffiliateMonthlySummary(
         select: { amountCents: true },
       }),
       db.payout.findMany({
-        where: { affiliateProfileId: profile.id, createdAt: inRange },
+        where: { affiliateProfileId: profile.id, requestedAt: inRange },
         select: { amountCents: true },
       }),
     ]);
@@ -92,7 +92,7 @@ export async function runAffiliateMonthlySummary(
       where: { id: profile.userId },
       select: { id: true, email: true, name: true },
     });
-    if (!user || isExcludedEmail(user.email)) continue;
+    if (!user || !user.email || isExcludedEmail(user.email)) continue;
     const already = await db.lifecycleEmailLog.findUnique({
       where: {
         userId_template_contextKey: {
@@ -116,7 +116,7 @@ export async function runAffiliateMonthlySummary(
     const ok = await sendEmail(user.email, mail.subject, mail.html);
     if (!ok) continue;
     await db.lifecycleEmailLog.create({
-      data: { userId: user.id, template: AFFILIATE_SUMMARY_TEMPLATE, contextKey: range.key },
+      data: { userId: user.id, recipientEmail: user.email, template: AFFILIATE_SUMMARY_TEMPLATE, contextKey: range.key, kind: "transactional", subject: mail.subject, status: "sent" },
     });
     sent++;
   }

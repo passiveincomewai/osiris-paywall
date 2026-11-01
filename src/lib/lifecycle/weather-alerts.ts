@@ -167,7 +167,7 @@ export async function runWeatherAlerts(
       continue;
     }
     const recentMarketing = await db.lifecycleEmailLog.findFirst({
-      where: { userId: user.id, sentAt: { gt: capSince } },
+      where: { userId: user.id, createdAt: { gt: capSince } },
       select: { id: true },
     });
     if (recentMarketing) {
@@ -234,7 +234,7 @@ export async function runWeatherAlerts(
     }
     for (const a of fresh) {
       await db.lifecycleEmailLog.create({
-        data: { userId: user.id, template: WEATHER_ALERT_TEMPLATE, contextKey: a.id },
+        data: { userId: user.id, recipientEmail: user.email, template: WEATHER_ALERT_TEMPLATE, contextKey: a.id, kind: "marketing", subject: rendered.subject, status: "sent" },
       });
     }
     summary.sent++;
