@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense, cache } from "react";
 import Link from "next/link";
 import { Scale } from "lucide-react";
 import {
@@ -276,6 +277,147 @@ async function loadSnowNow(): Promise<SnowNowHit[]> {
   }
 }
 
+
+/* Streaming (2026-10-31 perf pass): the hub used to await EVERYTHING
+   before first byte — ~17 country catalogue chunks (the US chunk is
+   10 MB of JSON) for the directory thumbnails + featured grids, plus
+   the multi-location Open-Meteo call for the snow strip — which is
+   why the page's TTFB measured 11–19 s. The shell below now renders
+   from static directory data immediately; each data-backed section
+   streams in behind its own Suspense boundary. getSamples is React
+   cache()d so the directory and the featured grids share ONE chunk
+   load per request. Data semantics are unchanged: the snow strip is
+   still the same modelled trailing-24h measure (labelled modelled,
+   absent on failure), thumbnails still come from the live catalogue
+   chunks, and nothing here is cached across requests. */
+const getSamples = cache(loadSamples);
+
+async function SnowNowStrip() {
+  const hits = await loadSnowNow();
+  if (hits.length === 0) return null;
+  return (
+        <section className="mt-10" aria-label="Where it's snowing">
+          <h2 className="text-xl md:text-2xl font-bold mb-2">Where it&apos;s snowing</h2>
+          <p className="text-sm text-white/50 mb-4 max-w-3xl">
+            Modelled snowfall in the last 24 hours (Open-Meteo) — a weather model, not a
+            measurement on the mountain. Open a resort and check its cameras to see the
+            snow on the ground.
+          </p>
+          <ul className="flex flex-wrap gap-2">
+            {hits.map((h) => {
+              const chip = (
+                <>
+                  {h.name}{" "}
+                  <span className="text-[#D4AF37] font-semibold">
+                    {formatCm(h.cm)} in 24h
+                  </span>
+                </>
+              );
+              return (
+                <li key={h.slug}>
+                  {h.hasPage ? (
+                    <Link
+                      href={`/ski-webcams/${h.slug}`}
+                      className="inline-flex items-center rounded-full border border-white/10 bg-white/[0.03] px-3.5 py-1.5 text-xs font-medium text-white/80 hover:border-[#D4AF37]/50 hover:text-white transition"
+                    >
+                      {chip}
+                    </Link>
+                  ) : (
+                    <span className="inline-flex items-center rounded-full border border-white/10 bg-white/[0.03] px-3.5 py-1.5 text-xs font-medium text-white/80">
+                      {chip}
+                    </span>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+  );
+}
+
+async function DirectoryWithThumbs({
+  initialSearch,
+  initialPass,
+  initialGroupBy,
+}: {
+  initialSearch: string;
+  initialPass: SkiPassFilter;
+  initialGroupBy: SkiGroupBy;
+}) {
+  const samples = await getSamples();
+  const thumbs = buildThumbs(samples);
+  return (
+    <SkiResortDirectory
+      resorts={SKI_RESORTS}
+      logos={SKI_LOGOS}
+      thumbs={thumbs}
+      noPageSlugs={[...FOLDED_RESORT_SLUGS]}
+      initialSearch={initialSearch}
+      initialPass={initialPass}
+      initialGroupBy={initialGroupBy}
+    />
+  );
+}
+
+async function FeaturedFeeds() {
+  const samples = await getSamples();
+  const featured = [...SKI_RESORTS]
+    .sort((a, b) => b.resortCameraCount - a.resortCameraCount)
+    .slice(0, 8)
+    .filter(r => (samples.get(r.slug) ?? []).length > 0);
+  return (
+    <>
+      {featured.map(r => (
+        <section key={r.slug} className="mt-12">
+          <div className="flex items-baseline justify-between gap-4 mb-5">
+            <h2 className="text-xl md:text-2xl font-bold">
+              <Link href={`/ski-webcams/${r.slug}`} className="hover:text-[#D4AF37] transition">
+                {r.name} — live now
+              </Link>
+            </h2>
+            <Link
+              href={`/ski-webcams/${r.slug}`}
+              className="shrink-0 text-sm text-[#00E5FF] hover:underline"
+            >
+              All {plural(r.resortCameraCount + r.nearbyCameraCount, "camera")} &rarr;
+            </Link>
+          </div>
+          <SkiCameraGrid cameras={samples.get(r.slug) ?? []} initial={6} />
+        </section>
+      ))}
+    </>
+  );
+}
+
+function DirectorySkeleton() {
+  return (
+    <div aria-label="Loading the resort directory" className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <div key={i} className="animate-pulse rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+          <div className="h-4 w-2/3 rounded bg-white/10" />
+          <div className="mt-3 h-3 w-1/2 rounded bg-white/[0.07]" />
+          <div className="mt-6 aspect-video rounded-xl bg-white/[0.05]" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function FeaturedSkeleton() {
+  return (
+    <section className="mt-12" aria-label="Loading live resort feeds">
+      <div className="animate-pulse">
+        <div className="h-6 w-64 max-w-full rounded bg-white/10" />
+        <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="aspect-video rounded-2xl bg-white/[0.05]" />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default async function SkiWebcamsPage({
   searchParams,
 }: {
@@ -295,14 +437,7 @@ export default async function SkiWebcamsPage({
   const initialGroupBy: SkiGroupBy =
     params.group === "region" || params.group === "pass" ? params.group : "country";
   const powder = powderPassEnabled(process.env);
-  const samples = await loadSamples();
-  const thumbs = buildThumbs(samples);
-  const snowNow = await loadSnowNow();
   const totalCameras = SKI_RESORTS.reduce((n, r) => n + r.resortCameraCount + r.nearbyCameraCount, 0);
-  const featured = [...SKI_RESORTS]
-    .sort((a, b) => b.resortCameraCount - a.resortCameraCount)
-    .slice(0, 8)
-    .filter(r => (samples.get(r.slug) ?? []).length > 0);
 
   return (
     <PageShell>
@@ -332,44 +467,9 @@ export default async function SkiWebcamsPage({
           (Open-Meteo), labelled as modelled. Renders only when at
           least one resort clears 1 cm; the cameras linked from each
           chip are the ground truth. */}
-      {snowNow.length > 0 && (
-        <section className="mt-10" aria-label="Where it's snowing">
-          <h2 className="text-xl md:text-2xl font-bold mb-2">Where it&apos;s snowing</h2>
-          <p className="text-sm text-white/50 mb-4 max-w-3xl">
-            Modelled snowfall in the last 24 hours (Open-Meteo) — a weather model, not a
-            measurement on the mountain. Open a resort and check its cameras to see the
-            snow on the ground.
-          </p>
-          <ul className="flex flex-wrap gap-2">
-            {snowNow.map((h) => {
-              const chip = (
-                <>
-                  {h.name}{" "}
-                  <span className="text-[#D4AF37] font-semibold">
-                    {formatCm(h.cm)} in 24h
-                  </span>
-                </>
-              );
-              return (
-                <li key={h.slug}>
-                  {h.hasPage ? (
-                    <Link
-                      href={`/ski-webcams/${h.slug}`}
-                      className="inline-flex items-center rounded-full border border-white/10 bg-white/[0.03] px-3.5 py-1.5 text-xs font-medium text-white/80 hover:border-[#D4AF37]/50 hover:text-white transition"
-                    >
-                      {chip}
-                    </Link>
-                  ) : (
-                    <span className="inline-flex items-center rounded-full border border-white/10 bg-white/[0.03] px-3.5 py-1.5 text-xs font-medium text-white/80">
-                      {chip}
-                    </span>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-        </section>
-      )}
+      <Suspense fallback={null}>
+        <SnowNowStrip />
+      </Suspense>
 
       {/* Directory + ski sidebar. The Powder Pass promo lives in the
           sidebar rail (rendered only once the owner has lit the
@@ -386,16 +486,14 @@ export default async function SkiWebcamsPage({
           <div className="mb-8 lg:mb-0">
             <SkiSidebar resorts={SKI_RESORTS} showPowder={powder} />
           </div>
-          <SkiResortDirectory
-            key={`${initialSearch}|${initialPass ?? ""}|${initialGroupBy}`}
-            resorts={SKI_RESORTS}
-            logos={SKI_LOGOS}
-            thumbs={thumbs}
-            noPageSlugs={[...FOLDED_RESORT_SLUGS]}
-            initialSearch={initialSearch}
-            initialPass={initialPass}
-            initialGroupBy={initialGroupBy}
-          />
+          <Suspense fallback={<DirectorySkeleton />}>
+            <DirectoryWithThumbs
+              key={`${initialSearch}|${initialPass ?? ""}|${initialGroupBy}`}
+              initialSearch={initialSearch}
+              initialPass={initialPass}
+              initialGroupBy={initialGroupBy}
+            />
+          </Suspense>
         </div>
       </section>
 
@@ -446,24 +544,9 @@ export default async function SkiWebcamsPage({
 
       {/* Live feeds, grouped by resort — the country pages' feed cards,
           a first serving per resort; each resort page has the full set. */}
-      {featured.map(r => (
-        <section key={r.slug} className="mt-12">
-          <div className="flex items-baseline justify-between gap-4 mb-5">
-            <h2 className="text-xl md:text-2xl font-bold">
-              <Link href={`/ski-webcams/${r.slug}`} className="hover:text-[#D4AF37] transition">
-                {r.name} — live now
-              </Link>
-            </h2>
-            <Link
-              href={`/ski-webcams/${r.slug}`}
-              className="shrink-0 text-sm text-[#00E5FF] hover:underline"
-            >
-              All {plural(r.resortCameraCount + r.nearbyCameraCount, "camera")} &rarr;
-            </Link>
-          </div>
-          <SkiCameraGrid cameras={samples.get(r.slug) ?? []} initial={6} />
-        </section>
-      ))}
+      <Suspense fallback={<FeaturedSkeleton />}>
+        <FeaturedFeeds />
+      </Suspense>
 
       <section className="mt-12">
         <h2 className="text-xl md:text-2xl font-bold mb-5">What mountain cameras show</h2>
