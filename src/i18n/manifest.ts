@@ -90,7 +90,7 @@ const ES_TRANCHE_DATE = "2026-10-26";
 // computed at publish time; dictionaries.test.ts recomputes and pins them.
 const ES_SOURCE_HASHES: Record<string, string> = {
   "": "3987311a1f1f7b5fc3e983833746da740e871cd7f755a5cb46016d4ff6b6c801",
-  pricing: "f0bd7896629b09165640bd75a02ec00b9ad8608951985246cf911263c76ca038",
+  pricing: "0b6aa1027feec7f976864ba43ad3110b9a95cea5cff36c5fad2a0d7495ff6f77",
   "live-webcams": "54a9ce1419a86b32947d625722b245bda2a93155af8c60f8fd5a8c6f2a51bd04",
   faq: "dff2534296fb945648065e81aede56c2e1ca758d493c91bf29440e6701324747",
   "live-flight-tracker": "3784894f1c4fce3a82800cf0d721bdd136b7590d0394e00e184056dcd179703c",
@@ -165,6 +165,11 @@ const ES_SOURCE_HASHES: Record<string, string> = {
 // live TomTom flow is not currently served. The Spanish dictionaries
 // were re-synced the same day, so the pricing and faq hashes moved;
 // their updatedAt stays 2026-10-31.
+// Re-sync (2026-11-01, Pricing v3): the pricing dictionary gained
+// the feature-showcase block (real site captures) and one added
+// feature capture on the Lite and Pro detail copy. The Spanish
+// dictionary was re-synced the same day, so the pricing hash moved;
+// its updatedAt stays 2026-10-31.
 const ES_UPDATED_AT: Record<string, string> = {
   "": "2026-10-31",
   pricing: "2026-10-31",

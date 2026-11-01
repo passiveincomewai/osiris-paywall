@@ -49,6 +49,14 @@
  * repeat it. Spanish re-synced the same day; the manifest's pricing
  * sourceHash was recomputed (updatedAt stays 2026-10-31).
  *
+ * Amended 2026-11-01 (Pricing v3): a `showcase` block of real site
+ * captures for the new /pricing showcase section, and one added
+ * feature capture each on the Lite (camera viewer) and Pro (OI
+ * panel) detail copy — both frames are real screenshots of the live
+ * site taken the same day. No prices, trials, savings or feature
+ * facts changed. Spanish re-synced the same day; the manifest's
+ * pricing sourceHash was recomputed (updatedAt stays 2026-10-31).
+ *
  * NOT covered (separate components keep their own copy; they render
  * in English on localized pricing pages until their own conversion —
  * see the build REPORT): TeamSection, CancelReassurance,
@@ -177,6 +185,13 @@ export interface PricingCopy {
     h2Before: string;
     h2Accent: string;
     items: { title: string; desc: string }[];
+  };
+  /** Feature showcase — real captures of the live site (Pricing v3). */
+  showcase: {
+    h2Before: string;
+    h2Accent: string;
+    sub: string;
+    items: { src: string; alt: string; title: string; desc: string }[];
   };
   /** Per-plan detail pages (/pricing/lite|pro|ultra). */
   planDetails: {
@@ -497,6 +512,49 @@ export const enPricing: PricingCopy = {
       { title: "Premium intel feeds", desc: "Cyber threats, GDELT events, maritime and live news feeds — Ultra only." },
     ],
   },
+  showcase: {
+    h2Before: "Every screenshot here is ",
+    h2Accent: "the real site.",
+    sub: "No mockups and no stock photos — these are captures of WorldEye itself, the same screens the plans unlock.",
+    items: [
+      {
+        src: "/landing/oi-assist.jpg",
+        alt: "The OI assistant panel open on the WorldEye globe",
+        title: "OI AI Assistant",
+        desc: "The built-in analyst, open on the globe: ask for a place and OI flies there, switches layers and marks what is live. Nothing to set up, no key of yours.",
+      },
+      {
+        src: "/landing/camera-viewer.jpg",
+        alt: "A live highway camera open in the WorldEye viewer, with its record panel",
+        title: "The camera viewer",
+        desc: "Every camera opens full-screen like this — a live Minnesota highway feed, with AI analysis, timelapse and the record panel that saves clips to your device on paid plans.",
+      },
+      {
+        src: "/landing/track-satellites.jpg",
+        alt: "Satellites tracked live over the Earth on WorldEye",
+        title: "Live satellite tracking",
+        desc: "Tracked satellites moving over the same globe — Ultra layers the premium intel feeds on top.",
+      },
+      {
+        src: "/landing/hazard-weather.jpg",
+        alt: "Hazard and disaster alerts on the WorldEye globe",
+        title: "Hazards & severe weather",
+        desc: "Earthquakes, fires, storms and GDACS disaster alerts alongside the weather layers.",
+      },
+      {
+        src: "/landing/osint-maritime.jpg",
+        alt: "The maritime and conflict layer on the WorldEye globe",
+        title: "Maritime & conflict intel",
+        desc: "Ship traffic and conflict-zone labels on the globe — part of Ultra's premium intel feeds.",
+      },
+      {
+        src: "/landing/osint-search.jpg",
+        alt: "WorldEye search flying to a place on the live globe",
+        title: "Search that flies",
+        desc: "Type a place and the globe goes there — paid plans add filters for country, camera type and live feeds.",
+      },
+    ],
+  },
   planDetails: {
     backToPricing: "← All plans",
     pricingHeading: "Pick your billing period",
@@ -527,6 +585,11 @@ export const enPricing: PricingCopy = {
           src: "/landing/track-flights.jpg",
           alt: "Live flight tracking on the WorldEye globe",
           caption: "Live flights over the camera network — free to watch, unlimited on Lite.",
+        },
+        {
+          src: "/landing/camera-viewer.jpg",
+          alt: "A live highway camera open full-screen in the WorldEye viewer",
+          caption: "Every camera opens full-screen like this — on Lite, the record panel below the feed saves clips from up to 5 cameras at once.",
         },
       ],
       bestFor: [
@@ -585,6 +648,11 @@ export const enPricing: PricingCopy = {
           src: "/landing/features-globe.jpg",
           alt: "The live WorldEye globe covered in camera points",
           caption: "The live globe — a real capture of WorldEye, cameras and layers in one place.",
+        },
+        {
+          src: "/landing/oi-assist.jpg",
+          alt: "The OI assistant panel open on the WorldEye globe",
+          caption: "OI, the built-in assistant, working the globe — the panel's example request is labelled as one, right in the panel.",
         },
       ],
       bestFor: [

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 import LanguageHeaderControl from "@/components/translate/LanguageHeaderControl";
 import Link from "next/link";
 import SiteFooter from "@/components/SiteFooter";
@@ -17,7 +17,7 @@ import { recordLastViewedPlan } from "@/lib/billing/trial-prompt";
 import { trackPlanSelected } from "@/lib/billing/picker-analytics";
 import { preloadStripeJs } from "@/lib/billing/stripe-preload";
 import type { CheckoutPlanId } from "@/lib/billing/trial-checkout";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, MotionConfig } from "framer-motion";
 import {
   ArrowLeft, Check, X, Sparkles, BrainCircuit,
   ShieldCheck, Zap, Lock, ChevronDown, BadgeCheck, Minus, Car, Video, Bell,
@@ -164,6 +164,33 @@ function buildFaqJsonLd(copy: PricingCopy, locale: LocaleCode) {
       acceptedAnswer: { "@type": "Answer", text: f.a },
     })),
   };
+}
+
+/** Scroll-reveal wrapper (Pricing v3): a section rises in once as
+ *  it enters the viewport. The page wraps everything in
+ *  MotionConfig reducedMotion="user", so for reduced-motion
+ *  visitors the transform is disabled and the section simply sits
+ *  in place — content is never gated on the animation. */
+function Reveal({
+  children,
+  className,
+  delay = 0,
+}: {
+  children: ReactNode;
+  className?: string;
+  delay?: number;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.45, delay }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
 }
 
 function CheckoutButton({
@@ -327,6 +354,7 @@ function TierCard({
       {...(tier === "pro" ? { id: "pro-card" } : {})}
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -4 }}
       transition={{ duration: 0.35 }}
       className={`relative flex flex-col rounded-3xl border ${accent.border} bg-gradient-to-b from-white/[0.06] to-white/[0.02] backdrop-blur-xl ${accent.glow} scroll-mt-6`}
     >
@@ -465,6 +493,18 @@ export default function PricingPage({
   // remains one quiet link away under each CTA.
   const [sheetPlan, setSheetPlan] = useState<CheckoutPlanId | null>(null);
   const closeSheet = useCallback(() => setSheetPlan(null), []);
+  // The hero's ambient video loop is decorative motion the
+  // MotionConfig below can't gate (it is not a framer transform):
+  // hold it for visitors who prefer reduced motion — they keep
+  // the static capture as the backdrop.
+  const [reduceMotion, setReduceMotion] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReduceMotion(mq.matches);
+    const onChange = (e: MediaQueryListEvent) => setReduceMotion(e.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
   // Warm Stripe.js while the visitor reads the plans: the sheet's
   // embedded flow starts on the CTA click, and with the script
   // already cached only the session POST gates the form.
@@ -473,6 +513,7 @@ export default function PricingPage({
   }, []);
 
   return (
+    <MotionConfig reducedMotion="user">
     <main className="docs-root min-h-screen bg-[#050508] text-zinc-100 relative overflow-x-clip">
       <JsonLd data={faqJsonLd} />
       {/* Ambient gold glow */}
@@ -504,6 +545,27 @@ export default function PricingPage({
             aria-hidden
             className="absolute inset-0 w-full h-full object-cover"
           />
+          {/* Ambient hero loop (Pricing v3) — a real screen capture
+              of live flight tracking on the globe, dimmed under the
+              same overlays as the still. Decorative only: it is
+              never labelled live, and reduced-motion visitors keep
+              the static capture above. Absolutely positioned over
+              the still, so it adds no layout shift. */}
+          {!reduceMotion && (
+            <video
+              className="absolute inset-0 w-full h-full object-cover"
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+              poster="/landing/features-globe.jpg"
+              aria-hidden
+            >
+              <source src="/landing/track-flights.webm" type="video/webm" />
+              <source src="/landing/track-flights.mp4" type="video/mp4" />
+            </video>
+          )}
           <div className="absolute inset-0 bg-black/55" />
           <div className="absolute inset-0 bg-gradient-to-b from-[#050508]/70 via-transparent to-[#050508]" />
           <div className="relative max-w-3xl mx-auto px-6 pt-12 pb-10 md:pt-16 md:pb-12 text-center">
@@ -594,20 +656,64 @@ export default function PricingPage({
             {copy.whyUpgrade.items.map((item, i) => {
               const Icon = WHY_UPGRADE_ICONS[i] ?? Sparkles;
               return (
-                <div key={item.title} className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+                <motion.div
+                  key={item.title}
+                  initial={{ opacity: 0, y: 14 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-40px" }}
+                  transition={{ duration: 0.4, delay: i * 0.07 }}
+                  className="rounded-2xl border border-white/10 bg-white/[0.02] p-4 transition-colors hover:border-[#D4AF37]/40"
+                >
                   <Icon className="w-5 h-5 text-[#D4AF37]" />
                   <p className="mt-2 text-sm font-semibold text-white/90">{item.title}</p>
                   <p className="mt-1 text-xs text-white/50 leading-relaxed">{item.desc}</p>
-                </div>
+                </motion.div>
               );
             })}
+          </div>
+        </div>
+
+        {/* Feature showcase (Pricing v3) — real captures of the
+            live site. Every image is a screenshot of WorldEye
+            itself; each caption says what the screen shows and
+            nothing more. Copy lives in the dictionary's showcase
+            block so both locales carry it. */}
+        <div className="mt-14">
+          <h2 className="text-xl md:text-2xl font-bold text-center">{copy.showcase.h2Before}<span className="text-[#D4AF37]">{copy.showcase.h2Accent}</span></h2>
+          <p className="mt-2 text-sm text-white/50 text-center max-w-xl mx-auto leading-relaxed">{copy.showcase.sub}</p>
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {copy.showcase.items.map((item, i) => (
+              <motion.figure
+                key={item.src}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ duration: 0.4, delay: (i % 3) * 0.08 }}
+                className="group"
+              >
+                <div className="overflow-hidden rounded-3xl border border-white/10">
+                  <img
+                    src={item.src}
+                    alt={item.alt}
+                    width={1200}
+                    height={675}
+                    loading="lazy"
+                    className="w-full h-44 object-cover transition duration-500 group-hover:scale-[1.04]"
+                  />
+                </div>
+                <figcaption className="mt-2.5 px-1">
+                  <p className="text-sm font-semibold text-white/90">{item.title}</p>
+                  <p className="mt-0.5 text-xs text-white/50 leading-relaxed">{item.desc}</p>
+                </figcaption>
+              </motion.figure>
+            ))}
           </div>
         </div>
 
         {/* Enterprise — image-backed, in the reference's blue. The
             backdrop is the dictionary's maritime-layer capture (the
             Ultra detail copy's second feature image in both locales). */}
-        <div className="relative mt-10 max-w-3xl mx-auto rounded-3xl border border-[#38bdf8]/30 overflow-hidden">
+        <Reveal className="relative mt-10 max-w-3xl mx-auto rounded-3xl border border-[#38bdf8]/30 overflow-hidden">
           <img
             src={copy.planDetails.ultra.featureImages[1].src}
             alt={copy.planDetails.ultra.featureImages[1].alt}
@@ -652,7 +758,7 @@ export default function PricingPage({
               </p>
             </div>
           </div>
-        </div>
+        </Reveal>
 
         {/* Team Access */}
         <div className="mt-10">
@@ -661,7 +767,7 @@ export default function PricingPage({
         <TeamSection />
 
         {/* Free vs the tiers comparison */}
-        <div className="mt-10">
+        <Reveal className="mt-10">
           <h2 className="text-xl md:text-2xl font-bold text-center">{copy.comparison.h2Before}<span className="text-[#D4AF37]">{copy.comparison.h2Accent}</span></h2>
           <div className="mt-5 rounded-3xl border border-white/10 bg-white/[0.02] overflow-hidden max-w-3xl mx-auto">
             <div className="grid grid-cols-[1fr_40px_40px_40px_44px] md:grid-cols-[1fr_72px_72px_72px_72px] text-[11px] font-bold tracking-[0.15em] text-white/40 border-b border-white/10 bg-white/[0.02]">
@@ -709,20 +815,20 @@ export default function PricingPage({
               {copy.comparison.choosePro}
             </button>
           </div>
-        </div>
+        </Reveal>
 
         {/* FAQ */}
-        <div className="mt-10 max-w-2xl mx-auto">
+        <Reveal className="mt-10 max-w-2xl mx-auto">
           <h2 className="text-xl md:text-2xl font-bold text-center mb-4">{copy.faqHeading}</h2>
           <div className="space-y-2">
             {copy.faqs.map((f) => (
               <FaqItem key={f.q} q={f.q} a={f.a} />
             ))}
           </div>
-        </div>
+        </Reveal>
 
         {/* Compare with the alternatives */}
-        <div className="mt-12 max-w-3xl mx-auto text-center">
+        <Reveal className="mt-12 max-w-3xl mx-auto text-center">
           <h2 className="text-xl md:text-2xl font-bold">{copy.compareTeasers.heading}</h2>
           <p className="text-sm text-white/50 mt-2 max-w-xl mx-auto leading-relaxed">
             {copy.compareTeasers.intro}
@@ -737,7 +843,7 @@ export default function PricingPage({
               {copy.compareTeasers.allLabel}
             </Link>
           </div>
-        </div>
+        </Reveal>
 
         {/* Bottom trust */}
         <div className="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-xs text-white/35">
@@ -753,5 +859,6 @@ export default function PricingPage({
       <CheckoutSheet plan={sheetPlan} onClose={closeSheet} analyticsSurface="pricing" />
       <SiteFooter copy={getChromeCopy(locale)} locale={locale} slug="pricing" />
     </main>
+    </MotionConfig>
   );
 }

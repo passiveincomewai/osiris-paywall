@@ -16,14 +16,14 @@
  * tier_period), same CheckoutSheet, trials from the period only
  * (weekly 3 days, monthly/annual 10 — src/lib/billing/trials.ts).
  */
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
 import SiteFooter from "@/components/SiteFooter";
 import CheckoutSheet from "@/components/CheckoutSheet";
 import HostedCheckoutLink from "@/components/HostedCheckoutLink";
 import { preloadStripeJs } from "@/lib/billing/stripe-preload";
 import type { CheckoutPlanId } from "@/lib/billing/trial-checkout";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, MotionConfig } from "framer-motion";
 import {
   ArrowLeft, Check, X, Zap, Lock, ChevronDown, BadgeCheck,
 } from "lucide-react";
@@ -78,6 +78,32 @@ function planCopyFor(copy: PricingCopy, tier: TierKey, period: Period): PricingP
   return copy.plansGrid[`${tier}_${period}` as keyof PricingCopy["plansGrid"]];
 }
 
+/** Scroll-reveal wrapper (Pricing v3) — same treatment as
+ *  /pricing: sections rise in once in the viewport; the page's
+ *  MotionConfig reducedMotion="user" disables the transform for
+ *  reduced-motion visitors. */
+function Reveal({
+  children,
+  className,
+  delay = 0,
+}: {
+  children: ReactNode;
+  className?: string;
+  delay?: number;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.45, delay }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
 function FaqItem({ q, a, accent }: { q: string; a: string; accent: string }) {
   const [open, setOpen] = useState(false);
   return (
@@ -130,6 +156,7 @@ export default function PlanDetailClient({ tier }: { tier: TierKey }) {
   );
 
   return (
+    <MotionConfig reducedMotion="user">
     <main className="docs-root min-h-screen bg-[#050508] text-zinc-100 relative overflow-x-clip">
       <div className="relative max-w-5xl mx-auto px-6 py-6 md:py-8">
         {/* Top bar */}
@@ -147,7 +174,7 @@ export default function PlanDetailClient({ tier }: { tier: TierKey }) {
 
         {/* Hero — uniquely art-directed per tier. */}
         {tier === "lite" && (
-          <div className="text-center">
+          <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }} className="text-center">
             <figure>
               <img
                 src={detail.heroImage.src}
@@ -162,10 +189,10 @@ export default function PlanDetailClient({ tier }: { tier: TierKey }) {
             <h1 className="mt-3 text-4xl md:text-5xl font-bold tracking-tight">{detail.h1}</h1>
             <p className="mt-4 text-sm md:text-base text-white/55 leading-relaxed max-w-2xl mx-auto">{detail.intro}</p>
             <div className="mt-6">{ctaButton(selected.cta, selectedKey)}</div>
-          </div>
+          </motion.div>
         )}
         {tier === "pro" && (
-          <div className="grid md:grid-cols-2 gap-8 items-center">
+          <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }} className="grid md:grid-cols-2 gap-8 items-center">
             <div>
               <p className={`text-[11px] md:text-xs font-bold tracking-[0.3em] ${theme.text}`}>{detail.eyebrow}</p>
               <h1 className="mt-3 text-4xl md:text-5xl font-bold tracking-tight">{detail.h1}</h1>
@@ -192,25 +219,25 @@ export default function PlanDetailClient({ tier }: { tier: TierKey }) {
               />
               <figcaption className="mt-2 text-xs text-white/35">{detail.heroImage.caption}</figcaption>
             </figure>
-          </div>
+          </motion.div>
         )}
         {tier === "ultra" && (
           <div className="relative left-1/2 -translate-x-1/2 w-screen overflow-hidden">
             <img src={detail.heroImage.src} alt="" aria-hidden className="absolute inset-0 w-full h-full object-cover" />
             <div className="absolute inset-0 bg-black/60" />
             <div className="absolute inset-0 bg-gradient-to-b from-[#0b0618]/80 via-[#050508]/40 to-[#050508]" />
-            <div className="relative max-w-3xl mx-auto px-6 pt-14 pb-12 md:pt-20 md:pb-16 text-center">
+            <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }} className="relative max-w-3xl mx-auto px-6 pt-14 pb-12 md:pt-20 md:pb-16 text-center">
               <p className={`text-[11px] md:text-xs font-bold tracking-[0.3em] ${theme.text}`}>{detail.eyebrow}</p>
               <h1 className="mt-3 text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">{detail.h1}</h1>
               <p className="mt-4 text-sm md:text-base text-white/60 leading-relaxed max-w-2xl mx-auto">{detail.intro}</p>
               <div className="mt-7">{ctaButton(selected.cta, selectedKey)}</div>
               <p className="mt-3 text-xs text-white/35">{detail.heroImage.caption}</p>
-            </div>
+            </motion.div>
           </div>
         )}
 
         {/* Period pricing — the full table, every period selectable. */}
-        <div className="mt-12 max-w-3xl mx-auto">
+        <Reveal className="mt-12 max-w-3xl mx-auto">
           <h2 className="text-xl md:text-2xl font-bold text-center">{copy.planDetails.pricingHeading}</h2>
           <div className="mt-5 space-y-2.5">
             {(["weekly", "monthly", "annual"] as Period[]).map((p) => {
@@ -294,10 +321,10 @@ export default function PlanDetailClient({ tier }: { tier: TierKey }) {
               <HostedCheckoutLink plan={selectedKey} caption={false} surface="pricing" />
             </p>
           </div>
-        </div>
+        </Reveal>
 
         {/* Best for */}
-        <div className="mt-12 max-w-3xl mx-auto">
+        <Reveal className="mt-12 max-w-3xl mx-auto">
           <h2 className="text-xl md:text-2xl font-bold">{copy.planDetails.bestForHeading}</h2>
           <ul className="mt-4 space-y-2">
             {detail.bestFor.map((line) => (
@@ -309,10 +336,10 @@ export default function PlanDetailClient({ tier }: { tier: TierKey }) {
               </li>
             ))}
           </ul>
-        </div>
+        </Reveal>
 
         {/* Everything included — layout varies by tier. */}
-        <div className="mt-12 max-w-4xl mx-auto">
+        <Reveal className="mt-12 max-w-4xl mx-auto">
           <h2 className="text-xl md:text-2xl font-bold">
             {copy.planDetails.includesBefore}
             {copy.tiers[tier].name}
@@ -346,10 +373,10 @@ export default function PlanDetailClient({ tier }: { tier: TierKey }) {
               ))}
             </ul>
           )}
-        </div>
+        </Reveal>
 
         {/* Not in this plan — stated plainly, with the way up. */}
-        <div className="mt-10 max-w-4xl mx-auto">
+        <Reveal className="mt-10 max-w-4xl mx-auto">
           <h2 className="text-lg md:text-xl font-bold text-white/80">{copy.planDetails.excludesHeading}</h2>
           <ul className="mt-4 space-y-2.5 max-w-3xl">
             {detail.excludes.map((f) => (
@@ -364,47 +391,50 @@ export default function PlanDetailClient({ tier }: { tier: TierKey }) {
               </li>
             ))}
           </ul>
-        </div>
+        </Reveal>
 
         {/* Feature captures — real screens of the live site. */}
-        <div className={`mt-12 grid gap-4 ${detail.featureImages.length > 2 ? "md:grid-cols-3" : "md:grid-cols-2"}`}>
+        <Reveal className={`mt-12 grid gap-4 ${detail.featureImages.length > 2 ? "md:grid-cols-3" : "md:grid-cols-2"}`}>
           {detail.featureImages.map((img) => (
-            <figure key={img.src}>
-              <img
-                src={img.src}
-                alt={img.alt}
-                width={1200}
-                height={675}
-                loading="lazy"
-                className="w-full h-48 md:h-56 object-cover rounded-3xl border border-white/10"
-              />
+            <figure key={img.src} className="group">
+              <div className="overflow-hidden rounded-3xl border border-white/10">
+                <img
+                  src={img.src}
+                  alt={img.alt}
+                  width={1200}
+                  height={675}
+                  loading="lazy"
+                  className="w-full h-48 md:h-56 object-cover transition duration-500 group-hover:scale-[1.04]"
+                />
+              </div>
               <figcaption className="mt-2 text-xs text-white/35">{img.caption}</figcaption>
             </figure>
           ))}
-        </div>
+        </Reveal>
 
         {/* FAQ */}
-        <div className="mt-12 max-w-2xl mx-auto">
+        <Reveal className="mt-12 max-w-2xl mx-auto">
           <h2 className="text-xl md:text-2xl font-bold text-center mb-4">{copy.faqHeading}</h2>
           <div className="space-y-2">
             {detail.faqs.map((f) => (
               <FaqItem key={f.q} q={f.q} a={f.a} accent={theme.text} />
             ))}
           </div>
-        </div>
+        </Reveal>
 
         {/* Bottom CTA + back to the comparison */}
-        <div className="mt-12 text-center">
+        <Reveal className="mt-12 text-center">
           {ctaButton(selected.cta, selectedKey)}
           <p className="mt-5">
             <Link href="/pricing#plans" className={`text-sm font-semibold ${theme.text} hover:underline`}>
               {copy.planDetails.allPlansLink}
             </Link>
           </p>
-        </div>
+        </Reveal>
       </div>
       <CheckoutSheet plan={sheetPlan} onClose={closeSheet} />
       <SiteFooter copy={getChromeCopy("en")} locale="en" />
     </main>
+    </MotionConfig>
   );
 }

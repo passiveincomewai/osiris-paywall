@@ -331,6 +331,49 @@ export const esPricing: PricingCopy = {
       { title: "Feeds de inteligencia premium", desc: "Ciberamenazas, eventos GDELT, marítimo y noticias en vivo — solo Ultra." },
     ],
   },
+  showcase: {
+    h2Before: "Cada captura aquí es ",
+    h2Accent: "el sitio real.",
+    sub: "Sin maquetas ni fotos de stock — son capturas del propio WorldEye, las mismas pantallas que desbloquean los planes.",
+    items: [
+      {
+        src: "/landing/oi-assist.jpg",
+        alt: "El panel del asistente OI abierto en el globo de WorldEye",
+        title: "Asistente de IA OI",
+        desc: "El analista integrado, abierto en el globo: pide un lugar y OI vuela hasta él, cambia las capas y marca lo que está en vivo. Sin configurar nada, sin claves tuyas.",
+      },
+      {
+        src: "/landing/camera-viewer.jpg",
+        alt: "Una cámara de autopista en vivo abierta en el visor de WorldEye, con su panel de grabación",
+        title: "El visor de cámaras",
+        desc: "Cada cámara se abre a pantalla completa así — un feed en vivo de una autopista de Minnesota, con análisis de IA, timelapse y el panel de grabación que guarda clips en tu dispositivo en los planes de pago.",
+      },
+      {
+        src: "/landing/track-satellites.jpg",
+        alt: "Satélites rastreados en vivo sobre la Tierra en WorldEye",
+        title: "Seguimiento de satélites en vivo",
+        desc: "Satélites rastreados moviéndose sobre el mismo globo — Ultra añade encima los feeds de inteligencia premium.",
+      },
+      {
+        src: "/landing/hazard-weather.jpg",
+        alt: "Alertas de peligros y desastres en el globo de WorldEye",
+        title: "Peligros y clima severo",
+        desc: "Terremotos, incendios, tormentas y alertas de desastres GDACS junto a las capas de clima.",
+      },
+      {
+        src: "/landing/osint-maritime.jpg",
+        alt: "La capa marítima y de conflictos en el globo de WorldEye",
+        title: "Inteligencia marítima y de conflictos",
+        desc: "Tráfico de barcos y etiquetas de zonas de conflicto en el globo — parte de los feeds de inteligencia premium de Ultra.",
+      },
+      {
+        src: "/landing/osint-search.jpg",
+        alt: "La búsqueda de WorldEye volando a un lugar en el globo en vivo",
+        title: "Una búsqueda que vuela",
+        desc: "Escribe un lugar y el globo va hasta él — los planes de pago añaden filtros por país, tipo de cámara y feeds en vivo.",
+      },
+    ],
+  },
   planDetails: {
     backToPricing: "← Todos los planes",
     pricingHeading: "Elige tu período de facturación",
@@ -361,6 +404,11 @@ export const esPricing: PricingCopy = {
           src: "/landing/track-flights.jpg",
           alt: "Seguimiento de vuelos en vivo en el globo de WorldEye",
           caption: "Vuelos en vivo sobre la red de cámaras — gratis para mirar, ilimitado en Lite.",
+        },
+        {
+          src: "/landing/camera-viewer.jpg",
+          alt: "Una cámara de autopista en vivo abierta a pantalla completa en el visor de WorldEye",
+          caption: "Cada cámara se abre a pantalla completa así — en Lite, el panel de grabación bajo el feed guarda clips de hasta 5 cámaras a la vez.",
         },
       ],
       bestFor: [
@@ -419,6 +467,11 @@ export const esPricing: PricingCopy = {
           src: "/landing/features-globe.jpg",
           alt: "El globo en vivo de WorldEye cubierto de puntos de cámara",
           caption: "El globo en vivo — una captura real de WorldEye, cámaras y capas en un solo lugar.",
+        },
+        {
+          src: "/landing/oi-assist.jpg",
+          alt: "El panel del asistente OI abierto en el globo de WorldEye",
+          caption: "OI, el asistente integrado, trabajando el globo — la petición de ejemplo del panel está etiquetada como tal, en el propio panel.",
         },
       ],
       bestFor: [
