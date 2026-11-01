@@ -91,10 +91,10 @@ const ES_TRANCHE_DATE = "2026-10-26";
 const ES_SOURCE_HASHES: Record<string, string> = {
   "": "d1e20181cb37f8f70a2ee2254f443bbc3ad8dcf70960dc7e7713428a2db0f74e",
   pricing: "baa2c2545a18d6cab0e2561cd8d13c89b09d4775492816a286680bdd3e2e07ac",
-  "live-webcams": "54a9ce1419a86b32947d625722b245bda2a93155af8c60f8fd5a8c6f2a51bd04",
+  "live-webcams": "5b6ebf74176e177bba6b13c296da76b85f2003d4bb65c15a904a7041821d1c8f",
   faq: "b9437dac3bacb6f5e5a61ce2961b5aaa04928a05c0b1e4285cb2b1e5aabbfacf",
   "live-flight-tracker": "f6098a009698c4a81bbdf8d413acc89dbf3d5bce2b506ab3e4627f2c168c1cf8",
-  "ship-tracker": "a2ac2cec641df42357c801e233edab00d77f58fc3bb7bb7071b3b56298709e34",
+  "ship-tracker": "07aa958ab9475efa3c61062044fcfe2f3fb461b4d8dee9ad29f711b86632d99d",
 };
 
 // Rebase note (2026-10-27): the foundation was rebased onto production
@@ -208,6 +208,14 @@ const ES_SOURCE_HASHES: Record<string, string> = {
 // opens allowance on top of the master-repair FAQ pass; the
 // Spanish dictionaries were re-synced the same day, so the home
 // and faq hashes moved; their updatedAt stays 2026-10-31.
+// Re-sync (2026-11-01, copy accuracy sweep D2 re-land): the
+// live-webcams free-access wording (free to browse + the camera-
+// opens allowance) and the ship-tracker maritime-feed Ultra
+// attribution, lost when D2's original push was interrupted, were
+// restored; the Spanish dictionaries were re-synced the same day,
+// so the live-webcams and ship-tracker hashes moved (this also
+// clears the live-webcams hash drift the dictionary had
+// accumulated); their updatedAt stays 2026-10-29 / 2026-10-31.
 const ES_UPDATED_AT: Record<string, string> = {
   "": "2026-10-31",
   pricing: "2026-10-31",

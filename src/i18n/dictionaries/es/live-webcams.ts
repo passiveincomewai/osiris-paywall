@@ -12,10 +12,10 @@ export const esLiveWebcams: LiveWebcamsCopy = {
   meta: {
     title: "Cámaras en vivo — mira 74.229 webcams de todo el mundo",
     description:
-      "Mira cámaras en vivo de todo el mundo: 74.229 webcams en {countries} países — tráfico, ciudades, playas, naturaleza y lugares emblemáticos. Gratis para siempre, sin registrarte.",
+      "Mira cámaras en vivo de todo el mundo: 74.229 webcams en {countries} países — tráfico, ciudades, playas, naturaleza y lugares emblemáticos. Gratis para explorar, sin registrarte.",
     ogTitle: "Cámaras en vivo — mira 74.229 webcams de todo el mundo | WorldEye",
     ogDescription:
-      "Mira cámaras en vivo de todo el mundo: 74.229 webcams en {countries} países — tráfico, ciudades, naturaleza, lugares emblemáticos. Gratis para siempre, sin registrarte.",
+      "Mira cámaras en vivo de todo el mundo: 74.229 webcams en {countries} países — tráfico, ciudades, naturaleza, lugares emblemáticos. Gratis para explorar, sin registrarte.",
   },
   schema: {
     name: "Cámaras en vivo — mira 74.229 webcams de todo el mundo",
@@ -33,7 +33,7 @@ export const esLiveWebcams: LiveWebcamsCopy = {
     intro1:
       "Este es el centro del directorio de cámaras de WorldEye: {count} webcams públicas en vivo de {countries} países, recopiladas y mapeadas para que puedas ver el planeta en tiempo real. Cámaras en vivo de carreteras y cruces, calles y plazas, playas, estaciones de esquí, puertos y naturaleza: todo lo que el mundo apunta con una cámara pública.",
     intro2:
-      "Solo Estados Unidos aporta {topCount} feeds, desde las redes estatales de transporte hasta los corredores metropolitanos más densos. Todas las cámaras aquí son gratis: sin cuenta, sin registro, nunca.",
+      "Solo Estados Unidos aporta {topCount} feeds, desde las redes estatales de transporte hasta los corredores metropolitanos más densos. Explorar aquí es gratis: sin cuenta, sin registro, nunca; y cada dispositivo tiene aperturas de cámara gratuitas, que los planes de pago hacen ilimitadas.",
   },
   search: {
     label: "todo el directorio",
@@ -148,7 +148,7 @@ export const esLiveWebcams: LiveWebcamsCopy = {
     },
     {
       q: "¿De verdad es gratis verlas?",
-      a: "Sí. Las cámaras nunca estarán tras un muro de pago: cada feed del mapa es gratis para todos, para siempre, sin cuenta y sin registro. El plan Pro opcional financia la infraestructura que mantiene el directorio en marcha.",
+      a: "Sí. El directorio nunca estará tras un muro de pago: explorarlo es gratis para todos, para siempre, sin cuenta y sin registro. Ver cámaras incluye una cantidad gratuita de aperturas en cada dispositivo, y los planes de pago eliminan el límite por completo. El plan Pro opcional financia la infraestructura que mantiene el directorio en marcha.",
     },
     {
       q: "¿Dónde encuentro cámaras de un país concreto?",
@@ -190,7 +190,7 @@ export const esLiveWebcams: LiveWebcamsCopy = {
   cta: {
     headingBefore: "El mundo está ",
     headingAccent: "en vivo ahora mismo.",
-    sub: "Gira el globo, elige un continente y empieza a mirar. Gratis para siempre: sin cuenta, sin registro.",
+    sub: "Gira el globo, elige un continente y empieza a mirar. Gratis para explorar: sin cuenta, sin registro.",
     primaryCta: "Ver webcams en vivo",
     secondaryCta: "Resumen de cámaras",
   },

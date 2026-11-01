@@ -76,10 +76,10 @@ export const enShipTracker: ShipTrackerCopy = {
   meta: {
     title: "Live Ship Tracker — Marine Vessel Tracking",
     description:
-      "Track ships on a 3D globe: position, speed, heading and vessel type via AIS — a live position whenever a ship is reporting. The maritime feed is included with Pro; the globe itself is free.",
+      "Track ships on a 3D globe: position, speed, heading and vessel type via AIS — a live position whenever a ship is reporting. The maritime feed is included with Ultra; the globe itself is free.",
     ogTitle: "Live Ship Tracker | WorldEye",
     ogDescription:
-      "Ships on a 3D globe — position, speed, heading and vessel type via AIS, with a live position whenever a ship is reporting. The maritime feed is included with Pro.",
+      "Ships on a 3D globe — position, speed, heading and vessel type via AIS, with a live position whenever a ship is reporting. The maritime feed is included with Ultra.",
   },
   schema: {
     webPageName: "WorldEye Live Ship Tracker",
@@ -95,7 +95,7 @@ export const enShipTracker: ShipTrackerCopy = {
     badge: "MARITIME DATA VIA AIS",
     h1: [tx("The oceans, "), ac("live.")],
     sub: "A ship tracker on a 3D globe. Vessels plotted from AIS transponder broadcasts — position, speed, heading and type — with a live position whenever a ship is reporting; when a ship isn't reporting, the page says so instead of guessing. Ports and chokepoints add context.",
-    cta: "Unlock the maritime feed with Pro",
+    cta: "Unlock the maritime feed with Ultra",
   },
   oneMap: {
     heading: "One live map for ships — and everything around them",
@@ -109,7 +109,7 @@ export const enShipTracker: ShipTrackerCopy = {
       tx(". Follow a vessel to its destination and you can "),
       lk("port-webcams", "watch the same ships arrive on port cameras"),
       tx(". The globe itself is free with no signup; maritime tracking is one of the premium intel feeds included with "),
-      lk("pricing", "a Pro subscription"),
+      lk("pricing", "an Ultra subscription"),
       tx("."),
     ],
   },
@@ -212,7 +212,7 @@ export const enShipTracker: ShipTrackerCopy = {
   faqs: [
     {
       q: "Is the ship tracker free?",
-      a: "The WorldEye globe itself is free — no account, no signup. Maritime vessel tracking is part of WorldEye's premium maritime intel feed, which is included with a Pro subscription. Everything else on the map — flights, satellites, weather, quakes, wildfires and 74,229 public cameras — is free forever.",
+      a: "The WorldEye globe itself is free — no account, no signup. Maritime vessel tracking is part of WorldEye's premium maritime intel feed, which is included with an Ultra subscription. Everything else on the map — flights, satellites, weather, quakes, wildfires and the camera directory — is free to browse forever.",
     },
     {
       q: "How do ships show up on the map?",
@@ -251,8 +251,8 @@ export const enShipTracker: ShipTrackerCopy = {
   voiceTitle: "Questions people ask",
   closingCta: {
     heading: [tx("Watch the world's "), ac("trade routes")],
-    sub: "The full maritime feed — vessels, ports and chokepoints — is part of WorldEye Pro.",
-    cta: "See Pro plans",
+    sub: "The full maritime feed — vessels, ports and chokepoints — is part of Ultra.",
+    cta: "See Ultra plans",
     exploreBefore: "Just want to explore? ",
     exploreLink: "Open the free globe",
   },
@@ -267,7 +267,7 @@ export const enShipTracker: ShipTrackerCopy = {
     },
     {
       label: "Pricing",
-      desc: "Weekly, monthly and annual Pro plans — the maritime feed is included.",
+      desc: "Weekly, monthly and annual plans — the maritime feed is included with Ultra.",
     },
     {
       label: "Open the map",

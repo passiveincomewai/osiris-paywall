@@ -84,10 +84,10 @@ export const enLiveWebcams: LiveWebcamsCopy = {
   meta: {
     title: "Live Cams — Watch 74,229 Live Webcams Worldwide",
     description:
-      "Watch live cams around the world: 74,229 live webcams in {countries} countries — traffic, cities, beaches, nature and landmarks. Free forever, no signup.",
+      "Watch live cams around the world: 74,229 live webcams in {countries} countries — traffic, cities, beaches, nature and landmarks. Free to browse, no signup.",
     ogTitle: "Live Cams — Watch 74,229 Live Webcams Worldwide | WorldEye",
     ogDescription:
-      "Watch live cams from around the world — 74,229 live webcams across {countries} countries: traffic, cities, nature, landmarks. Free forever, no signup.",
+      "Watch live cams from around the world — 74,229 live webcams across {countries} countries: traffic, cities, nature, landmarks. Free to browse, no signup.",
   },
   schema: {
     name: "Live Cams — Watch 74,229 Live Webcams Worldwide",
@@ -105,7 +105,7 @@ export const enLiveWebcams: LiveWebcamsCopy = {
     intro1:
       "This is the hub of the WorldEye camera directory: {count} publicly available live webcams from {countries} countries, collected and mapped so you can watch the planet in real time. Live cams from highways and intersections, city streets and plazas, beaches, ski resorts, harbors and wilderness — whatever the world points a public camera at.",
     intro2:
-      "The United States alone contributes {topCount} feeds, from statewide DOT networks to dense metro corridors. Every camera here is free to watch — no account, no signup, ever.",
+      "The United States alone contributes {topCount} feeds, from statewide DOT networks to dense metro corridors. Browsing here is free — no account, no signup, ever — and every device gets free camera opens; paid plans make opens unlimited.",
   },
   search: {
     label: "the whole directory",
@@ -220,7 +220,7 @@ export const enLiveWebcams: LiveWebcamsCopy = {
     },
     {
       q: "Is it really free to watch?",
-      a: "Yes. Cameras will never sit behind a paywall — every feed on the map is free for everyone, forever, with no account and no signup. The optional Pro plan funds the infrastructure that keeps the directory running.",
+      a: "Yes. The directory will never sit behind a paywall — browsing is free for everyone, forever, with no account and no signup. Watching comes with a free allowance of camera opens on every device, and paid plans remove the limit entirely. The optional Pro plan funds the infrastructure that keeps the directory running.",
     },
     {
       q: "Where can I find cameras for a specific country?",
@@ -262,7 +262,7 @@ export const enLiveWebcams: LiveWebcamsCopy = {
   cta: {
     headingBefore: "The world is ",
     headingAccent: "live right now.",
-    sub: "Spin the globe, pick a continent, and start watching. Free forever — no account, no signup.",
+    sub: "Spin the globe, pick a continent, and start watching. Free to browse — no account, no signup.",
     primaryCta: "Watch live webcams",
     secondaryCta: "Camera overview",
   },
