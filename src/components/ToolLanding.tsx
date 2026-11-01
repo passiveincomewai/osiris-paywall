@@ -91,15 +91,19 @@ export default function ToolLanding(cfg: ToolLandingConfig) {
         ]}
       />
 
-      <div className="mt-8 text-center max-w-3xl mx-auto">
+      {/* The working tool comes first (Jameson, 2026-10-31): the page's
+          interactive block renders directly under the breadcrumb so it is
+          usable on load with no scrolling; the headline and every
+          explanatory section follow below it, unchanged. */}
+      {cfg.children}
+
+      <div className="mt-10 text-center max-w-3xl mx-auto">
         <p className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.25em] text-[#D4AF37] border border-[#D4AF37]/30 rounded-full px-4 py-1.5 mb-6">
           <Icon className="w-3.5 h-3.5" /> {cfg.eyebrow}
         </p>
         <h1 className="text-3xl md:text-5xl font-bold tracking-tight">{cfg.h1}</h1>
         <p className="mt-4 text-white/55">{cfg.lede}</p>
       </div>
-
-      {cfg.children}
 
       <div className="mx-auto mt-10 max-w-3xl rounded-2xl border border-white/10 bg-white/[0.02] p-5">
         <h2 className="flex items-center gap-2 font-semibold">

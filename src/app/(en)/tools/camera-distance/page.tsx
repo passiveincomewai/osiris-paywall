@@ -95,7 +95,12 @@ export default function CameraDistancePage() {
         ]}
       />
 
-      <div className="mt-8 text-center max-w-3xl mx-auto">
+      {/* The working tool comes first (Jameson, 2026-10-31): usable on
+          load with no scrolling; headline and explanatory sections
+          follow below it, unchanged. */}
+      <CameraDistanceTool />
+
+      <div className="mt-10 text-center max-w-3xl mx-auto">
         <p className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.25em] text-[#D4AF37] border border-[#D4AF37]/30 rounded-full px-4 py-1.5 mb-6">
           <Ruler className="w-3.5 h-3.5" /> FREE TOOL
         </p>
@@ -108,8 +113,6 @@ export default function CameraDistancePage() {
           centred on the pair.
         </p>
       </div>
-
-      <CameraDistanceTool />
 
       <div className="mx-auto mt-10 max-w-3xl rounded-2xl border border-white/10 bg-white/[0.02] p-5">
         <h2 className="flex items-center gap-2 font-semibold">
