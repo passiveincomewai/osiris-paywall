@@ -7,7 +7,7 @@ import {
   CloudLightning, Ship, Network, Database,
   Flame, Tv, Radio, Mountain, Anchor, SlidersHorizontal, Lock, Bus, Crown,
   Snowflake, ChevronDown, ChevronRight, X, Layers, Car, TramFront, Building2,
-  TriangleAlert, Radiation, Palette
+  TriangleAlert, Palette
 } from 'lucide-react';
 import StyleStudio from './StyleStudio';
 import TrialPicker from './TrialPicker';
@@ -838,13 +838,15 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, capabilitie
     </div>
   );
 
-  /* The reference board's quick bar. Same five stats the mobile drawer
-     header used to print (AIR = all four flight buckets, SAT, CAM, WX,
-     NUC = infrastructure) — each is a switch: AIR/SAT flip their whole
-     category through the same group patch the category headers use,
-     CAM/WX/NUC flip their single layer. The live counts the chips used
-     to print were removed on the owner's order (2026-10-30) — the chips
-     are pure toggles now; the numbers still show on the category rows. */
+  /* The reference board's quick bar. The stats the mobile drawer
+     header used to print (AIR = all four flight buckets, SAT, CAM) —
+     each is a switch: AIR/SAT flip their whole category through the
+     same group patch the category headers use, CAM flips its single
+     layer. The live counts the chips used to print were removed on the
+     owner's order (2026-10-30), and the WX/NUC chips were removed on
+     the owner's order (2026-11-01) — severe weather still toggles from
+     the Natural Hazards category below. The chips are pure toggles;
+     the numbers still show on the category rows. */
   const aviationCat = visibleCategories.find((c) => c.id === 'aviation');
   const spaceCat = visibleCategories.find((c) => c.id === 'space');
   const quickItems = [
@@ -866,22 +868,10 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, capabilitie
       label: 'Toggle CCTV cameras',
       onClick: () => toggle('cctv'),
     },
-    {
-      id: 'WX', icon: CloudLightning, accent: '#B388FF',
-      active: !!activeLayers?.weather,
-      label: 'Toggle severe weather',
-      onClick: () => toggle('weather'),
-    },
-    {
-      id: 'NUC', icon: Radiation, accent: '#FFC400',
-      active: !!activeLayers?.infrastructure,
-      label: 'Toggle nuclear infrastructure',
-      onClick: () => toggle('infrastructure'),
-    },
   ];
   const quickBar = (
     <div
-      className="mx-3 mb-3 grid grid-cols-5 rounded-xl overflow-hidden"
+      className="mx-3 mb-3 grid grid-cols-3 rounded-xl overflow-hidden"
       style={{
         border: '1px solid rgba(56,189,248,0.35)',
         background: 'linear-gradient(180deg, rgba(8,25,48,0.85), rgba(4,12,26,0.9))',
