@@ -95,6 +95,58 @@ export function giftPeriodFromSubscription(sub: {
 /* Recipient email                                                     */
 /* ------------------------------------------------------------------ */
 
+function giftDateLabel(d: Date): string {
+  return d.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    timeZone: "UTC",
+  });
+}
+
+/** Buyer confirmation (2026-11 expansion, pick 6): what was bought,
+ * who it went to, the paid period — plus the same redemption link the
+ * recipient got, so the buyer can pass it on personally. */
+export function giftBuyerConfirmationEmail(input: {
+  planDisplayName: string;
+  recipientEmail: string;
+  periodStart: Date;
+  periodEnd: Date;
+  redeemUrl: string;
+}): { subject: string; html: string } {
+  const subject = `Your WorldEye gift is on its way to ${input.recipientEmail}`;
+  const html = shell(
+    "Gift sent",
+    `Your gift of WorldEye ${input.planDisplayName} is on its way to ${input.recipientEmail}.`,
+    `<p style="margin:0 0 14px;color:#d4d4d8;line-height:1.65;">Thanks — your gift of <strong style="color:#fff;">WorldEye ${escapeHtml(input.planDisplayName)}</strong> has been paid for and emailed to <strong style="color:#fff;">${escapeHtml(input.recipientEmail)}</strong>.</p>` +
+      `<p style="margin:0 0 14px;color:#d4d4d8;line-height:1.65;">Once they redeem it, their access runs from <strong style="color:#fff;">${escapeHtml(giftDateLabel(input.periodStart))}</strong> through <strong style="color:#fff;">${escapeHtml(giftDateLabel(input.periodEnd))}</strong>. It's one prepaid term — your card won't be charged again when it ends.</p>` +
+      `<p style="margin:0;color:#a1a1aa;line-height:1.65;font-size:13px;">Want to pass it on yourself? The button below is the same redemption link they received — it works for the account signed in under their email address.</p>`,
+    { label: "View the redemption link", href: input.redeemUrl },
+    { why: "You're receiving this because you bought a WorldEye gift subscription." },
+  );
+  return { subject, html };
+}
+
+/** Unredeemed-gift reminder to the BUYER (pick 6): the gift is paid
+ * and waiting, the term is already running, and the expiry is real. */
+export function giftUnredeemedReminderEmail(input: {
+  planDisplayName: string;
+  recipientEmail: string;
+  periodEnd: Date;
+  redeemUrl: string;
+}): { subject: string; html: string } {
+  const subject = `Your WorldEye gift for ${input.recipientEmail} hasn't been redeemed yet`;
+  const html = shell(
+    "Your gift is still waiting",
+    `The WorldEye ${input.planDisplayName} gift you sent hasn't been redeemed — it expires ${giftDateLabel(input.periodEnd)}.`,
+    `<p style="margin:0 0 14px;color:#d4d4d8;line-height:1.65;">A quick nudge: the <strong style="color:#fff;">WorldEye ${escapeHtml(input.planDisplayName)}</strong> gift you bought for <strong style="color:#fff;">${escapeHtml(input.recipientEmail)}</strong> hasn't been redeemed yet, and the prepaid term is already running — the access ends on <strong style="color:#fff;">${escapeHtml(giftDateLabel(input.periodEnd))}</strong> whether or not it's claimed.</p>` +
+      `<p style="margin:0;color:#a1a1aa;line-height:1.65;font-size:13px;">Pass them the link below — it redeems into the account signed in under their email address. If the original email landed in their spam folder, this gets them in.</p>`,
+    { label: "Share the redemption link", href: input.redeemUrl },
+    { why: "You're receiving this because a WorldEye gift you bought is still unredeemed." },
+  );
+  return { subject, html };
+}
+
 export function giftRecipientEmail(input: {
   planDisplayName: string;
   periodEnd: Date;
@@ -201,6 +253,23 @@ export async function fulfillGiftPurchase(
       emailed = await sendEmail(gift.recipientEmail, mail.subject, mail.html);
     } catch (e) {
       console.error(`[gift] recipient email failed for gift ${gift.id}:`, e);
+    }
+    // Buyer confirmation (pick 6): the purchaser hears from us too —
+    // what was bought, who it went to, the exact paid period, and the
+    // same redemption link. Best-effort, exactly-once inside the
+    // claim like the recipient mail above.
+    try {
+      const plan = PLAN_DEFS[gift.planKey as PlanKey];
+      const buyerMail = giftBuyerConfirmationEmail({
+        planDisplayName: plan?.displayName ?? gift.planKey,
+        recipientEmail: gift.recipientEmail,
+        periodStart: period.start,
+        periodEnd: period.end,
+        redeemUrl: `${appUrl()}/gift/redeem?code=${gift.code}`,
+      });
+      await sendEmail(gift.buyerEmail, buyerMail.subject, buyerMail.html);
+    } catch (e) {
+      console.error(`[gift] buyer confirmation failed for gift ${gift.id}:`, e);
     }
   }
   return { handled: true, fulfilled: true, emailed };
