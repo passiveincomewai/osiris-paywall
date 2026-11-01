@@ -24,6 +24,10 @@ import {
   Video,
   type LucideIcon,
 } from "lucide-react";
+import { auth } from "@/auth";
+import { planTierOf } from "@/lib/plan-tier";
+import { premiumFeatureNames } from "@/lib/billing/premium-features";
+import ProUpgradeEmbed from "@/components/ProUpgradeEmbed";
 import SiteFooter from "@/components/SiteFooter";
 import MediaFrame from "@/components/design/MediaFrame";
 import EditorialSplit from "@/components/design/EditorialSplit";
@@ -385,7 +389,12 @@ function FeatureGroup({
   );
 }
 
-export default function FeaturesPage() {
+export default async function FeaturesPage() {
+  // The closing upgrade embed (below) is a free/signed-out reader's
+  // signup moment; premium members already own what it sells and, per
+  // the embed's own contract, never see it.
+  const session = await auth().catch(() => null);
+  const showUpgradeEmbed = planTierOf(session) === "free";
   return (
     <main
       className="docs-root min-h-screen relative overflow-x-clip"
@@ -848,6 +857,20 @@ export default function FeaturesPage() {
             ))}
           </div>
         </section>
+
+        {/* Closing signup moment (2026-10-31): the shared upgrade embed —
+            the same in-place checkout the globe's boards use — for
+            readers who reached the end of the tour. The mid-page pricing
+            buttons stay the click-through path; this is the only picker
+            on the page, and premium members never see it. */}
+        {showUpgradeEmbed && (
+          <div
+            className="mx-auto"
+            style={{ maxWidth: "28rem", marginTop: "var(--we-space-8)" }}
+          >
+            <ProUpgradeEmbed premiumLabels={premiumFeatureNames("pro")} />
+          </div>
+        )}
 
         <RelatedLinks
           links={[

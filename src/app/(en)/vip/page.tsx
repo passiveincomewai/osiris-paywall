@@ -5,6 +5,8 @@ import { planTierOf } from "@/lib/plan-tier";
 import VipShell from "@/components/vip/VipShell";
 import VipLock from "@/components/vip/VipLock";
 import DashboardPreview from "@/components/vip/DashboardPreview";
+import ProUpgradeEmbed from "@/components/ProUpgradeEmbed";
+import { premiumFeatureNames } from "@/lib/billing/premium-features";
 
 export const metadata: Metadata = {
   title: "VIP Pro hub — WorldEye",
@@ -136,6 +138,19 @@ export default async function VipHubPage() {
           ))}
         </div>
       </section>
+
+      {/* Closing signup embed for signed-out readers only (2026-10-31):
+          the shared ProUpgradeEmbed, unchanged — its chips name the Pro
+          features, which it sells truthfully. Signed-in non-VIP members
+          already get VipLock's picker above (which emphasizes Ultra
+          annual, the hub unlock), so they never see a second picker;
+          VIP members need nothing. The panel above states plainly that
+          Ultra is the pick that unlocks this hub. */}
+      {!userId && (
+        <div className="mx-auto max-w-md">
+          <ProUpgradeEmbed premiumLabels={premiumFeatureNames("pro")} />
+        </div>
+      )}
     </VipShell>
   );
 }

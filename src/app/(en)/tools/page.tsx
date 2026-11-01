@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import { Wrench, ArrowUpRight } from "lucide-react";
 import { BASE, JsonLd, Breadcrumb, PageShell, CtaRow } from "@/components/directory-page";
 import EmailCaptureCard from "@/components/EmailCaptureCard";
+import { auth } from "@/auth";
+import { planTierOf } from "@/lib/plan-tier";
+import { premiumFeatureNames } from "@/lib/billing/premium-features";
+import ProUpgradeEmbed from "@/components/ProUpgradeEmbed";
 
 export const metadata: Metadata = {
   title: "WorldEye Tools — OSINT, Network & Recon Toolkit",
@@ -104,7 +108,12 @@ const PILL: Record<Access, string> = {
   PARTNER: "border-white/25 text-white/60",
 };
 
-export default function ToolsHubPage() {
+export default async function ToolsHubPage() {
+  // The closing upgrade embed (below) shows only to free and
+  // signed-out readers; premium members already own what it sells
+  // and, per the embed's own contract, never see it.
+  const session = await auth().catch(() => null);
+  const showUpgradeEmbed = planTierOf(session) === "free";
   return (
     <PageShell>
       <JsonLd data={jsonLd} />
@@ -159,6 +168,17 @@ export default function ToolsHubPage() {
           programmes and are labelled as such.
         </p>
       </div>
+
+      {/* Closing signup moment (2026-10-31): this hub explains that the
+          Pro tools live in the RECON board with WorldEye Pro, but
+          offered no way to start from here — the shared upgrade embed
+          is that path, in place. Free and signed-out readers only;
+          premium members never see it. */}
+      {showUpgradeEmbed && (
+        <div className="mx-auto mt-12 max-w-md">
+          <ProUpgradeEmbed premiumLabels={premiumFeatureNames("pro")} />
+        </div>
+      )}
 
       <div className="mt-12">
         <EmailCaptureCard placement="page" variant="inline" />

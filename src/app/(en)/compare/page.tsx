@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { auth } from "@/auth";
+import { planTierOf } from "@/lib/plan-tier";
+import { premiumFeatureNames } from "@/lib/billing/premium-features";
+import ProUpgradeEmbed from "@/components/ProUpgradeEmbed";
 import { db } from "@/lib/db";
 import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
@@ -59,6 +63,11 @@ const DIFFERENTIATORS = [
 ];
 
 export default async function CompareHubPage() {
+  // The closing upgrade embed (below) shows only to free and
+  // signed-out readers; premium members already own what it sells
+  // and, per the embed's own contract, never see it.
+  const session = await auth().catch(() => null);
+  const showUpgradeEmbed = planTierOf(session) === "free";
   // DB first (admin-seeded); bundled research JSON fills in until seeded.
   let competitors: { slug: string; name: string; website: string | null; categories: string[]; tagline: string | null; lastReviewed: Date }[] = [];
   try {
@@ -332,6 +341,17 @@ export default async function CompareHubPage() {
           ))}
         </div>
       </section>
+
+      {/* Closing signup moment (2026-10-31): comparison readers are
+          deciding between tools — the shared upgrade embed gives them
+          the in-place checkout instead of only the mid-page pricing
+          link. Free and signed-out readers only; premium members
+          never see it. */}
+      {showUpgradeEmbed && (
+        <div className="mx-auto max-w-md px-6 pb-16">
+          <ProUpgradeEmbed premiumLabels={premiumFeatureNames("pro")} />
+        </div>
+      )}
 
       <SiteFooter />
     </div>
