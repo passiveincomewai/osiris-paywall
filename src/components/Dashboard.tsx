@@ -646,7 +646,19 @@ export default function Dashboard() {
   // deliberate switch-off opens the standard basemap. The switch
   // persists the choice (handleSatelliteToggle); programmatic view
   // changes never do. See lib/basemap-mode.
-  const [mapStyle, setMapStyle] = useState<'dark'|'satellite'>(() => (readSatelliteView() ? 'satellite' : 'dark'));
+  // The first render must match the server, where storage is
+  // unreadable and readSatelliteView() always comes back true — so
+  // the state starts at 'satellite' on both sides, and the layout
+  // effect below applies the stored choice before first paint (and
+  // before the map initialises). Reading storage in the initializer
+  // instead left the satellite switch announcing the server's "on"
+  // (aria-pressed + label) over a dark map for stored-"off" visitors:
+  // hydration does not rewrite those attributes, and mapStyle never
+  // changed again to re-render the switch.
+  const [mapStyle, setMapStyle] = useState<'dark'|'satellite'>('satellite');
+  useLayoutEffect(() => {
+    setMapStyle(readSatelliteView() ? 'satellite' : 'dark');
+  }, []);
   // Satellite imagery time (Wayback slider; free for everyone, like
   // the satellite view itself). Default `latest` = the live World
   // Imagery service; the slider can step back through Esri's dated
