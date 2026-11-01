@@ -9,17 +9,36 @@ export const TERRAIN_MIN_ZOOM = 10;
 const DISABLE_ZOOM = 9.5;
 export const TERRAIN_SETTLE_MS = 500;
 
+export interface TerrainAttachOptions {
+  /** Cap applied to the map's maxPitch while terrain is attached.
+   *  Default 60: terrain's standing rule that enabling it never has to
+   *  flatten a camera the visitor already placed. Flight follow passes
+   *  its own max (85) — its cameras fly past 60 by design, and clamping
+   *  one mid-ride would cut the ride's pitch out from under it. */
+  pitchCap?: number;
+  /** Activate as soon as zoom and visibility allow instead of waiting
+   *  for the camera to settle. A follow camera is driven on a tick and
+   *  never settles, so the settle gate would starve it indefinitely.
+   *  Default false. */
+  eager?: boolean;
+  /** Relief multiplier handed to setTerrain. Default 1 (true height). */
+  exaggeration?: number;
+}
+
 /** Lazy, bounded terrain using the existing renderer; no second map or imagery. */
-export function attachTerrain(map: Map, onStatus: (status: TerrainStatus) => void) {
+export function attachTerrain(map: Map, onStatus: (status: TerrainStatus) => void, opts?: TerrainAttachOptions) {
   let disposed = false;
   let active = false;
   let failed = false;
   let restoreLayerOrder: (() => void) | undefined;
   let status: TerrainStatus | undefined;
   let activationTimer: ReturnType<typeof setTimeout> | undefined;
+  const pitchCap = opts?.pitchCap ?? 60;
+  const eager = opts?.eager ?? false;
+  const exaggeration = opts?.exaggeration ?? 1;
   const originalPitchLimit = map.getMaxPitch();
   const originalPixelRatio = map.getPixelRatio();
-  map.setMaxPitch(Math.min(originalPitchLimit, 60));
+  map.setMaxPitch(Math.min(originalPitchLimit, pitchCap));
   // Retina screens otherwise multiply the terrain framebuffers' pixel count.
   if (originalPixelRatio > 1.5) map.setPixelRatio(1.5);
 
@@ -42,7 +61,10 @@ export function attachTerrain(map: Map, onStatus: (status: TerrainStatus) => voi
   const hidden = () => typeof document !== 'undefined' && document.hidden;
   const activate = () => {
     activationTimer = undefined;
-    if (disposed || active || failed || map.isMoving() || hidden() || map.getZoom() < TERRAIN_MIN_ZOOM) return;
+    if (disposed || active || failed || hidden() || map.getZoom() < TERRAIN_MIN_ZOOM) return;
+    // The settle path never activates under a moving camera; an eager
+    // attach (flight follow) is driven continuously, so it must.
+    if (!eager && map.isMoving()) return;
     active = true;
     report('loading');
     try {
@@ -58,7 +80,7 @@ export function attachTerrain(map: Map, onStatus: (status: TerrainStatus) => voi
       // Bound the latter too, especially the distant tiles in a pitched view.
       map.setSourceTileLodParams(10, 1.25, TERRAIN_SOURCE);
       restoreLayerOrder = batchTerrainLayers(map);
-      map.setTerrain({ source: TERRAIN_SOURCE, exaggeration: 1 });
+      map.setTerrain({ source: TERRAIN_SOURCE, exaggeration });
     } catch (error) {
       failed = true;
       release();
@@ -74,6 +96,10 @@ export function attachTerrain(map: Map, onStatus: (status: TerrainStatus) => voi
       return;
     }
     report('waiting');
+    // Eager attaches skip the settle timer (and with it the movestart
+    // cancel's whole purpose): activate now; activate() still enforces
+    // the zoom floor and the visible-tab rule itself.
+    if (eager) { activate(); return; }
     if (!map.isMoving() && !hidden()) activationTimer = setTimeout(activate, TERRAIN_SETTLE_MS);
   };
   const onZoom = () => {

@@ -25,7 +25,7 @@ import { featureMatchesFlightShareId, FLIGHT_SHARE_OPEN_DEADLINE_MS } from '@/li
 import { findFlightFeatureInBuckets, flightShareCameraSettledOn, flightShareFlyToTarget } from '@/lib/share/flight-open';
 import { groupStormFeatures, stormChangeSummary, compassDirection, STORM_SIZE_MEANING, type StormGroup } from '@/lib/events/hurricanes';
 import {
-  IDLE_FLIGHT_FOLLOW, FOLLOW_MAX_PITCH, aircraftFollowPreset, describeFix, followCameraTarget,
+  COCKPIT_TERRAIN_EXAGGERATION, IDLE_FLIGHT_FOLLOW, FOLLOW_MAX_PITCH, aircraftFollowPreset, describeFix, followCameraTarget,
   followLostExpired, headingOf, noteFollowSeen, setFollowMode as setFollowModeState, startFollow,
   type FlightFollowState, type FollowHudData, type FollowMode, type SavedCameraState,
 } from '@/lib/flights/follow';
@@ -81,7 +81,7 @@ import { launchPadKey } from '@/lib/launches/normalize';
 import { nextLaunch } from '@/lib/launches/countdown';
 import { spaceMissionPreset } from '@/lib/launches/preset';
 import LiveNewsPreviews, { type PreviewFeed } from '@/components/LiveNewsPreviews';
-import { attachTerrain, type TerrainStatus } from '@/lib/map-terrain';
+import { attachTerrain, type TerrainAttachOptions, type TerrainStatus } from '@/lib/map-terrain';
 
 import { applyMapProjection } from '@/lib/map-projection';
 
@@ -5592,13 +5592,25 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     if (src) src.setData({ type: 'FeatureCollection', features });
   }, [scanTargets, mapReady]);
 
+  // Cockpit borrows terrain the way it already borrows the imagery
+  // basemap and the 3D buildings: flying forward at pitch 85 over a
+  // flat-shaded map reads as a video game from 1995, so while follow is
+  // in forward mode the elevation mesh attaches even when the visitor's
+  // own 3D Terrain toggle is off — and hands their choice back when the
+  // ride ends or leaves forward mode. The projection effect below and
+  // the terrain effect both key on this one effective flag, so a
+  // cockpit-forced attach gets the terrain-globe projection variant
+  // exactly like a visitor toggle (no globe+terrain program compile).
+  const followMode = flightFollowUi?.mode;
+  const terrainActive = terrainEnabled || followMode === 'forward';
+
   // Projection changes are independent of terrain. Toggling elevation must not
   // zoom, tilt, or reposition the camera the user has already chosen.
   useEffect(() => {
     if (!mapReady || !mapRef.current) return;
     const map = mapRef.current;
     try {
-      const projectionChanged = applyMapProjection(map, projection, terrainEnabled);
+      const projectionChanged = applyMapProjection(map, projection, terrainActive);
       const configureSky = projectionChanged || !containerRef.current?.dataset.mapProjection;
       if (containerRef.current) containerRef.current.dataset.mapProjection = projection;
       if (projection === 'globe') {
@@ -5622,19 +5634,38 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     } catch (e) {
       console.warn('Projection switch failed:', e);
     }
-  }, [mapReady, projection, terrainEnabled]);
+  }, [mapReady, projection, terrainActive]);
 
   // Terrain loads only at regional zooms; globe overview stays inexpensive.
   useEffect(() => {
-    if (!mapReady || !mapRef.current || !terrainEnabled) return;
+    if (!mapReady || !mapRef.current || !terrainActive) return;
     const map = mapRef.current;
     installTerrainTileProtocol(maplibregl.addProtocol);
-    const dispose = attachTerrain(map, status => onTerrainStatusChange?.(status));
+    // Attach profile follows the follow state. Any follow: the pitch cap
+    // is follow's own max, so attaching (or re-attaching) terrain can
+    // never clamp a chase camera at 68 or a forward camera at 85 down
+    // to terrain's standing 60. Forward (cockpit): additionally eager —
+    // the drive eases the camera every tick, so the settle gate would
+    // starve activation for the whole ride — and exaggerated, because
+    // true height at cockpit zoom reads nearly flat. The effect
+    // re-attaches when the profile changes (follow start, mode switch,
+    // follow end); the DEM tiles come from the terrain protocol's
+    // shared cache, so a same-area re-attach reuses encoded tiles.
+    // Dispose/attach maxPitch bookkeeping composes with follow's own
+    // save/restore in every ordering: attach only ever lowers the cap
+    // to min(previous, cap) and dispose restores what attach found, so
+    // a follow-raised 85 survives an attach/dispose cycle whole.
+    const profile: TerrainAttachOptions | undefined = followMode === 'forward'
+      ? { pitchCap: FOLLOW_MAX_PITCH, eager: true, exaggeration: COCKPIT_TERRAIN_EXAGGERATION }
+      : followMode
+        ? { pitchCap: FOLLOW_MAX_PITCH }
+        : undefined;
+    const dispose = attachTerrain(map, status => onTerrainStatusChange?.(status), profile);
     return () => {
       // The map constructor effect removes the entire map first on unmount.
       if (mapRef.current === map) dispose();
     };
-  }, [mapReady, terrainEnabled, terrainRetry, onTerrainStatusChange]);
+  }, [mapReady, terrainActive, followMode, terrainRetry, onTerrainStatusChange]);
 
   // A user-requested close-up keeps the current location and avoids a fly-out arc.
   useEffect(() => {

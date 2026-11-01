@@ -161,6 +161,11 @@ export const CHASE_CAM = { backM: 1150, zoom: 15.4, pitch: 68 };
  *  heading at near-horizon pitch — a forward view approximation from
  *  telemetry, not a cockpit (there is no cockpit). */
 export const FORWARD_CAM = { aheadM: 480, zoom: 16.6, pitch: 85 };
+/** Relief multiplier for the elevation mesh cockpit borrows while
+ *  flying forward. True height (1x) at cockpit zoom reads nearly
+ *  flat, so the mesh is drawn at 1.5x real height: broad ranges read
+ *  clearly, and genuinely flat ground stays flat, because it is. */
+export const COCKPIT_TERRAIN_EXAGGERATION = 1.5;
 /** Orbit: centre on the aircraft, bearing advancing slowly around it. */
 export const ORBIT_CAM = { zoom: 15.9, pitch: 55, degPerSec: 5 };
 

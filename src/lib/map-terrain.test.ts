@@ -209,3 +209,47 @@ describe('lightweight terrain', () => {
     expect(fixture.methods.removeSource).not.toHaveBeenCalled();
   });
 });
+
+describe('attach options (flight-follow profiles)', () => {
+  beforeEach(() => vi.useFakeTimers());
+  afterEach(() => { vi.useRealTimers(); vi.unstubAllGlobals(); });
+
+  it('honours a caller pitch cap instead of the standing 60', () => {
+    const fixture = createMap();
+    const dispose = attachTerrain(fixture.map, vi.fn(), { pitchCap: 85 });
+    expect(fixture.map.getMaxPitch()).toBe(85);
+    dispose();
+    expect(fixture.map.getMaxPitch()).toBe(85);
+    const low = createMap();
+    const disposeLow = attachTerrain(low.map, vi.fn(), { pitchCap: 30 });
+    expect(low.map.getMaxPitch()).toBe(30);
+    disposeLow();
+    expect(low.map.getMaxPitch()).toBe(85);
+  });
+
+  it('passes the caller exaggeration to setTerrain', () => {
+    const fixture = createMap();
+    const dispose = attachTerrain(fixture.map, vi.fn(), { exaggeration: 1.5 });
+    vi.advanceTimersByTime(TERRAIN_SETTLE_MS);
+    expect(fixture.methods.setTerrain).toHaveBeenCalledWith({ source: TERRAIN_SOURCE, exaggeration: 1.5 });
+    dispose();
+  });
+
+  it('eager activation fires under a continuously moving camera, with no settle wait', () => {
+    const fixture = createMap();
+    fixture.moveTo(16.6, true); // the follow drive: the camera never goes still
+    const dispose = attachTerrain(fixture.map, vi.fn(), { eager: true, pitchCap: 85, exaggeration: 1.5 });
+    // No timers advanced: activation happened during attach.
+    expect(fixture.methods.addSource).toHaveBeenCalledTimes(1);
+    expect(fixture.methods.setTerrain).toHaveBeenCalledWith({ source: TERRAIN_SOURCE, exaggeration: 1.5 });
+    dispose();
+  });
+
+  it('eager still respects the zoom floor', () => {
+    const fixture = createMap(2);
+    const dispose = attachTerrain(fixture.map, vi.fn(), { eager: true });
+    expect(fixture.methods.addSource).not.toHaveBeenCalled();
+    expect(fixture.methods.setTerrain).not.toHaveBeenCalled();
+    dispose();
+  });
+});

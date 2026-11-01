@@ -204,3 +204,35 @@ describe('follow HUD — mobile compact bar', () => {
     expect(overlay).toContain('max-w-[calc(100vw-1.5rem)]');
   });
 });
+
+// ── Cockpit terrain borrow (2026-11-01) ─────────────────────────────
+//
+// Cockpit flew over a flat-shaded map: terrain was never engaged for
+// it (payload C deliberately skipped it over the pitch-cap conflict).
+// These pins hold the borrow: forward follow makes terrain effective
+// through the same single flag the projection and terrain effects
+// share, and the attach profile (follow pitch cap; forward eager +
+// exaggerated) reaches attachTerrain.
+
+describe('cockpit view — borrowed 3D terrain', () => {
+  const followSrc = readFileSync(join(process.cwd(), 'src', 'lib', 'flights', 'follow.ts'), 'utf8');
+
+  it('forward follow makes terrain effective alongside the visitor toggle', () => {
+    expect(osirisMap).toContain("const terrainActive = terrainEnabled || followMode === 'forward';");
+    expect(osirisMap).toContain('applyMapProjection(map, projection, terrainActive)');
+    expect(osirisMap).toContain('if (!mapReady || !mapRef.current || !terrainActive) return;');
+  });
+
+  it('the attach profile follows the follow state and reaches attachTerrain', () => {
+    const profile = block("const profile: TerrainAttachOptions | undefined = followMode === 'forward'", 'const dispose = attachTerrain(');
+    expect(profile).toContain('pitchCap: FOLLOW_MAX_PITCH');
+    expect(profile).toContain('eager: true');
+    expect(profile).toContain('exaggeration: COCKPIT_TERRAIN_EXAGGERATION');
+    expect(osirisMap).toContain('attachTerrain(map, status => onTerrainStatusChange?.(status), profile)');
+    expect(osirisMap).toContain('}, [mapReady, terrainActive, followMode, terrainRetry, onTerrainStatusChange]);');
+  });
+
+  it('cockpit relief is exaggerated above true height, beside the forward camera', () => {
+    expect(followSrc).toContain('export const COCKPIT_TERRAIN_EXAGGERATION = 1.5;');
+  });
+});
