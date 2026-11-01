@@ -385,6 +385,11 @@ export function ShareViewPopup({
 }
 
 // ── powder_pass (page-scoped; rendered only behind the server flag gate) ──
+// Docked toast, never a modal (fixed 2026-10-31): the offer must not
+// cover the ski page it interrupts. Same copy, same price/trial source,
+// same checkout action — the toast is the popup system's
+// non-obscuring shape, and the trigger portals it to <body> so it
+// layers at shell level like the global manager's surfaces.
 
 export function PowderPassPopup({
   option,
@@ -396,21 +401,27 @@ export function PowderPassPopup({
   onClose: () => void;
 }) {
   return (
-    <PopupModal label="Powder Pass" onClose={onClose}>
-      <PopupMedallion>
-        <BellRing className="w-6 h-6 text-[#D4AF37]" />
-      </PopupMedallion>
-      <h2 className="text-lg font-bold tracking-tight">Powder Pass</h2>
-      <p className="text-sm text-white/55 mt-2 mb-5">
-        WorldEye&apos;s ski-only membership: resort pages, live slope and
-        access-road cameras, the drive-up route tool and resort compare —{" "}
-        {option.price}
-        {option.per}, {option.trialLabel.toLowerCase()} to start. VIP Pro
-        annual already includes it.
-      </p>
+    <PopupToast label="Powder Pass" onClose={onClose}>
+      <div className="flex items-start gap-3 pr-6">
+        <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#D4AF37]/10 border border-[#D4AF37]/25">
+          <BellRing className="w-5 h-5 text-[#D4AF37]" />
+        </span>
+        <div className="min-w-0">
+          <p className="text-sm font-bold tracking-tight">
+            Powder Pass — {option.price}
+            {option.per}
+          </p>
+          <p className="mt-1 text-xs leading-relaxed text-white/55">
+            WorldEye&apos;s ski-only membership: resort pages, live slope and
+            access-road cameras, the drive-up route tool and resort compare —{" "}
+            {option.trialLabel.toLowerCase()} to start. VIP Pro annual already
+            includes it.
+          </p>
+        </div>
+      </div>
       <button
         type="button"
-        className={POPUP_GOLD_CTA_CLASS}
+        className={`${POPUP_GOLD_CTA_CLASS} mt-3`}
         onClick={() => {
           onAction();
           startPlanCheckout("ski");
@@ -418,7 +429,7 @@ export function PowderPassPopup({
       >
         {option.cta}
       </button>
-    </PopupModal>
+    </PopupToast>
   );
 }
 

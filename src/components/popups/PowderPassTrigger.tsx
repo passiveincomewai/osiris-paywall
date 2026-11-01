@@ -9,9 +9,19 @@
  * frequency cap, the dialog check, and the popup_* events. Trial-
  * Prompt's welcome modal or the ladder prompt open on a ski page
  * suppresses it like any other surface.
+ *
+ * Presentation (fixed 2026-10-31): the offer renders as the popup
+ * system's docked toast, NOT a full-screen modal, and through a
+ * portal to <body> — the trigger mounts inside the ski sidebar's
+ * sticky rail, whose stacking context trapped the old modal's
+ * z-index and let page chrome paint through its backdrop while the
+ * modal itself covered the page Jameson was trying to read. The
+ * toast never obscures page content and always layers at shell
+ * level, exactly like the global manager's surfaces.
  */
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { trackAnalyticsEvent } from "../AnalyticsTracker";
 import { readSessionIdentity } from "@/lib/premium-entitlement";
 import {
@@ -66,7 +76,7 @@ export default function PowderPassTrigger({
   }, []);
 
   if (!show) return null;
-  return (
+  const popup = (
     <PowderPassPopup
       option={option}
       onAction={() => trackAnalyticsEvent("popup_clicked", POPUP_EVENT_DETAIL.powder_pass)}
@@ -76,4 +86,5 @@ export default function PowderPassTrigger({
       }}
     />
   );
+  return typeof document !== "undefined" ? createPortal(popup, document.body) : popup;
 }
