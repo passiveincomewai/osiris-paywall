@@ -67,5 +67,7 @@ export function fraudRadarPublicPaths(
     "/fraud-radar/contracts",
     "/fraud-radar/contracts/naics",
     "/fraud-radar/contracts/psc",
+    // Phase 10 geo explorer (landing-grade public surface, §6.4).
+    "/fraud-radar/geo",
   ];
 }

@@ -831,3 +831,20 @@ describe("§14.3 isolation — Phase 10 profile Network sections (P10-B2)", () =
     expect(flagSrc).not.toContain("/fraud-radar/graph");
   });
 });
+
+describe("§14.3 isolation — Phase 10 geo explorer (P10-C)", () => {
+  it("the geo page carries the flag gate", () => {
+    const src = readFileSync(
+      path.join(SRC, "app/(en)/fraud-radar/geo/page.tsx"),
+      "utf8",
+    );
+    expect(src).toContain("fraudRadarEnabled()");
+    expect(src).toContain("notFound()");
+  });
+
+  it("geo is a public path; the graph explorer is not (§6.2/§6.4)", () => {
+    const flagSrc = readFileSync(path.join(SRC, "lib/fraud-radar/flag.ts"), "utf8");
+    expect(flagSrc).toContain('"/fraud-radar/geo"');
+    expect(flagSrc).not.toContain("/fraud-radar/graph");
+  });
+});

@@ -49,6 +49,7 @@ describe("fraudRadarPublicPaths — sitemap/nav isolation", () => {
       "/fraud-radar/contracts",
       "/fraud-radar/contracts/naics",
       "/fraud-radar/contracts/psc",
+      "/fraud-radar/geo",
     ]);
   });
 });
