@@ -161,6 +161,17 @@ describe("FRAUD_RADAR_SOURCES — §5 registry seed", () => {
     expect(usa.notes).toContain("never FY obligations");
     expect(usa.notes).toContain("No SAM.gov API");
     expect(usa.limitations).toContain("award-cumulative");
+    // Phase 5 (Payload C): the SAME entry carries the contracts
+    // dataset — extended, never duplicated under a second slug.
+    expect(usa.dataFields).toContain("piid");
+    expect(usa.dataFields).toContain("modification_number");
+    expect(usa.dataFields).toContain("naics_psc");
+    expect(usa.notes).toContain("usaspending-contracts-2026-10-06");
+    expect(usa.notes).toContain("published transaction (modification) grain");
+    expect(usa.status).toBe("ingested");
+    expect(
+      FRAUD_RADAR_SOURCES.filter((s) => s.slug === "usaspending"),
+    ).toHaveLength(1);
   });
 
   it("pins the FAC ingest to its pipeline manifest (Phase 4, vintage 2026-10-31_ay2026)", () => {

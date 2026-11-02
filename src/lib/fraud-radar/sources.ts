@@ -242,6 +242,8 @@ export const FRAUD_RADAR_SOURCES: FrDataSourceSeed[] = [
       "subawards",
       "naics_psc",
       "place_of_performance",
+      "piid",
+      "modification_number",
     ],
     coverageStart: "2018-01",
     coverageEnd: "2025-12",
@@ -250,7 +252,7 @@ export const FRAUD_RADAR_SOURCES: FrDataSourceSeed[] = [
     cadence: "Award Data Archive Full files, regenerated periodically (generation 2026-10-06 for this import); subawards via generated downloads",
     status: "ingested",
     notes:
-      "Phase 4 (2026-10-31): ingested from the official USAspending Award Data Archive Full files — FY2018–FY2025 federal-assistance archive files (archive generation 2026-10-06) — plus the generated subawards download; pipeline manifest usaspending-assistance-2026-10-06. The published award grain is DERIVED (latest-transaction snapshot per award); cumulative fields keep their source semantics — they are award-cumulative totals, never FY obligations. No SAM.gov API is used (locked decision, AUDIT §17): SAM registration and exclusion facts are separate registry entries sourced from the SAM public extracts. The grants + contracts spine (Phases 4–5). No auth, no key.",
+      "Phase 4 (2026-10-31): ingested from the official USAspending Award Data Archive Full files — FY2018–FY2025 federal-assistance archive files (archive generation 2026-10-06) — plus the generated subawards download; pipeline manifest usaspending-assistance-2026-10-06. The published award grain is DERIVED (latest-transaction snapshot per award); cumulative fields keep their source semantics — they are award-cumulative totals, never FY obligations. No SAM.gov API is used (locked decision, AUDIT §17): SAM registration and exclusion facts are separate registry entries sourced from the SAM public extracts. The grants + contracts spine (Phases 4–5). No auth, no key. Phase 5 (2026-11-01): the contracts archive files (the same Award Data Archive Full files, FY2018–FY2025, generation 2026-10-06) are ingested under this same entry — derived award grain plus the published transaction (modification) grain; pipeline manifest usaspending-contracts-2026-10-06.",
     sourceVersion: "2026-10-06",
     lastPublishedAt: "2026-10-06",
     lastImportedAt: "2026-10-31T05:51:44Z",
