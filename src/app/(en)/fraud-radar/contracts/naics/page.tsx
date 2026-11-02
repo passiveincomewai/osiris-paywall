@@ -64,11 +64,15 @@ export default async function ContractsNaicsPage({
                 </thead>
                 <tbody>
                   {data.rows.map((r) => (
-                    <tr key={`${r.naics}-${r.attributedFiscalYear}`} className="border-b border-white/5">
+                    <tr key={`${r.naics ?? "no-code-reported"}-${r.attributedFiscalYear}`} className="border-b border-white/5">
                       <td className="px-4 py-3">
-                        <Link href={`/fraud-radar/contracts/naics/${r.naics}`} className="text-cyan-200 hover:underline">
-                          {r.naics}{r.naicsDescription ? ` — ${r.naicsDescription}` : ""}
-                        </Link>
+                        {r.naics !== null ? (
+                          <Link href={`/fraud-radar/contracts/naics/${r.naics}`} className="text-cyan-200 hover:underline">
+                            {r.naics}{r.naicsDescription ? ` — ${r.naicsDescription}` : ""}
+                          </Link>
+                        ) : (
+                          <span className="text-white/60">No NAICS code reported</span>
+                        )}
                       </td>
                       <td className="px-4 py-3">{r.attributedFiscalYear}</td>
                       <td className="px-4 py-3">{formatCount(r.awards)}</td>

@@ -102,7 +102,10 @@ try {
       await tx.frContractsNaicsSummary.deleteMany({ where: { datasetVersion: version } });
       const naicsRows = naics.map((r) => ({
         datasetVersion: version,
-        naics: reqStr(r.naics),
+        // P5-A2: the publisher's null-code row (no NAICS code on
+        // the winning snapshot) loads as null — absence, never a
+        // fabricated sentinel code.
+        naics: strOrNull(r.naics),
         naicsDescription: strOrNull(r.naicsDescription),
         attributedFiscalYear: toInt(r.attributedFiscalYear),
         awards: toBig(r.awards),
@@ -120,7 +123,8 @@ try {
       await tx.frContractsPscSummary.deleteMany({ where: { datasetVersion: version } });
       const pscRows = psc.map((r) => ({
         datasetVersion: version,
-        psc: reqStr(r.psc),
+        // P5-A2: same published null-code row as NAICS.
+        psc: strOrNull(r.psc),
         pscDescription: strOrNull(r.pscDescription),
         attributedFiscalYear: toInt(r.attributedFiscalYear),
         awards: toBig(r.awards),

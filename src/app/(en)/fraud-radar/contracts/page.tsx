@@ -146,14 +146,18 @@ export default async function ContractsPage() {
                   </h2>
                   <ul className="mt-3 space-y-2 text-sm">
                     {topNaics.rows.map((r) => (
-                      <li key={r.naics} className="flex flex-wrap items-baseline justify-between gap-2">
-                        <Link
-                          href={`/fraud-radar/contracts/naics/${r.naics}`}
-                          className="text-cyan-200 hover:underline"
-                        >
-                          {r.naics}
-                          {r.naicsDescription ? ` — ${r.naicsDescription}` : ""}
-                        </Link>
+                      <li key={r.naics ?? "no-code-reported"} className="flex flex-wrap items-baseline justify-between gap-2">
+                        {r.naics !== null ? (
+                          <Link
+                            href={`/fraud-radar/contracts/naics/${r.naics}`}
+                            className="text-cyan-200 hover:underline"
+                          >
+                            {r.naics}
+                            {r.naicsDescription ? ` — ${r.naicsDescription}` : ""}
+                          </Link>
+                        ) : (
+                          <span className="text-white/60">No NAICS code reported</span>
+                        )}
                         <span className="text-white/85">
                           {formatUsd(r.obligatedAwardCumulativeUsd)}
                         </span>

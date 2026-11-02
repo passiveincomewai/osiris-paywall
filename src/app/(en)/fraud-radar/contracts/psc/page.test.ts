@@ -7,8 +7,22 @@ import { renderToString } from "react-dom/server";
  */
 vi.mock("@/lib/fraud-radar/contracts-neon", () => ({
   listContractsPsc: async () => ({
-    total: 1,
+    total: 2,
     rows: [
+      {
+        // P5-A2: the published null-code row renders as a labelled
+        // absence, never as a fabricated code or a bogus link.
+        psc: null,
+        pscDescription: null,
+        attributedFiscalYear: 2025,
+        awards: 7,
+        distinctVendors: 6,
+        distinctNaicsCodes: 2,
+        obligatedAwardCumulativeUsd: 654321,
+        outlayAwardCumulativeUsd: null,
+        transactionsInWindow: 7,
+        modificationsInWindow: 0,
+      },
       {
         psc: "D399",
         pscDescription: "IT Services",
@@ -51,5 +65,7 @@ describe("/fraud-radar/contracts/psc", () => {
     const html = renderToString(await ContractsPscPage(sp({})));
     expect(html).toContain("D399");
     expect(html).toContain("award-cumulative");
+    expect(html).toContain("No PSC code reported");
+    expect(html).not.toContain("/fraud-radar/contracts/psc/null");
   });
 });

@@ -64,11 +64,15 @@ export default async function ContractsPscPage({
                 </thead>
                 <tbody>
                   {data.rows.map((r) => (
-                    <tr key={`${r.psc}-${r.attributedFiscalYear}`} className="border-b border-white/5">
+                    <tr key={`${r.psc ?? "no-code-reported"}-${r.attributedFiscalYear}`} className="border-b border-white/5">
                       <td className="px-4 py-3">
-                        <Link href={`/fraud-radar/contracts/psc/${r.psc}`} className="text-cyan-200 hover:underline">
-                          {r.psc}{r.pscDescription ? ` — ${r.pscDescription}` : ""}
-                        </Link>
+                        {r.psc !== null ? (
+                          <Link href={`/fraud-radar/contracts/psc/${r.psc}`} className="text-cyan-200 hover:underline">
+                            {r.psc}{r.pscDescription ? ` — ${r.pscDescription}` : ""}
+                          </Link>
+                        ) : (
+                          <span className="text-white/60">No PSC code reported</span>
+                        )}
                       </td>
                       <td className="px-4 py-3">{r.attributedFiscalYear}</td>
                       <td className="px-4 py-3">{formatCount(r.awards)}</td>

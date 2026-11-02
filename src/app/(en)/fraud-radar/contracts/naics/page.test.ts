@@ -7,8 +7,22 @@ import { renderToString } from "react-dom/server";
  */
 vi.mock("@/lib/fraud-radar/contracts-neon", () => ({
   listContractsNaics: async () => ({
-    total: 1,
+    total: 2,
     rows: [
+      {
+        // P5-A2: the published null-code row renders as a labelled
+        // absence, never as a fabricated code or a bogus link.
+        naics: null,
+        naicsDescription: null,
+        attributedFiscalYear: 2025,
+        awards: 12,
+        distinctVendors: 9,
+        distinctPscCodes: 3,
+        obligatedAwardCumulativeUsd: 123456,
+        outlayAwardCumulativeUsd: null,
+        transactionsInWindow: 12,
+        modificationsInWindow: 0,
+      },
       {
         naics: "541511",
         naicsDescription: "Custom Computer Programming",
@@ -51,5 +65,7 @@ describe("/fraud-radar/contracts/naics", () => {
     const html = renderToString(await ContractsNaicsPage(sp({})));
     expect(html).toContain("541511");
     expect(html).toContain("award-cumulative");
+    expect(html).toContain("No NAICS code reported");
+    expect(html).not.toContain("/fraud-radar/contracts/naics/null");
   });
 });

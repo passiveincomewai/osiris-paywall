@@ -2344,7 +2344,11 @@ model FrContractsYearlySummary {
 model FrContractsNaicsSummary {
   id                          String   @id @default(cuid())
   datasetVersion              String
-  naics                       String
+  // Nullable (P5-A2): the publisher's contracts-neon.json carries
+  // one null-code row per attributed fiscal year — awards whose
+  // winning snapshot reports no NAICS code. Absence stays null;
+  // no sentinel code is fabricated, so every grain reconciles.
+  naics                       String?
   naicsDescription            String?
   attributedFiscalYear        Int
   awards                      BigInt
@@ -2364,7 +2368,9 @@ model FrContractsNaicsSummary {
 model FrContractsPscSummary {
   id                          String   @id @default(cuid())
   datasetVersion              String
-  psc                         String
+  // Nullable (P5-A2): same published null-code row as NAICS —
+  // awards whose winning snapshot reports no PSC code.
+  psc                         String?
   pscDescription              String?
   attributedFiscalYear        Int
   awards                      BigInt

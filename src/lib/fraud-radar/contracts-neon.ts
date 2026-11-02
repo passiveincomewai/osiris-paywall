@@ -15,7 +15,12 @@
  * assigns each award to one year without changing what the
  * amounts mean. Outlay is nullable in this grain: absence is
  * null, never zero. Ceilings are not obligations and are not
- * modelled here. FAC does not cover contracts.
+ * modelled here. FAC does not cover contracts. NAICS/PSC code
+ * columns are nullable (P5-A2): the publisher carries one
+ * null-code row per attributed fiscal year (awards whose winning
+ * snapshot reports no code); absence stays null, never a
+ * fabricated sentinel, so every grain reconciles to the same
+ * award total.
  */
 import { db } from "@/lib/db";
 import { DEFAULT_CONTRACTS_VERSION } from "./contracts-data";
@@ -55,7 +60,9 @@ export async function listContractsYearly(
 }
 
 export interface ContractsNaicsRow {
-  naics: string;
+  // Null = the published no-code row for that attributed fiscal
+  // year (awards whose winning snapshot reports no NAICS code).
+  naics: string | null;
   naicsDescription: string | null;
   attributedFiscalYear: number;
   awards: number;
@@ -154,7 +161,9 @@ export async function listContractsNaicsYears(
 }
 
 export interface ContractsPscRow {
-  psc: string;
+  // Null = the published no-code row for that attributed fiscal
+  // year (awards whose winning snapshot reports no PSC code).
+  psc: string | null;
   pscDescription: string | null;
   attributedFiscalYear: number;
   awards: number;

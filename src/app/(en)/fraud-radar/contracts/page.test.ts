@@ -23,8 +23,22 @@ vi.mock("@/lib/fraud-radar/contracts-neon", () => ({
     },
   ],
   listContractsNaics: async () => ({
-    total: 1,
+    total: 2,
     rows: [
+      {
+        // P5-A2: published null-code row — labelled absence,
+        // never a fabricated code or a bogus link.
+        naics: null,
+        naicsDescription: null,
+        attributedFiscalYear: 2025,
+        awards: 12,
+        distinctVendors: 9,
+        distinctPscCodes: 3,
+        obligatedAwardCumulativeUsd: 3000000,
+        outlayAwardCumulativeUsd: null,
+        transactionsInWindow: 12,
+        modificationsInWindow: 0,
+      },
       {
         naics: "541511",
         naicsDescription: "Custom Computer Programming",
@@ -90,5 +104,7 @@ describe("/fraud-radar/contracts", () => {
     expect(html).toContain("does not cover contracts");
     expect(html).toContain("81.3834%");
     expect(html).toContain("541511");
+    expect(html).toContain("No NAICS code reported");
+    expect(html).not.toContain("/fraud-radar/contracts/naics/null");
   });
 });
