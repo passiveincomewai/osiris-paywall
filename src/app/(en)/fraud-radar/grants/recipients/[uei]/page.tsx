@@ -14,6 +14,7 @@ import {
 import { formatCount, formatUsd } from "@/lib/fraud-radar/healthcare-data";
 import { ResearchLeadNotice, NotPublishedYet } from "@/components/fraud-radar/Provenance";
 import { ResearchSignalsSection } from "@/components/fraud-radar/ResearchSignals";
+import { ProfileNetworkSection } from "@/components/fraud-radar/ProfileNetwork";
 import PinToCase from "@/components/fraud-radar/PinToCase";
 
 /**
@@ -67,6 +68,12 @@ export default async function GrantRecipientProfilePage({
     engine: "grants",
     entityKey: profile.uei,
     heading: "Research signals — grants rules",
+  });
+  // Phase 10 (Payload B2): the §6.3 Network section — absent when
+  // the graphs artifact root is unconfigured.
+  const profileNetwork = await ProfileNetworkSection({
+    engine: "grants",
+    entityKey: profile.uei,
   });
   const crossSignals = await ResearchSignalsSection({
     engine: "cross",
@@ -328,6 +335,7 @@ export default async function GrantRecipientProfilePage({
             configured. */}
         <div className="mt-10">{grantsSignals}</div>
         <div className="mt-6">{crossSignals}</div>
+        {profileNetwork ? <div className="mt-6">{profileNetwork}</div> : null}
 
         <section className="mt-10">
           <h2 className="text-xl font-semibold">Exclusion screening</h2>

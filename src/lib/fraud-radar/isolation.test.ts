@@ -813,3 +813,21 @@ describe("§14.3 isolation — Phase 10 graph/geo routes + firewall (P10-A)", ()
     }
   });
 });
+
+describe("§14.3 isolation — Phase 10 profile Network sections (P10-B2)", () => {
+  it("the three profile families wire the shared Network section", () => {
+    for (const rel of [
+      "app/(en)/fraud-radar/grants/recipients/[uei]/page.tsx",
+      "app/(en)/fraud-radar/healthcare/providers/[npi]/page.tsx",
+      "app/(en)/fraud-radar/care/medicare/[npi]/page.tsx",
+    ]) {
+      const src = readFileSync(path.join(SRC, rel), "utf8");
+      expect(src, rel).toContain("ProfileNetworkSection");
+    }
+  });
+
+  it("B2 adds no public paths — the flag list is unchanged by the payload", () => {
+    const flagSrc = readFileSync(path.join(SRC, "lib/fraud-radar/flag.ts"), "utf8");
+    expect(flagSrc).not.toContain("/fraud-radar/graph");
+  });
+});

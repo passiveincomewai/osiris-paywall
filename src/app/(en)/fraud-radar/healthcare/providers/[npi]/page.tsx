@@ -13,6 +13,7 @@ import {
 } from "@/lib/fraud-radar/healthcare-data";
 import MonthlyChart from "@/components/fraud-radar/MonthlyChart";
 import { ResearchSignalsSection } from "@/components/fraud-radar/ResearchSignals";
+import { ProfileNetworkSection } from "@/components/fraud-radar/ProfileNetwork";
 import PinToCase from "@/components/fraud-radar/PinToCase";
 import {
   ResearchLeadNotice,
@@ -141,6 +142,12 @@ export default async function ProviderProfilePage({
   // stays synchronously renderable (the established page-test
   // pattern), exactly as the page's own data reads are awaited.
   const researchSignals = await ResearchSignalsSection({
+    engine: "healthcare",
+    entityKey: profile.npi,
+  });
+  // Phase 10 (Payload B2): the §6.3 Network section — absent when
+  // the graphs artifact root is unconfigured.
+  const profileNetwork = await ProfileNetworkSection({
     engine: "healthcare",
     entityKey: profile.npi,
   });
@@ -303,6 +310,7 @@ export default async function ProviderProfilePage({
             leads, read from the signals artifacts — fail-soft to
             absent when no signals artifact is configured. */}
         <div className="mt-6">{researchSignals}</div>
+        {profileNetwork ? <div className="mt-6">{profileNetwork}</div> : null}
 
         <section className="mt-6 rounded-2xl border border-white/10 bg-white/[0.03] p-5">
           <h2 className="text-lg font-semibold">Screening — exclusion lists</h2>
