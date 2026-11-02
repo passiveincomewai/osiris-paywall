@@ -165,7 +165,7 @@ export default async function ComparePage({ params }: { params: Promise<{ slug: 
   if (c.pricing) {
     faqs.push({
       q: `Is ${c.name} free?`,
-      a: `${c.pricing} WorldEye's map is free forever with no signup; Pro is $7.99/week, $13.99/month or $74.99/year.`,
+      a: `${c.pricing} WorldEye's map is free to browse with no signup; the paid tiers are Lite ($4.99/week, $8.99/month, $44.99/year), Pro ($7.99/week, $13.99/month, $74.99/year) and Ultra ($12.99/week, $24.99/month, $149.99/year).`,
     });
   }
   if (c.competitorWins) {
@@ -299,7 +299,7 @@ export default async function ComparePage({ params }: { params: Promise<{ slug: 
             <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.02] p-6">
               <h3 className="font-bold text-white mb-2">Pricing</h3>
               <p className="text-sm text-white/55 leading-relaxed">{c.pricing}</p>
-              <p className="text-sm text-white/55 mt-3"><span className="text-[#0096FF] font-semibold">WorldEye:</span> map free forever, no signup. Pro: $7.99/week, $13.99/month, $74.99/year.</p>
+              <p className="text-sm text-white/55 mt-3"><span className="text-[#0096FF] font-semibold">WorldEye:</span> map free to browse, no signup. Paid tiers: Lite from $4.99/week, Pro $7.99/week, $13.99/month or $74.99/year, Ultra from $12.99/week.</p>
             </div>
           )}
         </section>
@@ -386,11 +386,12 @@ export default async function ComparePage({ params }: { params: Promise<{ slug: 
             </p>
             <p>
               WorldEye&rsquo;s own figures are counted, not estimated: the camera network is
-              the 74,229 public feeds in our live directory across 105 countries, and the
-              free/Pro split is the live product — the map, flights, satellites, weather,
+              the 74,229 public feeds in our live directory across 109 countries, and the
+              free/paid split is the live product — the map, flights, satellites, weather,
               earthquakes, wildfires, cameras and the satellite imagery view are free with no
-              signup, while the OSINT toolkit, intel feeds and traffic layer sit in Pro
-              ($7.99/week, $13.99/month, $74.99/year, with free trials and a 7-day
+              signup, while the paid tiers add the OSINT toolkit and the traffic layer and
+              Ultra adds the intel feeds (Lite from $4.99/week; Pro $7.99/week, $13.99/month,
+              $74.99/year; Ultra from $12.99/week — with free trials and a 7-day
               money-back guarantee on the first charge).
             </p>
             <p>

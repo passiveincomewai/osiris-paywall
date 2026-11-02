@@ -59,7 +59,7 @@ const DIFFERENTIATORS = [
   { title: "One globe, every layer", body: "Flights, satellites, ships, cameras, live transit, weather, quakes and wildfires on a single interactive 3D globe — not scattered across a dozen tabs." },
   { title: "Free with no signup", body: "The full live map costs nothing and needs no account. Most competitors paywall their best views." },
   { title: "74,229 live cameras", body: "The world's largest free public-camera network, browsable right on the globe." },
-  { title: "Pro OSINT toolkit", body: "AI analyst, Nmap/DNS/WHOIS/SSL lookups and premium intel feeds (cyber, GDELT, maritime, conflict, live news)." },
+  { title: "Pro OSINT toolkit", body: "AI analyst and Nmap/DNS/WHOIS/SSL lookups on the paid tiers; Ultra adds the premium intel feeds (cyber, GDELT, maritime, conflict, live news)." },
 ];
 
 export default async function CompareHubPage() {
@@ -177,8 +177,8 @@ export default async function CompareHubPage() {
               aviation deeply, a conflict map built around curated event reports, a weather
               platform built on forecast models. WorldEye is the generalist — one free 3D
               globe carrying flights, satellites, ships, live transit, weather, earthquakes,
-              wildfires and 74,229 public cameras, with an optional Pro tier for the OSINT
-              toolkit and intel feeds. Neither shape is automatically better; the right pick
+              wildfires and 74,229 public cameras, with optional paid tiers for the OSINT
+              toolkit and — on Ultra — the intel feeds. Neither shape is automatically better; the right pick
               depends on whether your work lives in one layer or moves between all of them.
             </p>
             <p>
@@ -218,7 +218,7 @@ export default async function CompareHubPage() {
                 ["Public camera network", "74,229 cameras", "Rarely included"],
                 ["Satellite tracking", "Yes", "Yes (specialists)"],
                 ["Ship tracking", "Yes", "Yes (specialists)"],
-                ["Conflict monitoring", "Pro intel feeds", "Yes (specialists)"],
+                ["Conflict monitoring", "Ultra intel feeds", "Yes (specialists)"],
                 ["OSINT toolkit", "Pro tier", "Yes (specialists)"],
                 ["Price for the map", "Free, no signup", "Often freemium / paid"],
               ].map(([cap, we, them]) => (

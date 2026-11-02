@@ -7,7 +7,7 @@ import JsonLd from "@/components/JsonLd";
 export const metadata: Metadata = {
   title: "WorldEye vs OSIRIS (2026): Hosted Globe or Self-Hosted OSINT Platform?",
   description:
-    "Compare WorldEye with OSIRIS: hosted 3D globe with 74,229 cameras and Pro intel feeds vs the free open-source OSINT dashboard you host yourself. Features, pricing and verdict.",
+    "Compare WorldEye with OSIRIS: hosted 3D globe with 74,229 cameras and premium intel feeds vs the free open-source OSINT dashboard you host yourself. Features, pricing and verdict.",
   alternates: { canonical: "/compare/worldeye-vs-osiris" },
   openGraph: {
     title: "WorldEye vs OSIRIS (2026): Hosted Globe or Self-Hosted OSINT Platform?",
@@ -78,7 +78,7 @@ const FAQS = [
   },
   {
     q: "Which has more live cameras?",
-    a: "WorldEye: 74,229 live public feeds across 105 countries, with a browsable directory. OSIRIS's README lists 17,000+ cameras from transport agencies and public webcam networks.",
+    a: "WorldEye: 74,229 live public feeds across 109 countries, with a browsable directory. OSIRIS's README lists 17,000+ cameras from transport agencies and public webcam networks.",
   },
 ];
 
@@ -97,7 +97,7 @@ const jsonLd = {
       "@type": "WebPage",
       name: "WorldEye vs OSIRIS (2026): Hosted Globe or Self-Hosted OSINT Platform?",
       description:
-        "Compare WorldEye with OSIRIS: hosted 3D globe with 74,229 cameras and Pro intel feeds vs the free open-source OSINT dashboard you host yourself.",
+        "Compare WorldEye with OSIRIS: hosted 3D globe with 74,229 cameras and premium intel feeds vs the free open-source OSINT dashboard you host yourself.",
       url: "https://worldeye.app/compare/worldeye-vs-osiris",
       dateModified: "2026-10-17",
       isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
@@ -223,9 +223,10 @@ export default function WorldEyeVsOsirisPage() {
             </p>
             <p className="text-sm text-white/55 mt-3">
               <span className="text-[#0096FF] font-semibold">WorldEye:</span>{" "}
-              the map is free forever, no signup. Pro is $7.99/week (3-day
+              the map is free to browse, no signup. Paid tiers run from Lite
+              at $4.99/week to Ultra at $24.99/month — Pro is $7.99/week (3-day
               free trial), $13.99/month, or $74.99/year (10-day free trial) —
-              and runs on our infrastructure and our keys.
+              and everything runs on our infrastructure and our keys.
             </p>
           </div>
         </section>
@@ -236,7 +237,7 @@ export default function WorldEyeVsOsirisPage() {
           <div className="grid sm:grid-cols-2 gap-4">
             {[
               "Nothing to install or maintain: the globe is hosted, updated and live the moment you open it — on a phone, not just a workstation.",
-              "More than four times the camera network: 74,229 live public feeds across 105 countries, with a directory you can browse by country and city.",
+              "More than four times the camera network: 74,229 live public feeds across 109 countries, with a directory you can browse by country and city.",
               "Live feeds where OSIRIS carries reference data: real vessel positions and live GDELT-powered conflict/intel feeds instead of static ports and zones.",
               "The AI analyst runs on the site's key — no OpenAI account, no key management, no metered surprises on your own bill.",
             ].map((w, i) => (
@@ -276,7 +277,7 @@ export default function WorldEyeVsOsirisPage() {
               <p className="text-sm text-white/70 leading-relaxed">
                 You want the live planet now: a hosted 3D globe with the
                 bigger camera network, live maritime and conflict feeds, and
-                Pro intel tools — free to open, no server, no keys, on any
+                Ultra intel tools — free to open, no server, no keys, on any
                 device.
               </p>
             </div>
