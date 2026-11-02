@@ -41,6 +41,220 @@ export type BlogPost = {
 
 export const POSTS: BlogPost[] = [
   {
+    slug: "cyclone-murasu-severe-landfall-andhra-pradesh",
+    title: "Severe Cyclone Murasu Heads for Landfall Near Ongole Tonight, a Week After Arnab",
+    seoTitle: "Cyclone Murasu Landfall Tonight | WorldEye Blog",
+    date: "2026-11-02",
+    excerpt:
+      "Cyclone Murasu strengthened into a severe cyclonic storm over the Bay of Bengal on Monday and is expected to cross the south Andhra Pradesh coast between Nellore and Narsapur, close to Ongole, between 11:30 p.m. IST on November 2 and 4 a.m. on November 3, with winds of 100–110 km/h gusting to 120 km/h, the India Meteorological Department said.",
+    seoDescription:
+      "Severe Cyclone Murasu is due to make landfall near Ongole, Andhra Pradesh, late on November 2 with winds of 100–110 km/h gusting to 120 km/h, IMD says.",
+    tags: ["cyclone", "india", "weather", "storms"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "India's east coast is bracing for its second cyclone landfall in a week. Cyclone Murasu, which [formed over the Bay of Bengal on Sunday](/blog/cyclone-murasu-forms-andhra-pradesh-landfall), intensified into a severe cyclonic storm early on Monday, November 2, and is now aimed at the south Andhra Pradesh coast, according to the India Meteorological Department (IMD). The department expects the storm to cross the coast between Nellore and Narsapur, close to Ongole, between 11:30 p.m. IST on November 2 and 4 a.m. IST on November 3 — 18:00 UTC on Monday to 22:30 UTC.",
+          "At landfall, the IMD expects sustained winds of 100–110 km/h (about 62–68 mph) with gusts reaching 120 km/h. That makes Murasu a severe cyclonic storm at the moment it comes ashore, the same stretch of coast that took Cyclone Arnab's landfall near Narsapur on October 28, only five days earlier.",
+        ],
+      },
+      {
+        heading: "Where the storm was on Monday morning",
+        body: [
+          "The IMD's bulletins through Monday morning tracked a system moving steadily toward the coast. At 2:30 a.m. IST on November 2, the severe cyclonic storm was centred over the west-central and adjoining southwest Bay of Bengal near 13.6°N, 82.5°E — about 260 km east-northeast of Chennai, 290 km east-southeast of Nellore, 310 km east-southeast of Kavali, 330 km southeast of Ongole and 470 km south of Visakhapatnam. It had moved nearly northwestwards at about 20 km/h over the previous six hours.",
+          "By 5:30 a.m. IST, the IMD's coastal weather bulletin placed the centre roughly 200 km east-northeast of Chennai, 210 km east-southeast of Nellore and 260 km southeast of Ongole, still moving northwest toward the Nellore–Narsapur crossing zone. You can follow the system's approach on WorldEye's [hurricane tracker](/hurricane-tracker), which follows tropical systems worldwide, and watch the rain bands build on the [weather radar](/weather-radar).",
+        ],
+      },
+      {
+        heading: "Rain, not just wind, is the wider threat",
+        body: [
+          "The IMD's rainfall outlook spreads well beyond the landfall district. Coastal Andhra Pradesh and Yanam were forecast isolated extremely heavy rainfall on November 2 and isolated very heavy rainfall on November 3, with Rayalaseema also expecting isolated very heavy rain across both days. Chennai and Tiruvallur, in northern Tamil Nadu, were under a heavy to very heavy rainfall warning for November 2, and Odisha — still recovering from Arnab — was forecast isolated very heavy rainfall on November 3 and 4.",
+          "Heavy rain was also forecast in parts of Telangana, Puducherry and Karaikal, Karnataka and Kerala across November 2–3. For coastal districts, the combination that matters most is the timing: the heaviest rain is expected around and just after the overnight landfall, when visibility is lowest and rivers and drains are already running high after a wet week.",
+        ],
+      },
+      {
+        heading: "Districts prepare for a second hit in a week",
+        body: [
+          "Preparedness work was under way on both sides of the landfall zone. In Odisha's Rayagada district, the administration deployed all 11 fire station teams and positioned heavy machinery — JCBs, excavators and Hydra cranes — at Gumma Ghati and Mukundpur Ghati to clear National Highway 326 quickly if landslides or debris blocked it. Officials there were working to a yellow warning through November 2, stepping up to an orange warning for November 3 and 4, after an emergency review meeting chaired by the District Collector on Sunday.",
+          "The strain is cumulative. India Today's November 2 report, cited in coverage of the twin storms, said more than 180,000 people (1.8 lakh) had been evacuated across Andhra Pradesh and Odisha during preparations for Cyclone Arnab the previous week. Many of the same shelters, warning systems and response teams are now being asked to do the same job again, six days later.",
+        ],
+      },
+      {
+        heading: "What happens after landfall",
+        body: [
+          "Once a Bay of Bengal cyclone crosses the coast, it usually weakens quickly as it loses its supply of warm ocean air — but its rain often does not. Murasu's remnants are expected to keep feeding heavy rain into Andhra Pradesh, Telangana and Odisha into November 4 even as the winds fall away. The official word remains the IMD's bulletins and state disaster-management instructions; anyone in the landfall zone between Nellore and Narsapur should follow those, not storm-track maps, for decisions about moving to shelter.",
+          "WorldEye will keep the storm on the [hurricane tracker](/hurricane-tracker) through landfall and its inland decay. For the background on how this storm formed and why it is the northeast monsoon's second Bay of Bengal cyclone, see [our November 1 report on Murasu's formation](/blog/cyclone-murasu-forms-andhra-pradesh-landfall).",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When and where will Cyclone Murasu make landfall?",
+        a: "The IMD expects Murasu to cross the south Andhra Pradesh coast between Nellore and Narsapur, close to Ongole, between 11:30 p.m. IST on November 2 and 4 a.m. IST on November 3, 2026.",
+      },
+      {
+        q: "How strong will Murasu be at landfall?",
+        a: "The IMD forecasts a severe cyclonic storm at landfall, with sustained winds of 100–110 km/h and gusts up to 120 km/h.",
+      },
+      {
+        q: "Which areas face the heaviest rain from Murasu?",
+        a: "Coastal Andhra Pradesh and Yanam face isolated extremely heavy rainfall on November 2, with very heavy rain also forecast for Rayalaseema, parts of Tamil Nadu including Chennai, and Odisha on November 3–4.",
+      },
+      {
+        q: "Why is this landfall unusual?",
+        a: "It is the second Bay of Bengal cyclone to strike India's east coast in a week: Cyclone Arnab made landfall near Narsapur on October 28, and Murasu is crossing a nearby stretch of the Andhra Pradesh coast days later.",
+      },
+    ],
+    sources: [
+      {
+        name: "ANI reporting the IMD bulletin, via NewKerala — Cyclone Murasu intensifies into severe cyclonic storm (November 2)",
+        url: "https://www.newkerala.com/news/a/cyclone-murasu-intensifies-into-severe-cyclonic-storm-likely-295.htm",
+      },
+      {
+        name: "Jagran Josh — Two cyclones in less than 7 days: IMD state-wise rain alert for Murasu (November 2)",
+        url: "https://www.jagranjosh.com/general-knowledge/two-cyclones-in-less-than-7-days-arnab-and-murasu-threaten-indias-east-coast-again-check-imd-statewise-rain-alert-1820013524-1",
+      },
+    ],
+  },
+  {
+    slug: "spacex-ussf-432-launch-november-3-vandenberg",
+    title: "SpaceX's Classified USSF-432 Launch From Vandenberg Moves to Tuesday Evening",
+    seoTitle: "USSF-432 Launch Moves to Nov 3 | WorldEye Blog",
+    date: "2026-11-02",
+    excerpt:
+      "SpaceX's classified USSF-432 mission for the U.S. Space Force has slipped again: after listings for November 1 and then November 2, the Falcon 9 is now scheduled to lift off from Vandenberg's SLC-4E on Tuesday, November 3, in a four-hour window opening at 5:28 p.m. PT. It is the only California launch on the board this week.",
+    seoDescription:
+      "SpaceX's classified USSF-432 Space Force launch from Vandenberg has moved to Tuesday, November 3, with a window opening at 5:28 p.m. PT, per the schedule.",
+    tags: ["spacex", "launch", "space-force", "vandenberg"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "California's next rocket launch has moved by a day — again. SpaceX's USSF-432 mission, a classified satellite deployment for the U.S. Space Force, is now scheduled for Tuesday, November 3, from Space Launch Complex 4E (SLC-4E) at Vandenberg Space Force Base, in a four-hour launch window opening at 5:28 p.m. PT and running to 9:28 p.m. PT, according to the Ventura County Star's November 2 rundown of the Vandenberg schedule — the only California launch currently on the board for the week ahead.",
+          "The mission has been walking down the calendar. SpaceX had earlier listed it for Sunday, November 1, then for Monday, November 2, with a four-hour window opening at 5:42 p.m. PT and the Tuesday slot held as the backup opportunity. As of November 2, the backup has become the plan: Tuesday evening, 14 minutes earlier than Monday's window would have opened.",
+        ],
+      },
+      {
+        heading: "What is known about the mission — and what is not",
+        body: [
+          "USSF-432 is a national-security launch, and SpaceX has released no details about the payload or the orbit it will be deployed into. That silence is normal for this class of mission. What SpaceX has published is the rocket's pedigree: the Falcon 9 first-stage booster flies for the eighth time on this mission, having previously launched the GPS III-8 satellite and six Starlink missions.",
+          "After stage separation, the booster is planned to land on the droneship Of Course I Still Love You, stationed in the Pacific Ocean. SpaceX also notes that residents of Santa Barbara, San Luis Obispo and Ventura counties may hear one or more sonic booms during the launch — a familiar signature of Vandenberg's evening departures for everyone living under the flight path.",
+        ],
+      },
+      {
+        heading: "The launch that fell off the schedule",
+        body: [
+          "USSF-432 is not the only change on Vandenberg's board. A Starlink satellite deployment that SpaceX's calendar had listed in recent days — and that still appears on a Federal Aviation Administration planning advisory — appears to have fallen off the schedule as of November 2, the Ventura County Star reports, as SpaceX works toward another flight test of its Starship rocket in Texas. A further Vandenberg Starlink mission, carrying 27 satellites, has been listed for later in the week, though its timing has shifted with the rest of the calendar.",
+          "The cadence behind all this shuffling is real: USSF-432 comes two weeks after Falcon 9 launched the previous classified Space Force mission, USSF-481, from California on October 16, and days after [the Halloween-eve Starlink flight that became the 700th Falcon 9 launch](/blog/falcon-9-700th-launch-starlink-15-18). Classified missions are now a routine part of Vandenberg's rhythm, not exceptions to it.",
+        ],
+      },
+      {
+        heading: "How to follow a launch you cannot see coming",
+        body: [
+          "Because the payload is classified, the public picture of USSF-432 will be assembled from the outside: the launch itself, visible across the Southern California coast on a clear evening, the booster's droneship landing, and the satellites' appearance in orbit afterwards. New objects from a Vandenberg launch typically show up in public tracking catalogues within days, which is where WorldEye's [satellite tracker](/satellite-tracker) picks the story up — the same sky that the [space station tracker](/space-station-tracker) watches for the ISS.",
+          "Launch schedules at this cadence change often, and SpaceX had not publicly explained either of this mission's one-day slips. If you are planning to watch from the California coast, check SpaceX's launch page on Tuesday before you drive: the window is four hours long, but the rocket only needs one clear minute inside it.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When is the USSF-432 launch now scheduled?",
+        a: "Tuesday, November 3, 2026. The four-hour Falcon 9 window from SLC-4E at Vandenberg Space Force Base opens at 5:28 p.m. PT and runs to 9:28 p.m. PT, per the November 2 schedule rundown.",
+      },
+      {
+        q: "Why did the launch move from November 2?",
+        a: "SpaceX has not given a public reason. The mission was listed first for November 1, then November 2 with Tuesday as the backup; as of November 2 the Tuesday slot is the scheduled attempt.",
+      },
+      {
+        q: "What is USSF-432 carrying?",
+        a: "The payload is classified. SpaceX describes the mission only as a satellite deployment for the U.S. Space Force and has released no payload or orbit details.",
+      },
+      {
+        q: "What is the Falcon 9 booster's history on this mission?",
+        a: "It is the booster's eighth flight; it previously launched GPS III-8 and six Starlink missions. It is planned to land on the Of Course I Still Love You droneship in the Pacific.",
+      },
+    ],
+    sources: [
+      {
+        name: "Ventura County Star (USA TODAY Network) — SpaceX plans 1 rocket launch in California this week (November 2)",
+        url: "https://www.vcstar.com/story/news/local/california/2026/11/02/rocket-launch-today-vandenberg-schedule/92493298007/",
+      },
+      {
+        name: "Starlust — SpaceX gears up to launch classified USSF-432 mission, SpaceX mission details (November 1)",
+        url: "https://starlust.org/spacex-gears-up-to-launch-classified-ussf-432-mission-on-november-2-streaming-details-here/",
+      },
+    ],
+  },
+  {
+    slug: "southern-taurid-fireballs-peak-november-4-5",
+    title: "Taurid Fireball Season Peaks This Week: Southern Taurids Top Out on November 4–5",
+    seoTitle: "Taurid Fireballs Peak Nov 4–5 | WorldEye Blog",
+    date: "2026-11-02",
+    excerpt:
+      "The Taurids — the slow, bright 'Halloween fireballs' — reach their first November peak this week. The Southern Taurids top out on the night of November 4–5 under a waning crescent Moon only about 25% lit, with the Northern Taurids to follow on November 11–12, the American Meteor Society says.",
+    seoDescription:
+      "The Southern Taurid meteor shower peaks on November 4–5, 2026, under a thin crescent Moon. Slow, bright fireballs are the draw, the Meteor Society says.",
+    tags: ["meteor-shower", "taurids", "night-sky", "astronomy"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "November's sky season opens this week with the most theatrical meteors of the autumn. The Southern Taurid meteor shower reaches its peak on the night of Wednesday, November 4 into Thursday, November 5, according to the American Meteor Society (AMS) — the first of three November shower peaks, and the one known for fireballs: meteors bright enough to light up the sky as they break apart. The shower has been active since September 20 and runs through November 20; what peaks around November 5 is its fireball-rich swarm component.",
+          "Conditions this year cooperate. The Moon will be a waning crescent, only about 25% illuminated on the peak night, so moonlight should cause relatively little interference — the main variable left is cloud. Both Taurid branches are already active overhead: the two overlapping streams were producing their 'Halloween fireballs' over the weekend just passed, and the overlap period in late October and early November is exactly when the AMS notes fireball reports sometimes rise.",
+        ],
+      },
+      {
+        heading: "Slow meteors, big pieces",
+        body: [
+          "The Taurids will never win on numbers. The AMS rate for the Southern branch is about five meteors an hour under ideal dark-sky conditions, and the Northern branch, which peaks a week later on November 11–12, adds about five more while the two overlap — roughly ten an hour combined around midnight. What they offer instead is quality. Taurid meteors strike the upper atmosphere at about 28 kilometres per second, the slowest entry speed of any well-known annual shower, so a bright one can hang in view for a second or more, fragmenting as it goes and sometimes leaving a brief smoky trail.",
+          "That slowness comes from the source. The Southern Taurids trace back to Comet Encke, which orbits the Sun every 3.3 years; the Northern Taurids are linked to asteroid 2004 TG10, on a very similar orbit and possibly a large fragment of the same long-vanished parent comet. The stream carries pebble-sized grains rather than fine dust, which is why a small share of its meteors — about 1% in an ordinary year, by published estimates — flare into true fireballs. This is an ordinary year: the next predicted Taurid swarm year is 2032.",
+        ],
+      },
+      {
+        heading: "When and where to look",
+        body: [
+          "Taurids appear to radiate from the constellation Taurus, near the orange star Aldebaran and the Pleiades cluster. The radiant climbs through the evening and stands highest around midnight, which makes the hours around and after midnight the best window — meteors can appear anywhere in the sky, so the technique is simply a dark place, a wide view, and 20 to 30 minutes for your eyes to adjust. No telescope helps; binoculars narrow the view you need.",
+          "If clouds take the peak night, the Taurids forgive: neither branch has a sharp maximum, so rates ramble across the surrounding nights rather than switching off. And the month keeps offering. The Northern Taurids peak on November 11–12 under a Moon only about 3–4% lit, and the faster Leonids — about 15 meteors an hour at peak, moving at roughly 44 miles per second — follow on November 16–17. On WorldEye, clear dark sites are easy to scout ahead of time on the [dark-sky cameras](/dark-sky-cameras) page, and the same northern sky is watched live on our [aurora webcams](/aurora-webcams).",
+        ],
+      },
+      {
+        heading: "Why fireball season matters beyond the show",
+        body: [
+          "Bright Taurids are also data. The American Meteor Society collects eyewitness fireball reports from the public, and a well-reported fireball's path can be reconstructed from them — where it entered, how deep it got, and whether anything might have survived to the ground. The famous benchmark is a Halloween fireball NASA's Meteoroid Environment Office tracked over Tennessee in 2012, last seen at an altitude of just 18.1 miles — unusually low for a meteor, and a reminder that the Taurid stream carries material big enough to push deep into the atmosphere.",
+          "So the plan for this week is simple: pick the clearest night from November 4 onward, get away from streetlights, look up around midnight, and be patient. Five meteors an hour sounds sparse until one of them is a fireball. For more of the night sky watched live, see our guide to [northern lights live webcams](/blog/northern-lights-live-webcams) — the same dark, clear conditions that suit meteors suit aurora watchers too.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When do the Southern Taurids peak in 2026?",
+        a: "On the night of November 4–5, 2026, according to the American Meteor Society. The shower is active from September 20 to November 20, and its fireball-swarm component peaks around November 5.",
+      },
+      {
+        q: "How many meteors per hour will the Taurids produce?",
+        a: "About five per hour for each branch under ideal dark-sky conditions. While the Southern and Northern Taurids overlap in early November, the combined rate can reach roughly ten per hour around midnight.",
+      },
+      {
+        q: "Will the Moon interfere with the Taurid peak?",
+        a: "Very little. The Moon will be about 25% illuminated on the Southern Taurid peak night of November 4–5, and only about 3–4% lit for the Northern Taurid peak on November 11–12.",
+      },
+      {
+        q: "What makes Taurid meteors special?",
+        a: "They are the slowest of the major annual showers, entering at about 28 km/s, and the stream contains pebble-sized debris from Comet Encke and asteroid 2004 TG10 — so its meteors are often exceptionally bright, long-lasting fireballs.",
+      },
+    ],
+    sources: [
+      {
+        name: "Parade, citing the American Meteor Society — 3 meteor showers will light up the sky in November (November 1)",
+        url: "https://parade.com/news/3-meteor-showers-will-light-up-the-sky-in-november-and-one-is-known-for-producing-brilliant-fireballs",
+      },
+      {
+        name: "Badiyaa — Taurid meteors bring Halloween fireballs; peaks follow on November 5 and 12 (October 31)",
+        url: "https://badiyaa.com/taurid-halloween-fireballs-2026-where-when/",
+      },
+    ],
+  },
+  {
     slug: "worldeye-strategic-partners",
     title: "WorldEye Is Looking for Strategic Partners: Let's Build and Grow Together",
     seoTitle: "WorldEye Is Looking for Strategic Partners | WorldEye Blog",

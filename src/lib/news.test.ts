@@ -87,6 +87,9 @@ describe("the launch story (real data, real dates)", () => {
   it("is one of the flagged posts, and every flagged post has sources", () => {
     const flagged = POSTS.filter(isNewsPost);
     expect(flagged.map((p) => p.slug)).toEqual([
+      "cyclone-murasu-severe-landfall-andhra-pradesh",
+      "spacex-ussf-432-launch-november-3-vandenberg",
+      "southern-taurid-fireballs-peak-november-4-5",
       "lake-louise-opening-day-november-1-2026",
       "mayon-alert-level-3-eruption-evacuation",
       "cyclone-murasu-forms-andhra-pradesh-landfall",
@@ -103,6 +106,15 @@ describe("the launch story (real data, real dates)", () => {
     for (const p of flagged) {
       expect(p.sources?.length).toBeGreaterThan(0);
     }
+  });
+
+  it("the Nov 2 event stories are inside the 48-hour window on their publication day", () => {
+    const pubDay = new Date("2026-11-02T15:00:00Z");
+    const fresh = getFreshNewsPosts(POSTS, pubDay).map((p) => p.slug);
+    expect(fresh).toContain("cyclone-murasu-severe-landfall-andhra-pradesh");
+    expect(fresh).toContain("spacex-ussf-432-launch-november-3-vandenberg");
+    expect(fresh).toContain("southern-taurid-fireballs-peak-november-4-5");
+    expect(fresh).not.toContain(LAUNCH_SLUG);
   });
 
   it("the Nov 1 event stories are inside the 48-hour window on their publication day", () => {

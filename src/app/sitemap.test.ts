@@ -103,7 +103,7 @@ describe("sitemap URL set", () => {
           !u.startsWith(`${BASE}/wildfires/`),
       )
       .sort();
-    expect(nonTransit.length).toBe(1118);
+    expect(nonTransit.length).toBe(1122);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     // Hash history: 6d75d0de… until the SEO audit fix #3 (2026-10-27)
     // normalised the es homepage entry from /es/ to its final /es
@@ -250,8 +250,22 @@ describe("sitemap URL set", () => {
     // /powder-pass reproduces the 1,115 set and the 72f775c4…
     // hash byte-for-byte, and adding exactly the 3 new blog URLs
     // to that set gives 1,118 / 6fda17cc….
+    // The Daily Blog 2026-11-02 batch (2026-11-02) then added
+    // the three sourced news posts
+    // (cyclone-murasu-severe-landfall-andhra-pradesh,
+    // spacex-ussf-432-launch-november-3-vandenberg,
+    // southern-taurid-fireballs-peak-november-4-5) → 1,122.
+    // Delta verified by executing sitemap() on both trees the
+    // same afternoon: the pristine tip generates 1,119 /
+    // 7d9e8391… (its own set has drifted +1 since the 1,118 pin
+    // above — one R38 thin-wall gated spoke's live camera count
+    // crossed the WALL_MIN_CAMERAS line between derivations;
+    // the gated families' counts are live, so this pin can move
+    // a URL either way when a borderline spoke crosses), and
+    // the merged tree's set minus the pristine set is exactly
+    // the 3 new blog URLs, giving 1,122 / 3d901fd2….
     expect(hash).toBe(
-      "6fda17cc2116fb7a8df1bcb3ee9354a9089cdb0399a91888f97951148a5a0f7c",
+      "3d901fd24a59cdbf250033c3afad6eafca8e3882b008300f1b45b077325f9c85",
     );
   });
 
