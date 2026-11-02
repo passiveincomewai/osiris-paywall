@@ -92,7 +92,7 @@ export async function POST(req: NextRequest) {
   }
   const body = (await req.json().catch(() => null)) as ActionBody | null;
   if (!body?.action) return NextResponse.json({ error: "action required" }, { status: 400 });
-  const actor = session.user?.email ?? undefined;
+  const actor = session?.user?.email ?? undefined;
 
   if (body.action === "createJob") {
     const prompt = (body.prompt ?? "").trim();
