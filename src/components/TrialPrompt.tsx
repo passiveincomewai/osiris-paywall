@@ -167,6 +167,7 @@ export default function TrialPrompt() {
       className="fixed bottom-4 inset-x-4 z-[900] mx-auto max-w-xl rounded-2xl border border-[#D4AF37]/30 bg-[#0a0e17]/95 backdrop-blur px-4 py-3 shadow-2xl flex items-center gap-3"
       role="region"
       aria-label="Start your free trial"
+      data-trial-prompt-banner=""
     >
       <Crown className="w-5 h-5 text-[#D4AF37] shrink-0 hidden sm:block" />
       <p className="flex-1 text-[13px] leading-snug text-white/70">

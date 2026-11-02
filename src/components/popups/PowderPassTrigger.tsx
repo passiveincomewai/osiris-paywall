@@ -17,7 +17,11 @@
  * z-index and let page chrome paint through its backdrop while the
  * modal itself covered the page Jameson was trying to read. The
  * toast never obscures page content and always layers at shell
- * level, exactly like the global manager's surfaces.
+ * level, exactly like the global manager's surfaces. One
+ * co-surface check goes beyond dialogs: TrialPrompt's trial
+ * banner (not a dialog) docks bottom-centre at z-[900], above
+ * the toast — if it is up, the toast stays silent rather than
+ * rendering underneath it with its CTA covered.
  */
 
 import { useEffect, useRef, useState } from "react";
@@ -56,8 +60,15 @@ export default function PowderPassTrigger({
       // offer can't be verified for this visitor).
       const identity = await readSessionIdentity().catch(() => null);
       if (!identity || identity.state === "premium" || identity.state === "unknown") return;
+      // TrialPrompt's trial banner is not a dialog, but it owns the
+      // same bottom-centre stage (fixed bottom-4, z-[900] — above this
+      // toast's z-[800]) and would paint over the toast's CTA. It was
+      // there first, so treat it as an occupying surface too: the
+      // offer stays silent this session, and no session claim or
+      // frequency stamp is consumed (both happen only on a show).
       const modalOpen =
-        document.querySelector('[role="dialog"], [aria-modal="true"]') !== null;
+        document.querySelector('[role="dialog"], [aria-modal="true"]') !== null ||
+        document.querySelector("[data-trial-prompt-banner]") !== null;
       const decision = arbitrate({
         candidates: ["powder_pass"],
         sessionClaim: readSessionClaim(session),
