@@ -41,6 +41,121 @@ export type BlogPost = {
 
 export const POSTS: BlogPost[] = [
   {
+    slug: "planet-had-100-earthquakes-today",
+    title: "The Planet Had 100 Earthquakes Today. Here's What That Actually Means",
+    seoTitle: "100 Earthquakes a Day? What It Means | WorldEye Blog",
+    date: "2026-11-02",
+    excerpt:
+      "A hundred earthquakes in a day sounds like the planet is coming apart. It's actually a slow day at the office for the Earth — the real story is in what counts as an earthquake, who does the counting, and why the number keeps growing without the planet changing at all.",
+    seoDescription:
+      "USGS locates ~20,000 earthquakes a year (~55/day) and millions more occur. Why '100 earthquakes today' is normal — magnitude thresholds and the counting problem.",
+    tags: ["earthquakes", "science", "data"],
+    sections: [
+      {
+        heading: "So — did the planet have 100 earthquakes today?",
+        body: [
+          "Probably. Also probably yesterday, and tomorrow. But the honest answer starts with a question back: counted how, by whom, and how small? An earthquake is just the ground releasing energy, and the ground does it at every scale — from magnitude 8 monsters down to magnitude 0 murmurings that only a sensitive instrument in a quiet vault can feel. There is no single daily count, because there is no single threshold. There are only counting rules, and each rule produces a different planet.",
+          "Run the count with the loosest rule — every tremor any network anywhere detected — and a day with a hundred earthquakes is a day the counters stopped early. Estimates of total global seismicity run to several million earthquakes a year: thousands a day, almost all unfelt by anyone, most unnoticed even by the catalogs. Run it with the strictest rule — only quakes big enough to matter — and a hundred would be a catastrophe beyond record. The headline number lives in the middle, where the counting rules live.",
+        ],
+      },
+      {
+        heading: "The 55-a-day baseline",
+        body: [
+          "The reference counter is the US Geological Survey's National Earthquake Information Center, which locates about 20,000 earthquakes around the globe each year — approximately 55 per day. 'Locates' is the operative word: these are quakes the NEIC's analysts and systems could pin to a place and a magnitude from the world's seismic network data. It is the most defensible daily number in seismology, and it says the planet officially shakes, in the recorded sense, about once every 26 minutes.",
+          "Above that baseline, the pyramid narrows fast. Long-term records since about 1900 lead the USGS to expect roughly 16 major earthquakes in any given year — about 15 in the magnitude 7 range and one of magnitude 8 or greater. In the past half-century the actual count has exceeded that average only about a dozen times. So the honest picture is a steep pyramid: tens of thousands located, a few hundred felt widely, a handful that make history. A hundred a day is the pyramid's wide, harmless base.",
+        ],
+      },
+      {
+        heading: "Why the count keeps 'rising' (and why it isn't)",
+        body: [
+          "Open any long earthquake catalog and the recent years look busier — which tempts the conclusion that the planet is getting more seismic. The USGS answers this one directly: the catalog contains more earthquakes in recent years not because there are more earthquakes, but because there are more seismic instruments, able to record smaller and remoter events. The Earth didn't change. The microphone count did.",
+          "This is why temporary surges and lulls prove so little. A busy month is usually a cluster — one big quake's aftershock family padding the statistics — or a new network coming online somewhere. The USGS again: a temporary increase or decrease in seismicity is part of the normal fluctuation of earthquake rates, and neither signals that a large earthquake is imminent. The planet's real rate, at the magnitudes that matter, has held roughly steady for a century of records.",
+        ],
+      },
+      {
+        heading: "Watching them land live",
+        body: [
+          "None of this makes the daily drumbeat less astonishing to watch. On WorldEye's globe, the [earthquake layer](/earthquake-tracker) plots quakes as their locations are published — magnitude, depth, and place, on the same map as the live cameras that may have felt them. A magnitude 5 under a camera'd coastline at rush hour, a deep one under an ocean nobody will ever feel, the aftershock metronome after a major event: the pyramid, arriving in real time.",
+          "So yes — the planet had its hundred earthquakes today, and its fifty-five official ones, and its thousands of instrument-only whispers. All three numbers are true. What they mean is the part that matters: a restless planet, a steady rate, and a counting problem that headlines will keep getting wrong. Now you know which number you're looking at.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "How many earthquakes happen every day?",
+        a: "It depends on the threshold. The USGS National Earthquake Information Center locates about 20,000 earthquakes a year — roughly 55 a day. Counting every instrument-detected tremor, estimates run to several million a year, or thousands a day, nearly all too small to feel.",
+      },
+      {
+        q: "Are earthquakes increasing?",
+        a: "No — detection is. The USGS states the catalog grows because there are more seismic instruments recording smaller and more remote quakes. At major magnitudes (7+), the long-term rate since ~1900 is steady at about 16 expected per year.",
+      },
+      {
+        q: "How many major earthquakes happen each year?",
+        a: "About 16, in the USGS's long-term expectation: roughly 15 in the magnitude 7 range and one of magnitude 8 or greater. Some years exceed it (2010 saw 23) and others fall below — that fluctuation is normal.",
+      },
+    ],
+    sources: [
+      { name: "USGS FAQ — earthquake frequency: NEIC locates ~20,000/yr (~55/day); ~16 major/yr expected", url: "https://www.usgs.gov/faqs/why-are-we-having-so-many-or-so-few-earthquakes-has-naturally-occurring-earthquake-activity" },
+    ],
+  },
+  {
+    slug: "one-screen-one-hour-volcano-launch-tokyo",
+    title: "One Screen, One Hour: A Volcano, a Launch Pad, and Tokyo at Rush Hour",
+    seoTitle: "One Hour on One Screen | WorldEye Blog",
+    date: "2026-11-02",
+    excerpt:
+      "Sixty minutes, one globe, three appointments: a volcano breathing in Hawai'i, a launch window opening on the Florida coast, and the busiest pedestrian crossing on Earth filling up for the evening. A guided hour of live-planet watching.",
+    seoDescription:
+      "A one-hour tour on one screen: Kīlauea's crater, a rocket launch window on the Space Coast, and Tokyo's Shibuya Scramble at rush hour — all live.",
+    tags: ["cameras", "live", "tour"],
+    sections: [
+      {
+        heading: "The rules of the hour",
+        body: [
+          "One screen. One hour. No itinerary beyond three appointments with the live planet, each chosen because it cannot be rehearsed: a volcano doing whatever it does today, a launch window that opens when it opens, and a rush hour that assembles itself every evening on schedule. Everything below is watchable from a single globe — WorldEye's — where volcanoes, launch coasts, and 74,229 public cameras share one map. Set a timer if you like. The planet will fill the hour either way.",
+        ],
+      },
+      {
+        heading: "Minutes 0–20: the volcano",
+        body: [
+          "Start in Hawai'i, at Kīlauea — one of the most watched volcanoes on Earth, and the anchor of WorldEye's [eruption watch](/blog/kilauea-eruption-watch-live). The crater livestream itself is run by the USGS Hawaiian Volcano Observatory, scientists' own eyes on the summit; what the globe adds around it is the context a single crater view can't give: the island's live cameras, the weather rolling over the caldera, and the earthquake layer ticking beneath it, because at Kīlauea the shaking and the lava are one story told in two instruments.",
+          "Watch it the way volcanologists do: unhurried. A lava lake's crust plates drift and founder; gas plumes bend with the wind you can cross-check on the nearest weather cam; the quake dots cluster and pause. Twenty minutes is nothing to a volcano, which is exactly the lesson — this is the slowest television on Earth, right up until the moment it isn't.",
+        ],
+      },
+      {
+        heading: "Minutes 20–40: the launch coast",
+        body: [
+          "Swing the globe to Florida's Space Coast. Honesty first, because this stop runs on it: WorldEye does not stream rocket launches — nobody's camera network owns that picture, and any site implying otherwise is borrowing someone else's feed. What you get here is the launch as a place and a schedule: the countdown data from Launch Library 2 that powers WorldEye's [rocket launch coverage](/blog/how-to-watch-rocket-launches-live), labelled reconstruction replays after flights, and the coast itself on live cameras — the pads, the causeways, the crowds that gather on the beaches when a window opens.",
+          "And that turns out to be the better seat. A launch is ninety seconds of fire; a launch window is an afternoon of a coastline holding its breath — boats clearing the hazard area, the light going golden over the pads, traffic thickening on the causeway. Watch the place get ready. When the countdown clock the globe carries reaches zero, you'll feel like you know the ground it leaves from — because for twenty minutes, you've been standing on it.",
+        ],
+      },
+      {
+        heading: "Minutes 40–60: Tokyo at rush hour",
+        body: [
+          "End the hour where the planet's rush hour is at its most choreographed. WorldEye's [Tokyo cameras](/city-webcams/tokyo) number 112 across the city — river and government feeds alongside city and scenic ones — and two of them frame the crossings the world knows by name: Shibuya Scramble and Ginza. Time this stop for the evening peak and the Scramble performs its famous trick: the lights change, and a small town's worth of people crosses in every direction at once, without — somehow — a single collision, umbrellas blooming in formation when it rains.",
+          "After a volcano's timescale and a launch pad's held breath, Tokyo is the hour's reminder that most of the live planet's drama is human and daily: trains threading the city in pulses, rivers of headlights, the whole machine restarting itself every few minutes at the change of a light. Then the hour is up. Three appointments, three kinds of live — geological, orbital, human — and you never left one screen. The globe is still turning. It does that.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Can I watch a volcano live online?",
+        a: "Yes. Kīlauea's crater is livestreamed by the USGS Hawaiian Volcano Observatory, and WorldEye's eruption watch wraps it with the island's live cameras, weather, and the earthquake layer that tells the other half of the volcano's story.",
+      },
+      {
+        q: "Does WorldEye stream rocket launches?",
+        a: "No — and it says so. WorldEye carries launch countdowns from Launch Library 2, labelled reconstruction replays, and live cameras of the launch coast itself. The launch broadcast picture belongs to the launch providers.",
+      },
+      {
+        q: "How many cameras are there in Tokyo on WorldEye?",
+        a: "112 across the city — 68 river/government feeds and 44 city/scenic cameras, including the Shibuya Scramble and Ginza crossings, per the Tokyo city cameras page.",
+      },
+    ],
+    sources: [
+      { name: "WorldEye Tokyo city cameras — 112 cameras incl. Shibuya Scramble", url: "https://worldeye.app/city-webcams/tokyo" },
+    ],
+  },
+  {
     slug: "the-sun-is-at-its-most-active-in-20-years",
     title: "The Sun Is at Its Most Active in ~20 Years — and the Sky Is Showing It",
     seoTitle: "Solar Maximum: The Sun at Its Most Active | WorldEye Blog",
