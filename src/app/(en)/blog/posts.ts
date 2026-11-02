@@ -41,6 +41,132 @@ export type BlogPost = {
 
 export const POSTS: BlogPost[] = [
   {
+    slug: "how-a-single-photo-gives-away-where-it-was-taken",
+    title: "How a Single Photo Gives Away Where It Was Taken",
+    seoTitle: "How a Photo Gives Away Its Location | WorldEye Blog",
+    date: "2026-11-02",
+    excerpt:
+      "No GPS required. A photo's shadows know the time, its signs know the language, its plants know the climate, and its buildings know the country. A field guide to reading a picture's location out of the picture itself.",
+    seoDescription:
+      "Geolocation from the photo alone: shadows and sun angle, signs and script, vegetation and architecture — how analysts pin a photo to a place, step by step.",
+    tags: ["OSINT", "geolocation", "technique"],
+    sections: [
+      {
+        heading: "The photo is a confession",
+        body: [
+          "Every photograph is two documents. The first is the picture you meant to take. The second is everything the frame captured without asking: the angle of the light, the script on a shop sign, the shape of a license plate, the species of a tree, the side of the road the cars are on. Put enough of those witnesses together and they will tell you — often to within a street — where the camera was standing.",
+          "Sometimes there's a shortcut: many photo files carry EXIF metadata, and if the camera had location services on, the coordinates are sitting in the file. But platforms strip metadata, cameras get it wrong, and the interesting cases — a screenshot, a repost, a photo from a place its photographer won't name — arrive with the file data long gone. What survives is the scene. So analysts learn to read the scene.",
+        ],
+      },
+      {
+        heading: "Read the light",
+        body: [
+          "Shadows are a clock and a compass in one. A shadow points away from the sun, and the sun's position is a solved problem: given a date and a rough time, sun calculators will tell you exactly where the sun stood over any point on Earth — which means a shadow's direction and length can be run backwards to test a claimed location and hour. A photo that claims to be morning in one hemisphere but throws long evening shadows toward the wrong compass point is lying, or mislabeled.",
+          "Shadow length does quieter work, too. The same building throws a stubby noon shadow near the equator and a sprawling one near the poles. Analysts have placed photos to a latitude band from nothing more than how a flagpole's shadow behaves — before reading a single word in the frame.",
+        ],
+      },
+      {
+        heading: "Read the words",
+        body: [
+          "Language is the fastest narrowing tool there is. The script on a sign — Latin, Cyrillic, Arabic, Devanagari, hanzi, kana — cuts the world to a region in one glance. The language inside that script cuts it further. Then the small print starts talking: the format of a phone number, the design of a license plate, the color of a road sign, which side of the road traffic drives on, whether the electrical outlets and bollards and manhole covers match a particular country's street furniture.",
+          "None of these details is decisive alone. A French-language sign exists on several continents. But signs don't travel in packs of one: language plus plate design plus driving side plus sign colors is a combination only a few places on Earth can produce, and each added detail multiplies the certainty rather than adding to it.",
+        ],
+      },
+      {
+        heading: "Read the land",
+        body: [
+          "Vegetation is a climate fingerprint. Palms rule out the subarctic; saguaros grow in one desert on Earth; the eucalyptus and the baobab each testify for their continents. Architecture testifies the same way — roof pitches tuned to snow loads or monsoons, balcony styles, the era and origin of a railway station, the brand of a petrol station that only operates in one market.",
+          "Terrain finishes the job. A distinctive ridgeline behind a town, visible in the photo, can be matched against the same ridgeline in satellite and street-level imagery. This is the step where geolocation stops being inference and becomes identification: the mountain in the picture is the mountain on the map, from exactly one vantage point.",
+        ],
+      },
+      {
+        heading: "Narrow, then verify",
+        body: [
+          "The working method is a funnel: continent from script and vegetation, country from language and plates, region from terrain and architecture, street from the final matched landmark. At each stage, the honest analyst also runs the disproof — hunting for the detail that would kill the current best guess, because a location that survives attempts to falsify it is worth ten that were never challenged.",
+          "Verification is where live imagery earns its place: once you have a candidate spot, a [public camera](/live-cameras) near it, a satellite view, and street-level imagery either corroborate the scene or they don't. WorldEye's [photo geolocation tool](/tools/photo-geolocation) automates the first pass of this funnel — EXIF when the file still carries it, scene-clue analysis when it doesn't, ranked candidates with the evidence for and against each, and an uncertainty radius that never pretends to be a pinpoint. The tool is a starting gun. The funnel — and the disproof habit — is the skill.",
+        ],
+      },
+      {
+        heading: "The ethics line",
+        body: [
+          "A technique this strong deserves its boundary stated plainly. Geolocating public scenes — a landmark, a news event, a landscape — is research. Geolocating a private person to expose where they live is not, and tools that respect the line build it into the product: WorldEye's tool enforces a 250-meter privacy floor, so results describe an area, never a doorstep. Learn the funnel. Use it on the world's stages, not on its people.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Can you find where a photo was taken without GPS data?",
+        a: "Often, yes. Shadows reveal sun angle, time, and latitude; signs reveal script and language; plates, driving side, and street furniture reveal the country; vegetation and architecture reveal the climate and region; and a matched ridgeline or landmark can confirm the exact spot.",
+      },
+      {
+        q: "What is the first thing to check in a photo?",
+        a: "The file itself: EXIF metadata may carry coordinates or at least the camera and timestamp. When metadata is stripped — as social platforms usually do — start with the fastest scene clues: script on signs, license plates, and which side of the road traffic uses.",
+      },
+      {
+        q: "How accurate can photo geolocation get?",
+        a: "With a unique landmark matched against satellite or street-level imagery, analysts can sometimes fix the camera's position to a specific street. Honest tools report an uncertainty area rather than a fake pinpoint — WorldEye's tool never reports finer than a 250 m radius.",
+      },
+    ],
+  },
+  {
+    slug: "watching-home-from-5000-miles-away",
+    title: "Watching Home From 5,000 Miles Away",
+    seoTitle: "Watching Home From Far Away | WorldEye Blog",
+    date: "2026-11-02",
+    excerpt:
+      "Somewhere tonight, someone is watching rain fall on a street they grew up on, from a phone on another continent. Live cameras have quietly become the expat's window home — here's how people actually use them.",
+    seoDescription:
+      "Live cameras across 109 countries have become the long-distance window home: hometown squares, harbors, and home weather, watched from 5,000 miles away.",
+    tags: ["cameras", "travel", "live"],
+    sections: [
+      {
+        heading: "The homesick hour",
+        body: [
+          "It usually happens at a specific time: late evening where you live now, which is morning where you're from. The new city's day is done, the old city's day is starting, and for a few minutes the distance collapses to the width of a phone screen. A tram crosses the square. The harbor is doing its morning shuffle. Somebody's grandfather is buying bread in weather you can read at a glance, because you read that sky for twenty years.",
+          "This is one of the quiet, unplanned uses of the live camera age. The cameras were installed for traffic, weather, tourism, security — nobody strung up a planet-wide network so emigrants could check on home. But with 74,229 public cameras across 109 countries, that's what the network also became: a window that opens both ways across every ocean.",
+        ],
+      },
+      {
+        heading: "A page for almost everywhere",
+        body: [
+          "WorldEye's [country pages](/countries) are the directory of that window: 109 countries with public cameras, each opening onto city and place pages beneath it. The big camera countries offer hundreds of doorways — whole regions of harbors, slopes, squares, and highways. Smaller countries may sit on regional hubs rather than a dedicated page of their own, which is the honest shape of the public camera world: coverage follows where cameras happen to be public, not where longing happens to point.",
+          "What matters is the habit the directory makes possible. Home stops being a search problem. It's a bookmark: your town's page, your harbor's camera, open in two taps whenever the hour comes around.",
+        ],
+      },
+      {
+        heading: "What people actually watch",
+        body: [
+          "Not the landmarks, mostly. The Eiffel-class cameras are for tourists. The homesick watch the ordinary: the square where the market sets up, the bridge on the old commute, the beach that means summer, the main street at the hour the shops open. Ordinary is the point — a landmark could be a postcard, but the 7 a.m. bus crossing a wet intersection in November is unmistakably, specifically home.",
+          "Weather is the second window. Checking the camera instead of the forecast tells you what home's weather feels like — snow actually sticking, the sea actually rough, the first genuinely spring morning arriving in real time. Expat group chats run on these screenshots: it's snowing at home. It started ten minutes ago. Look.",
+        ],
+      },
+      {
+        heading: "Time zones, working for you",
+        body: [
+          "Distance used to mean delay: letters, then expensive calls at agreed hours. Live cameras invert the problem — because home is hours ahead or behind, its day is always in progress at some point in yours. The 5,000-mile window has a showing at breakfast, at lunch, at the homesick hour. And unlike a call, it asks nothing of anyone back home. Nobody has to be awake, available, or performing. The town just goes about its morning, unaware it's being kept company.",
+          "That one-sidedness is the tenderness and the limit of it. A camera shows the place, not the people — your street, not your family's kitchen, and that's as it should be: these are public cameras on public places. What they offer the far-away is continuity. Home is still there, still raining on schedule, still lit at dusk. Watching it doesn't close the distance. It makes the distance bearable, one ordinary morning at a time.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "How many countries have live cameras on WorldEye?",
+        a: "109 countries, per the country directory at worldeye.app/countries — part of a network of 74,229 public cameras. Larger countries have many city and place pages; the smallest sit on regional hubs.",
+      },
+      {
+        q: "Can I watch my hometown's cameras from another country?",
+        a: "If public cameras cover it, yes — open the country page, then the city or place page, and the live feeds are there. Coverage follows where cameras are public, so major cities and tourist areas are deepest; some small towns have a single camera or none.",
+      },
+      {
+        q: "Are these private cameras?",
+        a: "No. Every feed is a public camera — traffic, weather, harbor, resort, and city cameras published for anyone to view. The network shows public places, never private homes or interiors.",
+      },
+    ],
+    sources: [
+      { name: "WorldEye country directory — 109 countries", url: "https://worldeye.app/countries" },
+    ],
+  },
+  {
     slug: "what-cameras-see-at-3am",
     title: "What 74,229 Cameras See at 3 A.M.",
     seoTitle: "What Live Cameras See at 3 A.M. | WorldEye Blog",
@@ -62,7 +188,7 @@ export const POSTS: BlogPost[] = [
         heading: "What's actually out there at 3 a.m.",
         body: [
           "Empty landmarks are the draw. Squares and boulevards that exist in a permanent crowd by day stand completely vacant, lit and immaculate, like a stage after the audience has gone. Mountain cameras show the other night industry: snowcats crawling up ski slopes with their lights on, grooming tomorrow's corduroy in the dark — work that only happens when the mountain is closed and empty.",
-          "Animal hours are different hours, too. The cameras that overlook waterholes, feeders, and harbors see the visitors that daylight scares off. Night is when the shy half of the world clocks in.",
+          "Animal hours are different hours, too. The wildlife feeds in the catalogue — lodge cameras in Kenya's Tsavo East and the Masai Mara, reserve cameras around South Africa's Balule and Kruger country — see the visitors that daylight scares off. Night is when the shy half of the world clocks in.",
           "And on the right nights, the sky itself performs. [Aurora cameras](/blog/northern-lights-live-webcams) in high latitudes watch curtains of green light ripple over snowfields for hours — a show with no schedule that peaks, very often, in the small hours when almost nobody is awake to see it. Almost. The cameras are awake.",
         ],
       },
@@ -132,7 +258,7 @@ export const POSTS: BlogPost[] = [
         heading: "The stick, the camera, and your powder day",
         body: [
           "This is why snow stake cams have become the powder morning ritual: coffee, stake check, decision. Is it a sick-day day? The stick knows before the report writers wake up.",
-          "WorldEye's [ski webcams](/ski-webcams) gather resort cameras — stakes included where resorts run them — into one place, so the morning check takes seconds across every mountain you're considering. And for skiers who want the watching to work for them, Powder Pass ($4.99/month, with a 10-day free trial) exists for exactly this season-long habit of snow watching.",
+          "WorldEye's [ski webcams](/ski-webcams) gather resort cameras — stakes included where resorts run them — into one place, so the morning check takes seconds across every mountain you're considering. And for skiers who want the watching to work for them, [Powder Pass](/powder-pass) ($4.99/month, with a 10-day free trial) exists for exactly this season-long habit of snow watching.",
           "Reports will keep being written by humans with hopes. The stick will keep just standing there, painted in inches, telling the truth to anyone who looks.",
         ],
       },
