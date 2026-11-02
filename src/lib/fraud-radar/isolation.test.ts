@@ -855,3 +855,14 @@ describe("§14.3 isolation — Phase 10 geo explorer (P10-C)", () => {
     expect(flagSrc).not.toContain("/fraud-radar/graph");
   });
 });
+
+describe("§14.3 isolation — Phase 10 contracts Network section (P10-B2 completion)", () => {
+  it("the contracts vendor profile wires the shared Network section", () => {
+    const src = readFileSync(
+      path.join(SRC, "app/(en)/fraud-radar/contracts/vendors/[uei]/page.tsx"),
+      "utf8",
+    );
+    expect(src).toContain("ProfileNetworkSection");
+    expect(src).toContain('engine: "contracts"');
+  });
+});
