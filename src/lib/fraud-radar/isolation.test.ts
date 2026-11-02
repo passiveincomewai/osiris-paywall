@@ -866,3 +866,25 @@ describe("§14.3 isolation — Phase 10 contracts Network section (P10-B2 comple
     expect(src).toContain('engine: "contracts"');
   });
 });
+
+describe("§14.3 isolation — Phase 10 graph explorer (P10-B1)", () => {
+  it("the graph page carries the flag gate and is never a public path", () => {
+    const src = readFileSync(
+      path.join(SRC, "app/(en)/fraud-radar/graph/page.tsx"),
+      "utf8",
+    );
+    expect(src).toContain("fraudRadarEnabled()");
+    expect(src).toContain("notFound()");
+    const flagSrc = readFileSync(path.join(SRC, "lib/fraud-radar/flag.ts"), "utf8");
+    expect(flagSrc).not.toContain("/fraud-radar/graph");
+  });
+
+  it("the explorer canvas is dynamically loaded (Cytoscape stays off other pages)", () => {
+    const src = readFileSync(
+      path.join(SRC, "app/(en)/fraud-radar/graph/GraphExplorer.tsx"),
+      "utf8",
+    );
+    expect(src).toContain("dynamic(");
+    expect(src).toContain("ssr: false");
+  });
+});
