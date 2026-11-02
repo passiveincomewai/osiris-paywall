@@ -41,6 +41,133 @@ export type BlogPost = {
 
 export const POSTS: BlogPost[] = [
   {
+    slug: "satellites-passing-over-you-right-now",
+    title: "Thousands of Satellites Are Passing Over You Right Now",
+    seoTitle: "Satellites Overhead Right Now | WorldEye Blog",
+    date: "2026-11-02",
+    excerpt:
+      "At this second, thousands of working satellites are crossing the sky above you — most of them launched in the last few years. Here's what's up there, why you usually can't see it, and how to watch it live.",
+    seoDescription:
+      "Thousands of satellites pass over you every day. What they are, why you can't usually see them, and how to track them live on one free globe.",
+    tags: ["satellites", "space", "guide"],
+    sections: [
+      {
+        heading: "The sky got crowded while you weren't looking",
+        body: [
+          "Stand outside on a clear day and look up. You will see sky. What you won't see is the traffic: as of late September 2026, astronomer Jonathan McDowell's catalog counted 16,913 working satellites in orbit around Earth — and the public CelesTrak catalog listed 16,633 active satellites in early October. Two of every three are Starlink satellites: 11,149 of them, a single constellation bigger than everything humanity launched in its first six decades of spaceflight.",
+          "None of this announces itself. The satellites are small, the sky is bright, and most of them are hundreds of kilometers up. But they are there, in a shell that never stops moving — and for the first time in history, ordinary people can watch all of it live, for free, from a phone.",
+        ],
+      },
+      {
+        heading: "Why you can't see them (most of the time)",
+        body: [
+          "A satellite doesn't carry lights you can spot from the ground in daylight. What you see, when you see one at all, is sunlight bouncing off it. That geometry only works in the hour after sunset and the hour before sunrise: dark where you're standing, still sunlit a few hundred kilometers overhead. Then satellites appear as silent, steady, fast-moving points of light — no blinking, because blinking lights belong to aircraft.",
+          "The International Space Station is the exception that proves the rule. It is the brightest object up there, bright enough to see from a city center, and it crosses the whole sky in about five minutes. If you've ever spotted one bright \"star\" gliding smoothly overhead at dusk, you've already seen it.",
+        ],
+      },
+      {
+        heading: "Ninety minutes around the planet",
+        body: [
+          "The low-orbit shell — home to the ISS, Starlink, and most weather and imaging satellites — moves fast. Objects there circle the planet in roughly 90 to 120 minutes, which means a given satellite passes over your part of the world again and again, every day, on a path that shifts a little with each lap. Higher up, the navigation constellations that give your phone its position cruise in medium Earth orbit around 20,000 km up, and at 35,786 km above the equator sits the geostationary ring, where satellites orbit at exactly Earth's rotation speed and hang over one spot forever.",
+          "The result: at any given second, some part of that machinery is over your house. Not metaphorically — geometrically. The sky above you is a shipping lane.",
+        ],
+      },
+      {
+        heading: "How anyone can watch it live",
+        body: [
+          "Satellites don't broadcast their positions the way aircraft do. Instead, their orbits are published as data files called two-line elements (TLEs), maintained by public catalogs like CelesTrak. Feed a TLE and the current time into standard orbital math and you get the satellite's latitude, longitude, and altitude at this exact second. Do that continuously for the whole catalog and you have a living map of orbit.",
+          "That's exactly what [WorldEye's satellite tracker](/satellite-tracker) does — free, no signup. It computes live positions for thousands of satellites and draws them on a 3D globe alongside 74,229 public cameras and live flights: the ISS and its orbit path, Starlink trains in the days after a launch, weather satellites, GPS constellations. Filter to one family, follow one object, or fly the globe to your own location and see what's above you right now.",
+          "One honest caveat, stated on the tracker page itself: positions are computed from published orbital data, and that data ages. A satellite that has just maneuvered can sit a few kilometers from its drawn position until fresh elements are published. For watching the living sky, that's plenty.",
+        ],
+      },
+      {
+        heading: "Try this tonight",
+        body: [
+          "An hour after sunset, open the tracker, filter to stations, and find when the ISS path crosses your location. Then go outside a minute early and look in the direction it comes from. The brightest light in the sky will arrive on schedule — a football-field-sized station, crewed, doing seventeen thousand miles an hour, close enough to wave at.",
+          "Then remember: it was never alone up there. Thousands of others crossed your sky today. Now you can see them.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "How many satellites are in orbit right now?",
+        a: "Catalogs counted in autumn 2026 put working satellites at roughly 16,600–16,900: Jonathan McDowell's catalog listed 16,913 active satellites on 30 September 2026, and CelesTrak's active catalog listed 16,633 on 4 October 2026. Counts differ because each catalog judges \"active\" slightly differently, and the number grows every week.",
+      },
+      {
+        q: "Can I really see satellites with my own eyes?",
+        a: "Yes — in the hour after sunset or before sunrise, when satellites overhead are still sunlit while the ground is dark. The ISS is the easiest: the brightest object in the sky, crossing it in about five minutes. Fresh Starlink trains are the second-easiest catch in the weeks after a launch.",
+      },
+      {
+        q: "How does the WorldEye satellite tracker work?",
+        a: "It takes public orbital data (two-line elements, published by catalogs like CelesTrak), computes each satellite's current position with standard orbital math, and draws it on a live 3D globe. It's free with no signup at worldeye.app/satellite-tracker.",
+      },
+    ],
+    sources: [
+      { name: "Jonathan McDowell satellite catalog figures, via XR Tech Group summary (30 Sep 2026)", url: "https://xrtechgroup.com/how-many-satellites-in-orbit/" },
+      { name: "WorldEye live satellite tracker", url: "https://worldeye.app/satellite-tracker" },
+    ],
+  },
+  {
+    slug: "your-wifi-knows-when-someone-walks-in",
+    title: "Your WiFi Already Knows When Someone Walks Into the Room",
+    seoTitle: "Your WiFi Senses Motion | WorldEye Blog",
+    date: "2026-11-02",
+    excerpt:
+      "No camera, no sensor, nothing to install: the WiFi link your phone is already using wobbles when a body moves through it — and that wobble is readable. Here's how WiFi sensing works, and the honest line around what it can't do.",
+    seoDescription:
+      "WiFi signals wobble when someone moves through them. How browser-based WiFi sensing works, what it can honestly detect, and what it can't — free to try.",
+    tags: ["sensing", "wifi", "technology"],
+    sections: [
+      {
+        heading: "The signal in your room is not empty",
+        body: [
+          "Every WiFi signal in your home is on a journey: out of the router, off the walls, off the furniture, off you. Radio waves reflect and scatter around a room, and the signal that finally reaches your phone is the sum of all those bounces. Which means the signal carries an imprint of the room itself — and when something in the room moves, the imprint changes.",
+          "Stand up, walk across the room, sit back down: each movement rearranges the reflections, and the link between your device and the router gets measurably messier for a moment. That messiness — engineers would say jitter and signal disturbance — is information. Your WiFi already knows when someone walks into the room. It has known for years. Nobody was listening.",
+        ],
+      },
+      {
+        heading: "Three ways to listen, all free",
+        body: [
+          "WorldEye's [sensing page](/sensing) turns that effect into a live room readout — presence, stillness, movement, strong activity — running entirely on your own device, with nothing to install and nothing simulated. It works three ways.",
+          "WiFi Link mode runs on any device, including a phone. About three times a second, the page fetches an empty response from WorldEye and times the round trip. The first hop of that trip is your own WiFi link, so movement that disturbs the link — carrying the device, a person moving close to it, motion between the device and the router — shows up as timing jitter. The timings pass through a calibrated pipeline (despiking, a detrended baseline, windowed jitter energy, a state machine) and come out as a link state: quiet, unsettled, disturbance, active disturbance.",
+          "Camera mode is the direct version: with your permission, your device compares consecutive camera frames at very low resolution (96×72) a few times a second and reads the frame-difference energy. Frames are processed in your browser and are never uploaded, recorded, or stored.",
+          "RavenScope mode is the optional desktop extra: a free, open-source program watches the signal strength (RSSI) of the WiFi networks your computer can hear, and the page becomes its display — a room state of empty, still, motion, or active, with a coarse sector and an anomaly score. The sensing and the data never leave your machine.",
+        ],
+      },
+      {
+        heading: "The honest limits — read this part twice",
+        body: [
+          "Sensing hype outruns physics fast, so here is the line, exactly as the sensing page itself states it. These modes sense motion and disturbance, not people. A person sitting perfectly still looks like a still scene to the camera and barely stirs a WiFi link. These modes cannot count people. They cannot measure breathing, heart rate, sleep, or falls — that takes dedicated WiFi CSI hardware, a sensing node built for the job. And this is an experimental demonstration, not a security device and not a medical device.",
+          "What it can honestly do is narrower and, arguably, more interesting: tell you that something in the room changed. Something moved. The link is unsettled. For a free page running on the phone already in your hand, that is a genuinely strange and delightful thing to watch happen in real time.",
+        ],
+      },
+      {
+        heading: "Why this matters beyond the trick",
+        body: [
+          "WiFi sensing is a real research field — the RuView project and dedicated CSI hardware push it toward the vitals-and-falls territory that ordinary links honestly can't reach, and WorldEye's sensing display is built feed-agnostic so richer feeds plug into the same readouts as they arrive. Today's three modes are the honest floor of the field: physics you can verify yourself, in your own room, in the next sixty seconds.",
+          "Open the sensing page, set your phone down, and walk out of the room. Then walk back in — and watch your own WiFi notice.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "How can WiFi detect motion without a camera?",
+        a: "WiFi signals bounce off walls, furniture, and people. When a body moves through the signal, the reflections change and the link's timing and strength wobble. Measuring that wobble — round-trip timing jitter on your own link, or signal-strength changes — reveals motion in the room.",
+      },
+      {
+        q: "What can WorldEye's sensing page actually detect?",
+        a: "Presence-style states: quiet/still versus movement and strong activity, on your own device and your own WiFi link. It has three modes — WiFi Link timing, on-device camera frame difference, and RavenScope RSSI on a computer. It is free and runs on-device.",
+      },
+      {
+        q: "Can WiFi sensing count people or measure heart rate?",
+        a: "No — not at this tier. Counting people and measuring breathing, heart rate, sleep, or falls requires dedicated WiFi CSI hardware. Anyone claiming a normal WiFi link or phone browser can do those things is overselling the physics.",
+      },
+    ],
+    sources: [
+      { name: "WorldEye sensing page — modes and stated limits", url: "https://worldeye.app/sensing" },
+    ],
+  },
+  {
     slug: "cyclone-murasu-severe-landfall-andhra-pradesh",
     title: "Severe Cyclone Murasu Heads for Landfall Near Ongole Tonight, a Week After Arnab",
     seoTitle: "Cyclone Murasu Landfall Tonight | WorldEye Blog",
