@@ -3027,3 +3027,71 @@ model SharedCollectionItem {
   @@unique([collectionId, cameraId])
   @@index([collectionId, position])
 }
+
+// ── Fraud Radar Phase 10: graphs + geo Neon grain ─────────────────
+// Summary grain ONLY (PHASE10 §6.6): one graph row per composite
+// vintage, geo state cells + per-layer national summaries mirroring
+// geo-neon.json 1:1. No per-entity or per-edge rows in Neon, ever
+// (§3.2) — extracts live in the versioned artifacts. Candidate
+// edges are counted separately and carry the measured linkage
+// rates from the pipeline manifest — never recomputed in the app,
+// never merged into the published-edge totals (§2.3). Geo withheld
+// small cells carry NULL value/entity counts with attributionState
+// "withheld_small_cell" — absence, never zero (§5.3).
+
+model FrGraphYearlySummary {
+  id                           String   @id @default(cuid())
+  datasetVersion               String   @unique // composite graph vintage
+  graphCatalogVersion          String
+  entitiesTotal                BigInt
+  entitiesUei                  Int
+  entitiesEin                  Int
+  entitiesNpi                  Int
+  nodesTotal                   BigInt
+  edgesExcludingCandidates     BigInt
+  candidateEdges               BigInt
+  annotations                  BigInt
+  truncations                  BigInt
+  candidateMatchRatePct        Decimal? @db.Decimal(10, 4)
+  candidateAsDesignedRatePct   Decimal? @db.Decimal(10, 4)
+
+  createdAt                    DateTime @default(now())
+
+  @@index([datasetVersion])
+}
+
+model FrGeoStateSummary {
+  id               String   @id @default(cuid())
+  datasetVersion   String
+  engine           String
+  layer            String
+  geographyField   String
+  stateCode        String
+  stateName        String
+  attributionState String   // attributed | no_published_records | withheld_small_cell
+  entityCount      Int?
+  awardCount       BigInt?
+  value            Decimal? @db.Decimal(24, 2)
+  values           Json
+
+  createdAt        DateTime @default(now())
+
+  @@unique([datasetVersion, engine, layer, stateCode])
+  @@index([datasetVersion, engine, layer])
+}
+
+model FrGeoYearlySummary {
+  id                String   @id @default(cuid())
+  datasetVersion    String
+  engine            String
+  layer             String
+  geographyField    String
+  national          Json
+  unknown           Json
+  coverageStatement String
+
+  createdAt         DateTime @default(now())
+
+  @@unique([datasetVersion, engine, layer])
+  @@index([datasetVersion])
+}

@@ -781,3 +781,35 @@ describe("§14.3 isolation — Phase 5 contracts routes carry the flag gate", ()
     expect(src).not.toContain("candidate-queue");
   });
 });
+
+describe("§14.3 isolation — Phase 10 graph/geo routes + firewall (P10-A)", () => {
+  const p10Files = [
+    "app/api/fraud-radar/graph/ego/route.ts",
+    "app/api/fraud-radar/graph/search/route.ts",
+    "app/api/fraud-radar/geo/states/route.ts",
+    "app/api/fraud-radar/geo/counties/route.ts",
+  ];
+
+  it("every Phase 10 API route carries the flag gate", () => {
+    for (const rel of p10Files) {
+      const src = readFileSync(path.join(SRC, rel), "utf8");
+      expect(src, rel).toContain("fraudRadarEnabled()");
+    }
+  });
+
+  it("graph and geo are not public paths yet (geo joins only in P10-C; graph never)", () => {
+    const flagSrc = readFileSync(path.join(SRC, "lib/fraud-radar/flag.ts"), "utf8");
+    expect(flagSrc).not.toContain("/fraud-radar/graph");
+  });
+
+  it("Phase 10 data modules read no case data (§7.1 firewall, summary pin)", () => {
+    for (const rel of [
+      "lib/fraud-radar/graphs-data.ts",
+      "lib/fraud-radar/geo-data.ts",
+    ]) {
+      const src = readFileSync(path.join(SRC, rel), "utf8");
+      expect(src, rel).not.toContain("FrCase");
+      expect(src, rel).not.toContain("BLOB_READ_WRITE_TOKEN");
+    }
+  });
+});
