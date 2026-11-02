@@ -54,6 +54,9 @@ interface SubscriptionFacts {
  *     price is 'free'-equivalent in this old contract — Lite's alert
  *     cap is 0 in the central config, and Lite must not leak Pro
  *     benefits through old consumers (nobody can hold Lite yet).
+ *   - standalone products (ambient/ski) are 'free' (2026-11-01,
+ *     master repair): they carry no tier in the central config, so
+ *     a standalone subscription alone grants no alert rules.
  */
 export function tierFromSubscription(
   sub: SubscriptionFacts | null | undefined,
@@ -73,8 +76,14 @@ export function tierFromSubscription(
   if (resolution.tier === "pro") {
     return legacyVipFor(resolution, sub.createdAt) ? "vip" : "pro";
   }
-  // Standalone products (ambient/ski) and unknown paying prices keep
-  // this adapter's historical default: a live payer is Pro.
+  // Standalone products (ambient/ski) carry no tier in the central
+  // config (plans.ts tier: null) and the session contract never
+  // resolves them to pro/vip — so they are 'free' here too (alert
+  // cap 0). Fixed 2026-11-01 (master repair): previously a live
+  // standalone payer defaulted to 'pro' and received 2 alert rules
+  // no plan sells them. Unknown paying prices keep the historical
+  // default below: a live payer is Pro.
+  if (resolution.standalone) return "free";
   return "pro";
 }
 

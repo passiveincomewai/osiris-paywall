@@ -48,6 +48,20 @@ describe("tierFromSubscription — annual is VIP", () => {
     // A comp row carries no Stripe price the env knows — still Pro, never VIP.
     expect(tierFromSubscription(sub({ stripePriceId: "comp-internal" }), env, now)).toBe("pro");
   });
+  it("standalone products (ambient/ski) are free — no tier, no alert rules", () => {
+    // The Ambient fallback price id from the central config's legacy
+    // table; it resolves standalone regardless of env configuration.
+    expect(
+      tierFromSubscription(sub({ stripePriceId: "price_1UUxUnGfHuTnzrlHH0pNYhJU" }), env, now),
+    ).toBe("free");
+    expect(
+      tierFromSubscription(
+        sub({ status: "trialing", stripePriceId: "price_1UUxUnGfHuTnzrlHH0pNYhJU" }),
+        env,
+        now,
+      ),
+    ).toBe("free");
+  });
   it("the annual price is vip — paid or trialing", () => {
     expect(tierFromSubscription(sub({ stripePriceId: "price_annual" }), env, now)).toBe("vip");
     expect(tierFromSubscription(sub({ status: "trialing", stripePriceId: "price_annual" }), env, now)).toBe("vip");
