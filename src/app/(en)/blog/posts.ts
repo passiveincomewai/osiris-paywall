@@ -439,7 +439,7 @@ export const POSTS: BlogPost[] = [
     faqs: [
       {
         q: "What can you see on live cameras at night?",
-        a: "A different world: empty landmark squares, floodlit harbors and airports still working, snowcats grooming ski slopes in the dark, nocturnal wildlife at waterhole and feeder cameras, and — on active nights — the aurora over high-latitude camera networks.",
+        a: "A different world: empty landmark squares, floodlit harbors and airports still working, snowcats grooming ski slopes in the dark, nocturnal wildlife on the reserve and lodge feeds, and — on active nights — the aurora over high-latitude camera networks.",
       },
       {
         q: "Is it always night somewhere on the camera network?",
