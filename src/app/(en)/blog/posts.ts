@@ -41,6 +41,120 @@ export type BlogPost = {
 
 export const POSTS: BlogPost[] = [
   {
+    slug: "the-sun-is-at-its-most-active-in-20-years",
+    title: "The Sun Is at Its Most Active in ~20 Years — and the Sky Is Showing It",
+    seoTitle: "Solar Maximum: The Sun at Its Most Active | WorldEye Blog",
+    date: "2026-11-02",
+    excerpt:
+      "Solar Cycle 25 was forecast to be a whimper. Instead it peaked about 40% stronger than predicted, threw the first G5 geomagnetic storm since 2003, and is still — past its peak — lighting up skies that rarely see the aurora. The Sun is having a moment, and cameras are catching it.",
+    seoDescription:
+      "Solar Cycle 25 beat its forecast by ~40%, peaked in Oct 2024 and produced the first G5 storm since 2003. Why the sky keeps showing it — and how to watch.",
+    tags: ["space", "aurora", "science"],
+    sections: [
+      {
+        heading: "The Sun beat its forecast",
+        body: [
+          "In December 2019, as Solar Cycle 25 began, the official prediction panel called for a weak cycle — a peak sunspot number near 115, arriving around July 2025, roughly a repeat of the feeble Cycle 24 before it. The Sun had other plans. Activity climbed faster than forecast from 2022 onward, and the smoothed sunspot number peaked at about 161 in October 2024 — some 40% higher than predicted, and nine months early. In October 2024, NASA and NOAA announced the Sun had reached its solar maximum period.",
+          "That makes the current era the most solar-active in about twenty years: Cycle 24 was the weakest in a century, and you have to go back to Cycle 23 — the cycle of the 2003 Halloween storms — to find the Sun this lively. Forecasts of the Sun, it turns out, are like forecasts of anything wild: the honest ones come with wide error bars, and this cycle landed outside them on the strong side.",
+        ],
+      },
+      {
+        heading: "What maximum actually means",
+        body: [
+          "The Sun's magnetic activity rises and falls on an approximately 11-year cycle. At maximum, sunspots multiply, solar flares and coronal mass ejections — billion-ton clouds of charged particles flung into space — become frequent, and when those clouds arrive at Earth, geomagnetic storms shake the magnetosphere. Most effects are invisible. Some are not: power grids and satellites feel the storms, radio and GPS can degrade — and the aurora, Earth's light show, pushes far beyond its usual polar home.",
+          "The night that announced this cycle to the whole world came in May 2024, when a train of eruptions drove a geomagnetic storm to G5 — the top of NOAA's scale — for the first time since 2003. People photographed the aurora from the southern United States and northern India, latitudes where it essentially never appears. That night was not an anomaly. It was the cycle introducing itself.",
+        ],
+      },
+      {
+        heading: "Past peak is not the same as over",
+        body: [
+          "Here is the part the headlines missed: a maximum is only official in hindsight. The peak is defined on a 13-month smoothed number, so by the time scientists can point at it, the Sun has moved on — Cycle 25's smoothed peak was October 2024, and activity has been gradually declining since. But NOAA's Space Weather Prediction Center made the point explicitly in its May 2026 update: some of the biggest solar storms in history happened a year, two years, even three years into a cycle's decline. The Halloween superstorms of 2003 arrived two and a half years after Cycle 23's peak.",
+          "In other words, we are living in the long, dangerous, beautiful tail of the strongest solar maximum in two decades — the phase where the Sun is quieter on average but still fully capable of its largest single punches, and where coronal holes add their own recurring aurora-driving streams. The show is not over. By the historical pattern, some of its best nights may still be ahead.",
+        ],
+      },
+      {
+        heading: "How to watch the fallout",
+        body: [
+          "You don't need the Sun to perform for a camera — you need it to perform for the sky, and then be watching when it does. Aurora watching is a forecast game: geomagnetic activity is indexed by the Kp number, and how much Kp you need depends on latitude. Under the auroral oval itself, a modest Kp 2–3 can be enough; a Kp 5 storm (a G1 event) pulls the lights much further from the poles. The season at high latitudes runs roughly September to March, with the hours around 10 p.m. to 2 a.m. local the classic window.",
+          "WorldEye's [aurora webcams](/aurora-webcams) pair the live Kp readout with camera walls across the aurora zones — the catalogue carries hundreds of cameras in each of Finland (825), Iceland (482), Norway (746), and Sweden (1,569) — so on an active night you can watch the sky light up in several countries at once, and the [northern lights webcams guide](/blog/northern-lights-live-webcams) explains the chasing in depth. The Sun is at its most active in twenty years. The sky is showing it. All you have to do is look when it does.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Is the Sun at solar maximum right now?",
+        a: "Cycle 25's smoothed sunspot number peaked at about 161 in October 2024 — roughly 40% above the forecast of ~115 — and NASA/NOAA declared the solar maximum period in October 2024. Activity is now gradually declining, but NOAA notes it remains elevated, and major storms can occur years into the decline.",
+      },
+      {
+        q: "When was the last time the Sun was this active?",
+        a: "The previous cycle, Cycle 24, was the weakest in about a century (peak ~116). The May 2024 storm reached G5, the highest category, for the first time since the Halloween storms of 2003 — the last time solar activity was broadly comparable.",
+      },
+      {
+        q: "Can I watch the aurora caused by solar activity on a live camera?",
+        a: "Yes. Aurora webcams across Finland, Iceland, Norway, Sweden, Alaska, and Canada stream the northern lights live, and WorldEye's aurora pages pair them with the live Kp geomagnetic index so you can check whether the night is active before you watch.",
+      },
+    ],
+    sources: [
+      { name: "NOAA SWPC — Solar Cycle 25 update (May 2026): peak in late 2024, storms possible in decline", url: "https://watchers.news/epicenter/biggest-solar-storms-can-occur-years-after-solar-maximum/" },
+      { name: "SILSO/NOAA sunspot record — Cycle 25 smoothed peak 160.9, Oct 2024", url: "https://lumara-space.app/solar-cycle-25.html" },
+    ],
+  },
+  {
+    slug: "watch-the-weather-arrive",
+    title: "Watch the Weather Arrive: Storm Fronts Crossing Live Cameras",
+    seoTitle: "Watch Storm Fronts Arrive on Live Cameras | WorldEye Blog",
+    date: "2026-11-02",
+    excerpt:
+      "A cold front is a line drawn across a continent — and with cameras strung along its path, you can watch it arrive town by town: the flags snapping round, the rain curtain crossing the harbor, the light going strange. A field guide to front-watching.",
+    seoDescription:
+      "Storm fronts cross whole continents on a schedule radar predicts — and live cameras let you watch the arrival, town by town. How front-watching works.",
+    tags: ["weather", "storms", "cameras"],
+    sections: [
+      {
+        heading: "A front is a line you can watch move",
+        body: [
+          "Weather maps draw fronts as bold lines with triangles and semicircles, and it is easy to forget those lines are literal. A cold front is the leading edge of a mass of colder air, bulldozing under the warm air in front of it — a real boundary, sometimes only a few kilometers wide, that crosses a town in minutes. On one side: the old air, calm and hazy. On the other: wind shifted, temperature falling, sky reorganized. The line passes. Everything changes.",
+          "Radar shows the line's position. But radar is an abstraction — colored pixels from a scanning beam. A camera on the ground shows the arrival itself: the moment the boundary crosses a harbor, a ridge, a main street. And because the front keeps moving after it leaves that town, the show repeats at the next camera down the line, and the next. String the cameras together and you can follow a front across a state the way you'd follow a train across stations.",
+        ],
+      },
+      {
+        heading: "Camera-hopping the line",
+        body: [
+          "The technique is simple. Take the forecast timing for the front's passage along a highway corridor or a coastline, and pick cameras spaced along its path — a harbor cam first, a city cam an hour behind it, a mountain cam where the front climbs. Then watch them in sequence. The harbor feed goes first: flags snapping around to the new wind, whitecaps building, the rain arriving as a visible gray curtain sweeping the water. By the time the city camera's turn comes, you know the front's traveling speed to the minute — you measured it yourself, one arrival at a time.",
+          "This is the rare weather experience that is better remote than in person. Standing in one town, you get one passage. Working the camera line, you get the front's whole biography for the day: where it sharpened, where it stalled, where it arrived ahead of its forecast like it had somewhere to be.",
+        ],
+      },
+      {
+        heading: "What a front looks like on camera",
+        body: [
+          "Learn the tells. The sky ahead of a cold front often goes a luminous, wrong-looking pale as high cloud thickens; then the shelf of the front itself appears — a dark, rolling boundary cloud that visibly eats the horizon. On the camera, the arrival minute has a signature: trees and flags whip as the wind shifts to the new direction, loose rain arrives in a first slanting burst, and the light drops as if someone dimmed the scene. Behind the line, the world looks scrubbed — hard blue sky, racing small clouds, visibility suddenly enormous.",
+          "Warm fronts are the introverts of the pair: no drama, just a slow gray thickening, rain that starts undecided and stays for hours. Squall lines out-perform everything — a whole picket fence of thunderstorms arriving at once, the kind of passage where a camera's audio, if it has it, tells the story before the picture does.",
+        ],
+      },
+      {
+        heading: "Pair it with radar — and know the limits",
+        body: [
+          "Front-watching works best as a duet: radar (or WorldEye's [weather tracker](/weather-tracker), hurricane and tornado trackers) tells you where the line is and where it's going; the cameras tell you what its arrival actually looks like on the ground. Neither replaces the other, and neither is a forecast — cameras show the weather arriving, not the weather that's coming, and where WorldEye models or estimates conditions rather than measuring them, the pages say so.",
+          "Safety deserves one plain sentence: a front you can watch arriving on a camera is a front you are safely not standing in, and severe weather is for watching through exactly this kind of glass. Pick your line of cameras before the next big front crosses your state. The boundary will keep its appointment at every town on the route — and for once, you can be at all of them.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Can you really see a storm front arrive on a webcam?",
+        a: "Yes. A front's passage has visible signatures on a ground camera: a shelf cloud eating the horizon, flags and trees whipping as the wind shifts, a rain curtain sweeping in, and a sudden drop in light — followed by scrubbed, crystal-clear air behind the line.",
+      },
+      {
+        q: "How do you follow a front across multiple cameras?",
+        a: "Use the forecast timing to pick cameras spaced along the front's path — harbor, city, mountains — and watch them in sequence. Each arrival confirms the front's speed, so by the second or third camera you can predict the next passage to the minute.",
+      },
+      {
+        q: "Do live cameras replace weather radar?",
+        a: "No — they complement it. Radar and trackers show where the front is and where it's headed; cameras show what the arrival looks like on the ground. Cameras show weather arriving, not forecasts of weather to come.",
+      },
+    ],
+  },
+  {
     slug: "how-a-single-photo-gives-away-where-it-was-taken",
     title: "How a Single Photo Gives Away Where It Was Taken",
     seoTitle: "How a Photo Gives Away Its Location | WorldEye Blog",
