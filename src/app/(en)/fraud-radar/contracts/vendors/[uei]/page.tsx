@@ -14,6 +14,7 @@ import {
 import { getGrantRecipientProfile } from "@/lib/fraud-radar/grants-data";
 import { formatCount, formatUsd } from "@/lib/fraud-radar/healthcare-data";
 import { ResearchLeadNotice, NotPublishedYet } from "@/components/fraud-radar/Provenance";
+import { ResearchSignalsSection } from "@/components/fraud-radar/ResearchSignals";
 import PinToCase from "@/components/fraud-radar/PinToCase";
 import { ProfileNetworkSection } from "@/components/fraud-radar/ProfileNetwork";
 
@@ -68,6 +69,18 @@ export default async function ContractVendorProfilePage({
   const profileNetwork = await ProfileNetworkSection({
     engine: "contracts",
     entityKey: profile.uei,
+  });
+  // Phase 6 (app tail, re-landed): the contracts research-signals
+  // section, awaited here so the page's element tree stays
+  // synchronously renderable (the B2 pattern). The contracts
+  // engine state is the labelled not-computed state until a
+  // contracts signals computation is published — never a count
+  // of zero.
+  const contractsSignals = await ResearchSignalsSection({
+    engine: "contracts",
+    entityKey: profile.uei,
+    heading: "Research signals — contracts rules",
+    note: "Contracts rules (C-01 to C-06) and the contracts-side screening records (S-02, X-MULTI-01) are defined in the Phase 6 design. Where the published signals vintage carries no contracts computation for this vendor, the section states so — a labelled not-computed state, never a count of zero.",
   });
   const id = profile.identity;
   const t = profile.totals;
@@ -256,6 +269,8 @@ export default async function ContractVendorProfilePage({
         )}
 
         {profileNetwork ? <div className="mt-10">{profileNetwork}</div> : null}
+
+        <div className="mt-10">{contractsSignals}</div>
 
         {meta && (
           <p className="mt-10 text-xs text-white/40">
