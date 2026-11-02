@@ -74,6 +74,7 @@ model User {
   discoveryDetail String?
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
+  sharedCollections SharedCollection[]
 }
 
 // ── Account settings expansion (2026-10-22) ─────────────────────────
@@ -2906,4 +2907,117 @@ model FrUsageLedger {
   @@index([userId, kind, createdAt])
   @@index([teamId, kind, createdAt])
   @@index([reversalOfId])
+}
+
+model DemoJob {
+  id          String     @id @default(cuid())
+  prompt      String     @db.Text
+  // Scene plan the worker executes: { template, steps: [...] } — written
+  // by the planner at creation; the queue response is self-describing.
+  plan        Json
+  style       String     @default("cinematic")
+  orientation String     @default("landscape")
+  // queued | claimed | recording | rendering | complete | failed
+  status      String     @default("queued")
+  progress    String?
+  error       String?    @db.Text
+  videoId     String?
+  video       DemoVideo? @relation(fields: [videoId], references: [id], onDelete: SetNull)
+  createdBy   String?
+  createdAt   DateTime   @default(now())
+  claimedAt   DateTime?
+  completedAt DateTime?
+
+  @@index([status, createdAt])
+}
+
+model DemoVideo {
+  id              String          @id @default(cuid())
+  title           String
+  description     String?         @db.Text
+  // Demonstrated feature tags, e.g. ["globe","search","cameras","flights"].
+  features        Json
+  prompt          String          @db.Text
+  style           String          @default("cinematic")
+  orientation     String          @default("landscape")
+  durationSec     Float?
+  // Vercel Blob URLs: edited master + original recording + poster frame.
+  videoUrl        String
+  rawUrl          String?
+  posterUrl       String?
+  // draft | approved — only approved videos can be placed or shared.
+  status          String          @default("draft")
+  affiliateShared Boolean         @default(false)
+  // Set by an admin when the site UI has changed enough that this demo
+  // may misrepresent it; drives the Regenerate flow. Never auto-set on
+  // a schedule — detection is advisory (Phase 5).
+  outdated        Boolean         @default(false)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  jobs            DemoJob[]
+  placements      DemoPlacement[]
+
+  @@index([status, createdAt])
+  @@index([affiliateShared, status])
+}
+
+model DemoPlacement {
+  id        String    @id @default(cuid())
+  videoId   String
+  video     DemoVideo @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  // Registry keys from lib/demo-studio/pages.ts (page + slot).
+  page      String
+  slot      String
+  active    Boolean   @default(true)
+  createdAt DateTime  @default(now())
+
+  @@unique([page, slot, videoId])
+  @@index([page, slot, active])
+}
+
+// ── Shareable camera collections (visitor feature, 2026-11-01) ─────
+// A signed-in visitor's themed, PUBLIC collection of catalogue
+// cameras ("Best Ski Cameras", "Tokyo Live Views"…). Distinct from
+// the enterprise CameraCollection above: that is the API/team feed
+// product; this one exists to be shared — a public page at
+// /collections/<slug> and an embed at /embed/collection/<slug> that
+// carries only rights-cleared cameras (lib/enterprise/rights).
+// Membership stores catalogue ids only; names, frames and rights
+// verdicts resolve at read time against the live catalogue, so a
+// camera that leaves the catalogue or loses clearance drops out of
+// the embed without any row changing.
+model SharedCollection {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  title       String
+  description String?
+  // Public, URL-safe, unique. Minted at create from the title plus a
+  // random suffix; never changes afterwards, so renames keep every
+  // shared link and embed alive.
+  slug        String   @unique
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  items       SharedCollectionItem[]
+
+  @@index([userId])
+}
+
+model SharedCollectionItem {
+  id           String   @id @default(cuid())
+  collectionId String
+  collection   SharedCollection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+
+  // Catalogue camera id (src/app/api/cctv records), validated against
+  // the catalogue before the row is written.
+  cameraId     String
+  // Owner-chosen order on the public page and in the embed.
+  position     Int
+  createdAt    DateTime @default(now())
+
+  @@unique([collectionId, cameraId])
+  @@index([collectionId, position])
 }
