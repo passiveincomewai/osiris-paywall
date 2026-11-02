@@ -119,29 +119,49 @@ export async function recordPlan({ appUrl, plan, orientation = "landscape", vide
     async searchPlace(step) {
       await dismissOverlays();
       const pick = step.pick ?? step.query;
-      await page.evaluate(() => document.querySelector('[data-search-toggle="true"]')?.click());
-      // The merged Search & Route panel may open in Route mode; the
-      // SearchBar input can take a long while to mount through the
-      // proxied connection — wait for it, switching panel tabs if a
-      // Search tab is what reveals it.
-      const inputReady = await page.waitForFunction(
-        () => !!document.querySelector('input[placeholder*="Search places"]'),
-        { timeout: 45000 },
-      ).then(() => true).catch(() => false);
-      if (!inputReady) {
-        await page.evaluate(() => {
-          const tab = [...document.querySelectorAll("button")].find((b) => /^\s*Search\s*$/i.test(b.textContent) || /Search places/i.test(b.getAttribute("aria-label") || ""));
-          tab?.click();
-        });
-        await page.waitForFunction(
+      // Poll-click the toggle until the panel REALLY opens. On this VM
+      // the app hydrates very slowly under software-WebGL load
+      // (evaluate round-trips alone can take tens of seconds), so a
+      // single early click lands before React is listening and is
+      // silently lost — the v5 run died on exactly that. Only click
+      // while the panel reads closed, and give each click time to land.
+      const panelDeadline = Date.now() + 240000;
+      let inputReady = false;
+      while (Date.now() < panelDeadline && !inputReady) {
+        const st = await page.evaluate(() => ({
+          expanded: document.querySelector('[data-search-toggle="true"]')?.getAttribute("aria-expanded"),
+          input: !!document.querySelector('input[placeholder*="Search places"]'),
+        })).catch(() => ({ expanded: null, input: false }));
+        if (st.input) { inputReady = true; break; }
+        if (st.expanded !== "true") {
+          await page.evaluate(() => document.querySelector('[data-search-toggle="true"]')?.click()).catch(() => {});
+        }
+        inputReady = await page.waitForFunction(
           () => !!document.querySelector('input[placeholder*="Search places"]'),
-          { timeout: 60000 },
-        ).catch(() => { throw new Error("search input never appeared in the Search & Route panel"); });
+          { timeout: 20000 },
+        ).then(() => true).catch(() => false);
       }
+      if (!inputReady) throw new Error("search panel never opened (toggle unresponsive after 240s of poll-clicks)");
       // Focus via evaluate — locator calls wait for element "stability",
       // which this always-animating UI never reaches (30s timeouts).
-      await page.evaluate(() => document.querySelector('input[placeholder*="Search places"]')?.focus());
-      await page.keyboard.type(step.query, { delay: 70 });
+      // Type, then VERIFY the value stuck; retype if a stalled main
+      // thread dropped keystrokes.
+      let valueOk = false;
+      for (let attempt = 0; attempt < 3 && !valueOk; attempt++) {
+        await page.evaluate(() => document.querySelector('input[placeholder*="Search places"]')?.focus());
+        await page.waitForTimeout(300);
+        await page.keyboard.type(step.query, { delay: 80 });
+        await page.waitForTimeout(600);
+        valueOk = await page.evaluate((q) => document.querySelector('input[placeholder*="Search places"]')?.value === q, step.query).catch(() => false);
+        if (!valueOk) {
+          await page.evaluate(() => {
+            const i = document.querySelector('input[placeholder*="Search places"]');
+            if (i) { i.focus(); i.select?.(); }
+          }).catch(() => {});
+          await page.keyboard.press("Backspace").catch(() => {});
+        }
+      }
+      if (!valueOk) throw new Error("search input never held the query text after 3 typing attempts");
       // Results render only after the camera/place indexes answer —
       // through the worker's proxied connection that has taken minutes.
       const haveResults = await page.waitForFunction(
@@ -221,6 +241,16 @@ export async function recordPlan({ appUrl, plan, orientation = "landscape", vide
           return false;
         });
         if (!clickedCard) {
+          // A lingering full-screen loading video (pointer-events:auto)
+          // would swallow canvas mouse clicks — wait for it to leave
+          // the DOM before using the mouse strategy.
+          await page.waitForFunction(
+            () => ![...document.querySelectorAll("video")].some((v) => {
+              const r = v.getBoundingClientRect();
+              return r.width >= window.innerWidth * 0.9 && r.height >= window.innerHeight * 0.9;
+            }),
+            { timeout: 60000 },
+          ).catch(() => {});
           // Strategy B: click the map near centre — camera markers/clusters
           // live on the canvas; a cluster zooms, a marker opens.
           const { width, height } = viewport;
@@ -290,11 +320,21 @@ export async function recordPlan({ appUrl, plan, orientation = "landscape", vide
     async enableLayer(step) {
       await dismissOverlays();
       if (step.layer !== "flights") throw new Error(`enableLayer: unsupported layer "${step.layer}" in Phase 1 engine`);
-      await page.evaluate(() => {
-        const b = [...document.querySelectorAll("button")].find((x) => /LAYERS & STATS/i.test(x.textContent));
-        b?.click();
-      });
-      await page.waitForTimeout(1500);
+      // Same hydration lag as searchPlace: poll-click until the panel
+      // actually renders its AVIATION section.
+      let panelOpen = false;
+      for (let i = 0; i < 20 && !panelOpen; i++) {
+        await page.evaluate(() => {
+          const b = [...document.querySelectorAll("button")].find((x) => /LAYERS & STATS/i.test(x.textContent));
+          b?.click();
+        }).catch(() => {});
+        panelOpen = await page.waitForFunction(
+          () => /AVIATION/.test(document.body.innerText),
+          { timeout: 8000 },
+        ).then(() => true).catch(() => false);
+      }
+      if (!panelOpen) throw new Error("Layers & Stats panel never opened after 20 poll-clicks");
+      await page.waitForTimeout(1000);
       // AIR tab
       await page.evaluate(() => {
         const tab = [...document.querySelectorAll("button")].find((x) => (x.textContent || "").trim() === "AIR");
@@ -308,13 +348,17 @@ export async function recordPlan({ appUrl, plan, orientation = "landscape", vide
         return !!section;
       });
       await page.waitForTimeout(1000);
-      const toggled = await page.evaluate(() => {
-        const switches = [...document.querySelectorAll('[role="switch"], button[aria-checked], input[type="checkbox"]')];
-        const off = switches.find((s) => s.getAttribute("aria-checked") === "false" || (s.type === "checkbox" && !s.checked));
-        if (off) { off.click(); return "switched"; }
-        if (switches.length) return "already-on";
-        return "none-found";
-      });
+      let toggled = "none-found";
+      for (let i = 0; i < 10 && toggled === "none-found"; i++) {
+        toggled = await page.evaluate(() => {
+          const switches = [...document.querySelectorAll('[role="switch"], button[aria-checked], input[type="checkbox"]')];
+          const off = switches.find((s) => s.getAttribute("aria-checked") === "false" || (s.type === "checkbox" && !s.checked));
+          if (off) { off.click(); return "switched"; }
+          if (switches.length) return "already-on";
+          return "none-found";
+        }).catch(() => "none-found");
+        if (toggled === "none-found") await page.waitForTimeout(3000);
+      }
       log(`flights layer: section=${result} toggle=${toggled}`);
       if (toggled === "none-found") throw new Error("aviation toggle not found in Layers panel");
       await page.waitForTimeout(2500); // let aircraft render
