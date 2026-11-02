@@ -20,10 +20,10 @@ import {
  * Fraud Radar Phase 9 — one report (PHASE9 §5.2): detail +
  * version summaries, title/status edits (the author's own
  * work states — there is NO route that edits a version), and
- * hard deletion (versions + exports cascade; export Blob
- * objects do not exist until generation lands in P9-C).
- * Owner-only (§2.2): foreign and nonexistent reports are the
- * same 404.
+ * hard deletion (the service enumerates the version rows and
+ * sweeps their export Blob objects first, then versions +
+ * exports cascade — P9-C). Owner-only (§2.2): foreign and
+ * nonexistent reports are the same 404.
  */
 export const dynamic = "force-dynamic";
 

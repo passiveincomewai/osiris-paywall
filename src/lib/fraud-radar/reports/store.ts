@@ -150,10 +150,24 @@ export interface ReportStore {
     contentSha256: string;
   }): Promise<ReportExportRecord>;
   listExports(reportId: string, versionId: string): Promise<ReportExportRecord[]>;
+  /** One export through BOTH parents (report + version), so
+   *  a guessed export id under a foreign report/version fails
+   *  at every hop — the download route's only read. */
+  getExport(
+    reportId: string,
+    versionId: string,
+    exportId: string,
+  ): Promise<ReportExportRecord | null>;
 
   // Generation jobs (the §5.3 monthly ledger) — rows the
-  // P9-C worker claims; P9-A creates none, but the read the
-  // usage route reconciles against ships with the model.
+  // generate route creates (P9-C) and the pipeline worker
+  // claims; the usage route reconciles against the same rows.
+  createGenerationJob(data: {
+    versionId: string;
+    reportId: string;
+    ownerId: string;
+    formats: string[];
+  }): Promise<ReportGenerationJobRecord>;
   listGenerationJobs(reportId: string, versionId: string): Promise<ReportGenerationJobRecord[]>;
   countGenerationJobsInRange(ownerId: string, start: Date, end: Date): Promise<number>;
   sumExportBytesInRange(ownerId: string, start: Date, end: Date): Promise<bigint>;
@@ -325,6 +339,24 @@ export function createPrismaReportStore(): ReportStore {
         orderBy: { createdAt: "asc" },
       });
       return rows as ReportExportRecord[];
+    },
+    async getExport(reportId, versionId, exportId) {
+      const row = await db.frReportExport.findFirst({
+        where: { id: exportId, versionId, version: { reportId } },
+      });
+      return row ? (row as ReportExportRecord) : null;
+    },
+
+    async createGenerationJob(data) {
+      const row = await db.frReportGenerationJob.create({
+        data: {
+          versionId: data.versionId,
+          reportId: data.reportId,
+          ownerId: data.ownerId,
+          formats: data.formats as never,
+        },
+      });
+      return row as ReportGenerationJobRecord;
     },
     async listGenerationJobs(reportId, versionId) {
       const rows = await db.frReportGenerationJob.findMany({
@@ -524,6 +556,40 @@ export function createInMemoryReportStore(): ReportStore {
         }));
     },
 
+    async getExport(reportId, versionId, exportId) {
+      const row = exports_.get(exportId);
+      if (!row || row.versionId !== versionId || row.reportId !== reportId) {
+        return null;
+      }
+      return {
+        id: row.id,
+        versionId: row.versionId,
+        format: row.format,
+        blobPathname: row.blobPathname,
+        sizeBytes: row.sizeBytes,
+        sha256: row.sha256,
+        contentSha256: row.contentSha256,
+        createdAt: row.createdAt,
+      };
+    },
+
+    async createGenerationJob(data) {
+      const row: ReportGenerationJobRecord = {
+        id: nextId("job"),
+        versionId: data.versionId,
+        reportId: data.reportId,
+        ownerId: data.ownerId,
+        formats: clone(data.formats),
+        status: "queued",
+        attempts: 0,
+        error: null,
+        startedAt: null,
+        finishedAt: null,
+        createdAt: new Date(),
+      };
+      jobs.set(row.id, row);
+      return { ...row };
+    },
     async listGenerationJobs(reportId, versionId) {
       return [...jobs.values()]
         .filter((j) => j.reportId === reportId && j.versionId === versionId)

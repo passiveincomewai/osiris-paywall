@@ -16,12 +16,16 @@
  * module an authorised report row.
  *
  * Deletion (§5.2): hard delete; versions and export rows
- * cascade. Export Blob objects do not exist until generation
- * lands (P9-C) — that payload extends this delete with the
- * Blob sweep over the version rows it enumerates first, on
- * the Phase 8 §2.6 pattern; the store cascade here is the
- * complete P9-A semantics because no export bytes can exist
- * yet.
+ * cascade. Since generation landed (P9-C), the delete first
+ * enumerates the version rows and sweeps their Blob objects
+ * (export files + the stored document + preview + manifest)
+ * on the Phase 8 §2.6 pattern — enumerate BEFORE the cascade,
+ * because the cascade removes the rows the enumeration reads.
+ * The sweep is best-effort per object and never blocks the
+ * row deletion: report rows carry no deletion_pending state,
+ * and an undeleted object sits under the owner's private
+ * prefix, unreachable through any route once its rows are
+ * gone. The sweep outcome is returned, never hidden.
  */
 
 import type { CaseStore } from "../cases/store";
@@ -47,6 +51,7 @@ import {
   type ReportComposition,
 } from "./document";
 import { templateAllowed, type ReportEntitlements } from "./entitlements";
+import { deleteReportObjects, reportBlobPathname } from "./blob";
 import type {
   ReportRecord,
   ReportStore,
@@ -135,11 +140,61 @@ export async function updateReportForUser(
   return store.updateReport(args.reportRow.id, patch);
 }
 
+export interface ReportDeletionResult {
+  deleted: boolean;
+  /** Blob sweep outcome (§5.2): objects the sweep deleted and
+   *  objects it could not — reported, never hidden. */
+  blobObjectsDeleted: number;
+  blobObjectsFailed: number;
+}
+
 export async function deleteReportForUser(
   store: ReportStore,
   args: { reportRow: ReportRecord },
-): Promise<boolean> {
-  return store.deleteReport(args.reportRow.id);
+  deps?: {
+    sweepObjects?: (
+      pathnames: string[],
+    ) => Promise<{ deleted: string[]; failed: string[] }>;
+  },
+): Promise<ReportDeletionResult> {
+  const sweep = deps?.sweepObjects ?? deleteReportObjects;
+  const versions = await store.listVersions(args.reportRow.id);
+  const pathnames: string[] = [];
+  for (const version of versions) {
+    const exports_ = await store.listExports(args.reportRow.id, version.id);
+    for (const row of exports_) pathnames.push(row.blobPathname);
+    if (version.documentPathname) pathnames.push(version.documentPathname);
+    // The worker's fixed per-version file set (§5.2 storage
+    // layout): preview + manifest live beside the document
+    // whether or not a row names them.
+    pathnames.push(
+      reportBlobPathname(
+        args.reportRow.ownerId,
+        args.reportRow.id,
+        version.id,
+        "preview.html",
+      ),
+      reportBlobPathname(
+        args.reportRow.ownerId,
+        args.reportRow.id,
+        version.id,
+        "manifest.json",
+      ),
+    );
+  }
+  let blobObjectsDeleted = 0;
+  let blobObjectsFailed = 0;
+  if (pathnames.length > 0) {
+    try {
+      const outcome = await sweep(pathnames);
+      blobObjectsDeleted = outcome.deleted.length;
+      blobObjectsFailed = outcome.failed.length;
+    } catch {
+      blobObjectsFailed = pathnames.length;
+    }
+  }
+  const deleted = await store.deleteReport(args.reportRow.id);
+  return { deleted, blobObjectsDeleted, blobObjectsFailed };
 }
 
 // ---------------------------------------------------------------------------

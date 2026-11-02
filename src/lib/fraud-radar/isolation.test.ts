@@ -897,6 +897,10 @@ describe("§14.3 isolation — Phase 9 report domain + pins (P9-A)", () => {
     "app/api/fraud-radar/reports/[id]/versions/route.ts",
     "app/api/fraud-radar/reports/[id]/versions/[versionId]/route.ts",
     "app/api/fraud-radar/reports/[id]/draft/route.ts",
+    // P9-C: generate / preview / download.
+    "app/api/fraud-radar/reports/[id]/versions/[versionId]/generate/route.ts",
+    "app/api/fraud-radar/reports/[id]/versions/[versionId]/preview/route.ts",
+    "app/api/fraud-radar/reports/[id]/versions/[versionId]/exports/[exportId]/download/route.ts",
   ];
 
   it("every reports API route carries the flag gate", () => {
@@ -904,6 +908,19 @@ describe("§14.3 isolation — Phase 9 report domain + pins (P9-A)", () => {
       const src = readFileSync(path.join(SRC, rel), "utf8");
       expect(src, rel).toContain("fraudRadarEnabled()");
       expect(src, rel).toContain('dynamic = "force-dynamic"');
+    }
+  });
+
+  it("every Report Studio page carries the flag gate and stays noindex (P9-C)", () => {
+    for (const rel of [
+      "app/(en)/fraud-radar/reports/page.tsx",
+      "app/(en)/fraud-radar/reports/[id]/page.tsx",
+      "app/(en)/fraud-radar/reports/[id]/build/page.tsx",
+    ]) {
+      const src = readFileSync(path.join(SRC, rel), "utf8");
+      expect(src, rel).toContain("fraudRadarEnabled()");
+      expect(src, rel).toContain("notFound()");
+      expect(src, rel).toContain("index: false");
     }
   });
 
