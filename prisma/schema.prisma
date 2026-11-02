@@ -65,6 +65,7 @@ model User {
   ambientStreamKey AmbientStreamKey?
   frInvestigatorConversations FrInvestigatorConversation[]
   frCases FrCase[]
+  frReports FrReport[]
   fraudRadarSubscription FraudRadarSubscription?
   deletionRequestedAt DateTime?
   deletionScheduledFor DateTime?
@@ -2628,6 +2629,7 @@ model FrCase {
   notes       FrCaseNote[]
   claims      FrCaseClaim[]
   events      FrCaseEvent[]
+  reports     FrReport[]
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -2796,6 +2798,101 @@ model FrCaseEvent {
   createdAt DateTime @default(now())
 
   @@index([caseId, createdAt])
+}
+
+
+// exists in v1 (PHASE9 §0.7, blocker B-3).
+
+model FrReport {
+  id        String @id @default(cuid())
+  ownerId   String
+  owner     User   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  // Optional home case (templates B/F/G normally; A/C/D/E/H/I
+  // may be caseless)
+  caseId    String?
+  case      FrCase? @relation(fields: [caseId], references: [id], onDelete: Cascade)
+
+  templateId String            // "A"…"I" (registry key, PHASE9 §1.4)
+  title     String             // the author's title
+  // draft | ready | archived — work states, never findings
+  status    String @default("draft")
+
+  versions  FrReportVersion[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([ownerId, updatedAt])
+  @@index([caseId])
+}
+
+model FrReportVersion {
+  id        String @id @default(cuid())
+  reportId  String
+  report    FrReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  versionNo Int                // 1, 2, 3… per report
+  templateVersion String       // PHASE9 §1.4 — the exact template def used
+  generatorVersion String      // REPORT_GENERATOR_VERSION (PHASE9 §3.2)
+
+  // THE PIN SET (§2.1) + the author's section composition (§4):
+  // frozen at creation; never updated.
+  pinSet    Json
+  composition Json
+
+  // THE CANONICAL CONTENT (§2.4): the Report Document Model
+  // produced by the generator — stored in Blob beside the
+  // exports (large), hash + pointer here. Written ONCE by the
+  // generation job, together with the manifest + validation.
+  documentPathname String?
+  contentSha256    String?
+  manifest  Json?
+  // pass | pass_with_user_text_warnings | failed (§3.4)
+  validationVerdict String?
+  validationDetail  Json?
+
+  exports   FrReportExport[]
+  jobs      FrReportGenerationJob[]
+
+  createdById String
+  createdAt DateTime @default(now())
+
+  @@unique([reportId, versionNo])
+  @@index([reportId, createdAt])
+}
+
+model FrReportExport {
+  id         String @id @default(cuid())
+  versionId  String
+  version    FrReportVersion @relation(fields: [versionId], references: [id], onDelete: Cascade)
+  format     String            // pdf | docx | csv | json | zip
+  blobPathname String          // fraud-radar-reports/<ownerId>/<reportId>/<versionId>/<file>
+  sizeBytes  BigInt
+  sha256     String            // of the exported file bytes
+  contentSha256 String         // the document hash it was rendered from — must equal the version's
+  createdAt  DateTime @default(now())
+
+  @@index([versionId, format])
+}
+
+// GenerationJob shape (AUDIT §7; Phase 8 §1.4 precedent):
+model FrReportGenerationJob {
+  id         String @id @default(cuid())
+  versionId  String
+  version    FrReportVersion @relation(fields: [versionId], references: [id], onDelete: Cascade)
+  reportId   String            // denormalised for claim query + tenant checks
+  ownerId    String            // denormalised likewise
+  formats    Json              // requested formats ["pdf","zip",…]
+  // queued | processing | succeeded | failed
+  status     String @default("queued")
+  attempts   Int @default(0)
+  error      String?
+  startedAt  DateTime?
+  finishedAt DateTime?
+  createdAt  DateTime @default(now())
+
+  @@index([status, createdAt])
+  @@index([versionId])
 }
 
 // ── White Label demo generator (pick #9, 2026-11-01) ───────────────────

@@ -888,3 +888,75 @@ describe("§14.3 isolation — Phase 10 graph explorer (P10-B1)", () => {
     expect(src).toContain("ssr: false");
   });
 });
+
+describe("§14.3 isolation — Phase 9 report domain + pins (P9-A)", () => {
+  const reportRouteFiles = [
+    "app/api/fraud-radar/reports/route.ts",
+    "app/api/fraud-radar/reports/usage/route.ts",
+    "app/api/fraud-radar/reports/[id]/route.ts",
+    "app/api/fraud-radar/reports/[id]/versions/route.ts",
+    "app/api/fraud-radar/reports/[id]/versions/[versionId]/route.ts",
+    "app/api/fraud-radar/reports/[id]/draft/route.ts",
+  ];
+
+  it("every reports API route carries the flag gate", () => {
+    for (const rel of reportRouteFiles) {
+      const src = readFileSync(path.join(SRC, rel), "utf8");
+      expect(src, rel).toContain("fraudRadarEnabled()");
+      expect(src, rel).toContain('dynamic = "force-dynamic"');
+    }
+  });
+
+  it("reports are never public paths — flag.ts and the sitemap gain nothing (§5.1)", () => {
+    const flagSrc = readFileSync(path.join(SRC, "lib/fraud-radar/flag.ts"), "utf8");
+    expect(flagSrc).not.toContain("/fraud-radar/reports");
+    const sitemapSrc = readFileSync(path.join(SRC, "app/sitemap.ts"), "utf8");
+    expect(sitemapSrc).not.toContain("fraud-radar/reports");
+  });
+
+  it("the report store exposes no pinSet/composition mutation path (§2.3.1)", () => {
+    const storeSrc = readFileSync(
+      path.join(SRC, "lib/fraud-radar/reports/store.ts"),
+      "utf8",
+    );
+    // The Prisma version update names exactly the one-time
+    // generation fields, conditional on contentSha256 null —
+    // and no interface method updates a version otherwise.
+    expect(storeSrc).toContain("contentSha256: null");
+    expect(storeSrc).not.toMatch(
+      /updateVersion|updatePinSet|setPinSet|updateComposition/,
+    );
+    const reportsSrc = readFileSync(
+      path.join(SRC, "lib/fraud-radar/reports/reports.ts"),
+      "utf8",
+    );
+    expect(reportsSrc).not.toMatch(/updateVersion|updatePinSet/);
+  });
+
+  it("reports never write cases — no Phase 9 module calls a case mutation (§7.3.8 guard)", () => {
+    const reportsDir = path.join(SRC, "lib/fraud-radar/reports");
+    for (const name of readdirSync(reportsDir)) {
+      if (!name.endsWith(".ts") || name.endsWith(".test.ts")) continue;
+      const src = readFileSync(path.join(reportsDir, name), "utf8");
+      expect(src, name).not.toMatch(
+        /\.createCase\(|\.updateCase\(|\.deleteCase\(|\.createLead\(|\.updateLeadAnnotation\(|\.deleteLead\(|\.createEvidence\(|\.updateEvidence\(|\.deleteEvidence\(|\.createClaim\(|\.deleteClaim\(/,
+      );
+    }
+  });
+
+  it("no Phase 9 module offers a reviewed designation or a submission action (§0.6/§0.7)", () => {
+    const reportsDir = path.join(SRC, "lib/fraud-radar/reports");
+    for (const name of readdirSync(reportsDir)) {
+      if (!name.endsWith(".ts") || name.endsWith(".test.ts")) continue;
+      const src = readFileSync(path.join(reportsDir, name), "utf8");
+      // No reviewed-designation machinery may exist (the
+      // rendered-copy scan lives in templates.test.ts; this
+      // pins the code surface — no badge/flag/attestation
+      // identifiers anywhere in the domain).
+      expect(src, name).not.toMatch(
+        /reviewedBadge|isReviewed|markReviewed|attestation|certification|certifiedBadge/i,
+      );
+      expect(src, name).not.toMatch(/submitTip|fileTip|sendToAgency/i);
+    }
+  });
+});
