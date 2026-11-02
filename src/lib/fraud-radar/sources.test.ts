@@ -229,3 +229,34 @@ describe("FRAUD_RADAR_SOURCES — §5 registry seed", () => {
     expect(leie.completeness).toContain("84,093");
   });
 });
+
+describe("Phase 10 registry notes (P10-E) — derivations recorded on existing entries only", () => {
+  it("the six Phase 10 input entries carry the derivation note; no new source was added", () => {
+    for (const slug of [
+      "usaspending",
+      "fac",
+      "nppes",
+      "sam-entities",
+      "cms-medicare",
+      "medicaid-hcpcs",
+    ]) {
+      const entry = FRAUD_RADAR_SOURCES.find((s) => s.slug === slug);
+      expect(entry, slug).toBeTruthy();
+      expect(entry!.notes, slug).toContain("Phase 10 (2026-11-01)");
+    }
+    // No new source: the registry still carries exactly the ten
+    // pre-Phase-10 entries (count pinned against the live array).
+    expect(FRAUD_RADAR_SOURCES.map((s) => s.slug).sort()).toEqual([
+      "cms-medicare",
+      "fac",
+      "irs-990",
+      "leie",
+      "medicaid-hcpcs",
+      "nppes",
+      "sam-entities",
+      "sam-exclusions",
+      "sam-opportunities",
+      "usaspending",
+    ]);
+  });
+});
