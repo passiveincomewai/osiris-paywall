@@ -62,3 +62,23 @@ describe("/fraud-radar/contracts/vendors/[uei]", () => {
     });
   });
 });
+
+describe("/fraud-radar/contracts/vendors/[uei] — research signals (Phase 6 tail)", () => {
+  const SIGNALS = fileURLToPath(
+    new URL("../../../../../../lib/fraud-radar/__fixtures__/signals", import.meta.url),
+  );
+
+  it("renders the contracts section with its not-computed note; S-06 never surfaces", async () => {
+    vi.stubEnv("FRAUD_RADAR_ENABLED", "1");
+    vi.stubEnv("FRAUD_RADAR_SIGNALS_ARTIFACT_ROOT", SIGNALS);
+    const html = renderToString(await ContractVendorProfilePage(params("ABC123DEF456")));
+    expect(html).toContain("Research signals — contracts rules");
+    // The fixture vintage carries no contracts computation for
+    // this vendor: the section states the labelled not-computed
+    // position from the page's keying note — never a zero count.
+    expect(html).toContain("labelled not-computed state, never a count of zero");
+    // S-06 is confined to the admin queue and never renders on a
+    // public profile.
+    expect(html).not.toContain("S-06");
+  });
+});

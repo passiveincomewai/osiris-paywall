@@ -772,11 +772,18 @@ describe("§14.3 isolation — Phase 5 contracts routes carry the flag gate", ()
     }
   });
 
-  it("S-06 confinement holds for the contracts profile", () => {
+  it("S-06 confinement holds for the contracts profile (Phase 6 tail: signals section wired, B2 pattern)", () => {
     const src = readFileSync(
       path.join(SRC, "app/(en)/fraud-radar/contracts/vendors/[uei]/page.tsx"),
       "utf8",
     );
+    // Phase 6 app tail: the contracts research-signals section is
+    // wired exactly as in B2 — the shared section component, read
+    // with the contracts engine, pre-awaited in the page body.
+    expect(src).toContain("ResearchSignalsSection");
+    expect(src).toContain('engine: "contracts"');
+    // S-06 stays confined to the admin candidate queue: the
+    // profile never references the queue or its reader.
     expect(src).not.toContain("getAdminCandidateQueue");
     expect(src).not.toContain("candidate-queue");
   });
