@@ -41,6 +41,118 @@ export type BlogPost = {
 
 export const POSTS: BlogPost[] = [
   {
+    slug: "what-cameras-see-at-3am",
+    title: "What 74,229 Cameras See at 3 A.M.",
+    seoTitle: "What Live Cameras See at 3 A.M. | WorldEye Blog",
+    date: "2026-11-02",
+    excerpt:
+      "Half the planet is asleep and the cameras don't care. At 3 a.m. the live globe turns into something else entirely: empty capitals, night-shift harbors, snowcats on dark slopes — and, on the right nights, the aurora doing whatever it wants.",
+    seoDescription:
+      "At 3 a.m., 74,229 live cameras watch an emptied world: quiet capitals, working harbors, groomers on dark slopes and aurora skies. A tour of the night shift.",
+    tags: ["cameras", "night", "live"],
+    sections: [
+      {
+        heading: "The world has a night shift, and it's all on camera",
+        body: [
+          "Every live camera network has two personalities. By day it's traffic and weather and crowds. But roll the globe to wherever it's 3 a.m. and the feed changes character completely. The same 74,229 public cameras that watch rush hour now watch the world with nobody in it — and it is quietly mesmerizing.",
+          "This is the hour the planet tidies itself. Street sweepers make their rounds in empty capitals. Harbors keep working under floodlights, because ships don't sleep. Airports go still in a way they never are at 3 p.m. — a parked fleet, a single service vehicle crossing a vast apron, the whole machine holding its breath.",
+        ],
+      },
+      {
+        heading: "What's actually out there at 3 a.m.",
+        body: [
+          "Empty landmarks are the draw. Squares and boulevards that exist in a permanent crowd by day stand completely vacant, lit and immaculate, like a stage after the audience has gone. Mountain cameras show the other night industry: snowcats crawling up ski slopes with their lights on, grooming tomorrow's corduroy in the dark — work that only happens when the mountain is closed and empty.",
+          "Animal hours are different hours, too. The cameras that overlook waterholes, feeders, and harbors see the visitors that daylight scares off. Night is when the shy half of the world clocks in.",
+          "And on the right nights, the sky itself performs. [Aurora cameras](/blog/northern-lights-live-webcams) in high latitudes watch curtains of green light ripple over snowfields for hours — a show with no schedule that peaks, very often, in the small hours when almost nobody is awake to see it. Almost. The cameras are awake.",
+        ],
+      },
+      {
+        heading: "Why 3 a.m. looks different on every camera at once",
+        body: [
+          "Part of the effect is light itself. Night collapses a camera's world to whatever its lights can reach: sodium-orange streets, blue-white floodlit work zones, headlight trails on an otherwise black highway. The rest of the scene falls away, and what's left reads like a film set — small pools of lit action in a dark world.",
+          "Part of it is us. Human activity is so synchronized — commute, shop, gather, sleep — that removing it changes places beyond recognition. A beach camera at noon and the same camera at 3 a.m. might as well be different planets that happen to share a coastline.",
+        ],
+      },
+      {
+        heading: "How to take the night tour",
+        body: [
+          "Open the WorldEye globe and spin it to the dark side of the planet — the side where it's deepest night right now. That's the trick: it's always 3 a.m. somewhere, so the night tour is available at any hour of your day. Drop into a capital city camera and enjoy the emptiness. Check a ski area and look for the groomers' lights. Then finish at an aurora camera and give the sky a few minutes; on an active night, it rewards patience like nothing else on the internet.",
+          "Day cameras show you the world working. Night cameras show you the world being maintained, patrolled, groomed, and quietly watched over — the shift nobody sees, running live.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "What can you see on live cameras at night?",
+        a: "A different world: empty landmark squares, floodlit harbors and airports still working, snowcats grooming ski slopes in the dark, nocturnal wildlife at waterhole and feeder cameras, and — on active nights — the aurora over high-latitude camera networks.",
+      },
+      {
+        q: "Is it always night somewhere on the camera network?",
+        a: "Yes. With 74,229 public cameras spread across the planet's time zones, some part of the network is always in deep night. Spin the globe to Earth's dark side and every camera there is on the night shift.",
+      },
+      {
+        q: "Can you watch the northern lights on a live camera?",
+        a: "Yes — aurora webcams at high latitudes stream the northern lights live, and the best viewing is often in the small hours. Activity depends on geomagnetic conditions driven by the Sun, so some nights are quiet and others are spectacular.",
+      },
+    ],
+  },
+  {
+    slug: "snow-stake-most-honest-number-in-skiing",
+    title: "The Most Honest Number in Skiing Is Painted on a Stick",
+    seoTitle: "Snow Stakes: Skiing's Honest Number | WorldEye Blog",
+    date: "2026-11-02",
+    excerpt:
+      "Resort snow reports have been accused of optimism for as long as they've existed. But there's one number on the mountain that can't spin, round up, or exaggerate: the snow stake — a marked stick, a fixed camera, and whatever actually fell.",
+    seoDescription:
+      "The snow stake is skiing's most honest number: a painted stick in a fixed spot, read on camera. Why skiers trust it more than any snow report.",
+    tags: ["skiing", "snow", "webcams"],
+    sections: [
+      {
+        heading: "Every skier has been lied to by a snow report",
+        body: [
+          "Not maliciously, usually. But the incentives are obvious: a resort that reports the biggest number sells the most lift tickets, and \"6 inches overnight\" has a way of meaning six inches at the summit, in a wind-loaded drift, measured with enthusiasm. Skiers learned long ago to read snow reports the way sailors read a barometer someone else owns — interested, but suspicious.",
+          "There is one number on the mountain that has no incentive at all. It's painted on a stick.",
+        ],
+      },
+      {
+        heading: "What a snow stake is",
+        body: [
+          "A snow stake is exactly what it sounds like: a tall, marked measuring pole — painted in bold increments, often a foot or more of bright bands — planted at a fixed, representative spot on the mountain, usually a sheltered study plot where wind can't cheat the reading. Snow accumulates against it. Someone (or something) reads it on a schedule, and the classic practice is to clear the reading board beside it so each measurement is honest new snow, not a season's accumulation wearing a costume.",
+          "The beautiful part is what happened when resorts pointed cameras at them. A snow stake cam doesn't have a marketing department. It has a stick, a lens, and last night's weather. Whatever the stake shows is what fell — readable by anyone, at any hour, from a couch five states away.",
+        ],
+      },
+      {
+        heading: "How to read one like a local",
+        body: [
+          "First, check the time and the clearing. A stake read at 5 a.m. before the board was cleared shows the full overnight story; the same stake an hour after clearing starts a new chapter. Second, look at the whole scene, not just the stick: snow plastered on the camera housing, buried trail signs, and trees wearing fresh coats all corroborate the number. Third, remember placement: a mid-mountain stake tells the mid-mountain truth. Summit and base can live in different climates on the same day, and locals know which stake predicts the lift they actually ride.",
+          "That corroboration habit is the real skill. A single number can be spun; a live scene can't. The stake is just the scene's ruler.",
+        ],
+      },
+      {
+        heading: "The stick, the camera, and your powder day",
+        body: [
+          "This is why snow stake cams have become the powder morning ritual: coffee, stake check, decision. Is it a sick-day day? The stick knows before the report writers wake up.",
+          "WorldEye's [ski webcams](/ski-webcams) gather resort cameras — stakes included where resorts run them — into one place, so the morning check takes seconds across every mountain you're considering. And for skiers who want the watching to work for them, Powder Pass ($4.99/month, with a 10-day free trial) exists for exactly this season-long habit of snow watching.",
+          "Reports will keep being written by humans with hopes. The stick will keep just standing there, painted in inches, telling the truth to anyone who looks.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "What is a snow stake?",
+        a: "A marked measuring pole planted at a fixed spot on a ski mountain. Snow builds up against its painted increments, giving a direct, readable measurement of how much snow has actually fallen at that spot.",
+      },
+      {
+        q: "Why do skiers trust snow stakes more than snow reports?",
+        a: "Because a stake can't round up. Especially with a camera pointed at it, the reading is a live scene anyone can check — the number is whatever the stick shows, not a figure chosen for a report.",
+      },
+      {
+        q: "Where can I watch snow stake cameras?",
+        a: "Many resorts point a webcam at their stake, and WorldEye's ski webcams page collects resort cameras in one place so you can check conditions across mountains in seconds.",
+      },
+    ],
+  },
+  {
     slug: "satellites-passing-over-you-right-now",
     title: "Thousands of Satellites Are Passing Over You Right Now",
     seoTitle: "Satellites Overhead Right Now | WorldEye Blog",
