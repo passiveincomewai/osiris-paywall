@@ -103,7 +103,7 @@ describe("sitemap URL set", () => {
           !u.startsWith(`${BASE}/wildfires/`),
       )
       .sort();
-    expect(nonTransit.length).toBe(1122);
+    expect(nonTransit.length).toBe(1135);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     // Hash history: 6d75d0de… until the SEO audit fix #3 (2026-10-27)
     // normalised the es homepage entry from /es/ to its final /es
@@ -264,8 +264,21 @@ describe("sitemap URL set", () => {
     // a URL either way when a borderline spoke crosses), and
     // the merged tree's set minus the pristine set is exactly
     // the 3 new blog URLs, giving 1,122 / 3d901fd2….
+    // The Daily Blog 2026-11-03 batch (2026-11-03) then added
+    // the three sourced news posts
+    // (kilauea-episode-56-precursory-lava-alert-watch,
+    // cyclone-murasu-crosses-ongole-landfall-complete,
+    // four-corners-record-flooding-arizona-emergency-november-3)
+    // → 1135. Delta verified by executing sitemap() on both
+    // trees the same day: the pristine tip generates 1,132 /
+    // 8ea6b57c… (its own set has drifted +10 since the 1,122 pin
+    // above — exactly the ten unflagged evergreen posts added
+    // to posts.ts on the tip after the Nov 2 batch shipped;
+    // verified by diffing the two executed sets), and the merged
+    // tree's set minus the pristine set is exactly the 3 new
+    // blog URLs.
     expect(hash).toBe(
-      "3d901fd24a59cdbf250033c3afad6eafca8e3882b008300f1b45b077325f9c85",
+      "74f28985a90c391821324eef3a486ca104d150c02656ef113507bb707813b385",
     );
   });
 

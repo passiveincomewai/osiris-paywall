@@ -87,6 +87,9 @@ describe("the launch story (real data, real dates)", () => {
   it("is one of the flagged posts, and every flagged post has sources", () => {
     const flagged = POSTS.filter(isNewsPost);
     expect(flagged.map((p) => p.slug)).toEqual([
+      "kilauea-episode-56-precursory-lava-alert-watch",
+      "cyclone-murasu-crosses-ongole-landfall-complete",
+      "four-corners-record-flooding-arizona-emergency-november-3",
       "cyclone-murasu-severe-landfall-andhra-pradesh",
       "spacex-ussf-432-launch-november-3-vandenberg",
       "southern-taurid-fireballs-peak-november-4-5",
@@ -106,6 +109,17 @@ describe("the launch story (real data, real dates)", () => {
     for (const p of flagged) {
       expect(p.sources?.length).toBeGreaterThan(0);
     }
+  });
+
+  it("the Nov 3 event stories are inside the 48-hour window on their publication day", () => {
+    const pubDay = new Date("2026-11-03T15:00:00Z");
+    const fresh = getFreshNewsPosts(POSTS, pubDay).map((p) => p.slug);
+    expect(fresh).toContain("kilauea-episode-56-precursory-lava-alert-watch");
+    expect(fresh).toContain("cyclone-murasu-crosses-ongole-landfall-complete");
+    expect(fresh).toContain(
+      "four-corners-record-flooding-arizona-emergency-november-3",
+    );
+    expect(fresh).not.toContain(LAUNCH_SLUG);
   });
 
   it("the Nov 2 event stories are inside the 48-hour window on their publication day", () => {

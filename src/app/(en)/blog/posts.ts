@@ -41,6 +41,249 @@ export type BlogPost = {
 
 export const POSTS: BlogPost[] = [
   {
+    slug: "kilauea-episode-56-precursory-lava-alert-watch",
+    title: "Kilauea Wakes Up: Lava Returns to Halemaʻumaʻu and USGS Raises the Alert to Watch",
+    seoTitle: "Kilauea Alert Raised to Watch | WorldEye Blog",
+    date: "2026-11-03",
+    excerpt:
+      "Kilauea's summit is erupting again at low level. Precursory lava overflows began at the north vent of Halemaʻumaʻu crater on Monday, November 2, and the USGS Hawaiian Volcano Observatory raised the volcano alert from Advisory to Watch and the aviation color code from Yellow to Orange, with episode 56 fountaining now forecast between Monday afternoon and November 7.",
+    seoDescription:
+      "Lava returned to Halemaʻumaʻu crater on November 2 and USGS raised Kilauea to Watch and Orange, with episode 56 fountaining forecast by November 7.",
+    tags: ["volcano", "kilauea", "hawaii", "usgs"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "The pause at Kilauea is over. Precursory low-level eruptive activity ahead of episode 56 of the ongoing Halemaʻumaʻu eruption began at about 11:43 a.m. HST on Monday, November 2, when a large flow of lava emerged from the north vent inside Halemaʻumaʻu crater, the U.S. Geological Survey's Hawaiian Volcano Observatory (HVO) said in Volcanic Activity Notice 2026/H509, issued at 2:06 p.m. HST on Monday.",
+          "In response, HVO raised Kilauea's volcano alert level from Advisory to Watch and its aviation color code from Yellow to Orange. The observatory now forecasts that episode 56's lava fountaining could begin at any point from Monday afternoon through November 7 — a window pulled forward from November 4–7 because of what it called the onset of voluminous precursory overflows. This is a genuinely new development in a story WorldEye last covered on [October 31, when episode 56 was still a forecast window of November 2–9](/blog/kilauea-episode-56-window-november-2-9) and the eruption was paused.",
+        ],
+      },
+      {
+        heading: "How Monday's run-up unfolded, minute by minute",
+        body: [
+          "The notice gives an unusually precise account of the first hours. The initial rise of lava to the surface and its first overflow were passive, with no spattering or low dome fountaining — a sign, HVO said, that the magma was highly degassed. Minor spatter began in the vent at about 12:30 p.m. HST. At 12:45 p.m., drainback accompanied by vigorous spattering ended that first overflow.",
+          "Several minutes of vigorous spattering then accompanied lava rising again inside the north vent, ahead of a second overflow that began at 1:00 p.m. HST. Once lava reached the surface and began overflowing the vent again, the spattering became subdued, with minor spatter bursts less than 3 feet (1 metre) high on the lava pond surface. HVO cautioned that this kind of low-level precursory activity can continue for hours to days before a lava fountaining episode begins, and that it will publish another notice when episode 56's fountaining actually starts.",
+        ],
+      },
+      {
+        heading: "What Watch and Orange actually mean",
+        body: [
+          "An alert level of Watch means the volcano is showing heightened or escalating unrest with an increased potential for eruption, or that an eruption is under way with limited hazards — a step above Advisory, where a volcano shows signs of unrest above background levels. Orange, the aviation color code, warns pilots and airlines that an eruption is under way or likely with no or minor ash emissions, which is why the code matters beyond Hawaii: Kilauea's summit sits under busy Pacific air routes.",
+          "For now, every eruptive vent and lava flow remains confined to Halemaʻumaʻu crater, inside the closed summit area of Hawaii Volcanoes National Park, HVO said. Tephra fall is greatest within 3 miles (5 km) of the vents, while lighter ash and Pele's hair — fine strands of volcanic glass — can stay suspended and travel much farther. Volcanic gas remains the wider hazard: sulfur dioxide released during the eruption reacts in the atmosphere to form vog, the volcanic air pollution that drifts downwind and can cause respiratory problems.",
+        ],
+      },
+      {
+        heading: "Episode 56 in the rhythm of this eruption",
+        body: [
+          "The current summit eruption has been running episodically since December 23, 2024, and most of its lava fountaining episodes have continued for a day or less, HVO notes. Episode 55, the most recent, began on October 17 and lasted only about six hours — which makes Monday's development the first lava back at the surface in 16 days, and the opening act of the eruption's 56th episode rather than a standalone event.",
+          "That pattern is why the alert change matters more than the size of Monday's flows. In this eruption, the sequence of quiet inflation, precursory overflows at the north vent, and then a fountaining episode has repeated dozens of times. The overflows are the volcano's tell: when they arrive in volume, as they did on Monday, the fountaining has so far followed within hours to days.",
+        ],
+      },
+      {
+        heading: "Watch the crater while the window is open",
+        body: [
+          "The forecast window runs through November 7, and the crater is one of the most-watched places on Earth. HVO itself runs three summit livestreams of the eruption, and WorldEye's dedicated [Kilauea volcano webcam page](/volcano-webcams/kilauea) gathers the summit views in one place, alongside the wider [volcano webcams](/volcano-webcams) collection and the [earthquake tracker](/earthquake-tracker) that shows the seismic side of the same unrest.",
+          "If fountaining begins, expect the notice sequence to move fast: HVO said another Volcanic Activity Notice will be published when episode 56 starts. Until then, the official word is the observatory's daily updates, and the crater rim around Halemaʻumaʻu — closed to the public since late 2007 because of crater-wall instability, ground cracking and rockfalls — remains off limits regardless of how photogenic the glow becomes.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Has Kilauea episode 56 started?",
+        a: "Not yet, as of the USGS notice on November 2. Precursory low-level activity — lava overflows from the north vent — began at 11:43 a.m. HST on November 2, and HVO forecasts the episode 56 lava fountaining itself to begin between Monday afternoon and November 7.",
+      },
+      {
+        q: "Why did USGS raise Kilauea's alert level to Watch?",
+        a: "Because voluminous precursory overflows began at the summit on November 2, showing escalating unrest ahead of episode 56. HVO raised the volcano alert from Advisory to Watch and the aviation color code from Yellow to Orange in Notice 2026/H509.",
+      },
+      {
+        q: "Is the lava a danger to communities on the Big Island?",
+        a: "All eruptive vents and lava flows are confined to Halemaʻumaʻu crater within Hawaii Volcanoes National Park, according to HVO. The main wider hazards are volcanic gas (vog) downwind and tephra, which falls heaviest within 3 miles of the vents.",
+      },
+      {
+        q: "How long do Kilauea's fountaining episodes usually last?",
+        a: "Most lava fountaining episodes since December 23, 2024, have continued for a day or less, HVO says. Episode 55 on October 17 lasted about six hours.",
+      },
+    ],
+    sources: [
+      {
+        name: "USGS Hawaiian Volcano Observatory — Volcanic Activity Notice 2026/H509: alert raised to Watch, aviation code to Orange (November 2)",
+        url: "https://www.usgs.gov/volcanoes/kilauea/volcano-updates",
+      },
+      {
+        name: "Freedom City Times — Hawaii's Kilauea shows new eruptive activity as scientists warn of potential major lava fountaining (November 3)",
+        url: "https://www.freedomcitytimes.com/post/untitled-a420122c",
+      },
+    ],
+  },
+  {
+    slug: "cyclone-murasu-crosses-ongole-landfall-complete",
+    title: "Cyclone Murasu Crosses the Coast Near Ongole and Weakens Over Andhra Pradesh",
+    seoTitle: "Cyclone Murasu Crosses Near Ongole | WorldEye Blog",
+    date: "2026-11-03",
+    excerpt:
+      "Severe Cyclonic Storm Murasu completed its landfall near Ongole in the early hours of Tuesday, November 3, crossing the south Andhra Pradesh coast between 3:30 and 5:30 a.m. IST with winds of 100–110 km/h gusting to 120 km/h, the India Meteorological Department said — and by afternoon it had weakened into a cyclonic storm moving slowly north over land.",
+    seoDescription:
+      "Severe Cyclone Murasu crossed near Ongole between 3:30 and 5:30 a.m. IST on November 3 at 100–110 km/h gusting 120, then weakened over land, IMD says.",
+    tags: ["cyclone", "india", "weather", "storms"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "Cyclone Murasu has made its landfall. The severe cyclonic storm crossed the south Andhra Pradesh coast between Nellore and Narsapur, close to Ongole, between 3:30 and 5:30 a.m. IST on Tuesday, November 3, near latitude 15.53°N and longitude 80.22°E, with sustained winds of 100–110 km/h gusting to 120 km/h, the India Meteorological Department (IMD) said. It is the outcome WorldEye's [November 2 report](/blog/cyclone-murasu-severe-landfall-andhra-pradesh) was tracking, when the crossing was still a forecast for that same overnight window.",
+          "The landfall process itself began around 1:00 a.m. IST, the IMD said in its overnight press release, when the forward sector of the storm's wall cloud started entering the coast. At 1:30 a.m. the centre was still over the west-central Bay of Bengal, about 40 km southeast of Ongole, 60 km northeast of Kavali and 70 km south of Bapatla. By the IMD's 6:36 a.m. update, the eye had crossed and the storm was over land.",
+        ],
+      },
+      {
+        heading: "Rain arrived before the eye did",
+        body: [
+          "Rain picked up well ahead of the centre. Kothapatnam in Prakasam district had recorded 74.7 mm of rain by 1:00 a.m., while Ongole city had 18 mm, The Hindu reported. Gale-force winds of 100–110 km/h, gusting to 120 km/h, were expected to prevail along and off the coast until morning, and the IMD warned of a storm surge of 1–1.5 metres above the astronomical tide inundating low-lying areas of south coastal Andhra Pradesh, with the maximum peak surge over Bapatla, Krishna and Prakasam districts.",
+          "Early reports described hundreds of trees uprooted across Nellore, Prakasam and Bapatla districts and flooding in several low-lying areas, while electricity officials told a 3:30 a.m. review meeting with Chief Minister N. Chandrababu Naidu that no power poles had fallen and supply had not been disrupted in the affected areas. At least 19 domestic flights had been cancelled at Vijayawada, Tirupati and Visakhapatnam airports on Monday ahead of the crossing.",
+        ],
+      },
+      {
+        heading: "A slow weakening over land on Tuesday",
+        body: [
+          "Once ashore, Murasu slowed and began to lose strength, but gradually. At 8:30 a.m. IST the centre lay about 30 km north-northeast of Ongole, and the IMD expected it to weaken into a cyclonic storm by noon and further into a deep depression by midnight. At 11:30 a.m. it was still classed a severe cyclonic storm, about 50 km north of Ongole and 40 km west of Bapatla, with winds eased to 85–95 km/h gusting to 105 km/h, tracked continuously by the Doppler weather radars at Machilipatnam and Visakhapatnam.",
+          "By the IMD's 2:10 p.m. hourly update, Murasu had weakened into a cyclonic storm: its centre at 1:30 p.m. was about 60 km north of Ongole and 40 km west-northwest of Bapatla, moving slowly north at about 6 km/h with winds of 80–90 km/h gusting to 100 km/h, and the department still expected a deep depression by midnight and a depression by Wednesday morning. Heavy rain continued meanwhile: between 8:30 a.m. and 1:00 p.m. alone, Konanki recorded 168.2 mm, Edlapadu 147.5 mm and Pasumarru 145.2 mm, and in the 24 hours to 8:30 a.m. Bapatla had received 22 cm of rain and Narsapuram 20 cm.",
+        ],
+      },
+      {
+        heading: "Trains halted, warnings stay red",
+        body: [
+          "The storm's inland passage disrupted the region's rail spine. Train movement on the Vijayawada–Ongole–Gudur line was suspended because of gale-force winds at Karavadi station, Vijayawada Division of South Coast Railway said, with trains between Vijayawada and Chennai Central and between Vijayawada and Ongole among those cancelled, eleven long-distance trains diverted inland, and special trains later arranged between Kazipet and Vijayawada for stranded passengers.",
+          "The IMD kept its red cyclone warning for Andhra Pradesh and its rain warnings in force through Tuesday, even as the surge forecast was lowered and dropped by the 1:00 p.m. bulletin. The state's advice remained to stay indoors and off the roads until fallen obstructions are cleared — a warning with a recent edge: after Cyclone Arnab, which crossed this same coast a week earlier, at least five people died after touching fallen live wires, The Indian Express reported.",
+        ],
+      },
+      {
+        heading: "The second landfall in a week, followed on the tracker",
+        body: [
+          "Murasu is the second cyclone to hit Andhra Pradesh in about a week, after Arnab's landfall in late October, and it [formed over the Bay of Bengal only on Sunday, November 1](/blog/cyclone-murasu-forms-andhra-pradesh-landfall). Its remnants are now a rain system rather than a wind system, moving slowly north over Andhra Pradesh with heavy rain also reaching into Telangana and Rayalaseema.",
+          "WorldEye's [hurricane tracker](/hurricane-tracker) follows the system's decay over land, and the [weather radar](/weather-radar) shows the rain shield that is now the storm's main hazard. The official word remains the IMD's bulletins: the wind emergency at the coast has passed, but a weakening cyclone that drops more than 160 mm of rain in an afternoon is not finished being dangerous.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When and where did Cyclone Murasu make landfall?",
+        a: "Murasu crossed the south Andhra Pradesh coast between Nellore and Narsapur, close to Ongole, between 3:30 and 5:30 a.m. IST on November 3, 2026, near 15.53°N, 80.22°E, the IMD said. The landfall process began around 1:00 a.m.",
+      },
+      {
+        q: "How strong was Murasu at landfall?",
+        a: "It crossed as a severe cyclonic storm with sustained winds of 100–110 km/h gusting to 120 km/h, according to the IMD, with a storm surge of 1–1.5 metres expected over low-lying parts of Bapatla, Krishna and Prakasam districts.",
+      },
+      {
+        q: "What is happening to Murasu now?",
+        a: "It is weakening over land. By early afternoon on November 3 it had eased into a cyclonic storm about 60 km north of Ongole with winds of 80–90 km/h gusting to 100 km/h, and the IMD expects a deep depression by midnight and a depression by Wednesday morning.",
+      },
+      {
+        q: "How much rain has Murasu brought?",
+        a: "Bapatla recorded 22 cm and Narsapuram 20 cm in the 24 hours to 8:30 a.m. on November 3, and Konanki recorded 168.2 mm between 8:30 a.m. and 1:00 p.m. alone, IMD updates said.",
+      },
+    ],
+    sources: [
+      {
+        name: "The Hindu BusinessLine — Cyclone Murasu begins landfall near Ongole in Andhra Pradesh, IMD press release (November 3)",
+        url: "https://www.thehindubusinessline.com/news/national/cyclone-murasu-begins-landfall-near-ongole-in-andhra-pradesh-winds-reach-120-kmph/article71659194.ece",
+      },
+      {
+        name: "Transclew live updates of IMD bulletins — Murasu crossed near Ongole 3:30–5:30 a.m. IST and weakened to a cyclonic storm (November 3)",
+        url: "https://transclew.com/news/cyclone-murasu-andhra-live-updates/",
+      },
+      {
+        name: "NewsPlainly — Cyclone Murasu landfall near Ongole: 120 kmph gusts, IMD timeline and district warnings (November 3)",
+        url: "https://newsplainly.com/india/cyclone-murasu-landfall/",
+      },
+    ],
+  },
+  {
+    slug: "four-corners-record-flooding-arizona-emergency-november-3",
+    title: "Record Rivers in the Desert: Four Corners Flooding Holds Into Tuesday After Arizona's Emergency",
+    seoTitle: "Four Corners Record Flooding | WorldEye Blog",
+    date: "2026-11-03",
+    excerpt:
+      "Rivers across Arizona, Colorado and New Mexico are at or above record levels on Tuesday, November 3, after a weekend storm dropped months of rain on the Four Corners: Arizona declared a statewide emergency on Monday, Sedona evacuated homes along Oak Creek, and on Tuesday morning a new flash flood warning sent a flood wave toward Supai in the Havasu Creek basin.",
+    seoDescription:
+      "Record flooding holds across Arizona and the Four Corners into November 3: Arizona emergency declared, Sedona evacuated, Havasu Creek warned.",
+    tags: ["flooding", "arizona", "weather", "storms"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "The rain has stopped across much of the Southwest, but the rivers have not. Considerable river flooding — including major and record flooding — is ongoing or forecast across parts of central Arizona, southwest Colorado and northwest New Mexico through Tuesday, November 3, the National Weather Service said, after heavy rain over the weekend of November 1 caused widespread flooding across all three states. On Monday, November 2, 11 rivers in Colorado and Arizona were either just coming out of major flood stage or about to enter it, according to the weather service office in Grand Junction, Colorado.",
+          "Arizona Governor Katie Hobbs declared a statewide state of emergency on Monday, November 2, as more than 10 rivers, creeks and washes in Arizona and southwest Colorado surged past major flood stage, several of them to new record crests. In Sedona, Oak Creek forced mandatory evacuations in zones along the creek, and crews used boats and helicopters to rescue about 40 people from their homes.",
+        ],
+      },
+      {
+        heading: "Tuesday morning: a flood wave heads for Supai",
+        body: [
+          "The newest warning came before dawn on Tuesday. At 2:05 a.m. MST, the National Weather Service in Flagstaff issued a flash flood warning for the Havasu Creek basin in Coconino County until 9:00 a.m. MST, after a gauge on Cataract Creek reported a rapid rise of 5.38 feet from heavy rain far upstream. The service said a flood wave was travelling through Cataract and Havasu creeks, with impacts at Supai estimated to begin between 9:00 a.m. and noon MST, and warned of life-threatening flash flooding at Supai, on the Havasupai Reservation, and at Little Navajo, Mooney and Beaver falls, as well as the Colorado River between river miles 156 and 158 — campers and hikers were told to move to higher ground immediately.",
+          "Elsewhere on Tuesday morning, the San Juan River at Shiprock, New Mexico, stood at 19.7 feet at 2:00 a.m. MST against a flood stage of 15.5 feet, and was expected to crest at 20.5 feet, a major flood, during the morning. The Animas River at Farmington was at 13.3 feet at 1:30 a.m., near its crest; the weather service notes that at 14 feet, water levels there approach those of the great flood of October 1911. In Arizona, the Little Colorado River at Winslow read 23.18 feet at 5:00 a.m. against a flood stage of 19 feet, still above moderate flood stage, with a rise above 25 feet — the level at which the levee is overtopped — possible during the day.",
+        ],
+      },
+      {
+        heading: "Records fell over the weekend",
+        body: [
+          "Two Arizona gauges rewrote their record books. The Little Colorado River at Woodruff broke its previous record by roughly six feet on November 2, in records dating back to the 1950s, the weather service said. The Gila River near Solomon rose 18 feet between the afternoon of November 1 and the morning of November 2, surpassing its previous historic high by six feet in a record dating to 2014; by 3:54 a.m. on Tuesday the Gila near Solomon was at 25.3 feet, a major flood, and at 24 feet homes and businesses flood on the north sides of Solomon, Safford and Thatcher.",
+          "In Colorado, flooding in Archuleta County was described by the weather service as catastrophic and historic. More than 3 inches of rain fell west of Pagosa Springs, triggering emergency evacuations ahead of major flooding on the San Juan River, which climbed past 16 feet; at one point the river had been predicted to crest at 21.9 feet, more than four feet above its previous record. Durango reported 4.3 inches of precipitation on November 1, with 1.8 to 2.6 inches around Cortez. Flood warnings covered the Mancos, Dolores, La Plata, Animas, Navajo and San Juan rivers, with rockfalls, mudslides and debris flows possible along burn scars and slot canyons.",
+        ],
+      },
+      {
+        heading: "Roads: SR 89A closed, I-40 cut in sections",
+        body: [
+          "The road network took the same water. State Route 89A through Oak Creek Canyon, between Sedona and Kachina Village, is closed after floodwaters pushed boulders and debris onto the road and washed out sections of pavement, with damaged guardrails and no reopening estimate. Sections of Interstate 40 around Flagstaff and further east were closed due to flooding, as were stretches of SR 87 near Winslow, US 191 at Rock Point and SR 288; Interstate 17 between Phoenix and Flagstaff, closed for hours over the weekend, has reopened in both directions.",
+          "The practical advice from every agency involved is the same: check official road information before every leg — AZ511 in Arizona, COtrip in Colorado — and never drive through floodwater. The rain ending does not reopen a washed-out road, and AccuWeather noted that washouts and closures, and the cleanup that follows them, could continue into Tuesday even as drier weather returns for Election Day.",
+        ],
+      },
+      {
+        heading: "Was this El Nino? The scientists disagree — for now",
+        body: [
+          "This was the second round of disastrous flooding in the Southwest in a couple of weeks, and it arrived while a strong El Nino continues to strengthen in the Pacific. Daniel Swain, a climate scientist with the University of California Agriculture and Natural Resources, wrote in his Weather West blog that back-to-back extreme-to-record-shattering rain events in the interior Southwest during one of the strongest El Nino events on record is, in his view, not a coincidence, pointing to unusually warm waters in the eastern subtropical Pacific, increased East Pacific tropical cyclone activity and a strengthened early-season subtropical jet.",
+          "The National Weather Service is not ready to say that. Lindsey Long, a meteorologist with NOAA's National Weather Service, said this week that forecasters cannot yet attribute the current weather patterns to the strengthening El Nino — attribution, she said, is something NOAA could examine later. For residents along the San Juan, the Animas and the Little Colorado, the argument is academic this week: what matters is that the gauges are at levels their record books, some a century old, have rarely or never held.",
+        ],
+      },
+      {
+        heading: "Watch the water from a safe distance",
+        body: [
+          "Flooding on this scale is exactly the kind of event that should be watched remotely, not in person. WorldEye's [weather radar](/weather-radar) shows the storm system that did this as it moves east, the [weather tracker](/weather-tracker) follows the wider pattern, and the region's [traffic cameras](/live-traffic-cameras) show road conditions on the corridors that remain open — the safe way to see what Oak Creek Canyon or the Flagstaff interchanges look like this morning without driving to them.",
+          "Several rivers are forecast to stay in flood through Tuesday and, on the San Juan toward Lake Powell, into Wednesday morning. If you are in the Four Corners, follow the National Weather Service and your county's emergency notices, obey evacuation orders, and treat every closed road as closed for a reason — in a desert that floods this rarely, the water is the record, and the record is still being written.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Why did Arizona declare a state of emergency on November 2?",
+        a: "Governor Katie Hobbs declared a statewide emergency as more than 10 rivers, creeks and washes in Arizona and southwest Colorado surged past major flood stage, several to record crests, after a weekend storm flooded northern and central Arizona and the Four Corners.",
+      },
+      {
+        q: "Which rivers set records in the Four Corners flooding?",
+        a: "The Little Colorado River at Woodruff broke its previous record by roughly six feet on November 2, and the Gila River near Solomon rose 18 feet in under a day to surpass its previous historic high by about six feet, the National Weather Service said.",
+      },
+      {
+        q: "What is the newest flood warning on November 3?",
+        a: "At 2:05 a.m. MST on Tuesday, the National Weather Service in Flagstaff warned of life-threatening flash flooding in the Havasu Creek basin, with a flood wave from Cataract Creek expected to reach Supai between 9:00 a.m. and noon MST.",
+      },
+      {
+        q: "Which major roads are closed by the flooding?",
+        a: "SR 89A through Oak Creek Canyon is closed with no reopening estimate, and sections of I-40 around Flagstaff and east, SR 87 near Winslow, US 191 at Rock Point and SR 288 were closed. I-17 has reopened. Check AZ511 or COtrip before travelling.",
+      },
+    ],
+    sources: [
+      {
+        name: "USA TODAY — 'Catastrophic' rain hits Southwest states: NWS record rivers in Arizona and Colorado (November 2)",
+        url: "https://www.usatoday.com/story/news/weather/2026/11/02/historic-catastrophic-flooding-southwest-el-nino/92561330007/",
+      },
+      {
+        name: "Storm Recovery Hub — Southwest floods event page compiling National Weather Service warnings, updated November 3, 2026",
+        url: "https://stormrecoveryhub.com/events/2026/new-mexico-west-texas-arizona-flash-flooding-oct-29/",
+      },
+      {
+        name: "Travel Tourister — Arizona floods travel alert: statewide emergency, Sedona evacuations and road closures (November 3)",
+        url: "https://www.traveltourister.com/news/arizona-four-corners-flooding-november-3-2026-sedona-evacuations-sr-89a-i-40-flagstaff-grand-canyon-travel-alert-guide/",
+      },
+    ],
+  },
+  {
     slug: "planet-had-100-earthquakes-today",
     title: "The Planet Had 100 Earthquakes Today. Here's What That Actually Means",
     seoTitle: "100 Earthquakes a Day? What It Means | WorldEye Blog",
