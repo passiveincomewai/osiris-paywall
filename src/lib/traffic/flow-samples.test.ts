@@ -1,9 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import { buildRoadNetwork, type RawRoadFeature } from './roads';
 import {
-  matchPointSamplesToRoads, mergeTimedFlowMaps,
+  matchPointSamplesToRoads, mergeTimedFlowMaps, matchIncidentsToRoads, isClosureIncident,
   type PointFlowSample, type MatchedFlow,
 } from './flow-samples';
+import type { HereIncident } from './here';
 
 const line = (coords: [number, number][], props: Record<string, unknown> = {}): RawRoadFeature => ({
   geometry: { type: 'LineString', coordinates: coords },
@@ -66,5 +67,43 @@ describe('mergeTimedFlowMaps', () => {
     const newer = { source: 'here' as const, at: 2_000, matched: matched([['r1', 0.4, 'here']]) };
     expect(mergeTimedFlowMaps([newer, older]).ratios.get('r1')).toBe(0.4);
     expect(mergeTimedFlowMaps([]).ratios.size).toBe(0);
+  });
+});
+
+describe('matchIncidentsToRoads', () => {
+  const incident = (type: string | null, lines: [number, number][][]): HereIncident => ({
+    id: 'inc-1', type, summary: null, lines,
+  });
+
+  it('only closure-type incidents count as closures', () => {
+    expect(isClosureIncident(incident('roadClosure', []))).toBe(true);
+    expect(isClosureIncident(incident('Road closure', []))).toBe(true);
+    expect(isClosureIncident(incident('accident', []))).toBe(false);
+    expect(isClosureIncident(incident('congestion', []))).toBe(false);
+    expect(isClosureIncident(incident('roadworks', []))).toBe(false);
+    expect(isClosureIncident(incident(null, []))).toBe(false);
+  });
+
+  it('closes the road a closure line runs along — and only that road', () => {
+    const net = buildRoadNetwork([
+      line([[0, 0], [0.01, 0]], { name: 'A Street' }),
+      line([[0, 0.002], [0.01, 0.002]], { name: 'B Street' }), // ~220 m north
+    ], 14);
+    const a = net.roads.find(r => r.name === 'A Street')!;
+    const b = net.roads.find(r => r.name === 'B Street')!;
+    const closed = matchIncidentsToRoads(net.roads, [
+      incident('roadClosure', [[[0.001, 0], [0.009, 0]]]),
+    ]);
+    expect(closed.has(a.id)).toBe(true);
+    expect(closed.has(b.id)).toBe(false);
+  });
+
+  it('a non-closure incident on the same geometry closes nothing', () => {
+    const roads = oneRoad();
+    const closed = matchIncidentsToRoads(roads, [
+      incident('accident', [[[0.001, 0], [0.009, 0]]]),
+    ]);
+    expect(closed.size).toBe(0);
+    expect(matchIncidentsToRoads(roads, []).size).toBe(0);
   });
 });

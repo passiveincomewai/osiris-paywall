@@ -20,6 +20,8 @@
 
 import { pointAt, type TrafficRoad } from './roads';
 import { FREE_FLOW_KMH } from './congestion';
+import { FLOW_MATCH_RADIUS_M } from './config';
+import type { HereIncident } from './here';
 
 export type FlowSourceId = 'tomtom' | 'here' | 'wsdot' | 'ndw';
 
@@ -106,6 +108,104 @@ export function matchPointSamplesToRoads(
     }
   }
   return { ratios, provenance };
+}
+
+/** Distance from point p to segment a–b, in metres (local equirectangular). */
+function pointSegmentM(p: [number, number], a: [number, number], b: [number, number]): number {
+  const cosLat = Math.cos((p[1] * Math.PI) / 180);
+  const ax = (a[0] - p[0]) * M_PER_DEG_LNG * cosLat;
+  const ay = (a[1] - p[1]) * M_PER_DEG_LAT;
+  const bx = (b[0] - p[0]) * M_PER_DEG_LNG * cosLat;
+  const by = (b[1] - p[1]) * M_PER_DEG_LAT;
+  const dx = bx - ax;
+  const dy = by - ay;
+  const len2 = dx * dx + dy * dy;
+  let t = len2 > 0 ? -(ax * dx + ay * dy) / len2 : 0;
+  t = Math.max(0, Math.min(1, t));
+  return Math.hypot(ax + t * dx, ay + t * dy);
+}
+
+/**
+ * Is this incident a road closure? HERE v7 incident types are a small
+ * vocabulary ('accident', 'congestion', 'roadworks', 'roadClosure',
+ * 'roadHazard', …); only a closure removes the road from the sim —
+ * everything else is information, not a barrier, and must not empty a
+ * street the data merely says is slow or busy.
+ */
+export function isClosureIncident(incident: HereIncident): boolean {
+  return (incident.type ?? '').toLowerCase().includes('clos');
+}
+
+/**
+ * Match closure incidents onto roads: a road is closed when a closure
+ * incident's geometry runs within `radiusM` of one of the road's
+ * quarter points — the same proximity rule the flow matchers use, so a
+ * closure lands on the roads its line actually covers and not on a
+ * parallel street two blocks away. Returns road ids for
+ * SimOpts.closedRoadIds (the sim never spawns on them, never enters
+ * them, and vacates them at the next reconcile).
+ */
+export function matchIncidentsToRoads(
+  roads: TrafficRoad[],
+  incidents: HereIncident[],
+  radiusM: number = FLOW_MATCH_RADIUS_M,
+): Set<string> {
+  const closed = new Set<string>();
+  const segments: { a: [number, number]; b: [number, number] }[] = [];
+  for (const inc of incidents) {
+    if (!isClosureIncident(inc)) continue;
+    for (const line of inc.lines) {
+      for (let i = 1; i < line.length; i++) segments.push({ a: line[i - 1], b: line[i] });
+    }
+  }
+  if (!roads.length || !segments.length) return closed;
+
+  // Vertex grid over the incident segments so road samples only test
+  // nearby segments (same pattern as matchFlowToRoads).
+  const midLat = roads[0].coords[0][1];
+  const cellLat = radiusM / M_PER_DEG_LAT;
+  const cellLng = radiusM / (M_PER_DEG_LNG * Math.max(0.2, Math.cos((midLat * Math.PI) / 180)));
+  const cellKey = (lng: number, lat: number) => `${Math.floor(lng / cellLng)},${Math.floor(lat / cellLat)}`;
+  const grid = new Map<string, number[]>();
+  segments.forEach((seg, si) => {
+    const registered = new Set<string>();
+    const register = (lng: number, lat: number) => {
+      const key = cellKey(lng, lat);
+      if (registered.has(key)) return;
+      registered.add(key);
+      const arr = grid.get(key);
+      if (arr) arr.push(si); else grid.set(key, [si]);
+    };
+    const step = Math.min(cellLat, cellLng) * 0.9;
+    const span = Math.max(Math.abs(seg.b[0] - seg.a[0]), Math.abs(seg.b[1] - seg.a[1]));
+    const steps = Math.max(1, Math.ceil(span / step));
+    for (let k = 0; k <= steps; k++) {
+      register(seg.a[0] + ((seg.b[0] - seg.a[0]) * k) / steps, seg.a[1] + ((seg.b[1] - seg.a[1]) * k) / steps);
+    }
+  });
+
+  for (const road of roads) {
+    for (const frac of [0.25, 0.5, 0.75]) {
+      const p = pointAt(road, road.lengthM * frac);
+      const cx = Math.floor(p.lng / cellLng);
+      const cy = Math.floor(p.lat / cellLat);
+      let hit = false;
+      for (let ix = cx - 1; ix <= cx + 1 && !hit; ix++) {
+        for (let iy = cy - 1; iy <= cy + 1 && !hit; iy++) {
+          const arr = grid.get(`${ix},${iy}`);
+          if (!arr) continue;
+          for (const si of arr) {
+            if (pointSegmentM([p.lng, p.lat], segments[si].a, segments[si].b) <= radiusM) {
+              hit = true;
+              break;
+            }
+          }
+        }
+      }
+      if (hit) { closed.add(road.id); break; }
+    }
+  }
+  return closed;
 }
 
 /** A matched map stamped with the time its source data was produced. */
