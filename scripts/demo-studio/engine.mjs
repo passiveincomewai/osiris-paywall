@@ -246,11 +246,15 @@ export async function recordPlan({ appUrl, plan, orientation = "landscape", vide
       for (let attempt = 1; attempt <= maxTries; attempt++) {
         log(`openCameraNearCenter: attempt ${attempt}/${maxTries}`);
         // Strategy A: a visible camera card (featured / nearby strip).
+        // A saturated renderer can starve this probe evaluate past its
+        // bound — that must degrade to the mouse strategy, not fail
+        // the job (2026-11-04: exactly this throw killed a run whose
+        // search step had already succeeded).
         const clickedCard = await ev(() => {
           const cards = [...document.querySelectorAll("button")].filter((b) => /WATCH|▶/i.test(b.textContent) && b.querySelector("img"));
           if (cards.length) { cards[0].click(); return true; }
           return false;
-        });
+        }).catch(() => false);
         if (!clickedCard) {
           // A lingering full-screen loading video (pointer-events:auto)
           // would swallow canvas mouse clicks — wait for it to leave
