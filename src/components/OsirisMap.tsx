@@ -14,12 +14,16 @@ import {
 import {
   TRAFFIC_MIN_ZOOM, CAMERA_SEARCH_RADIUS_M,
   targetVehicleCount, congestionBand, BAND_COLORS, trafficChipText, type TrafficFlowState, } from '@/lib/traffic/config';
-import { adaptBasemapRoadFeatures, buildRoadNetwork, haversineM, pointAt, type RoadNetwork } from '@/lib/traffic/roads';
+import { adaptBasemapRoadFeatures, buildRoadNetwork, haversineM, type RoadNetwork } from '@/lib/traffic/roads';
 import { effectiveRatio } from '@/lib/traffic/congestion';
 import {
-  createRng, reconcileVehicles, advanceVehicles, vehicleFeature, type SimVehicle,
+  createRng, reconcileVehicles, advanceVehicles, vehicleFeature, vehiclePointAt, kindOf, type SimVehicle,
 } from '@/lib/traffic/sim';
 import { matchFlowToRoads } from '@/lib/traffic/flow';
+import {
+  matchPointSamplesToRoads, mergeTimedFlowMaps, matchIncidentsToRoads, type TimedFlowMap,
+} from '@/lib/traffic/flow-samples';
+import type { HereIncident } from '@/lib/traffic/here';
 import { FlightBlend, flightIconImage, flightIconSize, flightsToFeatures, type FlightBuckets } from '@/lib/flights/render';
 import { featureMatchesFlightShareId, FLIGHT_SHARE_OPEN_DEADLINE_MS } from '@/lib/share/links';
 import { findFlightFeatureInBuckets, flightShareCameraSettledOn, flightShareFlyToTarget } from '@/lib/share/flight-open';
@@ -473,7 +477,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
   // panel is React state; the per-frame camera driver lives in the
   // traffic effect and works through trafficFollowRef below.
   const [trafficFollowUi, setTrafficFollowUi] = useState<{
-    num: number; speedKmh: number; bearing: number; roadName: string; gone: boolean;
+    num: number; speedKmh: number; bearing: number; roadName: string; gone: boolean; kind: string;
   } | null>(null);
   // Space Missions keeps its LL2 board in-map: the latest
   // /api/launches payload plus the pad/launch selection the panel and the
@@ -512,6 +516,18 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
   const trafficFollowUiAtRef = useRef(0);
   const trafficFollowGoneTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const trafficSpriteReadyRef = useRef(false);
+  const trafficTruckSpriteReadyRef = useRef(false);
+  // Roads reported closed by incident data (from /api/traffic/flow-segments):
+  // the sim never spawns on them, never enters them, and vacates them.
+  const trafficClosedRef = useRef<ReadonlySet<string>>(new Set());
+  // TomTom's matched ratios for the current network (sampleFlow writes
+  // here; applyMergedFlow merges this with the segment sources).
+  const trafficTomtomRef = useRef<{ ratios: Map<string, number>; at: number } | null>(null);
+  // The latest /api/traffic/flow-segments payload for the viewport:
+  // HERE/WSDOT line features, NDW point samples, HERE incidents.
+  const trafficSegPayloadRef = useRef<{
+    features: any[]; pointSamples: any[]; incidents: HereIncident[]; atMs: number;
+  } | null>(null);
   // End a vehicle follow. With `gone`, the panel lingers briefly in its
   // "vehicle left the area" state instead of vanishing without a word.
   const endTrafficFollow = useCallback((gone = false) => {
@@ -1300,6 +1316,20 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
         trafficSpriteReadyRef.current = true;
       } catch { /* a later call (boot/theme) retries */ }
     });
+    // The semi truck (owner's artwork, same style): the truck fleet's
+    // marker. Same letterboxed canvas, sized to 84 logical px wide —
+    // exactly 1.5x the car — so the trucks layer can reuse the car's
+    // icon-size curve and land at ~57 px wide at street zoom: longer
+    // than a car, not larger than life.
+    void loadAircraftPhoto('/icons/traffic-truck.png').then((img) => {
+      if (!img) return;
+      try {
+        const data = aircraftPhotoData(img);
+        if (map.hasImage('traffic-truck')) map.removeImage('traffic-truck');
+        map.addImage('traffic-truck', data, { pixelRatio: AIRCRAFT_PHOTO_PX / 84 });
+        trafficTruckSpriteReadyRef.current = true;
+      } catch { /* a later call (boot/theme) retries */ }
+    });
     // The snow plow pin (owner's artwork): every live plow marker.
     void loadAircraftPhoto('/icons/snowplow-pin.png').then((img) => {
       if (!img) return;
@@ -1861,19 +1891,45 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       // bearing: the art is a front three-quarter view, and a spun 3/4
       // car reads as broken. The plain band-coloured dots stay as a
       // fallback layer for whenever the sprite is not in the style.
-      map.addLayer({ id: 'traffic-vehicles', type: 'symbol', source: 'traffic-vehicles', layout: {
-        visibility: 'none',
-        'icon-image': 'traffic-car',
-        'icon-size': ['interpolate', ['linear'], ['zoom'], 10.5, 0.29, 13, 0.38, 14, 0.43, 15, 0.52, 17, 0.68],
-        'icon-allow-overlap': true, 'icon-ignore-placement': true, 'icon-anchor': 'center',
-      }});
-      map.addLayer({ id: 'traffic-vehicles-dots', type: 'circle', source: 'traffic-vehicles', layout: {
-        visibility: 'none',
-      }, paint: {
-        'circle-radius': ['interpolate', ['linear'], ['zoom'], 11, 2.2, 14, 3.4, 17, 5.2],
-        'circle-color': ['match', ['get', 'band'], 'free', BAND_COLORS.free, 'slow', BAND_COLORS.slow, 'jam', BAND_COLORS.jam, '#B0BEC5'],
-        'circle-opacity': 0.95, 'circle-stroke-color': '#04140A', 'circle-stroke-width': 0.8,
-      }});
+      map.addLayer({ id: 'traffic-vehicles', type: 'symbol', source: 'traffic-vehicles',
+        filter: ['!=', ['get', 'kind'], 'truck'],
+        layout: {
+          visibility: 'none',
+          'icon-image': 'traffic-car',
+          'icon-size': ['interpolate', ['linear'], ['zoom'], 10.5, 0.29, 13, 0.38, 14, 0.43, 15, 0.52, 17, 0.68],
+          'icon-allow-overlap': true, 'icon-ignore-placement': true, 'icon-anchor': 'center',
+        }});
+      // Semi trucks get their OWN symbol layer (same source, kind
+      // filter): the truck sprite is 1.5x the car's logical size, so
+      // the identical icon-size curve yields ~24 px at city zoom and
+      // ~57 px at street zoom — and each layer property still carries
+      // exactly ONE zoom expression.
+      map.addLayer({ id: 'traffic-vehicles-trucks', type: 'symbol', source: 'traffic-vehicles',
+        filter: ['==', ['get', 'kind'], 'truck'],
+        layout: {
+          visibility: 'none',
+          'icon-image': 'traffic-truck',
+          'icon-size': ['interpolate', ['linear'], ['zoom'], 10.5, 0.29, 13, 0.38, 14, 0.43, 15, 0.52, 17, 0.68],
+          'icon-allow-overlap': true, 'icon-ignore-placement': true, 'icon-anchor': 'center',
+        }});
+      map.addLayer({ id: 'traffic-vehicles-dots', type: 'circle', source: 'traffic-vehicles',
+        filter: ['!=', ['get', 'kind'], 'truck'],
+        layout: {
+          visibility: 'none',
+        }, paint: {
+          'circle-radius': ['interpolate', ['linear'], ['zoom'], 11, 2.2, 14, 3.4, 17, 5.2],
+          'circle-color': ['match', ['get', 'band'], 'free', BAND_COLORS.free, 'slow', BAND_COLORS.slow, 'jam', BAND_COLORS.jam, '#B0BEC5'],
+          'circle-opacity': 0.95, 'circle-stroke-color': '#04140A', 'circle-stroke-width': 0.8,
+        }});
+      map.addLayer({ id: 'traffic-vehicles-dots-trucks', type: 'circle', source: 'traffic-vehicles',
+        filter: ['==', ['get', 'kind'], 'truck'],
+        layout: {
+          visibility: 'none',
+        }, paint: {
+          'circle-radius': ['interpolate', ['linear'], ['zoom'], 11, 3.0, 14, 4.6, 17, 7.0],
+          'circle-color': ['match', ['get', 'band'], 'free', BAND_COLORS.free, 'slow', BAND_COLORS.slow, 'jam', BAND_COLORS.jam, '#B0BEC5'],
+          'circle-opacity': 0.95, 'circle-stroke-color': '#04140A', 'circle-stroke-width': 0.8,
+        }});
 
       // Space Missions — launch pads (LL2 via /api/launches). One marker
       // per pad, coloured by the pad's next-launch status (or its last
@@ -4991,10 +5047,13 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     if (!on) {
       setGeo('traffic-roads', []);
       setGeo('traffic-vehicles', []);
-      setVis(['traffic-flow', 'traffic-vehicles', 'traffic-vehicles-dots'], false);
+      setVis(['traffic-flow', 'traffic-vehicles', 'traffic-vehicles-trucks', 'traffic-vehicles-dots', 'traffic-vehicles-dots-trucks'], false);
       trafficNetRef.current = null;
       trafficVehiclesStateRef.current = [];
       trafficFlowRef.current = null;
+      trafficTomtomRef.current = null;
+      trafficSegPayloadRef.current = null;
+      trafficClosedRef.current = new Set();
       endTrafficFollow(false);
       setTrafficChip(null);
       return;
@@ -5049,22 +5108,27 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
       }));
     };
 
-    const setVehicleFeatures = () => {
+    const setVehicleFeatures = (alpha = 1) => {
       const net = trafficNetRef.current;
       if (!net) { setGeo('traffic-vehicles', []); return; }
       const feats: any[] = [];
       for (const v of trafficVehiclesStateRef.current) {
-        const f = vehicleFeature(v, net, ratioFor);
+        const f = vehicleFeature(v, net, ratioFor, alpha);
         if (f) { (f.properties as any).band = congestionBand((f.properties as any).ratio); feats.push(f); }
       }
       setGeo('traffic-vehicles', feats);
     };
 
     const applyVisibility = () => {
-      // Car sprite whenever it is in the style; band dots until/unless.
-      const sprite = trafficSpriteReadyRef.current && map.hasImage('traffic-car');
-      setVis(['traffic-vehicles'], showVehicles && sprite);
-      setVis(['traffic-vehicles-dots'], showVehicles && !sprite);
+      // Sprites whenever they are in the style; band dots until/unless —
+      // per kind, so a missing truck sprite never hides the trucks or
+      // dresses them as cars.
+      const carSprite = trafficSpriteReadyRef.current && map.hasImage('traffic-car');
+      const truckSprite = trafficTruckSpriteReadyRef.current && map.hasImage('traffic-truck');
+      setVis(['traffic-vehicles'], showVehicles && carSprite);
+      setVis(['traffic-vehicles-trucks'], showVehicles && truckSprite);
+      setVis(['traffic-vehicles-dots'], showVehicles && !carSprite);
+      setVis(['traffic-vehicles-dots-trucks'], showVehicles && !truckSprite);
       // Congestion overlay: TomTom's own flow lines when its source is
       // live, otherwise our extracted roads colored by the model.
       setVis(['traffic-flow'], showCongestion && !tomtomAdded);
@@ -5092,6 +5156,85 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
       });
     };
 
+    const ensureTruckSprite = () => {
+      if (map.hasImage('traffic-truck')) { trafficTruckSpriteReadyRef.current = true; return; }
+      trafficTruckSpriteReadyRef.current = false;
+      void loadAircraftPhoto('/icons/traffic-truck.png').then((img) => {
+        if (!img || !live) return;
+        try {
+          if (!map.hasImage('traffic-truck')) {
+            map.addImage('traffic-truck', aircraftPhotoData(img), { pixelRatio: AIRCRAFT_PHOTO_PX / 84 });
+          }
+          trafficTruckSpriteReadyRef.current = true;
+          applyVisibility();
+        } catch { /* dots fallback stays up; a later rebuild retries */ }
+      });
+    };
+
+    /**
+     * The one place the speed model is assembled: TomTom's matched map
+     * and the /api/traffic/flow-segments sources (HERE + WSDOT lines,
+     * NDW points) are merged freshest-wins per road with provenance
+     * (lib/traffic/flow-samples), and the merged ratios become what
+     * ratioFor reads — so a vehicle on a road any measured source
+     * covers drives at that road's measured speed, and the simulated
+     * model only fills roads no source covers.
+     */
+    const applyMergedFlow = () => {
+      const net = trafficNetRef.current;
+      if (!net) return;
+      const maps: TimedFlowMap[] = [];
+      const tt = trafficTomtomRef.current;
+      if (tt && tt.ratios.size) {
+        maps.push({
+          source: 'tomtom', at: tt.at,
+          matched: {
+            ratios: tt.ratios,
+            provenance: new Map([...tt.ratios.keys()].map(id => [id, 'tomtom' as const])),
+          },
+        });
+      }
+      const seg = trafficSegPayloadRef.current;
+      if (seg) {
+        const bySource = new Map<string, any[]>();
+        for (const f of seg.features) {
+          const src = typeof f?.properties?.source === 'string' ? f.properties.source : '';
+          const arr = bySource.get(src);
+          if (arr) arr.push(f); else bySource.set(src, [f]);
+        }
+        for (const [src, feats] of bySource) {
+          if (!src) continue;
+          const ratios = matchFlowToRoads(net.roads, feats as any);
+          if (ratios.size) {
+            maps.push({
+              source: src as TimedFlowMap['source'], at: seg.atMs,
+              matched: {
+                ratios,
+                provenance: new Map([...ratios.keys()].map(id => [id, src as TimedFlowMap['source']])),
+              },
+            });
+          }
+        }
+        if (seg.pointSamples.length) {
+          const pm = matchPointSamplesToRoads(net.roads, seg.pointSamples as any);
+          const perSource = new Map<string, { ratios: Map<string, number>; provenance: Map<string, TimedFlowMap['source']> }>();
+          for (const [id, ratio] of pm.ratios) {
+            const src = pm.provenance.get(id) ?? 'ndw';
+            let entry = perSource.get(src);
+            if (!entry) { entry = { ratios: new Map(), provenance: new Map() }; perSource.set(src, entry); }
+            entry.ratios.set(id, ratio);
+            entry.provenance.set(id, src as TimedFlowMap['source']);
+          }
+          for (const [src, matched] of perSource) {
+            maps.push({ source: src as TimedFlowMap['source'], at: seg.atMs, matched });
+          }
+        }
+      }
+      trafficFlowRef.current = maps.length
+        ? { ratios: mergeTimedFlowMaps(maps).ratios, at: Date.now() }
+        : null;
+    };
+
     const sampleFlow = () => {
       if (!tomtomAdded || !trafficNetRef.current) return;
       let feats: any[] = [];
@@ -5099,16 +5242,59 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
       if (!feats.length) return;
       const ratios = matchFlowToRoads(trafficNetRef.current.roads, feats as any);
       if (ratios.size) {
-        trafficFlowRef.current = { ratios, at: Date.now() };
+        trafficTomtomRef.current = { ratios, at: Date.now() };
         flowError = false;
+        applyMergedFlow();
         setRoadFeatures();
         setChip();
       }
     };
 
+    // Fetch the segment sources for the (padded) viewport, throttled by
+    // a rounded-bbox key: rebuilds fire on every moveend and every 20 s,
+    // but the payload only changes when the view actually moves on (the
+    // server caches each source for 60 s anyway). Fail-soft: a dead
+    // upstream leaves the previous payload — and TomTom — in charge.
+    let segFetchKey = '';
+    const maybeFetchSegments = () => {
+      const b = map.getBounds();
+      const padLat = (b.getNorth() - b.getSouth()) * 0.5;
+      const padLng = (b.getEast() - b.getWest()) * 0.5;
+      const w = b.getWest() - padLng;
+      const s = b.getSouth() - padLat;
+      const e = b.getEast() + padLng;
+      const n = b.getNorth() + padLat;
+      // The route caps bbox span at 1 degree; wider views (continental
+      // zoom) are TomTom's job — segment sources are city-scale data.
+      if (e - w > 0.98 || n - s > 0.98) return;
+      const key = [w, s, e, n].map(x => Math.round(x * 20) / 20).join(',');
+      if (key === segFetchKey) return;
+      segFetchKey = key;
+      void fetch(`/api/traffic/flow-segments?bbox=${w},${s},${e},${n}`)
+        .then(r => (r.ok ? r.json() : null))
+        .then(j => {
+          if (!live || !j) return;
+          trafficSegPayloadRef.current = {
+            features: Array.isArray(j.features) ? j.features : [],
+            pointSamples: Array.isArray(j.pointSamples) ? j.pointSamples : [],
+            incidents: Array.isArray(j.incidents) ? j.incidents : [],
+            atMs: j.at ? Date.parse(j.at) || Date.now() : Date.now(),
+          };
+          const net = trafficNetRef.current;
+          if (net) {
+            trafficClosedRef.current = matchIncidentsToRoads(net.roads, trafficSegPayloadRef.current.incidents);
+            applyMergedFlow();
+            setRoadFeatures();
+            setVehicleFeatures(1);
+          }
+        })
+        .catch(() => { /* keep the last good payload */ });
+    };
+
     const rebuild = () => {
       if (!live) return;
       ensureCarSprite();
+      ensureTruckSprite();
       const zoom = map.getZoom();
       if (zoom < TRAFFIC_MIN_ZOOM) {
         trafficNetRef.current = null;
@@ -5166,16 +5352,26 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
           visibleLengthM += road.lengthM;
         }
       }
+      // Closures from the latest incident payload, matched onto THIS
+      // network: the reconcile below vacates those roads, and the sim
+      // never spawns on or enters them while the payload stands.
+      const segPayload = trafficSegPayloadRef.current;
+      trafficClosedRef.current = segPayload
+        ? matchIncidentsToRoads(active.roads, segPayload.incidents)
+        : new Set<string>();
       if (!shrankWhileLoading) {
         trafficVehiclesStateRef.current = reconcileVehicles(
           trafficVehiclesStateRef.current, active,
           targetVehicleCount(visibleLengthM, zoom, mobileLike, meanRatio), rng, ratioFor,
           prevNet && prevNet !== active ? prevNet : undefined,
+          { closedRoadIds: trafficClosedRef.current },
         );
       }
       sampleFlow();
+      applyMergedFlow();
+      maybeFetchSegments();
       setRoadFeatures();
-      setVehicleFeatures();
+      setVehicleFeatures(1);
       applyVisibility();
       setChip();
     };
@@ -5193,7 +5389,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
       // A click that lands on a vehicle belongs to the vehicle (follow),
       // not to this road's camera lookup.
       try {
-        const vehLayers = ['traffic-vehicles', 'traffic-vehicles-dots'].filter(l => map.getLayer(l));
+        const vehLayers = ['traffic-vehicles', 'traffic-vehicles-trucks', 'traffic-vehicles-dots', 'traffic-vehicles-dots-trucks'].filter(l => map.getLayer(l));
         if (vehLayers.length && map.queryRenderedFeatures(e.point, { layers: vehLayers }).length) return;
       } catch { /* fall through to the road behaviour */ }
       const here: [number, number] = [e.lngLat.lng, e.lngLat.lat];
@@ -5217,19 +5413,20 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
       if (!net || !v) return;
       const road = net.roads[v.roadIndex];
       if (!road) return;
-      const p = pointAt(road, v.s);
+      const p = vehiclePointAt(v, net, 1);
+      if (!p) return;
       trafficFollowRef.current = { num, lastLng: p.lng, lastLat: p.lat };
       if (trafficFollowGoneTimer.current) {
         clearTimeout(trafficFollowGoneTimer.current);
         trafficFollowGoneTimer.current = undefined;
       }
-      const f = vehicleFeature(v, net, ratioFor);
       setTrafficFollowUi({
         num,
         speedKmh: Math.round(v.v * 3.6),
-        bearing: Math.round(Number(f?.properties.bearing ?? 0)),
+        bearing: Math.round(p.bearing),
         roadName: road.name || '',
         gone: false,
+        kind: kindOf(v),
       });
     };
 
@@ -5242,7 +5439,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     // A >600 m jump between pushes means the sim teleported the vehicle
     // (the oneway dead-end respawn) — that reads as "left the area",
     // never as a camera cut across the city.
-    const driveTrafficFollow = (nowMs: number) => {
+    const driveTrafficFollow = (nowMs: number, alpha = 1) => {
       const fol = trafficFollowRef.current;
       if (!fol) return;
       const net = trafficNetRef.current;
@@ -5250,7 +5447,11 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
       if (!net || !v) { endTrafficFollow(true); return; }
       const road = net.roads[v.roadIndex];
       if (!road) { endTrafficFollow(true); return; }
-      const p = pointAt(road, v.s);
+      // The drawn point (interpolated, glide-aware), not the raw sim
+      // state: the camera rides the same continuous motion the marker
+      // shows instead of chasing 30 Hz steps.
+      const p = vehiclePointAt(v, net, alpha);
+      if (!p) { endTrafficFollow(true); return; }
       if (haversineM([fol.lastLng, fol.lastLat], [p.lng, p.lat]) > 600) { endTrafficFollow(true); return; }
       fol.lastLng = p.lng;
       fol.lastLat = p.lat;
@@ -5260,13 +5461,13 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
       }
       if (nowMs - trafficFollowUiAtRef.current >= 400) {
         trafficFollowUiAtRef.current = nowMs;
-        const f = vehicleFeature(v, net, ratioFor);
         setTrafficFollowUi({
           num: fol.num,
           speedKmh: Math.round(v.v * 3.6),
-          bearing: Math.round(Number(f?.properties.bearing ?? 0)),
+          bearing: Math.round(p.bearing),
           roadName: road.name || '',
           gone: false,
+          kind: kindOf(v),
         });
       }
     };
@@ -5310,7 +5511,9 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
 
     map.on('click', 'traffic-flow', onRoadClick);
     map.on('click', 'traffic-vehicles', onVehicleClick);
+    map.on('click', 'traffic-vehicles-trucks', onVehicleClick);
     map.on('click', 'traffic-vehicles-dots', onVehicleClick);
+    map.on('click', 'traffic-vehicles-dots-trucks', onVehicleClick);
     map.on('dragstart', onUserDrag);
     map.on('sourcedata', onSourceData);
     map.on('error', onMapError);
@@ -5330,16 +5533,33 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     // Periodic pass: late tile arrivals, time-of-day drift, chip freshness.
     const iv = setInterval(() => { rebuild(); setChip(); }, 20000);
 
+    // Fixed-step physics (30 Hz) decoupled from rendering: the sim
+    // advances in exact steps however the frame rate jitters, and each
+    // rendered frame interpolates between the last two steps
+    // (vehiclePointAt's alpha) — continuous motion on a 60 Hz phone
+    // instead of positions quantised to a 33 ms push. A long stall
+    // sheds its backlog rather than fast-forwarding the city.
     let last = performance.now();
-    let lastPush = 0;
+    let acc = 0;
+    const STEP_S = 1 / 30;
     const tick = (nowMs: number) => {
       if (!live) return;
-      const dt = Math.min(0.1, Math.max(0, (nowMs - last) / 1000));
+      const frameDt = Math.min(0.25, Math.max(0, (nowMs - last) / 1000));
       last = nowMs;
       const net = trafficNetRef.current;
       if (net && trafficVehiclesStateRef.current.length) {
-        advanceVehicles(trafficVehiclesStateRef.current, net, dt, rng, ratioFor);
-        if (nowMs - lastPush >= 33) { lastPush = nowMs; setVehicleFeatures(); driveTrafficFollow(nowMs); }
+        acc += frameDt;
+        let steps = 0;
+        while (acc >= STEP_S && steps < 8) {
+          advanceVehicles(trafficVehiclesStateRef.current, net, STEP_S, rng, ratioFor,
+            { closedRoadIds: trafficClosedRef.current });
+          acc -= STEP_S;
+          steps++;
+        }
+        if (steps === 8) acc = 0;
+        const alpha = Math.max(0, Math.min(1, acc / STEP_S));
+        setVehicleFeatures(alpha);
+        driveTrafficFollow(nowMs, alpha);
       } else if (trafficFollowRef.current) {
         // The followed vehicle is gone (fleet wiped below min zoom, or
         // the layer reset) — close out with the "left the area" state.
@@ -5356,7 +5576,9 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
       if (rebuildTimer) clearTimeout(rebuildTimer);
       map.off('click', 'traffic-flow', onRoadClick);
       map.off('click', 'traffic-vehicles', onVehicleClick);
+      map.off('click', 'traffic-vehicles-trucks', onVehicleClick);
       map.off('click', 'traffic-vehicles-dots', onVehicleClick);
+      map.off('click', 'traffic-vehicles-dots-trucks', onVehicleClick);
       map.off('dragstart', onUserDrag);
       if (tomtomAdded) map.off('click', 'tomtom-flow-lines', onRoadClick);
       map.off('sourcedata', onSourceData);
@@ -5367,10 +5589,13 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
       if (map.getSource('tomtom-flow')) map.removeSource('tomtom-flow');
       setGeo('traffic-roads', []);
       setGeo('traffic-vehicles', []);
-      setVis(['traffic-flow', 'traffic-vehicles', 'traffic-vehicles-dots'], false);
+      setVis(['traffic-flow', 'traffic-vehicles', 'traffic-vehicles-trucks', 'traffic-vehicles-dots', 'traffic-vehicles-dots-trucks'], false);
       trafficNetRef.current = null;
       trafficVehiclesStateRef.current = [];
       trafficFlowRef.current = null;
+      trafficTomtomRef.current = null;
+      trafficSegPayloadRef.current = null;
+      trafficClosedRef.current = new Set();
       endTrafficFollow(false);
       setTrafficChip(null);
     };
@@ -7090,14 +7315,14 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
           <div className="rounded-lg border border-white/10 bg-black/70 backdrop-blur-md px-3 py-2 shadow-xl">
             {trafficFollowUi.gone ? (
               <p className="text-[11px] font-mono leading-relaxed text-white/60 whitespace-nowrap">
-                <span className="text-white/90 uppercase tracking-wider">Car #{trafficFollowUi.num}</span>
+                <span className="text-white/90 uppercase tracking-wider">{trafficFollowUi.kind === 'truck' ? 'Semi truck' : 'Car'} #{trafficFollowUi.num}</span>
                 {' — '}
                 <span className="text-white/80">Vehicle left the area</span>
               </p>
             ) : (
               <div className="flex items-center gap-3">
                 <p className="text-[11px] font-mono leading-relaxed text-white/60 whitespace-nowrap">
-                  <span className="text-white/90 uppercase tracking-wider">Car #{trafficFollowUi.num}</span>
+                  <span className="text-white/90 uppercase tracking-wider">{trafficFollowUi.kind === 'truck' ? 'Semi truck' : 'Car'} #{trafficFollowUi.num}</span>
                   {' · '}
                   <span className="text-white/80">{trafficFollowUi.speedKmh} km/h</span>
                   {' · '}
