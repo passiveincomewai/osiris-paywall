@@ -258,6 +258,35 @@ describe('reconcile across a re-clipped rebuild', () => {
   });
 });
 
+describe('tracking numbers', () => {
+  it('spawned vehicles carry unique numbers that reconcile keeps', () => {
+    const net = abNetwork();
+    const rng = createRng(5);
+    const first = reconcileVehicles([], net, 12, rng, () => 1);
+    const nums = first.map(v => v.num);
+    expect(nums.every(n => typeof n === 'number' && n > 0)).toBe(true);
+    expect(new Set(nums).size).toBe(12);
+    const again = reconcileVehicles(first, net, 12, rng, () => 1);
+    expect(again.map(v => v.num)).toEqual(nums);
+  });
+
+  it('a vehicle respawned at a oneway dead end keeps its tracking number', () => {
+    const net = buildRoadNetwork([line([[0, 0], [0.01, 0]], { oneway: 1 })], 14);
+    const road = net.roads[0];
+    const v: SimVehicle = { roadId: road.id, roadIndex: 0, s: road.lengthM - 2, dir: 1, v: speedMps(road, 1), pace: 1, num: 42 };
+    const rng = createRng(3);
+    for (let i = 0; i < 20; i++) advanceVehicles([v], net, 0.5, rng, () => 1);
+    expect(v.num).toBe(42);
+  });
+
+  it('vehicleFeature exposes the tracking number', () => {
+    const net = abNetwork();
+    const road = net.roads.find(r => r.name === 'A Street')!;
+    const v: SimVehicle = { roadId: road.id, roadIndex: net.roads.indexOf(road), s: 100, dir: 1, v: 5, pace: 1, num: 7 };
+    expect(vehicleFeature(v, net, () => 1)!.properties.num).toBe(7);
+  });
+});
+
 describe('flow matching', () => {
   const roadOf = () => abNetwork().roads.find(r => r.name === 'A Street')!;
 

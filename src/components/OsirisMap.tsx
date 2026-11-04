@@ -14,7 +14,7 @@ import {
 import {
   TRAFFIC_MIN_ZOOM, CAMERA_SEARCH_RADIUS_M,
   targetVehicleCount, congestionBand, BAND_COLORS, trafficChipText, type TrafficFlowState, } from '@/lib/traffic/config';
-import { adaptBasemapRoadFeatures, buildRoadNetwork, type RoadNetwork } from '@/lib/traffic/roads';
+import { adaptBasemapRoadFeatures, buildRoadNetwork, haversineM, pointAt, type RoadNetwork } from '@/lib/traffic/roads';
 import { effectiveRatio } from '@/lib/traffic/congestion';
 import {
   createRng, reconcileVehicles, advanceVehicles, vehicleFeature, type SimVehicle,
@@ -393,6 +393,11 @@ function aircraftPhotoData(img: HTMLImageElement): { width: number; height: numb
   return { width: s, height: s, data: new Uint8Array(ctx.getImageData(0, 0, s, s).data) };
 }
 
+function compass8(bearing: number): string {
+  const dirs = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+  return dirs[Math.round(((bearing % 360) / 45)) % 8];
+}
+
 const FLIGHT_FOLLOW_PRESETS = [aircraftFollowPreset()];
 
 /** Director presets owned by other systems: Aircraft Follow (Wave 2) and
@@ -464,6 +469,12 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
   // TomTom flow sample, and the honest-labeling chip (always visible
   // while the layer is on — it carries the simulation disclaimer).
   const [trafficChip, setTrafficChip] = useState<string | null>(null);
+  // Click-to-follow for one simulated traffic vehicle ("Car #N"): the
+  // panel is React state; the per-frame camera driver lives in the
+  // traffic effect and works through trafficFollowRef below.
+  const [trafficFollowUi, setTrafficFollowUi] = useState<{
+    num: number; speedKmh: number; bearing: number; roadName: string; gone: boolean;
+  } | null>(null);
   // Space Missions keeps its LL2 board in-map: the latest
   // /api/launches payload plus the pad/launch selection the panel and the
   // Director's Space Mission preset read. The replay drawing itself is
@@ -497,6 +508,34 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
   const trafficNetRef = useRef<RoadNetwork | null>(null);
   const trafficVehiclesStateRef = useRef<SimVehicle[]>([]);
   const trafficFlowRef = useRef<{ ratios: Map<string, number>; at: number } | null>(null);
+  const trafficFollowRef = useRef<{ num: number; lastLng: number; lastLat: number } | null>(null);
+  const trafficFollowUiAtRef = useRef(0);
+  const trafficFollowGoneTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const trafficSpriteReadyRef = useRef(false);
+  // End a vehicle follow. With `gone`, the panel lingers briefly in its
+  // "vehicle left the area" state instead of vanishing without a word.
+  const endTrafficFollow = useCallback((gone = false) => {
+    const cur = trafficFollowRef.current;
+    trafficFollowRef.current = null;
+    if (trafficFollowGoneTimer.current) {
+      clearTimeout(trafficFollowGoneTimer.current);
+      trafficFollowGoneTimer.current = undefined;
+    }
+    if (gone && cur) {
+      setTrafficFollowUi(prev => (prev && prev.num === cur.num ? { ...prev, gone: true } : prev));
+      trafficFollowGoneTimer.current = setTimeout(() => {
+        setTrafficFollowUi(prev => (prev?.gone ? null : prev));
+      }, 3500);
+    } else {
+      setTrafficFollowUi(null);
+    }
+  }, []);
+  useEffect(() => {
+    if (!trafficFollowUi || trafficFollowUi.gone) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') endTrafficFollow(false); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [trafficFollowUi, endTrafficFollow]);
   // ── Nearby cameras — ONE handoff for every "cameras near X" surface ──
   // The search itself lives in src/lib/nearby-cameras.ts (shared with the
   // region dossier in page.tsx); this block owns only the popup + the
@@ -1248,6 +1287,19 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
         map.addImage('hurricane-pin', data, { pixelRatio: AIRCRAFT_PHOTO_PX / 34 });
       } catch { /* a later call (boot/theme) retries */ }
     });
+    // The traffic car (owner's artwork): every simulated vehicle marker.
+    // Wide artwork letterboxed on the shared 96px canvas; the pixelRatio
+    // sizes the canvas to 56 logical px wide at icon-size 1 and the
+    // traffic-vehicles layer scales it by zoom from there.
+    void loadAircraftPhoto('/icons/traffic-car.png').then((img) => {
+      if (!img) return;
+      try {
+        const data = aircraftPhotoData(img);
+        if (map.hasImage('traffic-car')) map.removeImage('traffic-car');
+        map.addImage('traffic-car', data, { pixelRatio: AIRCRAFT_PHOTO_PX / 56 });
+        trafficSpriteReadyRef.current = true;
+      } catch { /* a later call (boot/theme) retries */ }
+    });
     // The snow plow pin (owner's artwork): every live plow marker.
     void loadAircraftPhoto('/icons/snowplow-pin.png').then((img) => {
       if (!img) return;
@@ -1804,9 +1856,18 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
           17, ['match', ['get', 'roadClass'], 'motorway', 8, 'trunk', 7, 'primary', 5.5, 'secondary', 4.5, 'tertiary', 3.5, 2.6]],
         'line-opacity': 0.8,
       }});
-      // Traffic — the simulated vehicles themselves, dots riding the roads,
-      // colored by the speed band of the road they're on.
-      map.addLayer({ id: 'traffic-vehicles', type: 'circle', source: 'traffic-vehicles', layout: {
+      // Traffic — the simulated vehicles themselves, rendered as the
+      // owner's car artwork (symbol layer). Upright, NOT rotated to
+      // bearing: the art is a front three-quarter view, and a spun 3/4
+      // car reads as broken. The plain band-coloured dots stay as a
+      // fallback layer for whenever the sprite is not in the style.
+      map.addLayer({ id: 'traffic-vehicles', type: 'symbol', source: 'traffic-vehicles', layout: {
+        visibility: 'none',
+        'icon-image': 'traffic-car',
+        'icon-size': ['interpolate', ['linear'], ['zoom'], 10.5, 0.55, 13, 0.8, 15, 1.15, 17, 1.6],
+        'icon-allow-overlap': true, 'icon-ignore-placement': true, 'icon-anchor': 'center',
+      }});
+      map.addLayer({ id: 'traffic-vehicles-dots', type: 'circle', source: 'traffic-vehicles', layout: {
         visibility: 'none',
       }, paint: {
         'circle-radius': ['interpolate', ['linear'], ['zoom'], 11, 2.2, 14, 3.4, 17, 5.2],
@@ -4930,10 +4991,11 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     if (!on) {
       setGeo('traffic-roads', []);
       setGeo('traffic-vehicles', []);
-      setVis(['traffic-flow', 'traffic-vehicles'], false);
+      setVis(['traffic-flow', 'traffic-vehicles', 'traffic-vehicles-dots'], false);
       trafficNetRef.current = null;
       trafficVehiclesStateRef.current = [];
       trafficFlowRef.current = null;
+      endTrafficFollow(false);
       setTrafficChip(null);
       return;
     }
@@ -4999,13 +5061,35 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     };
 
     const applyVisibility = () => {
-      setVis(['traffic-vehicles'], showVehicles);
+      // Car sprite whenever it is in the style; band dots until/unless.
+      const sprite = trafficSpriteReadyRef.current && map.hasImage('traffic-car');
+      setVis(['traffic-vehicles'], showVehicles && sprite);
+      setVis(['traffic-vehicles-dots'], showVehicles && !sprite);
       // Congestion overlay: TomTom's own flow lines when its source is
       // live, otherwise our extracted roads colored by the model.
       setVis(['traffic-flow'], showCongestion && !tomtomAdded);
       if (tomtomAdded && map.getLayer('tomtom-flow-lines')) {
         map.setLayoutProperty('tomtom-flow-lines', 'visibility', showCongestion ? 'visible' : 'none');
       }
+    };
+
+    // Make sure the car sprite is in the style (installPhotoIcons also
+    // installs it at boot/theme; this covers a style that was rebuilt
+    // without it). loadAircraftPhoto caches by URL, so repeat calls are
+    // one shared promise.
+    const ensureCarSprite = () => {
+      if (map.hasImage('traffic-car')) { trafficSpriteReadyRef.current = true; return; }
+      trafficSpriteReadyRef.current = false;
+      void loadAircraftPhoto('/icons/traffic-car.png').then((img) => {
+        if (!img || !live) return;
+        try {
+          if (!map.hasImage('traffic-car')) {
+            map.addImage('traffic-car', aircraftPhotoData(img), { pixelRatio: AIRCRAFT_PHOTO_PX / 56 });
+          }
+          trafficSpriteReadyRef.current = true;
+          applyVisibility();
+        } catch { /* dots fallback stays up; a later rebuild retries */ }
+      });
     };
 
     const sampleFlow = () => {
@@ -5024,6 +5108,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
 
     const rebuild = () => {
       if (!live) return;
+      ensureCarSprite();
       const zoom = map.getZoom();
       if (zoom < TRAFFIC_MIN_ZOOM) {
         trafficNetRef.current = null;
@@ -5081,6 +5166,12 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     // openNearbyCameras above) — the same one the aircraft popup and the
     // region dossier use, so there is exactly one nearest-camera behaviour.
     const onRoadClick = (e: any) => {
+      // A click that lands on a vehicle belongs to the vehicle (follow),
+      // not to this road's camera lookup.
+      try {
+        const vehLayers = ['traffic-vehicles', 'traffic-vehicles-dots'].filter(l => map.getLayer(l));
+        if (vehLayers.length && map.queryRenderedFeatures(e.point, { layers: vehLayers }).length) return;
+      } catch { /* fall through to the road behaviour */ }
       const here: [number, number] = [e.lngLat.lng, e.lngLat.lat];
       const roadName = e.features?.[0]?.properties?.name || e.features?.[0]?.properties?.ref || '';
       const radiusKm = (CAMERA_SEARCH_RADIUS_M / 1000).toFixed(1);
@@ -5091,6 +5182,69 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
         listLead: (n) => `${n} live camera${n > 1 ? 's' : ''} within ${radiusKm} km:`,
         emptyText: `No live cameras in the loaded index within ${radiusKm} km of this road.`,
       });
+    };
+
+    // ── Click a vehicle → follow it ("Car #N") ──────────────────────
+    const onVehicleClick = (e: any) => {
+      const num = Number(e.features?.[0]?.properties?.num);
+      if (!Number.isFinite(num) || num <= 0) return;
+      const net = trafficNetRef.current;
+      const v = trafficVehiclesStateRef.current.find(x => x.num === num);
+      if (!net || !v) return;
+      const road = net.roads[v.roadIndex];
+      if (!road) return;
+      const p = pointAt(road, v.s);
+      trafficFollowRef.current = { num, lastLng: p.lng, lastLat: p.lat };
+      if (trafficFollowGoneTimer.current) {
+        clearTimeout(trafficFollowGoneTimer.current);
+        trafficFollowGoneTimer.current = undefined;
+      }
+      const f = vehicleFeature(v, net, ratioFor);
+      setTrafficFollowUi({
+        num,
+        speedKmh: Math.round(v.v * 3.6),
+        bearing: Math.round(Number(f?.properties.bearing ?? 0)),
+        roadName: road.name || '',
+        gone: false,
+      });
+    };
+
+    const onUserDrag = () => {
+      if (trafficFollowRef.current) endTrafficFollow(false);
+    };
+
+    // Camera driver for the followed vehicle: recentre on it as it
+    // drives (the flight-follow pattern: a short ease per render push).
+    // A >600 m jump between pushes means the sim teleported the vehicle
+    // (the oneway dead-end respawn) — that reads as "left the area",
+    // never as a camera cut across the city.
+    const driveTrafficFollow = (nowMs: number) => {
+      const fol = trafficFollowRef.current;
+      if (!fol) return;
+      const net = trafficNetRef.current;
+      const v = trafficVehiclesStateRef.current.find(x => x.num === fol.num);
+      if (!net || !v) { endTrafficFollow(true); return; }
+      const road = net.roads[v.roadIndex];
+      if (!road) { endTrafficFollow(true); return; }
+      const p = pointAt(road, v.s);
+      if (haversineM([fol.lastLng, fol.lastLat], [p.lng, p.lat]) > 600) { endTrafficFollow(true); return; }
+      fol.lastLng = p.lng;
+      fol.lastLat = p.lat;
+      const c = map.getCenter();
+      if (Math.abs(c.lng - p.lng) > 1e-7 || Math.abs(c.lat - p.lat) > 1e-7) {
+        map.easeTo({ center: [p.lng, p.lat], duration: 120 });
+      }
+      if (nowMs - trafficFollowUiAtRef.current >= 400) {
+        trafficFollowUiAtRef.current = nowMs;
+        const f = vehicleFeature(v, net, ratioFor);
+        setTrafficFollowUi({
+          num: fol.num,
+          speedKmh: Math.round(v.v * 3.6),
+          bearing: Math.round(Number(f?.properties.bearing ?? 0)),
+          roadName: road.name || '',
+          gone: false,
+        });
+      }
     };
 
     const setupTomtom = () => {
@@ -5131,6 +5285,9 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     const onMoveEnd = () => { map.once('idle', scheduleRebuild); scheduleRebuild(); };
 
     map.on('click', 'traffic-flow', onRoadClick);
+    map.on('click', 'traffic-vehicles', onVehicleClick);
+    map.on('click', 'traffic-vehicles-dots', onVehicleClick);
+    map.on('dragstart', onUserDrag);
     map.on('sourcedata', onSourceData);
     map.on('error', onMapError);
     map.on('moveend', onMoveEnd);
@@ -5158,7 +5315,11 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
       const net = trafficNetRef.current;
       if (net && trafficVehiclesStateRef.current.length) {
         advanceVehicles(trafficVehiclesStateRef.current, net, dt, rng, ratioFor);
-        if (nowMs - lastPush >= 33) { lastPush = nowMs; setVehicleFeatures(); }
+        if (nowMs - lastPush >= 33) { lastPush = nowMs; setVehicleFeatures(); driveTrafficFollow(nowMs); }
+      } else if (trafficFollowRef.current) {
+        // The followed vehicle is gone (fleet wiped below min zoom, or
+        // the layer reset) — close out with the "left the area" state.
+        endTrafficFollow(true);
       }
       raf = requestAnimationFrame(tick);
     };
@@ -5170,6 +5331,9 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
       clearInterval(iv);
       if (rebuildTimer) clearTimeout(rebuildTimer);
       map.off('click', 'traffic-flow', onRoadClick);
+      map.off('click', 'traffic-vehicles', onVehicleClick);
+      map.off('click', 'traffic-vehicles-dots', onVehicleClick);
+      map.off('dragstart', onUserDrag);
       if (tomtomAdded) map.off('click', 'tomtom-flow-lines', onRoadClick);
       map.off('sourcedata', onSourceData);
       map.off('error', onMapError);
@@ -5179,10 +5343,11 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
       if (map.getSource('tomtom-flow')) map.removeSource('tomtom-flow');
       setGeo('traffic-roads', []);
       setGeo('traffic-vehicles', []);
-      setVis(['traffic-flow', 'traffic-vehicles'], false);
+      setVis(['traffic-flow', 'traffic-vehicles', 'traffic-vehicles-dots'], false);
       trafficNetRef.current = null;
       trafficVehiclesStateRef.current = [];
       trafficFlowRef.current = null;
+      endTrafficFollow(false);
       setTrafficChip(null);
     };
   }, [mapReady, (activeLayers as any).traffic, (activeLayers as any).traffic_vehicles, (activeLayers as any).traffic_congestion, setGeo, setVis]);
@@ -6890,6 +7055,47 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
               {' — '}
               <span className="text-white/80">{trafficChip}</span>
             </p>
+          </div>
+        </div>
+      )}
+      {trafficFollowUi && (
+        <div
+          className="absolute left-1/2 z-[121] -translate-x-1/2 px-3 pointer-events-none"
+          style={{ bottom: trafficChip ? (transitNotice ? '15rem' : '10.5rem') : (transitNotice ? '10.5rem' : '6rem') }}
+        >
+          <div className="rounded-lg border border-white/10 bg-black/70 backdrop-blur-md px-3 py-2 shadow-xl">
+            {trafficFollowUi.gone ? (
+              <p className="text-[11px] font-mono leading-relaxed text-white/60 whitespace-nowrap">
+                <span className="text-white/90 uppercase tracking-wider">Car #{trafficFollowUi.num}</span>
+                {' — '}
+                <span className="text-white/80">Vehicle left the area</span>
+              </p>
+            ) : (
+              <div className="flex items-center gap-3">
+                <p className="text-[11px] font-mono leading-relaxed text-white/60 whitespace-nowrap">
+                  <span className="text-white/90 uppercase tracking-wider">Car #{trafficFollowUi.num}</span>
+                  {' · '}
+                  <span className="text-white/80">{trafficFollowUi.speedKmh} km/h</span>
+                  {' · '}
+                  <span className="text-white/80">{trafficFollowUi.bearing}° {compass8(trafficFollowUi.bearing)}</span>
+                  {trafficFollowUi.roadName ? (
+                    <>
+                      {' · '}
+                      <span className="text-white/80">{trafficFollowUi.roadName}</span>
+                    </>
+                  ) : null}
+                  {' · '}
+                  <span>simulated vehicle</span>
+                </p>
+                <button
+                  type="button"
+                  onClick={() => endTrafficFollow(false)}
+                  className="pointer-events-auto rounded border border-white/20 px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider text-white/80 hover:bg-white/10"
+                >
+                  Stop
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}

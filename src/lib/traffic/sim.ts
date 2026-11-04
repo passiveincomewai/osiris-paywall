@@ -16,11 +16,16 @@ import { nodeKey, pointAt, type RoadNetwork, type TrafficRoad } from './roads';
 import { speedMps } from './congestion';
 import { CLASS_SPAWN_WEIGHT, congestionDensityWeight } from './config';
 
-/** Deterministic RNG (mulberry32) carried as plain state. */
-export interface Rng { state: number }
+/**
+ * Deterministic RNG (mulberry32) carried as plain state. `seq` is the
+ * tracking-number counter: every vehicle ever spawned takes the next
+ * number, so a vehicle's number is unique and never recycled while the
+ * fleet lives (numbers of retired vehicles leave gaps, never dupes).
+ */
+export interface Rng { state: number; seq: number }
 
 export function createRng(seed: number): Rng {
-  return { state: seed >>> 0 };
+  return { state: seed >>> 0, seq: 0 };
 }
 
 export function nextFloat(rng: Rng): number {
@@ -42,6 +47,13 @@ export interface SimVehicle {
   v: number;
   /** Individual pace, 0.75–1.1 — drivers differ. */
   pace: number;
+  /**
+   * Tracking number ("Car #N"): assigned at spawn from the fleet's
+   * sequence, stable for the vehicle's whole lifetime — it survives
+   * rebuilds, re-homing, and even the oneway-dead-end respawn. Optional
+   * only so hand-built fixtures stay terse; every spawned vehicle has one.
+   */
+  num?: number;
 }
 
 const ACCEL_MPS2 = 2.2;
@@ -75,6 +87,7 @@ function spawnVehicle(network: RoadNetwork, rng: Rng, ratioFor: RatioFor): SimVe
     dir,
     v: speedMps(road, ratioFor(road)) * pace * 0.7,
     pace,
+    num: ++rng.seq,
   };
 }
 
@@ -290,7 +303,14 @@ function exitRoad(
   }
   // Oneway dead end (e.g. a tile-clipped motorway stub): respawn elsewhere.
   const fresh = spawnVehicle(network, rng, ratioFor);
-  if (fresh) Object.assign(v, fresh);
+  if (fresh) {
+    // The tracking number identifies the vehicle for its whole lifetime,
+    // so it is carried across the respawn; the fresh spawn's number is
+    // discarded with it (a gap in the sequence, never a duplicate).
+    const num = v.num;
+    Object.assign(v, fresh);
+    v.num = num;
+  }
 }
 
 /** Advance every vehicle by dt seconds. Mutates in place (hot loop). */
@@ -335,6 +355,7 @@ export function vehicleFeature(
       bearing: Math.round(bearing),
       ratio: Math.round(ratio * 100) / 100,
       roadClass: road.roadClass,
+      num: v.num ?? 0,
     },
   };
 }
