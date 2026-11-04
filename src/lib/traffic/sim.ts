@@ -10,6 +10,11 @@
  * traffic. All randomness flows through a seeded RNG, so a run is
  * reproducible and unit-testable. No map, no DOM, no timers in here:
  * the component owns the clock and calls advance() per frame.
+ *
+ * Redeploy note (2026-11-04): this commit exists to trigger a fresh
+ * production build of the current tip — the previous deployment race
+ * left the production alias serving the pre-car-sprite build while
+ * this code was already at the tip.
  */
 
 import { nodeKey, pointAt, type RoadNetwork, type TrafficRoad } from './roads';
