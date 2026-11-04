@@ -29,6 +29,7 @@ import { MANIFEST_ENTRIES } from "@/i18n/manifest";
 import { hreflangMapFor, localizedUrl } from "@/lib/i18n-seo";
 import { withoutFutureLastmod } from "@/lib/lastmod";
 import { fraudRadarPublicPaths } from "@/lib/fraud-radar/flag";
+import { AI_ENGINE_PATHS } from "@/lib/ai-engines";
 import { developerPublicPaths } from "@/lib/developer/flag";
 import { RAIL_PLACE_SLUGS, RAIL_PLACES } from "@/lib/railfan-places";
 import { agencySeoData, seoAgencies } from "@/lib/transit/seo-data";
@@ -266,6 +267,7 @@ const SEO_PAGES_ENTERPRISE = ["/enterprise"];
 // White Label (2026-10-29): the pilot-programme page — a standing
 // commercial page like /enterprise, so it takes the same treatment.
 const SEO_PAGES_WHITE_LABEL = ["/white-label"];
+const SEO_PAGES_AI = AI_ENGINE_PATHS;
 // Index recovery (2026-10-27): two real pages that were orphans —
 // live routes with no sitemap entry and no crawlable inbound links.
 const SEO_PAGES_ORPHANS = ["/use-cases", "/submit-camera"];
@@ -1003,6 +1005,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${BASE}${p}`,
       changeFrequency: "monthly" as const,
       priority: 0.8,
+    })),
+    // Per-AI-engine pages (/ai hub + one page per engine, from the
+    // lib/ai-engines registry — the same source as the routes).
+    ...SEO_PAGES_AI.map((p) => ({
+      url: `${BASE}${p}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
     })),
     // Fraud Radar (Phase 1+): fraudRadarPublicPaths() is [] while
     // FRAUD_RADAR_ENABLED is off, so a dark Fraud Radar contributes

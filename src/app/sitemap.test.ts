@@ -103,7 +103,7 @@ describe("sitemap URL set", () => {
           !u.startsWith(`${BASE}/wildfires/`),
       )
       .sort();
-    expect(nonTransit.length).toBe(1135);
+    expect(nonTransit.length).toBe(1147);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     // Hash history: 6d75d0de… until the SEO audit fix #3 (2026-10-27)
     // normalised the es homepage entry from /es/ to its final /es
@@ -277,8 +277,16 @@ describe("sitemap URL set", () => {
     // verified by diffing the two executed sets), and the merged
     // tree's set minus the pristine set is exactly the 3 new
     // blog URLs.
+    // The per-AI-engine pages (2026-11-04) then added the /ai
+    // hub + the 11 per-engine pages (/ai/chatgpt, /ai/claude,
+    // /ai/perplexity, /ai/gemini, /ai/copilot, /ai/grok,
+    // /ai/meta-ai, /ai/mistral, /ai/duckduckgo, /ai/brave,
+    // /ai/you-com) from the lib/ai-engines registry → 1,147.
+    // Delta verified by executing sitemap() on the merged tree:
+    // removing exactly those 12 URLs reproduces the 1,135 set
+    // and the 74f28985… hash byte-for-byte.
     expect(hash).toBe(
-      "74f28985a90c391821324eef3a486ca104d150c02656ef113507bb707813b385",
+      "badace3c86a52c7c825e512286302b618b50ea8bb9117fffb02891a19003971c",
     );
   });
 
