@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { gunzipSync } from 'node:zlib';
 import { requestHasTrafficAccess } from '@/lib/traffic/access';
 import { trafficPublicAccess } from '@/lib/traffic/public-access';
 import { hereConfigured, hereFlowUrl, hereIncidentsUrl, parseHereFlow, parseHereIncidents, type BBox, type HereIncident } from '@/lib/traffic/here';
@@ -61,7 +62,14 @@ async function fetchText(url: string, timeoutMs: number): Promise<string> {
     signal: AbortSignal.timeout(timeoutMs),
   });
   if (!r.ok) throw new Error(`upstream ${r.status}`);
-  return r.text();
+  const buf = Buffer.from(await r.arrayBuffer());
+  // NDW serves its DATEX II as .xml.gz FILE downloads (not a gzip
+  // content-encoding fetch would undo for us) — sniff the magic bytes
+  // and gunzip explicitly, or the parsers see binary and find nothing.
+  if (buf.length >= 2 && buf[0] === 0x1f && buf[1] === 0x8b) {
+    return gunzipSync(buf).toString('utf8');
+  }
+  return buf.toString('utf8');
 }
 
 async function hereSource(bbox: BBox, key: string) {

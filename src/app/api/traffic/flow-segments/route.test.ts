@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { gzipSync } from 'node:zlib';
 import { NextRequest } from 'next/server';
 import { GET } from './route';
 import { requestHasTrafficAccess } from '@/lib/traffic/access';
@@ -43,8 +44,11 @@ beforeEach(() => {
   upstream.mockImplementation((url: string) => {
     const u = String(url);
     if (u.includes('wsdot.wa.gov')) return Promise.resolve(new Response(WSDOT_FIXTURE, { status: 200 }));
-    if (u.includes('configuratie_meetlocaties')) return Promise.resolve(new Response(NDW_SITES, { status: 200 }));
-    if (u.includes('meetgegevens')) return Promise.resolve(new Response(NDW_MEAS, { status: 200 }));
+    // NDW serves .xml.gz file downloads — the stub gzips for real so the
+    // route's gunzip path is covered (a plain-XML stub masked exactly
+    // that bug during the first production check).
+    if (u.includes('configuratie_meetlocaties')) return Promise.resolve(new Response(new Uint8Array(gzipSync(NDW_SITES)), { status: 200 }));
+    if (u.includes('meetgegevens')) return Promise.resolve(new Response(new Uint8Array(gzipSync(NDW_MEAS)), { status: 200 }));
     return Promise.resolve(new Response('nope', { status: 404 }));
   });
 });
