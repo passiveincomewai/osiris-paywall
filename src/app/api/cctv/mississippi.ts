@@ -29,12 +29,25 @@ import { cachedSource } from '@/lib/sourceCache';
  * camera MDOT itself shows as down — those are dropped, the same way
  * Indiana drops its placeholder-icon views. Site pages are fetched with
  * bounded concurrency and a failed page only loses that one site.
+ *
+ * The fan-out is bounded in time as well as concurrency (2026-11-04):
+ * the upstream slow-walks a long tail of pages (measured p50 ~0.1s but
+ * p95 ~9s), and the page fetches carried no timeout covering the body,
+ * so a handful of stalled pages could hold the loader open forever —
+ * in production the region simply never landed. Every page now has a
+ * hard timeout, and the loader stops dispatching new pages at a
+ * deadline and returns the cameras it has gathered: a partial index
+ * beats none, and the missing sites are retried on the next refresh.
  */
 
 const BASE = 'https://mdottraffic.com';
 const CAMERA_DATA = `${BASE}/default.aspx/LoadCameraData`;
 const SITE_PAGE = (siteId: string) => `${BASE}/mapbubbles/camerasite.aspx?site=${siteId}`;
-const SITE_CONCURRENCY = 16;
+const SITE_CONCURRENCY = 24;
+/** One site page, headers and body together, gets at most this long. */
+const PAGE_TIMEOUT_MS = 8_000;
+/** Dispatching stops this long after the load starts; see header. */
+const LOAD_DEADLINE_MS = 35_000;
 
 /** Mississippi bounding box — drops any stray/placeholder coordinates. */
 const MS_BOUNDS = { minLat: 30.1, maxLat: 35.1, minLng: -91.7, maxLng: -88.05 };
@@ -137,28 +150,42 @@ export function mapView(site: MdotSite, view: MdotView): CctvCamera | null {
   };
 }
 
-async function loadMississippiCameras(): Promise<CctvCamera[]> {
-  const res = await stealthFetch(CAMERA_DATA, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json; charset=utf-8', Accept: 'application/json' },
-    body: '{}',
-  });
-  if (!res.ok) throw new Error(`MDOTtraffic LoadCameraData HTTP ${res.status}`);
+/** Timing bounds for the site-page fan-out. Exported for tests. */
+export interface MdotLoadBounds {
+  pageTimeoutMs?: number;
+  deadlineMs?: number;
+  concurrency?: number;
+}
 
-  const json = await res.json();
-  const sites: MdotSite[] = Array.isArray(json?.d) ? json.d : [];
-  if (!sites.length) throw new Error('MDOTtraffic returned no camera sites');
+/**
+ * Fetch every site's page and collect its cameras. Bounded: a page that
+ * outlives its timeout loses only its site, and once the deadline passes
+ * no new pages are dispatched — the cameras gathered so far are the
+ * result. Exported for tests.
+ */
+export async function collectMississippiCameras(
+  sites: MdotSite[],
+  bounds: MdotLoadBounds = {},
+): Promise<CctvCamera[]> {
+  const pageTimeoutMs = bounds.pageTimeoutMs ?? PAGE_TIMEOUT_MS;
+  const deadline = Date.now() + (bounds.deadlineMs ?? LOAD_DEADLINE_MS);
+  const concurrency = bounds.concurrency ?? SITE_CONCURRENCY;
 
   const cams: CctvCamera[] = [];
   const seen = new Set<string>();
   let cursor = 0;
   const worker = async () => {
     while (cursor < sites.length) {
+      /* Past the deadline the remaining sites wait for the next refresh;
+         pages already in flight are bounded by their own timeout. */
+      if (Date.now() >= deadline) return;
       const site = sites[cursor++];
       const siteId = siteIdOf(site);
       if (!siteId) continue;
       try {
-        const page = await stealthFetch(SITE_PAGE(siteId));
+        const page = await stealthFetch(SITE_PAGE(siteId), {
+          signal: AbortSignal.timeout(pageTimeoutMs),
+        });
         if (!page.ok) continue;
         for (const view of parseSiteViews(await page.text())) {
           const cam = mapView(site, view);
@@ -172,7 +199,24 @@ async function loadMississippiCameras(): Promise<CctvCamera[]> {
       }
     }
   };
-  await Promise.all(Array.from({ length: SITE_CONCURRENCY }, worker));
+  await Promise.all(Array.from({ length: concurrency }, worker));
+  return cams;
+}
+
+async function loadMississippiCameras(): Promise<CctvCamera[]> {
+  const res = await stealthFetch(CAMERA_DATA, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json; charset=utf-8', Accept: 'application/json' },
+    body: '{}',
+    signal: AbortSignal.timeout(12_000),
+  });
+  if (!res.ok) throw new Error(`MDOTtraffic LoadCameraData HTTP ${res.status}`);
+
+  const json = await res.json();
+  const sites: MdotSite[] = Array.isArray(json?.d) ? json.d : [];
+  if (!sites.length) throw new Error('MDOTtraffic returned no camera sites');
+
+  const cams = await collectMississippiCameras(sites);
 
   console.log(`[OSIRIS] Mississippi cameras — Mississippi DOT: ${cams.length}`);
   return cams;

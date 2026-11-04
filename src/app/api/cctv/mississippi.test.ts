@@ -1,12 +1,16 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import {
   parseSiteViews,
   parseThumbnail,
   streamUrl,
   mapView,
+  collectMississippiCameras,
   type MdotSite,
   type MdotView,
 } from './mississippi';
+import { stealthFetch } from '@/lib/stealthFetch';
+
+vi.mock('@/lib/stealthFetch', () => ({ stealthFetch: vi.fn(), stealthHeaders: vi.fn(() => ({})) }));
 
 /** Site 1 from LoadCameraData, verbatim (I-55 at Lakeland Dr, Jackson). */
 const site1: MdotSite = {
@@ -106,5 +110,67 @@ describe('mapView', () => {
   it('drops a site with no usable marker id or coordinates', () => {
     expect(mapView({ ...site1, markerid: 'dms_9' }, viewN)).toBeNull();
     expect(mapView({ ...site1, lat: null }, viewN)).toBeNull();
+  });
+});
+
+const site2: MdotSite = {
+  markerid: 'camsite_2',
+  tooltip: 'I-20 at State St',
+  lat: 32.296,
+  lon: -90.179,
+};
+
+const pageHtml = (stream: string, title: string) =>
+  `<img id="camimg" alt='x' src='https://streamingjxn1.mdottraffic.com/thumbnail?application=rtplive&streamname=${stream}.stream&size=352x240&format=jpg&fitmode=stretch' />` +
+  `<a href='#' onclick="javascript:switchImage('https://streamingjxn1.mdottraffic.com/thumbnail?application=rtplive&streamname=${stream}.stream&size=352x240&format=jpg&fitmode=stretch', '${stream}', '${title}','', this, false, false,' Save Camera','true');">N</a>`;
+
+/** A fetch that behaves like the real one: answers, delays, or hangs
+ *  until the caller's signal aborts it. */
+function fakeFetch(behaviour: (siteId: string) => 'ok' | 'hang' | 'slow') {
+  const streamFor = (siteId: string) => (siteId === '1' ? '010406' : `2${siteId}01`);
+  return (url: unknown, init?: { signal?: AbortSignal }) => {
+    const siteId = String(url).split('site=')[1];
+    const mode = behaviour(siteId);
+    if (mode === 'ok') return Promise.resolve(new Response(pageHtml(streamFor(siteId), 'Cam'), { status: 200 }));
+    return new Promise((_resolve, reject) => {
+      const timer = mode === 'slow' ? setTimeout(() => _resolve(new Response(pageHtml(streamFor(siteId), 'Cam'), { status: 200 })), 40) : undefined;
+      init?.signal?.addEventListener('abort', () => {
+        if (timer) clearTimeout(timer);
+        reject(new Error('aborted'));
+      });
+    });
+  };
+}
+
+describe('collectMississippiCameras (bounded fan-out)', () => {
+  beforeEach(() => { vi.resetAllMocks(); });
+
+  it('collects the views of every site that answers', async () => {
+    vi.mocked(stealthFetch).mockImplementation(fakeFetch(() => 'ok') as never);
+    const cams = await collectMississippiCameras([site1, site2]);
+    expect(cams.map((c) => c.id).sort()).toEqual(['msdot-010406', 'msdot-2201']);
+  });
+
+  /* The production failure this guards: pages whose bodies stall used
+     to hold the loader open forever, so the region never landed. */
+  it('a page that never answers loses only its site, and the load still completes', async () => {
+    vi.mocked(stealthFetch).mockImplementation(fakeFetch((id) => (id === '2' ? 'hang' : 'ok')) as never);
+    const cams = await collectMississippiCameras([site1, site2], { pageTimeoutMs: 60 });
+    expect(cams.map((c) => c.id)).toEqual(['msdot-010406']);
+  });
+
+  it('stops dispatching at the deadline and returns what it has', async () => {
+    vi.mocked(stealthFetch).mockImplementation(fakeFetch(() => 'slow') as never);
+    const many = Array.from({ length: 10 }, (_, i) => ({
+      markerid: `camsite_${i + 1}`,
+      tooltip: `Site ${i + 1}`,
+      lat: 32.3,
+      lon: -90.1,
+    }));
+    const started = Date.now();
+    const cams = await collectMississippiCameras(many, { concurrency: 1, deadlineMs: 90, pageTimeoutMs: 5_000 });
+    expect(cams.length).toBeGreaterThan(0);
+    expect(cams.length).toBeLessThan(10);
+    expect(Date.now() - started).toBeLessThan(2_000);
   });
 });
