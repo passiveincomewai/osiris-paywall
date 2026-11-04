@@ -11,27 +11,29 @@ import { cachedSource } from '@/lib/sourceCache';
  * a still at https://webcams.nyctmc.org/api/cameras/<id>/image —
  * NO API KEY NEEDED.
  *
- * ── GATED OFF — landed 2026-10-22, NOT serving (DOT gap fills) ──────
- * This module is complete but deliberately dark, the nycdot precedent
- * from the OpenCCTV pass (the harvest's nycdot family is CLEAR in
- * families.ts yet contributed 0 records for the same reason): from this
+ * ── ENABLED 2026-11-04 (was gated off at landing, 2026-10-22) ──────
+ * This module landed deliberately dark, the nycdot precedent from the
+ * OpenCCTV pass (the harvest's nycdot family is CLEAR in families.ts
+ * yet contributed 0 records for the same reason): from the development
  * sandbox, webcams.nyctmc.org is unreachable — the TLS handshake
- * completes and the connection is then dropped (curl: "empty reply from
- * server"; Node/Python: connection reset), for the list and for every
- * image, exactly reproducing the prior pass's 946/946-dead probe. The
- * upstream itself is alive: fetched through an off-sandbox path on
- * 2026-10-22, the official list returned all 893 cameras and sampled
- * stills returned real images. The block is this environment's egress,
- * not the agency — but a camera whose feed cannot be probe-verified
- * from the serving pipeline is not presented as serving. That is also
- * why this fetcher is NOT probe-filtered at runtime: while gated it
- * returns nothing at all.
+ * completes and the connection is then dropped (curl: "empty reply
+ * from server"; Node/Python: connection reset), for the list and for
+ * every image, exactly reproducing the prior pass's 946/946-dead
+ * probe. The upstream itself is alive: fetched through an off-sandbox
+ * path on 2026-10-22, the official list returned all 893 cameras and
+ * sampled stills returned real images.
  *
- * Re-enable with OSIRIS_CCTV_NYCDOT=on ONLY after the list and a sample
- * of image URLs probe-verify from the serving environment; then drop
- * the gate and this notice in the same change. The health rollup
- * reports this source as "gated", never as down (health.ts
- * GATED_SOURCES).
+ * The gate's condition was probe-verification from the SERVING
+ * environment, and the block turned out to be a property of the
+ * sandbox's egress (broadly impaired — unrelated hosts reset from it
+ * too), not of the production (Vercel) egress the serving pipeline
+ * actually uses. The module is therefore enabled by default and this
+ * flip is verified from production itself (empty-regions NOTES,
+ * 2026-11-04); the fetch is fail-soft, so a blocked fetch would leave
+ * the region empty exactly as the gate did. Kill switch:
+ * OSIRIS_CCTV_NYCDOT=off restores the dark state without a deploy of
+ * anything else. The fetcher is NOT probe-filtered at runtime: it
+ * trusts the agency's own isOnline flags, like the other DOT modules.
  *
  * Mapping notes: one record per camera; `area` is the borough and is
  * the most precise place name the feed offers, so it is the city.
@@ -44,7 +46,10 @@ const LIST_URL = 'https://webcams.nyctmc.org/api/cameras';
 /** New York City bounding box — drops any stray/placeholder coordinates. */
 const NYC_BOUNDS = { minLat: 40.4, maxLat: 41.0, minLng: -74.3, maxLng: -73.6 };
 
-const NYCDOT_ENABLED = process.env.OSIRIS_CCTV_NYCDOT === 'on';
+/** Enabled by default since 2026-11-04 (see header); OSIRIS_CCTV_NYCDOT=off
+ *  is the kill switch. Read at call time so the switch takes effect
+ *  without a restart of anything else. Exported for tests. */
+export const nycDotEnabled = (): boolean => process.env.OSIRIS_CCTV_NYCDOT !== 'off';
 
 export interface NycDotRecord {
   id?: string | null;
@@ -85,7 +90,7 @@ export function mapCamera(record: NycDotRecord): CctvCamera | null {
 }
 
 async function loadNycDotCameras(): Promise<CctvCamera[]> {
-  if (!NYCDOT_ENABLED) return [];
+  if (!nycDotEnabled()) return [];
 
   const res = await stealthFetch(LIST_URL, {
     signal: AbortSignal.timeout(20000),
