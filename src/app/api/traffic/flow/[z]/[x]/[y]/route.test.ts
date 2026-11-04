@@ -2,13 +2,19 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { NextRequest } from 'next/server';
 import { GET } from './route';
 import { requestHasTrafficAccess } from '@/lib/traffic/access';
+import { trafficPublicAccess } from '@/lib/traffic/public-access';
 
 vi.mock('@/lib/traffic/access', () => ({
   requestHasTrafficAccess: vi.fn(),
   trafficAccessForStatus: (s: string | null | undefined) => s === 'active',
 }));
 
+vi.mock('@/lib/traffic/public-access', () => ({
+  trafficPublicAccess: vi.fn(),
+}));
+
 const mockAccess = vi.mocked(requestHasTrafficAccess);
+const mockPublic = vi.mocked(trafficPublicAccess);
 const upstream = vi.fn();
 
 const call = (z: string, x: string, y: string) =>
@@ -31,6 +37,9 @@ beforeEach(() => {
   upstream.mockReset();
   vi.stubGlobal('fetch', upstream);
   process.env.TOMTOM_API_KEY = 'test-key';
+  // Default: the owner's temporary public-access switch is OFF, so the
+  // subscriber gate below is exercised exactly as before it existed.
+  mockPublic.mockReturnValue(false);
 });
 
 afterEach(() => {
@@ -92,6 +101,37 @@ describe('traffic flow proxy — subscriber gate', () => {
     mockAccess.mockResolvedValue(false);
     const res = await call('12', '99999', '201');
     expect(res.status).toBe(400);
+    expect(upstream).not.toHaveBeenCalled();
+  });
+});
+
+describe('traffic flow proxy — temporary public access (owner switch on)', () => {
+  it('serves a non-subscriber the upstream tile while the switch is on', async () => {
+    mockPublic.mockReturnValue(true);
+    mockAccess.mockResolvedValue(false);
+    upstream.mockImplementation(tileResponse);
+    const res = await call('12', '105', '205');
+    expect(res.status).toBe(200);
+    expect(res.headers.get('x-traffic-cache')).toBe('miss');
+    expect(new Uint8Array(await res.arrayBuffer())).toEqual(new Uint8Array([9, 8, 7]));
+    expect(upstream).toHaveBeenCalledOnce();
+    expect(String(upstream.mock.calls[0][0])).toContain('key=test-key');
+  });
+
+  it('keeps the no-key behaviour while the switch is on: 204, nothing upstream', async () => {
+    mockPublic.mockReturnValue(true);
+    mockAccess.mockResolvedValue(false);
+    delete process.env.TOMTOM_API_KEY;
+    const res = await call('12', '106', '206');
+    expect(res.status).toBe(204);
+    expect(upstream).not.toHaveBeenCalled();
+  });
+
+  it('keeps the zoom band while the switch is on: 204 below city zoom', async () => {
+    mockPublic.mockReturnValue(true);
+    mockAccess.mockResolvedValue(false);
+    const res = await call('5', '4', '4');
+    expect(res.status).toBe(204);
     expect(upstream).not.toHaveBeenCalled();
   });
 });

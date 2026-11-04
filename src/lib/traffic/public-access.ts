@@ -10,18 +10,26 @@
 // two enforcement points for layer visibility, and both consult this
 // one switch.
 //
-// Scope, deliberately narrow:
-// - VIEWING only. /api/traffic/flow's own behaviour is unchanged, and
-//   every other premium layer keeps its normal gate —
+// Scope:
+// - VIEWING: the three traffic layer keys above — panel + globe, above.
+// - DATA PATH (added 2026-11-04): /api/traffic/flow also consults this
+//   switch. It originally did not, and the result was the broken
+//   half-state diagnosed that day: layers visible to everyone, but the
+//   flow tiles 403'd for every non-subscriber, so congestion colours
+//   never rendered and the chip read "live traffic flow unavailable"
+//   for the entire public while subscribers saw live flow. While the
+//   switch is on, the proxy serves tiles to any viewer (its per-IP
+//   rate limit, zoom band and instance cache still bound the spend);
+//   access.ts itself is unchanged and decides again the moment the
+//   switch goes off.
+// - Every other premium layer keeps its normal gate —
 //   checkPremiumEntitlement (src/lib/premium-entitlement.ts) is NOT
 //   touched, and the separate question of whether an active Lite-only
 //   subscription should read as premium for traffic is NOT decided here.
-// - The server-side API gate (src/lib/traffic/access.ts) is a different
-//   module for a different path and is NOT affected by this switch.
 //
 // REVERT (one step): set TRAFFIC_PUBLIC_ACCESS = false and push. The
-// locks are restored everywhere instantly (panel + globe). No data
-// cleanup is required.
+// locks are restored everywhere instantly (panel + globe + tile proxy).
+// No data cleanup is required.
 
 export const TRAFFIC_PUBLIC_ACCESS = true;
 

@@ -3,6 +3,7 @@ import {
   TOMTOM_PROXY_MIN_ZOOM, TOMTOM_PROXY_MAX_ZOOM, TOMTOM_TILE_TTL_MS,
 } from '@/lib/traffic/config';
 import { requestHasTrafficAccess } from '@/lib/traffic/access';
+import { trafficPublicAccess } from '@/lib/traffic/public-access';
 
 /**
  * OSIRIS — TomTom Traffic Flow vector-tile proxy.
@@ -12,7 +13,12 @@ import { requestHasTrafficAccess } from '@/lib/traffic/access';
  * attached here, upstream of the client. Layers of restraint, in order:
  *   • Not a subscriber → 403 (traffic is a Pro layer; the panel lock is
  *     the visible fence, this is the real one — and the answer is
- *     no-store, so no cache can soften it).
+ *     no-store, so no cache can soften it). EXCEPTION: while the owner's
+ *     temporary public-access switch (lib/traffic/public-access) is on,
+ *     the traffic layers are public and this data path serves every
+ *     viewer — layers public but data gated left flow dark for all
+ *     non-subscribers (diagnosed 2026-11-04: key valid, tiles 403).
+ *     Reverting the switch restores this 403 in the same step.
  *   • No key configured → 204 (the layer runs its simulated model; the
  *     client learns this from /api/traffic/status and never adds the
  *     source in the first place — this is the belt-and-braces path).
@@ -60,7 +66,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ z: s
   if (!Number.isInteger(z) || !Number.isInteger(x) || !Number.isInteger(y) || z < 0 || z > 22 || x < 0 || y < 0 || x >= 2 ** z || y >= 2 ** z) {
     return new NextResponse(null, { status: 400 });
   }
-  if (!(await requestHasTrafficAccess())) {
+  if (!trafficPublicAccess() && !(await requestHasTrafficAccess())) {
     return NextResponse.json(
       { error: 'subscription_required' },
       { status: 403, headers: { 'Cache-Control': 'no-store' } },
