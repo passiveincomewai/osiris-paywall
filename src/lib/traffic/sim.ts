@@ -82,6 +82,18 @@ function spawnVehicle(network: RoadNetwork, rng: Rng, ratioFor: RatioFor): SimVe
  * Keep `vehicles` riding the (possibly rebuilt) network and top the fleet
  * up to `target`. Vehicles whose road survived the rebuild keep driving —
  * panning doesn't reset the city. Extras are dropped from the tail.
+ *
+ * A rebuild can also hand back the SAME physical road under a NEW id:
+ * the id hashes the exact tile-clipped vertex string (roads.ts), and the
+ * tiles re-clip / re-simplify geometry whenever the tile set or tile zoom
+ * changes. Keyed on id alone, every such rebuild dropped the road's
+ * vehicles and respawned them at random positions — the fleet visibly
+ * teleported on every pan/zoom and tile refresh. When the caller passes
+ * the previous network, a vehicle whose road id vanished is therefore
+ * re-homed onto the nearest road of the new network at its current world
+ * position (projected along-track), keeping its speed and pace: the dot
+ * stays where it was. Only a vehicle with no road within
+ * REHOME_RADIUS_M of where it was driving is actually dropped.
  */
 export function reconcileVehicles(
   vehicles: SimVehicle[],
@@ -89,17 +101,23 @@ export function reconcileVehicles(
   target: number,
   rng: Rng,
   ratioFor: RatioFor,
+  prevNetwork?: RoadNetwork,
 ): SimVehicle[] {
   const indexById = new Map(network.roads.map((r, i) => [r.id, i] as const));
   const kept: SimVehicle[] = [];
+  let rehomeCtx: RehomeContext | null = null;
   for (const v of vehicles) {
     const idx = indexById.get(v.roadId);
-    if (idx === undefined) continue;
-    const road = network.roads[idx];
-    v.roadIndex = idx;
-    v.s = Math.max(0, Math.min(road.lengthM, v.s));
-    if (road.oneway) v.dir = 1;
-    kept.push(v);
+    if (idx !== undefined) {
+      const road = network.roads[idx];
+      v.roadIndex = idx;
+      v.s = Math.max(0, Math.min(road.lengthM, v.s));
+      if (road.oneway) v.dir = 1;
+      kept.push(v);
+    } else if (prevNetwork) {
+      if (!rehomeCtx) rehomeCtx = createRehomeContext(network, prevNetwork);
+      if (rehomeVehicle(v, rehomeCtx)) kept.push(v);
+    }
     if (kept.length >= target) break;
   }
   while (kept.length < target) {
@@ -108,6 +126,126 @@ export function reconcileVehicles(
     kept.push(v);
   }
   return kept;
+}
+
+/** How far (m) a vehicle may be re-homed across a rebuild — same street, not the next one over. */
+const REHOME_RADIUS_M = 75;
+const M_PER_DEG_LAT = 110_540;
+const M_PER_DEG_LNG = 111_320;
+
+interface RehomeContext {
+  next: RoadNetwork;
+  prevById: Map<string, TrafficRoad>;
+  cellLat: number;
+  cellLng: number;
+  grid: Map<string, number[]>;
+}
+
+/**
+ * Candidate index over the NEW network for re-homing: road indices
+ * registered into ~REHOME_RADIUS_M cells along every segment (not just
+ * at vertices — a long segment spans cells its endpoints never touch).
+ */
+function createRehomeContext(next: RoadNetwork, prev: RoadNetwork): RehomeContext {
+  const midLat = next.roads.length ? next.roads[0].coords[0][1] : 0;
+  const cellLat = REHOME_RADIUS_M / M_PER_DEG_LAT;
+  const cellLng = REHOME_RADIUS_M / (M_PER_DEG_LNG * Math.max(0.2, Math.cos((midLat * Math.PI) / 180)));
+  const key = (lng: number, lat: number) => `${Math.floor(lng / cellLng)},${Math.floor(lat / cellLat)}`;
+  const grid = new Map<string, number[]>();
+  next.roads.forEach((road, ri) => {
+    const registered = new Set<string>();
+    const register = (lng: number, lat: number) => {
+      const k = key(lng, lat);
+      if (registered.has(k)) return;
+      registered.add(k);
+      const arr = grid.get(k);
+      if (arr) arr.push(ri); else grid.set(k, [ri]);
+    };
+    const step = Math.min(cellLat, cellLng) * 0.9;
+    for (let i = 1; i < road.coords.length; i++) {
+      const [ax, ay] = road.coords[i - 1];
+      const [bx, by] = road.coords[i];
+      const span = Math.max(Math.abs(bx - ax), Math.abs(by - ay));
+      const steps = Math.max(1, Math.ceil(span / step));
+      for (let k = 0; k <= steps; k++) register(ax + ((bx - ax) * k) / steps, ay + ((by - ay) * k) / steps);
+    }
+  });
+  return {
+    next,
+    prevById: new Map(prev.roads.map(r => [r.id, r] as const)),
+    cellLat,
+    cellLng,
+    grid,
+  };
+}
+
+/** Closest point on `road` to (lng, lat): along-track metres + gap in metres. */
+function projectOntoRoad(road: TrafficRoad, lng: number, lat: number): { s: number; distM: number } {
+  const cosLat = Math.cos((lat * Math.PI) / 180);
+  let bestS = 0;
+  let bestD2 = Infinity;
+  for (let i = 1; i < road.coords.length; i++) {
+    const a = road.coords[i - 1];
+    const b = road.coords[i];
+    const ax = (a[0] - lng) * M_PER_DEG_LNG * cosLat;
+    const ay = (a[1] - lat) * M_PER_DEG_LAT;
+    const bx = (b[0] - lng) * M_PER_DEG_LNG * cosLat;
+    const by = (b[1] - lat) * M_PER_DEG_LAT;
+    const dx = bx - ax;
+    const dy = by - ay;
+    const len2 = dx * dx + dy * dy;
+    let t = len2 > 0 ? -(ax * dx + ay * dy) / len2 : 0;
+    t = Math.max(0, Math.min(1, t));
+    const cx = ax + t * dx;
+    const cy = ay + t * dy;
+    const d2 = cx * cx + cy * cy;
+    if (d2 < bestD2) {
+      bestD2 = d2;
+      bestS = road.cumM[i - 1] + t * (road.cumM[i] - road.cumM[i - 1]);
+    }
+  }
+  return { s: bestS, distM: Math.sqrt(bestD2) };
+}
+
+/**
+ * Move `v` onto the new network's nearest road to where it was driving on
+ * the previous network. Returns false when it was nowhere near any road
+ * of the new network (it genuinely left the simulated area).
+ */
+function rehomeVehicle(v: SimVehicle, ctx: RehomeContext): boolean {
+  const oldRoad = ctx.prevById.get(v.roadId);
+  if (!oldRoad) return false;
+  const pos = pointAt(oldRoad, v.s);
+  const cx = Math.floor(pos.lng / ctx.cellLng);
+  const cy = Math.floor(pos.lat / ctx.cellLat);
+  const candidates = new Set<number>();
+  for (let ix = cx - 1; ix <= cx + 1; ix++) {
+    for (let iy = cy - 1; iy <= cy + 1; iy++) {
+      const arr = ctx.grid.get(`${ix},${iy}`);
+      if (arr) for (const ri of arr) candidates.add(ri);
+    }
+  }
+  let best: { idx: number; s: number; distM: number } | null = null;
+  for (const ri of candidates) {
+    const road = ctx.next.roads[ri];
+    const proj = projectOntoRoad(road, pos.lng, pos.lat);
+    if (proj.distM > REHOME_RADIUS_M) continue;
+    // Nearest wins; within a metre, prefer the same road class (keeps a
+    // vehicle off a parallel frontage road when its own street ties).
+    const better = !best
+      || proj.distM < best.distM - 1
+      || (proj.distM <= best.distM + 1
+        && road.roadClass === oldRoad.roadClass
+        && ctx.next.roads[best.idx].roadClass !== oldRoad.roadClass);
+    if (better) best = { idx: ri, s: proj.s, distM: proj.distM };
+  }
+  if (!best) return false;
+  const road = ctx.next.roads[best.idx];
+  v.roadId = road.id;
+  v.roadIndex = best.idx;
+  v.s = Math.max(0, Math.min(road.lengthM, best.s));
+  if (road.oneway) v.dir = 1;
+  return true;
 }
 
 /** Move one vehicle off the end it just crossed, or turn it around / respawn it. */

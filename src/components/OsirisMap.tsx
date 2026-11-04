@@ -5044,6 +5044,11 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
       });
       // Tiles may still be loading on first activation; an empty result
       // keeps the previous network and is retried by the periodic pass.
+      // The outgoing network rides along into reconcile: a road that
+      // comes back re-clipped under a new id re-homes its vehicles at
+      // their current position instead of respawning them at random
+      // (see reconcileVehicles in lib/traffic/sim).
+      const prevNet = trafficNetRef.current;
       if (net.roads.length) trafficNetRef.current = net;
       const active = trafficNetRef.current;
       if (!active) { setChip(); return; }
@@ -5057,6 +5062,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
       trafficVehiclesStateRef.current = reconcileVehicles(
         trafficVehiclesStateRef.current, active,
         targetVehicleCount(active.totalLengthM, zoom, mobileLike, meanRatio), rng, ratioFor,
+        prevNet && prevNet !== active ? prevNet : undefined,
       );
       sampleFlow();
       setRoadFeatures();

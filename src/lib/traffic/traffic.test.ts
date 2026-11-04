@@ -227,6 +227,37 @@ describe('sim', () => {
   });
 });
 
+describe('reconcile across a re-clipped rebuild', () => {
+  it('re-homes a vehicle onto the re-clipped twin of its road instead of respawning it', () => {
+    const before = buildRoadNetwork([line([[0, 0], [0.01, 0]], { name: 'A Street' })], 14);
+    // Same physical street, re-simplified by the tiles: an extra vertex a
+    // couple of metres off the original line — a different geometry hash,
+    // therefore a different road id.
+    const after = buildRoadNetwork([line([[0, 0], [0.004, 0.00002], [0.01, 0]], { name: 'A Street' })], 14);
+    expect(after.roads[0].id).not.toBe(before.roads[0].id);
+    const road = before.roads[0];
+    const v: SimVehicle = { roadId: road.id, roadIndex: 0, s: 500, dir: 1, v: 8, pace: 0.9 };
+    const kept = reconcileVehicles([v], after, 1, createRng(7), () => 1, before);
+    expect(kept).toHaveLength(1);
+    expect(kept[0]).toBe(v); // same vehicle — not a random respawn
+    expect(v.roadId).toBe(after.roads[0].id);
+    expect(v.pace).toBe(0.9);
+    const p0 = pointAt(road, 500);
+    const p1 = pointAt(after.roads[0], v.s);
+    expect(haversineM([p0.lng, p0.lat], [p1.lng, p1.lat])).toBeLessThan(5);
+  });
+
+  it('still drops a vehicle whose road vanished with no road nearby', () => {
+    const before = buildRoadNetwork([line([[0, 0], [0.01, 0]], { name: 'A Street' })], 14);
+    const after = buildRoadNetwork([line([[0.05, 0.05], [0.06, 0.05]], { name: 'Far Street' })], 14);
+    const road = before.roads[0];
+    const v: SimVehicle = { roadId: road.id, roadIndex: 0, s: 500, dir: 1, v: 8, pace: 0.9 };
+    const kept = reconcileVehicles([v], after, 1, createRng(7), () => 1, before);
+    expect(kept).toHaveLength(1); // topped back up with a fresh spawn
+    expect(kept[0]).not.toBe(v);
+  });
+});
+
 describe('flow matching', () => {
   const roadOf = () => abNetwork().roads.find(r => r.name === 'A Street')!;
 
