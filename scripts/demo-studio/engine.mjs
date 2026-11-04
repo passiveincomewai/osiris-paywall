@@ -55,6 +55,16 @@ export async function recordPlan({ appUrl, plan, orientation = "landscape", vide
     log(`mark ${action} @ ${t.toFixed(1)}s`);
   };
   const state = { cameraTitle: null, cameraSource: null, feedVerified: false };
+  // page.evaluate has no default timeout: under software-WebGL load the
+  // renderer main thread can starve for many minutes, and an unbounded
+  // evaluate hangs the whole job (and the worker's close path). Bound
+  // the evaluates that must return a value: on timeout the step fails
+  // honestly instead of wedging the run.
+  const ev = (fn, arg, ms = 120000) => Promise.race([
+    page.evaluate(fn, arg),
+    new Promise((_, reject) => setTimeout(
+      () => reject(new Error(`evaluate did not return within ${ms / 1000}s (renderer saturated)`)), ms)),
+  ]);
 
   const dismissOverlays = async () => {
     await page.evaluate(() => {
@@ -148,7 +158,7 @@ export async function recordPlan({ appUrl, plan, orientation = "landscape", vide
       // thread dropped keystrokes.
       let valueOk = false;
       for (let attempt = 0; attempt < 3 && !valueOk; attempt++) {
-        await page.evaluate(() => document.querySelector('input[placeholder*="Search places"]')?.focus());
+        await ev(() => document.querySelector('input[placeholder*="Search places"]')?.focus());
         await page.waitForTimeout(300);
         await page.keyboard.type(step.query, { delay: 80 });
         await page.waitForTimeout(600);
@@ -170,7 +180,7 @@ export async function recordPlan({ appUrl, plan, orientation = "landscape", vide
         { timeout: 180000 },
       ).then(() => true).catch(() => false);
       if (!haveResults) throw new Error(`no search results appeared for "${pick}" within 180s`);
-      const picked = await page.evaluate((p) => {
+      const picked = await ev((p) => {
         const btns = [...document.querySelectorAll('button, [role="option"]')].filter((b) => (b.textContent || "").trim().startsWith(p) && (b.textContent || "").trim().length < 160);
         // Camera results carry an "At source" suffix and read
         // "<Place> - <Area>"; a PLACE result does neither. Prefer the
@@ -215,7 +225,7 @@ export async function recordPlan({ appUrl, plan, orientation = "landscape", vide
           if (imgs.length) return "image";
           return false;
         }, { timeout: 45000 }).then(async () => {
-          return page.evaluate(async () => {
+          return ev(async () => {
             const v = [...document.querySelectorAll("video")].find((x) => x.videoWidth > 0);
             if (!v) return true;
             const t = v.currentTime;
@@ -224,7 +234,7 @@ export async function recordPlan({ appUrl, plan, orientation = "landscape", vide
           });
         }).catch(() => false);
         if (feedOk) {
-          state.cameraTitle = await page.evaluate(() => document.body.innerText.match(/CAM-\d{3,}/)?.[0] ?? "camera");
+          state.cameraTitle = await ev(() => document.body.innerText.match(/CAM-\d{3,}/)?.[0] ?? "camera");
           state.feedVerified = true;
           log(`camera already open from search; feed verified: ${state.cameraTitle}`);
           return;
@@ -234,8 +244,9 @@ export async function recordPlan({ appUrl, plan, orientation = "landscape", vide
         await page.waitForTimeout(1500);
       }
       for (let attempt = 1; attempt <= maxTries; attempt++) {
+        log(`openCameraNearCenter: attempt ${attempt}/${maxTries}`);
         // Strategy A: a visible camera card (featured / nearby strip).
-        const clickedCard = await page.evaluate(() => {
+        const clickedCard = await ev(() => {
           const cards = [...document.querySelectorAll("button")].filter((b) => /WATCH|▶/i.test(b.textContent) && b.querySelector("img"));
           if (cards.length) { cards[0].click(); return true; }
           return false;
@@ -263,6 +274,7 @@ export async function recordPlan({ appUrl, plan, orientation = "landscape", vide
           const t = document.body.innerText;
           return /CAM-\d{3,}/.test(t) && /SECURE UPLINK|ACQUIRING UPLINK|LIVE/i.test(t);
         }, { timeout: 12000 }).then(() => true).catch(() => false);
+        log(`openCameraNearCenter: attempt ${attempt} clickedCard=${clickedCard} viewerOpened=${opened}`);
         if (!opened) { lastError = `attempt ${attempt}: viewer did not open`; await page.waitForTimeout(2500); continue; }
         // Verify a real feed renders (video advancing or a still image loaded).
         const feed = await page.waitForFunction(() => {
@@ -273,7 +285,7 @@ export async function recordPlan({ appUrl, plan, orientation = "landscape", vide
           return false;
         }, { timeout: 30000 }).then(async () => {
           // For video, confirm playback actually advances.
-          const advancing = await page.evaluate(async () => {
+          const advancing = await ev(async () => {
             const v = [...document.querySelectorAll("video")].find((x) => x.videoWidth > 0);
             if (!v) return true; // image feed — loaded is enough
             const t = v.currentTime;
@@ -283,7 +295,7 @@ export async function recordPlan({ appUrl, plan, orientation = "landscape", vide
           return advancing;
         }).catch(() => false);
         if (feed) {
-          const meta = await page.evaluate(() => {
+          const meta = await ev(() => {
             const m = document.body.innerText.match(/CAM-\d{3,}[\s\S]{0,200}/)?.[0] ?? "";
             return { snippet: m.slice(0, 200) };
           });
@@ -292,6 +304,7 @@ export async function recordPlan({ appUrl, plan, orientation = "landscape", vide
           log(`camera feed verified (try ${attempt}): ${state.cameraTitle}`);
           return;
         }
+        log(`openCameraNearCenter: attempt ${attempt} feed=${feed}`);
         lastError = `attempt ${attempt}: viewer opened but no feed rendered`;
         await steps.closeCamera();
         await page.waitForTimeout(1500);
