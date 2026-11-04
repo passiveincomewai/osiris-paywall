@@ -43,11 +43,18 @@ import { cachedSource } from '@/lib/sourceCache';
 const BASE = 'https://mdottraffic.com';
 const CAMERA_DATA = `${BASE}/default.aspx/LoadCameraData`;
 const SITE_PAGE = (siteId: string) => `${BASE}/mapbubbles/camerasite.aspx?site=${siteId}`;
-const SITE_CONCURRENCY = 24;
+/* Tightened the same day (2026-11-04): with the first cut live
+   (24 / 8s / 35s) the region still never landed in production —
+   background loads on short-lived instances kept dying before the
+   long tail finished. The typical load now fits inside a single
+   request's region budget: 467 pages at the measured ~0.35s average
+   over 32 workers is ≈5s of wall time, and the 20s deadline still
+   leaves the slow tail room without letting it hold the load open. */
+const SITE_CONCURRENCY = 32;
 /** One site page, headers and body together, gets at most this long. */
-const PAGE_TIMEOUT_MS = 8_000;
+const PAGE_TIMEOUT_MS = 6_000;
 /** Dispatching stops this long after the load starts; see header. */
-const LOAD_DEADLINE_MS = 35_000;
+const LOAD_DEADLINE_MS = 20_000;
 
 /** Mississippi bounding box — drops any stray/placeholder coordinates. */
 const MS_BOUNDS = { minLat: 30.1, maxLat: 35.1, minLng: -91.7, maxLng: -88.05 };

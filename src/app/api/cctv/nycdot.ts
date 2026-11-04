@@ -11,29 +11,33 @@ import { cachedSource } from '@/lib/sourceCache';
  * a still at https://webcams.nyctmc.org/api/cameras/<id>/image —
  * NO API KEY NEEDED.
  *
- * ── ENABLED 2026-11-04 (was gated off at landing, 2026-10-22) ──────
- * This module landed deliberately dark, the nycdot precedent from the
- * OpenCCTV pass (the harvest's nycdot family is CLEAR in families.ts
- * yet contributed 0 records for the same reason): from the development
- * sandbox, webcams.nyctmc.org is unreachable — the TLS handshake
- * completes and the connection is then dropped (curl: "empty reply
- * from server"; Node/Python: connection reset), for the list and for
- * every image, exactly reproducing the prior pass's 946/946-dead
- * probe. The upstream itself is alive: fetched through an off-sandbox
- * path on 2026-10-22, the official list returned all 893 cameras and
- * sampled stills returned real images.
+ * ── GATED OFF — verified unreachable from BOTH environments ────────
+ * This module landed deliberately dark on 2026-10-22, the nycdot
+ * precedent from the OpenCCTV pass (the harvest's nycdot family is
+ * CLEAR in families.ts yet contributed 0 records for the same reason):
+ * from the development sandbox, webcams.nyctmc.org is unreachable —
+ * the TLS handshake completes and the connection is then dropped
+ * (curl: "empty reply from server"; Node/Python: connection reset),
+ * for the list and for every image, exactly reproducing the prior
+ * pass's 946/946-dead probe. The upstream itself is alive: fetched
+ * through an off-sandbox path on 2026-10-22, the official list
+ * returned all 893 cameras and sampled stills returned real images.
  *
  * The gate's condition was probe-verification from the SERVING
- * environment, and the block turned out to be a property of the
- * sandbox's egress (broadly impaired — unrelated hosts reset from it
- * too), not of the production (Vercel) egress the serving pipeline
- * actually uses. The module is therefore enabled by default and this
- * flip is verified from production itself (empty-regions NOTES,
- * 2026-11-04); the fetch is fail-soft, so a blocked fetch would leave
- * the region empty exactly as the gate did. Kill switch:
- * OSIRIS_CCTV_NYCDOT=off restores the dark state without a deploy of
- * anything else. The fetcher is NOT probe-filtered at runtime: it
- * trusts the agency's own isOnline flags, like the other DOT modules.
+ * environment, so on 2026-11-04 the module was enabled by default as
+ * a probe (commit 40b69cb6) — and production could not fetch it
+ * either: with the flip live fleet-wide for ~30 minutes under real
+ * traffic, the region never landed once (a single fast GET; the NYC
+ * bounds total stayed frozen while a sibling region's live feed
+ * refreshed normally). The agency's edge evidently drops datacenter
+ * egress generally, Vercel's included — not just this sandbox's. The
+ * gate was therefore restored the same day with the question settled:
+ * re-enable (OSIRIS_CCTV_NYCDOT=on) ONLY if list + image probes pass
+ * from the serving environment, e.g. if the agency changes its edge
+ * posture. The health rollup reports this source as "gated", never
+ * as down (health.ts GATED_SOURCES). The fetcher is NOT
+ * probe-filtered at runtime: it trusts the agency's own isOnline
+ * flags, like the other DOT modules.
  *
  * Mapping notes: one record per camera; `area` is the borough and is
  * the most precise place name the feed offers, so it is the city.
@@ -46,10 +50,10 @@ const LIST_URL = 'https://webcams.nyctmc.org/api/cameras';
 /** New York City bounding box — drops any stray/placeholder coordinates. */
 const NYC_BOUNDS = { minLat: 40.4, maxLat: 41.0, minLng: -74.3, maxLng: -73.6 };
 
-/** Enabled by default since 2026-11-04 (see header); OSIRIS_CCTV_NYCDOT=off
- *  is the kill switch. Read at call time so the switch takes effect
- *  without a restart of anything else. Exported for tests. */
-export const nycDotEnabled = (): boolean => process.env.OSIRIS_CCTV_NYCDOT !== 'off';
+/** Gate — see header. Not serving unless OSIRIS_CCTV_NYCDOT is 'on'.
+ *  Read at call time so the switch takes effect without a restart of
+ *  anything else. Exported for tests. */
+export const nycDotEnabled = (): boolean => process.env.OSIRIS_CCTV_NYCDOT === 'on';
 
 export interface NycDotRecord {
   id?: string | null;

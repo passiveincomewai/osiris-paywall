@@ -62,6 +62,16 @@ export const GATED_SOURCES: Record<string, string> = {
     'returns 404 (endpoint retired; verified from the sandbox and production). Washington ' +
     'coverage is carried by the OpenCCTV harvest wsdot family (1,174 probe-verified cameras). ' +
     'Re-enable with OSIRIS_CCTV_WSDOT=on if WSDOT republishes an endpoint.',
+  'label:NYC DOT':
+    'Direct module (nycdot.ts) landed 2026-10-22 gated off: webcams.nyctmc.org drops the ' +
+    'connection after the TLS handshake from the sandbox (reproducing the OpenCCTV pass\u2019s ' +
+    '946/946-dead probe). Enabled by default on 2026-11-04 as a serving-environment probe; ' +
+    'production could not fetch it either \u2014 the region never landed once in ~30 minutes ' +
+    'fleet-wide while a sibling region\u2019s live feed refreshed normally \u2014 so the gate was ' +
+    'restored the same day: the agency\u2019s edge drops datacenter egress generally. The ' +
+    'upstream itself is alive (official list fetched off-sandbox 2026-10-22: 893 cameras, ' +
+    'sampled stills live). Re-enable with OSIRIS_CCTV_NYCDOT=on only after list + image ' +
+    'probes pass from the serving environment.',
 };
 
 const iso = (ms: number | null | undefined): string | null =>

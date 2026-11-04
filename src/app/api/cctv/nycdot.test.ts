@@ -46,31 +46,27 @@ describe('mapCamera', () => {
   });
 });
 
-describe('nycDotEnabled (kill switch)', () => {
-  it('is enabled by default and dark only when OSIRIS_CCTV_NYCDOT=off', () => {
-    // The module was enabled 2026-11-04: the 2026-10-22 block was the
-    // sandbox's egress, not the serving environment's. 'off' restores
-    // the dark state without a deploy.
+describe('nycDotEnabled (gate)', () => {
+  it('is dark unless OSIRIS_CCTV_NYCDOT=on', () => {
+    // Gated since 2026-10-22; the 2026-11-04 enable-as-probe proved
+    // the serving environment cannot reach the host either, and the
+    // gate was restored the same day. See the module header.
     delete process.env.OSIRIS_CCTV_NYCDOT;
-    expect(nycDotEnabled()).toBe(true);
-    process.env.OSIRIS_CCTV_NYCDOT = 'on';
-    expect(nycDotEnabled()).toBe(true);
+    expect(nycDotEnabled()).toBe(false);
     process.env.OSIRIS_CCTV_NYCDOT = 'off';
     expect(nycDotEnabled()).toBe(false);
+    process.env.OSIRIS_CCTV_NYCDOT = 'on';
+    expect(nycDotEnabled()).toBe(true);
     delete process.env.OSIRIS_CCTV_NYCDOT;
   });
 
-  it('serves nothing while the kill switch is off', async () => {
-    process.env.OSIRIS_CCTV_NYCDOT = 'off';
-    try {
-      await expect(fetchNycDotCameras()).resolves.toEqual([]);
-    } finally {
-      delete process.env.OSIRIS_CCTV_NYCDOT;
-    }
+  it('serves nothing while the gate is closed', async () => {
+    delete process.env.OSIRIS_CCTV_NYCDOT;
+    await expect(fetchNycDotCameras()).resolves.toEqual([]);
   });
 });
 
-// Live integration test — opt in with RUN_LIVE_TESTS=1
+// Live integration test — opt in with RUN_LIVE_TESTS=1 AND OSIRIS_CCTV_NYCDOT=on
 // (hits the real NYC DOT list; only meaningful where the host is reachable).
 const liveIt = process.env.RUN_LIVE_TESTS === '1' ? it : it.skip;
 

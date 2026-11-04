@@ -639,11 +639,12 @@ const RAW_REGION_FETCHERS: Record<string, RegionFetcher> = {
   'kentucky': fetchKentuckyCameras,
   'southdakota': fetchSouthDakotaCameras,
   'montana': fetchMontanaCameras,
-  /* NYC DOT (TMC) — module landed 2026-10-22, ENABLED 2026-11-04:
-     webcams.nyctmc.org is unreachable from the sandbox's egress but
-     the block does not extend to the production serving environment;
-     kill switch OSIRIS_CCTV_NYCDOT=off inside nycdot.ts. See its
-     header for the full history. */
+  /* NYC DOT (TMC) — module landed 2026-10-22, GATED OFF inside
+     nycdot.ts (OSIRIS_CCTV_NYCDOT=on to enable): webcams.nyctmc.org
+     drops datacenter egress — verified from the sandbox AND from
+     production (2026-11-04 enable-as-probe never landed once), so
+     its 893 cameras are not presented as serving. See nycdot.ts
+     header and health.ts GATED_SOURCES. */
   'nycdot': fetchNycDotCameras,
   'nevada': fetchNevadaCameras,
   'louisiana': fetchLouisianaCameras,
