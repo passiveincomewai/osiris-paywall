@@ -3,7 +3,7 @@ import { cachedSource } from '@/lib/sourceCache';
 /**
  * OSIRIS — Snow plow / winter maintenance vehicles.
  *
- * Seven verified public feeds, merged into a single payload by
+ * Ten verified public feeds, merged into a single payload by
  * `getPlows` below. Each source is cached and tracked
  * independently, so one state going down never takes the others with
  * it. (Survey + probe record: ~/workspace/plow-expansion/REPORT.md,
@@ -41,19 +41,38 @@ import { cachedSource } from '@/lib/sourceCache';
  *    reporting, Manitoba answering with an empty active set. The
  *    marker feed has no timestamps, so a vehicle is only kept once
  *    its trail bounds its recency — see the IBI section below.
+ *  • Castle Rock 511 GraphQL — Indiana (INDOT), Nebraska (NDOT) and
+ *    Kansas (KDOT) run the Castle Rock ITS next-gen 511 platform,
+ *    whose public apps expose the winter fleet through the same
+ *    `plowLocations` GraphQL layer on each tenant. The map query is
+ *    the apps' own document: verified live against Indiana on
+ *    2026-10-27 (11 active trucks) and against all three tenants on
+ *    2026-11-04 (each answering the platform shape with an empty,
+ *    fair-weather active set). The map payload carries no
+ *    timestamps, so — the IBI rule again — a vehicle is only kept
+ *    once the platform's per-plow detail record bounds its recency;
+ *    the detail query (`heading`, `activeMaterialPhrase`,
+ *    `lastUpdated { timestamp }`) is the platform's own document,
+ *    re-validated live against all three tenants on 2026-11-04.
+ *    TERMS: the platform publishes no reuse terms, and the survey
+ *    held these states for a permission/courtesy email first. The
+ *    owner overrode that hold on 2026-11-04 — "Ship IN/NE/KS with
+ *    attribution, no emails" — so they ship WITH attribution (the
+ *    agency label on every truck, and every source list the layer
+ *    publishes) and no emails were sent. If any of the three DOTs
+ *    objects, that feed comes down; each sits behind its own cache.
  *
  * Held, deliberately NOT integrated (plow-expansion survey +
- * 2026-10-27 expansion audit): Indiana (live on the Castle Rock 511
- * GraphQL platform, but no published reuse terms — a
- * permission/courtesy email to INDOT comes first), Michigan
- * (MiDrive JSON re-probed 2026-10-27: endpoint alive, `[]`
- * pre-season, and the contract still carries NO timestamp field, so
- * staleness cannot be bounded from the data — probationary until
- * re-verified against live trucks in a storm), Nebraska / Colorado /
- * Minnesota (Castle Rock data-feed agreement territory), Alberta
- * (same IBI endpoints as its integrated neighbours, but its detail
- * records carry zero trail states — no timestamp exists anywhere in
- * the payload, so recency cannot be bounded).
+ * 2026-10-27 expansion audit): Michigan (MiDrive JSON re-probed
+ * 2026-10-27: endpoint alive, `[]` pre-season, and the contract
+ * still carries NO timestamp field, so staleness cannot be bounded
+ * from the data — probationary until re-verified against live trucks
+ * in a storm), Colorado / Minnesota (Castle Rock data-feed
+ * agreement territory — no verified public plow endpoint exists on
+ * their tenants), Alberta (same IBI endpoints as its integrated
+ * neighbours, but its detail records carry zero trail states — no
+ * timestamp exists anywhere in the payload, so recency cannot be
+ * bounded).
  *
  * The IBI 511 family's LIST resources were probed for a sibling plow
  * resource (2026-10-26): every plausible resource name returns the
@@ -126,7 +145,9 @@ function dedupe(plows: Plow[]): Plow[] {
 /* Per-source feed health, recorded by each fetcher itself — it only
    runs on a real upstream attempt, which is exactly when the answer
    changes. The route reads the aggregate via getPlowFeedStatus(). */
-type PlowSourceId = 'iowa' | 'utah' | 'vermont' | 'ontario' | 'manitoba' | 'saskatchewan' | 'alaska';
+type PlowSourceId =
+  | 'iowa' | 'utah' | 'vermont' | 'ontario' | 'manitoba' | 'saskatchewan' | 'alaska'
+  | 'indiana' | 'nebraska' | 'kansas';
 const sourceHealth: Record<PlowSourceId, { ok: boolean | null; fetchedAt: string | null }> = {
   iowa: { ok: null, fetchedAt: null },
   utah: { ok: null, fetchedAt: null },
@@ -135,6 +156,9 @@ const sourceHealth: Record<PlowSourceId, { ok: boolean | null; fetchedAt: string
   manitoba: { ok: null, fetchedAt: null },
   saskatchewan: { ok: null, fetchedAt: null },
   alaska: { ok: null, fetchedAt: null },
+  indiana: { ok: null, fetchedAt: null },
+  nebraska: { ok: null, fetchedAt: null },
+  kansas: { ok: null, fetchedAt: null },
 };
 
 function recordAttempt(source: PlowSourceId, ok: boolean): void {
@@ -774,6 +798,427 @@ async function fetchIbiPlows(cfg: IbiPlowConfig): Promise<Plow[]> {
   }
 }
 
+/* ── Castle Rock 511 GraphQL — Indiana · Nebraska · Kansas ──
+ *
+ * Three tenants of the Castle Rock ITS next-gen 511 platform —
+ * Indiana (511in.org), Nebraska (511.nebraska.gov) and Kansas
+ * (kandrive.gov, whose Plow Locations Tool launched 2026-10-15) —
+ * publish their winter fleets through one GraphQL API:
+ *
+ *   POST {base}/api/graphql   (the public app's own endpoint, keyless)
+ *
+ * Two documents, both the platform's own:
+ *
+ *   MapFeatures — the app's map-layer query with
+ *   layerSlugs: ["plowLocations"] over a state bbox at zoom 8 (the
+ *   zoom drives clustering; 8 returned 251 unclustered camera groups
+ *   and Indiana's 11 individual plows in the October probes, so it
+ *   is the proven setting). One group per truck: `title`
+ *   ("US 52: Plow Truck"), `uri` ("avl/63067") and one GeoJSON
+ *   feature whose properties carry an 8-way direction icon
+ *   ("Solid_Southeast.svg") instead of a numeric heading. Verified
+ *   live: Indiana 2026-10-27 (11 active trucks, fixture in the
+ *   tests) and all three tenants 2026-11-04 (HTTP 200, the exact
+ *   platform shape, empty fair-weather active sets).
+ *
+ *   Plow — the app's per-plow detail query. It is the only Castle
+ *   Rock document that carries a timestamp: `lastUpdated
+ *   { timestamp, timezone }`, plus a numeric `heading` and
+ *   `activeMaterialPhrase` — the truck's own material activity
+ *   ("Spreading…" style phrases), a real reported status, mapped
+ *   verbatim. Reconstructed from the platform bundle and validated
+ *   live against all three tenants on 2026-11-04: the document
+ *   executes and answers its structured NOT_FOUND for a retired
+ *   vehicle id, where an unknown field earns the platform's generic
+ *   400. No truck was active on any tenant that day, so the detail
+ *   record's values are pinned by the bundle document, not by a
+ *   capture — first-storm re-verification applies, as it did for
+ *   Michigan.
+ *
+ * So the IBI rule holds here too: presence in the map layer is
+ * never by itself a live claim. A vehicle is kept only when its
+ * detail record reads AND its `lastUpdated` lands inside
+ * CASTLE_ROCK_PLOW_RECENCY_MS; a vehicle whose detail can't be read
+ * (or carries no parseable stamp) is dropped, never stamped with
+ * fetch time. Map-level data still contributes the position and
+ * the label, and the icon heading is the fallback when the detail
+ * record reports no numeric heading.
+ *
+ * Attribution is a condition of shipping these three (owner's
+ * 2026-11-04 decision, see the header): `agency` on every truck —
+ * "Indiana DOT (INDOT)", "Nebraska DOT", "Kansas DOT (KDOT)" — is
+ * what the map popup renders, and the route + layer panel source
+ * lists name all three DOTs.
+ */
+
+/** One GeoJSON feature of a Castle Rock map group — only the fields we read. */
+export interface CastleRockPlowFeature {
+  id?: string | null;
+  type?: string | null;
+  geometry?: { type?: string; coordinates?: [number, number] } | null;
+  properties?: {
+    icon?: { url?: string | null } | null;
+  } | null;
+}
+
+/** One map group of the Castle Rock response — one truck per group. */
+export interface CastleRockPlowGroup {
+  __typename?: string | null;
+  title?: string | null;
+  tooltip?: string | null;
+  /** The vehicle's platform id, "avl/63067". */
+  uri?: string | null;
+  features?: CastleRockPlowFeature[] | null;
+}
+
+/** One per-plow detail record — only the fields we read. */
+export interface CastleRockPlowDetail {
+  uri?: string | null;
+  title?: string | null;
+  /** Degrees clockwise from north, when the truck reports it. */
+  heading?: number | null;
+  /** The truck's material activity in the platform's own words. */
+  activeMaterialPhrase?: string | null;
+  locationDescription?: string | null;
+  lastUpdated?: {
+    /** Epoch ms, epoch seconds, or an ISO string — the platform's
+        serialization is not documented, so the parser is liberal. */
+    timestamp?: string | number | null;
+    /** IANA zone the stamp is expressed in, when it is a wall time. */
+    timezone?: string | null;
+  } | null;
+}
+
+/** What separates one Castle Rock tenant from another. */
+export interface CastleRockPlowConfig {
+  source: PlowSourceId;
+  /** Origin, e.g. `https://511in.org` — the GraphQL path is shared. */
+  base: string;
+  /** The attribution label every truck of this tenant carries. */
+  agency: string;
+  /** Prefixes every plow id, so two tenants can't collide. */
+  idPrefix: string;
+  /** The state bbox the map query runs over (the probed shape). */
+  query: { north: number; south: number; east: number; west: number };
+  /** Drops mis-geocoded rows — same guard as the other feeds. */
+  bounds: { minLat: number; maxLat: number; minLng: number; maxLng: number };
+}
+
+/** How old a detail ping may be before the truck stops being a live
+    claim. The platform's own persistence window is undocumented;
+    2 h matches the IBI platform's stated window, the closest
+    precedent in this file. */
+export const CASTLE_ROCK_PLOW_RECENCY_MS = 120 * 60 * 1000;
+
+export const CASTLE_ROCK_PLOW_CONFIGS: Record<'indiana' | 'nebraska' | 'kansas', CastleRockPlowConfig> = {
+  indiana: {
+    source: 'indiana', base: 'https://511in.org', agency: 'Indiana DOT (INDOT)', idPrefix: 'indiana',
+    query: { north: 41.8, south: 37.8, east: -84.8, west: -88.1 },
+    bounds: { minLat: 37.6, maxLat: 42.0, minLng: -88.3, maxLng: -84.6 },
+  },
+  nebraska: {
+    source: 'nebraska', base: 'https://511.nebraska.gov', agency: 'Nebraska DOT', idPrefix: 'nebraska',
+    query: { north: 43.0, south: 40.0, east: -95.3, west: -104.1 },
+    bounds: { minLat: 39.9, maxLat: 43.2, minLng: -104.3, maxLng: -95.1 },
+  },
+  kansas: {
+    source: 'kansas', base: 'https://kandrive.gov', agency: 'Kansas DOT (KDOT)', idPrefix: 'kansas',
+    query: { north: 40.0, south: 37.0, east: -94.6, west: -102.1 },
+    bounds: { minLat: 36.9, maxLat: 40.2, minLng: -102.3, maxLng: -94.4 },
+  },
+};
+
+const CASTLE_ROCK_ICON_HEADINGS: Record<string, number> = {
+  North: 0, Northeast: 45, East: 90, Southeast: 135,
+  South: 180, Southwest: 225, West: 270, Northwest: 315,
+};
+
+/** Heading from the map icon's compass point ("…/Solid_Southeast.svg"
+    → 135). The map payload's only heading signal; the detail
+    record's numeric heading supersedes it when present. */
+export function castleRockIconHeading(iconUrl: unknown): number | undefined {
+  if (typeof iconUrl !== 'string') return undefined;
+  const m = /_([A-Za-z]+)\.svg$/.exec(iconUrl.trim());
+  if (!m) return undefined;
+  return CASTLE_ROCK_ICON_HEADINGS[m[1]];
+}
+
+/* Zone-aware wall-time conversion, generalised from the Vermont
+   helpers above (theirs are pinned to America/New_York): a
+   formatter per IANA zone, cached. */
+const zoneFormatters = new Map<string, Intl.DateTimeFormat>();
+
+function zoneFormatter(timeZone: string): Intl.DateTimeFormat | null {
+  const hit = zoneFormatters.get(timeZone);
+  if (hit) return hit;
+  let f: Intl.DateTimeFormat;
+  try {
+    f = new Intl.DateTimeFormat('en-US', {
+      timeZone, hourCycle: 'h23',
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit',
+    });
+  } catch {
+    return null; // not an IANA zone the runtime knows
+  }
+  zoneFormatters.set(timeZone, f);
+  return f;
+}
+
+function zoneOffsetMs(timeZone: string, utcMs: number): number | null {
+  const f = zoneFormatter(timeZone);
+  if (!f) return null;
+  const parts: Record<string, number> = {};
+  for (const p of f.formatToParts(new Date(utcMs))) {
+    if (p.type !== 'literal') parts[p.type] = Number(p.value);
+  }
+  const wallAsUtc = Date.UTC(parts.year, parts.month - 1, parts.day, parts.hour % 24, parts.minute, parts.second);
+  return wallAsUtc - Math.floor(utcMs / 1000) * 1000;
+}
+
+const CASTLE_ROCK_NAIVE_TS_RE = /^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2}):(\d{2})(?:\.(\d{1,6}))?$/;
+
+/**
+ * Parse a Castle Rock `lastUpdated.timestamp` to epoch ms. The
+ * platform does not document the serialization, so the accepted
+ * shapes are: epoch numbers (ms, or seconds when too small to be
+ * ms), digit strings of the same, ISO strings carrying a zone
+ * designator, and naive ISO wall times — converted through the
+ * record's own `timezone` when it names a real IANA zone, else read
+ * as UTC (this platform family's stamps are UTC, the IBI
+ * precedent). Anything else is null, and null drops the vehicle.
+ */
+export function parseCastleRockTimestamp(raw: unknown, timeZone?: string | null): number | null {
+  if (typeof raw === 'number') {
+    if (!Number.isFinite(raw) || raw <= 0) return null;
+    return raw < 1e11 ? Math.round(raw * 1000) : Math.round(raw);
+  }
+  if (typeof raw !== 'string') return null;
+  const s = raw.trim();
+  if (!s) return null;
+  if (/^\d+$/.test(s)) {
+    const n = Number(s);
+    return n < 1e11 ? n * 1000 : n;
+  }
+  const naive = CASTLE_ROCK_NAIVE_TS_RE.exec(s);
+  if (naive) {
+    const fracMs = naive[7] ? Math.round(Number(`0.${naive[7]}`) * 1000) : 0;
+    const wallAsUtc = Date.UTC(
+      Number(naive[1]), Number(naive[2]) - 1, Number(naive[3]),
+      Number(naive[4]), Number(naive[5]), Number(naive[6]), fracMs,
+    );
+    if (timeZone) {
+      const off1 = zoneOffsetMs(timeZone, wallAsUtc);
+      if (off1 != null) {
+        const candidate = wallAsUtc - off1;
+        const off2 = zoneOffsetMs(timeZone, candidate); // re-check at the instant (DST edges)
+        return off2 != null ? wallAsUtc - off2 : candidate;
+      }
+    }
+    return wallAsUtc;
+  }
+  if (/(?:Z|[+-]\d{2}:?\d{2})$/i.test(s)) {
+    const ms = Date.parse(s);
+    return Number.isFinite(ms) ? ms : null;
+  }
+  return null;
+}
+
+/** The vehicle key ("63067") from a group's platform uri ("avl/63067"),
+    with the feature id ("avl/63067-191764396") as fallback. */
+function castleRockVehicleKey(
+  group: CastleRockPlowGroup | null | undefined,
+  feature: CastleRockPlowFeature | null | undefined,
+): string | null {
+  const uri = typeof group?.uri === 'string' ? group.uri.trim() : '';
+  const tail = uri.includes('/') ? uri.slice(uri.lastIndexOf('/') + 1) : uri;
+  if (/^\d+$/.test(tail)) return tail;
+  const fid = typeof feature?.id === 'string' ? feature.id : '';
+  const m = /^avl\/(\d+)/.exec(fid);
+  return m ? m[1] : null;
+}
+
+/** Map one Castle Rock vehicle (map group + feature + its detail
+    record) to a plow, or null — the detail record must bound the
+    vehicle's recency, per the honesty rule in the section header. */
+export function normalizeCastleRockPlowVehicle(
+  group: CastleRockPlowGroup | null | undefined,
+  feature: CastleRockPlowFeature | null | undefined,
+  detail: CastleRockPlowDetail | null | undefined,
+  cfg: CastleRockPlowConfig,
+  nowMs: number = Date.now(),
+): Plow | null {
+  const vehicleKey = castleRockVehicleKey(group, feature);
+  if (!vehicleKey) return null;
+
+  const coords = feature?.geometry?.coordinates;
+  const lng = finiteIn(coords?.[0], -180, 180);
+  const lat = finiteIn(coords?.[1], -90, 90);
+  if (lat == null || lng == null) return null;
+  const b = cfg.bounds;
+  if (lat < b.minLat || lat > b.maxLat || lng < b.minLng || lng > b.maxLng) return null;
+
+  if (!detail) return null; // no detail record — recency cannot be bounded
+  const updatedMs = parseCastleRockTimestamp(detail.lastUpdated?.timestamp, detail.lastUpdated?.timezone);
+  if (updatedMs == null) return null;
+  if (nowMs - updatedMs > CASTLE_ROCK_PLOW_RECENCY_MS) return null; // stale ping, not a live claim
+  if (updatedMs - nowMs > 5 * 60 * 1000) return null; // ping from the future — source clock is wrong
+
+  const label = typeof detail.title === 'string' && detail.title.trim()
+    ? detail.title.trim()
+    : typeof group?.title === 'string' && group.title.trim() ? group.title.trim() : undefined;
+  const heading = finiteIn(detail.heading, 0, 360) ?? castleRockIconHeading(feature?.properties?.icon?.url);
+  const phrase = typeof detail.activeMaterialPhrase === 'string' ? detail.activeMaterialPhrase.trim() : '';
+  /* A real reported material activity, in the platform's own words —
+     the one status in this layer that is neither blade state nor
+     motion state. Absurd lengths are not the platform talking. */
+  const status = phrase && phrase.length <= 80 ? phrase : undefined;
+
+  return {
+    id: `${cfg.idPrefix}-${vehicleKey}`,
+    ...(label ? { label } : {}),
+    lat,
+    lng,
+    ...(heading != null ? { heading: Math.round(heading) } : {}),
+    ...(status ? { status } : {}),
+    agency: cfg.agency,
+    updatedAt: new Date(updatedMs).toISOString(),
+  };
+}
+
+/** Map a whole map-layer response, joining each group to its detail
+    record (keyed by the group's uri, the fetcher's keying). */
+export function normalizeCastleRockFeed(
+  groups: CastleRockPlowGroup[] | null | undefined,
+  details: ReadonlyMap<string, CastleRockPlowDetail | null>,
+  cfg: CastleRockPlowConfig,
+  nowMs: number = Date.now(),
+): Plow[] {
+  const out: Plow[] = [];
+  for (const g of groups ?? []) {
+    if (!g || (g.__typename != null && g.__typename !== 'Plow')) continue; // clusters are not trucks
+    const detail = details.get(typeof g.uri === 'string' ? g.uri : '') ?? null;
+    for (const f of Array.isArray(g.features) ? g.features : []) {
+      const plow = normalizeCastleRockPlowVehicle(g, f, detail, cfg, nowMs);
+      if (plow) out.push(plow);
+    }
+  }
+  return dedupe(out);
+}
+
+/* The map-layer document, verbatim from the tenants' own app
+   bundle (probe/in-mf-plowLocations.json) — proven to execute on
+   all three tenants. A hand-trimmed variant fails the platform's
+   validation (it rejects the document when $plowType is declared
+   but the Plow fragment that uses it is gone), so the document
+   ships whole. */
+const CASTLE_ROCK_MAP_QUERY = "query MapFeatures($input: MapFeaturesArgs!, $plowType: String) {\n\t\tmapFeaturesQuery(input: $input) {\n\t\t\tmapFeatures {\n\t\t\t\tbbox\n\t\t\t\ttitle\n\t\t\t\ttooltip\n\t\t\t\turi\n\t\t\t\tfeatures {\n\t\t\t\t\tid\n\t\t\t\t\tgeometry\n\t\t\t\t\tproperties\n\t\t\t\t\ttype\n\t\t\t\t}\n\t\t\t\t... on Cluster {\n\t\t\t\t\tmaxZoom\n\t\t\t\t}\n\t\t\t\t... on Sign {\n\t\t\t\t\tsignDisplayType\n\t\t\t\t}\n\t\t\t\t... on Event {\n\t\t\t\t\tpriority\n\t\t\t\t}\n\t\t\t\t__typename\n\t\t\t\t... on Camera {\n\t\t\t\t\tactive\n\t\t\t\t\tviews(limit: 5) {\n\t\t\t\t\t\turi\n\t\t\t\t\t\t... on CameraView {\n\t\t\t\t\t\t\turl\n\t\t\t\t\t\t}\n\t\t\t\t\t\tcategory\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\t... on Plow {\n\t\t\t\t\tviews(limit: 5, plowType: $plowType) {\n\t\t\t\t\t\turi\n\t\t\t\t\t\t... on PlowCameraView {\n\t\t\t\t\t\t\turl\n\t\t\t\t\t\t}\n\t\t\t\t\t\tcategory\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t\terror {\n\t\t\t\tmessage\n\t\t\t\ttype\n\t\t\t}\n\t\t}\n\t}\n";
+
+/* The per-plow detail document — the platform bundle's own field
+   set, minus its fragment spreads (the bundle inlines them from
+   code at runtime; reconstructed without them the query validates
+   and executes on all three tenants, verified 2026-11-04). */
+const CASTLE_ROCK_DETAIL_QUERY = `query Plow($plowId: ID!, $showTotalPlows: Boolean!) {
+  plowQuery(plowId: $plowId) {
+    plow {
+      uri
+      title
+      tooltip
+      plowType
+      activeMaterialPhrase
+      totalPlows @include(if: $showTotalPlows)
+      heading
+      locationDescription
+      lastUpdated { timestamp timezone }
+    }
+    error { type }
+  }
+}`;
+
+async function castleRockGraphql(cfg: CastleRockPlowConfig, body: unknown, timeoutMs: number): Promise<unknown> {
+  const res = await fetch(`${cfg.base}/api/graphql`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Origin: cfg.base,
+      Referer: `${cfg.base}/`,
+      'User-Agent': 'WorldEye plow layer (worldeye.app)',
+      Accept: 'application/json',
+    },
+    body: JSON.stringify(body),
+    signal: AbortSignal.timeout(timeoutMs),
+  });
+  if (!res.ok) throw new Error(`${cfg.agency} GraphQL HTTP ${res.status}`);
+  return res.json();
+}
+
+async function fetchCastleRockPlowDetail(
+  cfg: CastleRockPlowConfig,
+  plowId: string,
+): Promise<CastleRockPlowDetail | null> {
+  try {
+    const data = await castleRockGraphql(cfg, {
+      query: CASTLE_ROCK_DETAIL_QUERY,
+      variables: { plowId, showTotalPlows: true },
+    }, 10000) as { data?: { plowQuery?: { plow?: CastleRockPlowDetail | null } | null } | null } | null;
+    const plow = data?.data?.plowQuery?.plow;
+    return plow && typeof plow === 'object' ? plow : null;
+  } catch {
+    return null; // an unreadable detail drops the vehicle, never the source
+  }
+}
+
+/* Detail records are fetched a page at a time, the way the IBI
+   loader batches. */
+const CASTLE_ROCK_DETAIL_CONCURRENCY = 10;
+/** Safety bound so a pathological active set can't fan out forever.
+    Statewide simultaneous actives run to a few hundred in a major
+    storm — comfortably under this. */
+const CASTLE_ROCK_MAX_VEHICLES = 600;
+
+async function fetchCastleRockPlows(cfg: CastleRockPlowConfig): Promise<Plow[]> {
+  try {
+    const data = await castleRockGraphql(cfg, {
+      query: CASTLE_ROCK_MAP_QUERY,
+      variables: {
+        input: { ...cfg.query, zoom: 8, layerSlugs: ['plowLocations'] },
+        plowType: null,
+      },
+    }, 15000) as { data?: { mapFeaturesQuery?: { mapFeatures?: CastleRockPlowGroup[] | null; error?: unknown } | null } | null } | null;
+    const mq = data?.data?.mapFeaturesQuery;
+    if (!mq || !Array.isArray(mq.mapFeatures) || mq.error) {
+      throw new Error(`${cfg.agency} GraphQL mapFeatures error`);
+    }
+    const groups = mq.mapFeatures;
+
+    const uris: string[] = [];
+    const seen = new Set<string>();
+    for (const g of groups) {
+      if (!g || (g.__typename != null && g.__typename !== 'Plow')) continue;
+      const uri = typeof g.uri === 'string' ? g.uri : '';
+      if (uri && !seen.has(uri)) {
+        seen.add(uri);
+        uris.push(uri);
+      }
+    }
+    const capped = uris.slice(0, CASTLE_ROCK_MAX_VEHICLES);
+
+    const details = new Map<string, CastleRockPlowDetail | null>();
+    for (let i = 0; i < capped.length; i += CASTLE_ROCK_DETAIL_CONCURRENCY) {
+      const batch = capped.slice(i, i + CASTLE_ROCK_DETAIL_CONCURRENCY);
+      const results = await Promise.all(batch.map(u => fetchCastleRockPlowDetail(cfg, u)));
+      batch.forEach((u, j) => details.set(u, results[j]));
+    }
+
+    const plows = normalizeCastleRockFeed(groups, details, cfg, Date.now());
+    recordAttempt(cfg.source, true);
+    return plows;
+  } catch (e) {
+    recordAttempt(cfg.source, false);
+    throw e;
+  }
+}
+
 /* ── Aggregation ─────────────────────────────────────────────────── */
 
 /**
@@ -794,6 +1239,14 @@ const getOntarioPlows = cachedSource<Plow>('plows-ontario-tmp', () => fetchIbiPl
 const getManitobaPlows = cachedSource<Plow>('plows-manitoba-tmp', () => fetchIbiPlows(IBI_PLOW_CONFIGS.manitoba), 120_000);
 const getSaskatchewanPlows = cachedSource<Plow>('plows-saskatchewan-tmp', () => fetchIbiPlows(IBI_PLOW_CONFIGS.saskatchewan), 120_000);
 const getAlaskaPlows = cachedSource<Plow>('plows-alaska-tmp', () => fetchIbiPlows(IBI_PLOW_CONFIGS.alaska), 120_000);
+/* The Castle Rock tenants cost one map request plus one small
+   detail request per active vehicle, the same fan-out shape as
+   IBI. Kansas advertises a 60 s refresh for its plow layer; 90 s
+   stays inside the approved cadence and matches the other
+   aggregated feeds. */
+const getIndianaPlows = cachedSource<Plow>('plows-indiana-castlerock', () => fetchCastleRockPlows(CASTLE_ROCK_PLOW_CONFIGS.indiana), 90_000);
+const getNebraskaPlows = cachedSource<Plow>('plows-nebraska-castlerock', () => fetchCastleRockPlows(CASTLE_ROCK_PLOW_CONFIGS.nebraska), 90_000);
+const getKansasPlows = cachedSource<Plow>('plows-kansas-castlerock', () => fetchCastleRockPlows(CASTLE_ROCK_PLOW_CONFIGS.kansas), 90_000);
 
 /* Read-time recency enforcement for the windowed feeds: even when the
    cache bridges a failed refresh with a last good set, a truck whose
@@ -806,21 +1259,25 @@ const READ_WINDOWS: Partial<Record<string, number>> = {
   'Manitoba 511': IBI_PLOW_RECENCY_MS + 5 * 60 * 1000,
   'Saskatchewan Highway Hotline': IBI_PLOW_RECENCY_MS + 5 * 60 * 1000,
   'Alaska 511': IBI_PLOW_RECENCY_MS + 5 * 60 * 1000,
+  'Indiana DOT (INDOT)': CASTLE_ROCK_PLOW_RECENCY_MS + 5 * 60 * 1000,
+  'Nebraska DOT': CASTLE_ROCK_PLOW_RECENCY_MS + 5 * 60 * 1000,
+  'Kansas DOT (KDOT)': CASTLE_ROCK_PLOW_RECENCY_MS + 5 * 60 * 1000,
 };
 
 /**
- * All plows across the seven verified feeds. Sources are
+ * All plows across the ten verified feeds. Sources are
  * isolated: cachedSource never rejects, so a failed feed contributes
  * its last good set or nothing — never an error that would empty the
  * other states.
  */
 export async function getPlows(): Promise<Plow[]> {
-  const [iowa, utah, vermont, ontario, manitoba, saskatchewan, alaska] = await Promise.all([
+  const [iowa, utah, vermont, ontario, manitoba, saskatchewan, alaska, indiana, nebraska, kansas] = await Promise.all([
     getIowaPlows(), getUtahPlows(), getVermontPlows(),
     getOntarioPlows(), getManitobaPlows(), getSaskatchewanPlows(), getAlaskaPlows(),
+    getIndianaPlows(), getNebraskaPlows(), getKansasPlows(),
   ]);
   const nowMs = Date.now();
-  return dedupe([...iowa, ...utah, ...vermont, ...ontario, ...manitoba, ...saskatchewan, ...alaska]).filter(p => {
+  return dedupe([...iowa, ...utah, ...vermont, ...ontario, ...manitoba, ...saskatchewan, ...alaska, ...indiana, ...nebraska, ...kansas]).filter(p => {
     const window = READ_WINDOWS[p.agency];
     if (window == null) return true;
     const pingMs = Date.parse(p.updatedAt);

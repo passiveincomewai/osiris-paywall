@@ -5,6 +5,9 @@ import {
   normalizeVermontVehicle, normalizeVermontFeed, parseVermontTimestamp, type VermontVehicle,
   normalizeIbiPlowVehicle, normalizeIbiPlowFeed, parseIbiPlowTimestamp, IBI_PLOW_CONFIGS,
   type IbiPlowMarker, type IbiPlowDetail,
+  normalizeCastleRockPlowVehicle, normalizeCastleRockFeed, parseCastleRockTimestamp,
+  castleRockIconHeading, CASTLE_ROCK_PLOW_CONFIGS,
+  type CastleRockPlowGroup, type CastleRockPlowDetail,
   getPlows, getPlowFeedStatus,
 } from './plows';
 import { clearSourceCache } from './sourceCache';
@@ -503,6 +506,202 @@ describe('normalizeIbiPlowVehicle (recency + rejections)', () => {
   });
 });
 
+/* ── Castle Rock 511 GraphQL — Indiana · Nebraska · Kansas ──────── */
+
+// Two groups from a live pull of Indiana's Castle Rock map layer,
+// 2026-10-27 (11 trucks active statewide; these are the first two) —
+// probe/in-plows-live.json in the plow-expansion workspace. The
+// fields the normalizer reads, values verbatim. The map payload
+// carries no timestamps: position, label and an 8-way direction
+// icon only.
+const inGroupUs52: CastleRockPlowGroup = {
+  __typename: 'Plow',
+  title: 'US 52: Plow Truck',
+  tooltip: 'US 52: Plow Truck',
+  uri: 'avl/63067',
+  features: [{
+    id: 'avl/63067-191764396',
+    type: 'Feature',
+    geometry: { type: 'Point', coordinates: [-86.03574, 39.75104] },
+    properties: { icon: { url: '/images/snow-plow-icons/Solid_North.svg' } },
+  }],
+};
+const inGroupI65: CastleRockPlowGroup = {
+  __typename: 'Plow',
+  title: 'I-65: Plow Truck',
+  tooltip: 'I-65: Plow Truck',
+  uri: 'avl/61442',
+  features: [{
+    id: 'avl/61442-4162814657',
+    type: 'Feature',
+    geometry: { type: 'Point', coordinates: [-86.56461, 40.18721] },
+    properties: { icon: { url: '/images/snow-plow-icons/Solid_Southeast.svg' } },
+  }],
+};
+
+const CR_LATEST_MS = Date.parse('2026-10-27T04:55:00Z');
+// A detail record in the shape of the platform's own Plow query
+// document (probe/in-plow-detail.json in the same workspace). The
+// document was validated live against all three tenants on
+// 2026-11-04 — it executes and answers its structured NOT_FOUND for
+// a retired vehicle id — but no truck was active on any tenant that
+// day, so this record's VALUES are constructed to the documented
+// field set, not captured. First-storm re-verification applies.
+const inDetailUs52: CastleRockPlowDetail = {
+  uri: 'avl/63067',
+  title: 'US 52: Plow Truck',
+  heading: 355,
+  activeMaterialPhrase: 'Spreading material',
+  lastUpdated: { timestamp: CR_LATEST_MS, timezone: 'America/Indiana/Indianapolis' },
+};
+
+describe('castleRockIconHeading', () => {
+  it('reads all eight compass points off the icon filename', () => {
+    const base = '/images/snow-plow-icons/Solid_';
+    expect(castleRockIconHeading(`${base}North.svg`)).toBe(0);
+    expect(castleRockIconHeading(`${base}Northeast.svg`)).toBe(45);
+    expect(castleRockIconHeading(`${base}East.svg`)).toBe(90);
+    expect(castleRockIconHeading(`${base}Southeast.svg`)).toBe(135);
+    expect(castleRockIconHeading(`${base}South.svg`)).toBe(180);
+    expect(castleRockIconHeading(`${base}Southwest.svg`)).toBe(225);
+    expect(castleRockIconHeading(`${base}West.svg`)).toBe(270);
+    expect(castleRockIconHeading(`${base}Northwest.svg`)).toBe(315);
+  });
+  it('returns undefined for anything else', () => {
+    expect(castleRockIconHeading('/images/snow-plow-icons/Solid_Up.svg')).toBeUndefined();
+    expect(castleRockIconHeading('')).toBeUndefined();
+    expect(castleRockIconHeading(null)).toBeUndefined();
+    expect(castleRockIconHeading(undefined)).toBeUndefined();
+  });
+});
+
+describe('parseCastleRockTimestamp', () => {
+  it('reads epoch numbers and digit strings, in ms or seconds', () => {
+    expect(parseCastleRockTimestamp(CR_LATEST_MS)).toBe(CR_LATEST_MS);
+    expect(parseCastleRockTimestamp(String(CR_LATEST_MS))).toBe(CR_LATEST_MS);
+    expect(parseCastleRockTimestamp(Math.floor(CR_LATEST_MS / 1000))).toBe(CR_LATEST_MS);
+    expect(parseCastleRockTimestamp(String(Math.floor(CR_LATEST_MS / 1000)))).toBe(CR_LATEST_MS);
+  });
+  it('reads zoned ISO strings and naive ISO as UTC', () => {
+    expect(parseCastleRockTimestamp('2026-10-27T04:55:00Z')).toBe(CR_LATEST_MS);
+    expect(parseCastleRockTimestamp('2026-10-27T04:55:00')).toBe(CR_LATEST_MS);
+    expect(parseCastleRockTimestamp('2026-10-27T04:55:00.5Z')).toBe(CR_LATEST_MS + 500);
+  });
+  it('converts a naive wall time through the record timezone when named', () => {
+    // 07:20:25 in New York in January (EST, UTC-5) is 12:20:25 UTC.
+    expect(parseCastleRockTimestamp('2026-01-08T07:20:25', 'America/New_York')).toBe(WOODFORD_LATEST_UTC);
+    // An unknown zone name falls back to the UTC reading, never to a guess.
+    expect(parseCastleRockTimestamp('2026-01-08T07:20:25', 'Not/AZone')).toBe(Date.UTC(2026, 0, 8, 7, 20, 25));
+  });
+  it('rejects garbage and non-timestamps', () => {
+    expect(parseCastleRockTimestamp('soon')).toBeNull();
+    expect(parseCastleRockTimestamp('10/27/2026 4:55 AM')).toBeNull();
+    expect(parseCastleRockTimestamp(null)).toBeNull();
+    expect(parseCastleRockTimestamp(undefined)).toBeNull();
+    expect(parseCastleRockTimestamp(0)).toBeNull();
+    expect(parseCastleRockTimestamp(-5)).toBeNull();
+  });
+});
+
+describe('normalizeCastleRockPlowVehicle (October map fixture)', () => {
+  const cfg = CASTLE_ROCK_PLOW_CONFIGS.indiana;
+  it('maps Indiana: the detail heading beats the icon, the material phrase is the status', () => {
+    const p = normalizeCastleRockPlowVehicle(inGroupUs52, inGroupUs52.features![0], inDetailUs52, cfg, CR_LATEST_MS + 10 * 60 * 1000)!;
+    expect(p).not.toBeNull();
+    expect(p.id).toBe('indiana-63067');
+    expect(p.label).toBe('US 52: Plow Truck');
+    expect(p.agency).toBe('Indiana DOT (INDOT)');
+    expect(p.lat).toBe(39.75104);
+    expect(p.lng).toBe(-86.03574);
+    expect(p.heading).toBe(355); // detail record's numeric heading, not the icon's North (0)
+    expect(p.status).toBe('Spreading material');
+    expect(p.updatedAt).toBe(new Date(CR_LATEST_MS).toISOString());
+  });
+
+  it('falls back to the icon heading when the detail record reports none', () => {
+    const detail: CastleRockPlowDetail = {
+      uri: 'avl/61442',
+      title: 'I-65: Plow Truck',
+      heading: null,
+      lastUpdated: { timestamp: CR_LATEST_MS, timezone: 'America/Indiana/Indianapolis' },
+    };
+    const p = normalizeCastleRockPlowVehicle(inGroupI65, inGroupI65.features![0], detail, cfg, CR_LATEST_MS + 5 * 60 * 1000)!;
+    expect(p).not.toBeNull();
+    expect(p.id).toBe('indiana-61442');
+    expect(p.heading).toBe(135); // Solid_Southeast.svg
+    expect(p.status).toBeUndefined(); // no material phrase reported
+  });
+
+  it('tags each tenant with its own attribution label', () => {
+    const ksDetail: CastleRockPlowDetail = {
+      uri: 'avl/63067', title: 'US 52: Plow Truck', heading: 10,
+      lastUpdated: { timestamp: CR_LATEST_MS, timezone: 'America/Chicago' },
+    };
+    // Same fixture truck, Kansas config: the id prefix and agency follow the tenant.
+    const ksGroup: CastleRockPlowGroup = {
+      ...inGroupUs52,
+      features: [{ ...inGroupUs52.features![0], geometry: { type: 'Point', coordinates: [-95.7, 39.05] } }],
+    };
+    const p = normalizeCastleRockPlowVehicle(ksGroup, ksGroup.features![0], ksDetail, CASTLE_ROCK_PLOW_CONFIGS.kansas, CR_LATEST_MS + 5 * 60 * 1000)!;
+    expect(p.id).toBe('kansas-63067');
+    expect(p.agency).toBe('Kansas DOT (KDOT)');
+    expect(CASTLE_ROCK_PLOW_CONFIGS.nebraska.agency).toBe('Nebraska DOT');
+  });
+
+  it('PRIVACY: an undeclared person field in the detail record never survives mapping', () => {
+    const withPerson = {
+      ...inDetailUs52,
+      operatorName: 'J DRIVER',
+      driverId: 'X9',
+    } as unknown as CastleRockPlowDetail;
+    const p = normalizeCastleRockPlowVehicle(inGroupUs52, inGroupUs52.features![0], withPerson, cfg, CR_LATEST_MS + 10 * 60 * 1000)!;
+    const json = JSON.stringify(p);
+    expect(json).not.toContain('DRIVER');
+    expect(json).not.toContain('X9');
+    expect(Object.keys(p).sort()).toEqual(
+      ['agency', 'heading', 'id', 'label', 'lat', 'lng', 'status', 'updatedAt'].sort(),
+    );
+  });
+});
+
+describe('normalizeCastleRockPlowVehicle (recency + rejections)', () => {
+  const cfg = CASTLE_ROCK_PLOW_CONFIGS.indiana;
+  it('drops a vehicle whose detail record cannot be read — the map alone bounds no recency', () => {
+    expect(normalizeCastleRockPlowVehicle(inGroupUs52, inGroupUs52.features![0], null, cfg, CR_LATEST_MS)).toBeNull();
+    expect(normalizeCastleRockPlowVehicle(inGroupUs52, inGroupUs52.features![0], undefined, cfg, CR_LATEST_MS)).toBeNull();
+  });
+  it('drops a vehicle whose detail record carries no parseable stamp', () => {
+    const noStamp: CastleRockPlowDetail = { ...inDetailUs52, lastUpdated: { timestamp: 'soon', timezone: null } };
+    expect(normalizeCastleRockPlowVehicle(inGroupUs52, inGroupUs52.features![0], noStamp, cfg, CR_LATEST_MS)).toBeNull();
+    const noUpdate: CastleRockPlowDetail = { ...inDetailUs52, lastUpdated: null };
+    expect(normalizeCastleRockPlowVehicle(inGroupUs52, inGroupUs52.features![0], noUpdate, cfg, CR_LATEST_MS)).toBeNull();
+  });
+  it('keeps a ping 119 minutes old, drops one 121 minutes old (120-min window)', () => {
+    expect(normalizeCastleRockPlowVehicle(inGroupUs52, inGroupUs52.features![0], inDetailUs52, cfg, CR_LATEST_MS + 119 * 60 * 1000)).not.toBeNull();
+    expect(normalizeCastleRockPlowVehicle(inGroupUs52, inGroupUs52.features![0], inDetailUs52, cfg, CR_LATEST_MS + 121 * 60 * 1000)).toBeNull();
+  });
+  it('drops a ping from the future beyond the clock-skew tolerance', () => {
+    expect(normalizeCastleRockPlowVehicle(inGroupUs52, inGroupUs52.features![0], inDetailUs52, cfg, CR_LATEST_MS - 6 * 60 * 1000)).toBeNull();
+  });
+  it('drops a vehicle geocoded outside its state', () => {
+    const london: CastleRockPlowGroup = {
+      ...inGroupUs52,
+      features: [{ ...inGroupUs52.features![0], geometry: { type: 'Point', coordinates: [-0.1276, 51.5074] } }],
+    };
+    expect(normalizeCastleRockPlowVehicle(london, london.features![0], inDetailUs52, cfg, CR_LATEST_MS)).toBeNull();
+  });
+  it('normalizeCastleRockFeed joins groups to details, skips clusters and de-duplicates', () => {
+    const details = new Map<string, CastleRockPlowDetail | null>([['avl/63067', inDetailUs52]]);
+    const cluster: CastleRockPlowGroup = { __typename: 'Cluster', uri: 'cluster/9', features: inGroupUs52.features };
+    const now = CR_LATEST_MS + 10 * 60 * 1000;
+    const feed = normalizeCastleRockFeed([inGroupUs52, inGroupUs52, inGroupI65, cluster], details, cfg, now);
+    // US 52 maps (detail fresh); I-65 has no detail record and drops; the cluster is not a truck.
+    expect(feed.map(p => p.id)).toEqual(['indiana-63067']);
+    // A dormant tenant (Nebraska on a fair-weather day) is an empty set, not an error.
+    expect(normalizeCastleRockFeed([], new Map(), CASTLE_ROCK_PLOW_CONFIGS.nebraska, now)).toEqual([]);
+  });
+});
+
 /* ── Aggregation: per-source failure isolation ───────────────────── */
 
 describe('getPlows (per-source failure isolation)', () => {
@@ -538,7 +737,7 @@ describe('getPlows (per-source failure isolation)', () => {
     }
   });
 
-  it('aggregates all seven sources: counts add up, a dormant IBI source is empty-not-down', async () => {
+  it('aggregates all ten sources: counts add up, dormant sources are empty-not-down', async () => {
     const fixedNow = WOODFORD_LATEST_UTC + 30 * 60 * 1000;
     const nowSpy = vi.spyOn(Date, 'now').mockReturnValue(fixedNow);
     clearSourceCache();
@@ -549,7 +748,28 @@ describe('getPlows (per-source failure isolation)', () => {
         properties: { ...liveFeatures[0].properties, MODIFIEDDT: fixedNow - 5 * 60 * 1000 },
       }],
     };
-    const fetchStub = vi.fn(async (url: unknown) => {
+    // One Indiana truck on the Castle Rock layer: a map group in the
+    // October capture's shape, plus its detail record.
+    const inAggGroup: CastleRockPlowGroup = {
+      __typename: 'Plow',
+      title: 'I-70: Plow Truck',
+      tooltip: 'I-70: Plow Truck',
+      uri: 'avl/777',
+      features: [{
+        id: 'avl/777-123',
+        type: 'Feature',
+        geometry: { type: 'Point', coordinates: [-86.1, 39.8] },
+        properties: { icon: { url: '/images/snow-plow-icons/Solid_East.svg' } },
+      }],
+    };
+    const inAggDetail: CastleRockPlowDetail = {
+      uri: 'avl/777',
+      title: 'I-70: Plow Truck',
+      heading: 88,
+      activeMaterialPhrase: 'Spreading material',
+      lastUpdated: { timestamp: fixedNow - 8 * 60 * 1000, timezone: 'America/Indiana/Indianapolis' },
+    };
+    const fetchStub = vi.fn(async (url: unknown, init?: { body?: unknown }) => {
       const u = String(url);
       if (u.includes('AVL_Direct_View')) return { ok: true, status: 200, json: async () => iowaFc };
       if (u.includes('SnowPlow_AVL_Public')) return { ok: true, status: 200, json: async () => ({ features: [] }) };
@@ -568,16 +788,31 @@ describe('getPlows (per-source failure isolation)', () => {
       }
       // Manitoba, Saskatchewan and Alaska answer with an empty active set.
       if (u.includes('mapIcons/ServiceVehicles')) return { ok: true, status: 200, json: async () => ({ item2: [] }) };
+      if (u.includes('511in.org/api/graphql')) {
+        // The same endpoint serves the map query and the per-plow detail query.
+        if (String(init?.body ?? '').includes('plowQuery')) {
+          return { ok: true, status: 200, json: async () => ({ data: { plowQuery: { plow: inAggDetail, error: null } } }) };
+        }
+        return { ok: true, status: 200, json: async () => ({ data: { mapFeaturesQuery: { mapFeatures: [inAggGroup], error: null } } }) };
+      }
+      // Nebraska and Kansas answer with an empty (fair-weather) active set.
+      if (u.includes('/api/graphql')) {
+        return { ok: true, status: 200, json: async () => ({ data: { mapFeaturesQuery: { mapFeatures: [], error: null } } }) };
+      }
       throw new Error(`unexpected fetch: ${u}`);
     });
     vi.stubGlobal('fetch', fetchStub);
     try {
       const plows = await getPlows();
-      // 1 Iowa + 0 Utah + 1 Vermont + 1 Ontario + 0 dormant × 3 = 3.
-      expect(plows.map(p => p.id).sort()).toEqual(['iowa-A31332', 'ontario-T1', 'vermont-16188']);
+      // 1 Iowa + 0 Utah + 1 Vermont + 1 Ontario + 1 Indiana + 0 dormant × 5 = 4.
+      expect(plows.map(p => p.id).sort()).toEqual(['indiana-777', 'iowa-A31332', 'ontario-T1', 'vermont-16188']);
       const ontario = plows.find(p => p.id === 'ontario-T1')!;
       expect(ontario.agency).toBe('Ontario 511');
       expect(ontario.speed).toBe(10); // 16.0934 km/h → 10 mph
+      const indiana = plows.find(p => p.id === 'indiana-777')!;
+      expect(indiana.agency).toBe('Indiana DOT (INDOT)');
+      expect(indiana.heading).toBe(88);
+      expect(indiana.status).toBe('Spreading material');
       // Every source answered, so the combined set is complete.
       expect(getPlowFeedStatus().ok).toBe(true);
     } finally {

@@ -4,13 +4,17 @@ import { getPlows, getPlowFeedStatus } from '@/lib/plows';
 /**
  * OSIRIS — Snow Plows: live winter-maintenance vehicle positions.
  *
- * Seven verified keyless plow feeds, merged in lib/plows: Iowa DOT's
+ * Ten verified keyless plow feeds, merged in lib/plows: Iowa DOT's
  * AVL FeatureServer, UDOT's `SnowPlow_AVL_Public` (recency-filtered —
  * it is a last-known-position table), Vermont AOT's Plow Finder
  * vehicle JSON (slimmed to latest positions, 90-minute staleness
- * gate), and the IBI 511 "Track My Plow" deployments of Ontario,
+ * gate), the IBI 511 "Track My Plow" deployments of Ontario,
  * Manitoba, Saskatchewan and Alaska (active-vehicle markers plus
- * per-vehicle timestamped trails, 2-hour recency gate). Each source
+ * per-vehicle timestamped trails, 2-hour recency gate), and the
+ * Castle Rock 511 GraphQL plow layer of Indiana, Nebraska and
+ * Kansas (map markers plus per-plow detail records whose
+ * `lastUpdated` bounds recency, 2-hour gate; shipped with
+ * attribution on the owner's 2026-11-04 decision). Each source
  * is cached and fails independently. The pipeline lives in lib/plows
  * — this route keeps the response shape:
  * { plows, total, stale, source, timestamp }.
@@ -23,12 +27,13 @@ import { getPlows, getPlowFeedStatus } from '@/lib/plows';
  * Location AVL) · Utah DOT — UDOT SnowPlow_AVL_Public (ArcGIS Online)
  * · Vermont AOT — VTrans Plow Finder vehicle JSON · Ontario 511 /
  * Manitoba 511 / Saskatchewan Highway Hotline / Alaska 511 — IBI 511
- * Track My Plow map endpoints.
+ * Track My Plow map endpoints · Indiana DOT (INDOT) / Nebraska DOT /
+ * Kansas DOT (KDOT) — Castle Rock 511 GraphQL plowLocations.
  */
 
 export const dynamic = 'force-dynamic';
 
-const SOURCE_LABEL = 'Iowa DOT · Utah DOT · Vermont AOT · Ontario 511 · Manitoba 511 · Saskatchewan Highway Hotline · Alaska 511';
+const SOURCE_LABEL = 'Iowa DOT · Utah DOT · Vermont AOT · Ontario 511 · Manitoba 511 · Saskatchewan Highway Hotline · Alaska 511 · Indiana DOT (INDOT) · Nebraska DOT · Kansas DOT (KDOT)';
 
 export async function GET() {
   try {

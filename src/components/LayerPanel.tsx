@@ -162,7 +162,7 @@ export const LAYER_GROUPS: LayerGroupDef[] = [
     fullLabel: 'WINTER & ROADS',
     icon: Snowflake,
     layers: [
-      { key: 'plows', label: 'Snow Plows', description: 'Iowa · Utah · Vermont · Ontario · Manitoba · Saskatchewan · Alaska · live plow AVL · ~2 min', dataKey: 'plows' },
+      { key: 'plows', label: 'Snow Plows', description: 'Iowa · Utah · Vermont · Indiana · Nebraska · Kansas · Ontario · Manitoba · Saskatchewan · Alaska · live plow AVL · ~2 min', dataKey: 'plows' },
     ],
   },
   /* The intel groups (THREATS & INTEL, NETWORK INTEL, NET & EVENT INTEL)
