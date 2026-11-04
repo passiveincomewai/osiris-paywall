@@ -16,9 +16,15 @@ export interface CctvCamera {
   source: string;
   /**
    * Direction the camera faces, in degrees clockwise from north. Set in
-   * exactly two ways, told apart by heading_source:
+   * exactly three ways, told apart by heading_source:
    *  - 'faa' — the source itself publishes the facing direction (the FAA
    *    WeatherCams `cameraDirection`); a true, sourced facing.
+   *  - 'name-derived' — the source's own camera NAME states the view
+   *    direction with an explicit verb ("… Looking West", "… Facing
+   *    North", "North View"): source-stated, but only at compass-point
+   *    precision — the bearing is the named point's centre and the true
+   *    facing may sit anywhere in that octant (see
+   *    cctv/name-headings.ts for the strict parser contract).
    *  - 'road-derived' — an ESTIMATE produced offline from OpenStreetMap
    *    road geometry: the direction of travel of the one-way carriageway
    *    the camera overlooks, assigned only when the road match was
@@ -32,7 +38,7 @@ export interface CctvCamera {
    */
   heading_deg?: number;
   /** Provenance of heading_deg — see its comment. */
-  heading_source?: 'faa' | 'road-derived';
+  heading_source?: 'faa' | 'name-derived' | 'road-derived';
 }
 
 /*

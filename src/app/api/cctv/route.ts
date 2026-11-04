@@ -67,6 +67,7 @@ import { fetchNewMexicoCameras } from './newmexico';
 import { fetchVermontCameras } from './vermont';
 import { fetchOklahomaCameras } from './oklahoma';
 import { applyRoadHeadings } from './road-headings';
+import { applyNameHeadings } from './name-headings';
 import { fetchEastAsiaCameras, fetchSeAsiaCameras, fetchWestAsiaCameras } from './opencctv';
 import {
   fetchOccHarvestAfrica,
@@ -636,12 +637,14 @@ if (OCC_HARVEST_ON) {
 const REGION_FETCHERS: Record<string, RegionFetcher> = Object.fromEntries(
   Object.entries(RAW_REGION_FETCHERS).map(([region, fetcher]) => [
     region,
-    /* Road-derived headings are attached inside the cached fetch, so
-       every serving path (region query, bounds query, by-id scan) sees
-       the same records — and a source that later publishes its own
-       facing direction keeps it, since applyRoadHeadings never
-       overwrites a sourced heading. */
-    cachedSource(`cctv:${region}`, async () => applyRoadHeadings(await fetcher())),
+    /* Headings are attached inside the cached fetch, so every serving
+       path (region query, bounds query, by-id scan) sees the same
+       records. Order matters: name-derived headings first — a facing
+       the source states in the camera's own name is source data and
+       outranks the road-geometry estimate — then applyRoadHeadings
+       fills the cameras still headingless. Neither ever overwrites a
+       heading a source published itself. */
+    cachedSource(`cctv:${region}`, async () => applyRoadHeadings(applyNameHeadings(await fetcher()))),
   ]),
 );
 

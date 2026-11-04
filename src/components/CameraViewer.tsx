@@ -573,13 +573,18 @@ export default function CameraViewer({ camera, onClose, onLocate, besideOi = fal
                     heading is known, at the certainty it carries. A
                     direction the camera's SOURCE publishes (heading_deg
                     with heading_source 'faa', today the FAA WeatherCams
-                    feed) renders as a plain FACING chip. A ROAD-DERIVED
-                    heading (heading_source 'road-derived') is an
-                    estimate — the direction of travel of the one-way
-                    carriageway the camera overlooks, matched from
-                    OpenStreetMap geometry — so it renders dimmer and
-                    labelled EST. Cameras with no heading show no chip
-                    rather than a guessed facing. */}
+                    feed) renders as a plain FACING chip. A NAME-DERIVED
+                    heading (heading_source 'name-derived') is stated in
+                    the camera's own name by its source ("… Looking
+                    West") — also a FACING chip, with the title saying
+                    where the direction comes from and that it carries
+                    compass-point precision. A ROAD-DERIVED heading
+                    (heading_source 'road-derived') is an estimate — the
+                    direction of travel of the one-way carriageway the
+                    camera overlooks, matched from OpenStreetMap
+                    geometry — so it renders dimmer and labelled EST.
+                    Cameras with no heading show no chip rather than a
+                    guessed facing. */}
                 {typeof camera.heading_deg === 'number' && camera.heading_source === 'road-derived' ? (
                   <span
                     className="flex items-center gap-1.5 px-2 py-1 bg-white/5 border border-white/10 text-[9px] font-mono tracking-widest text-gray-400"
@@ -587,6 +592,15 @@ export default function CameraViewer({ camera, onClose, onLocate, besideOi = fal
                   >
                     <ArrowUp className="w-2.5 h-2.5" style={{ transform: `rotate(${camera.heading_deg}deg)` }} />
                     EST. FACING {compassLabel(camera.heading_deg).toUpperCase()}
+                  </span>
+                ) : typeof camera.heading_deg === 'number' && camera.heading_source === 'name-derived' ? (
+                  <span
+                    className="flex items-center gap-1.5 px-2 py-1 bg-white/5 border text-[9px] font-mono tracking-widest"
+                    style={{ borderColor: 'var(--gold-primary)', color: 'var(--gold-primary)' }}
+                    title={`This camera faces ${compassLabel(camera.heading_deg).toLowerCase()} — direction stated in the camera's name by its source (compass point)`}
+                  >
+                    <ArrowUp className="w-2.5 h-2.5" style={{ transform: `rotate(${camera.heading_deg}deg)` }} />
+                    FACING {compassLabel(camera.heading_deg).toUpperCase()}
                   </span>
                 ) : typeof camera.heading_deg === 'number' ? (
                   <span

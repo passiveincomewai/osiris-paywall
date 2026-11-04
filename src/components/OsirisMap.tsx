@@ -1561,12 +1561,14 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       createDot(map, 'dot-cctv', cameraColor, 10);
       // Facing wedge for cameras with a known direction: a translucent
       // cone with its apex at the centre, pointing up = north at
-      // rotation 0. Two provenances reach the 'cctv-cones' source (see
-      // the render loop): a direction the camera's SOURCE publishes
-      // (today only the FAA WeatherCams feed) at full opacity, and a
+      // rotation 0. Three provenances reach the 'cctv-cones' source
+      // (see the render loop): a direction the camera's SOURCE
+      // publishes (today only the FAA WeatherCams feed) at full
+      // opacity; a direction the source STATES IN THE CAMERA'S NAME
+      // ("… Looking West" — compass-point precision) at 0.7; and a
       // road-derived ESTIMATE — the direction of travel of the one-way
       // carriageway the camera overlooks, matched unambiguously from
-      // OpenStreetMap geometry — drawn fainter so it never reads with
+      // OpenStreetMap geometry — drawn faintest so it never reads with
       // the same certainty as a published facing.
       (() => {
         const S = 96, c = document.createElement('canvas');
@@ -2005,7 +2007,9 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       // map alignment keeps it glued to the ground plane instead of
       // the screen. From zoom 11 up, where an individual camera's
       // outlook is readable. Road-derived estimates (derived=1) paint
-      // at 0.45 opacity — visibly an estimate, never a published fact.
+      // at 0.45 opacity — visibly an estimate, never a published fact;
+      // name-stated facings (derived=2) paint at 0.7 — source-stated,
+      // but only at compass-point precision.
       map.addLayer({ id: 'cctv-cones', type: 'symbol', source: 'cctv-cones', minzoom: 11, layout: {
         'icon-image': 'cctv-cone',
         'icon-size': ['interpolate',['linear'],['zoom'], 11,0.5, 14,0.85, 18,1.4],
@@ -2014,7 +2018,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
         'icon-pitch-alignment': 'map',
         'icon-allow-overlap': true, 'icon-ignore-placement': true,
       }, paint: {
-        'icon-opacity': ['case', ['==', ['get', 'derived'], 1], 0.45, 1],
+        'icon-opacity': ['case', ['==', ['get', 'derived'], 1], 0.45, ['==', ['get', 'derived'], 2], 0.7, 1],
       }});
       // CCTV — outer glow disc: a soft dark ground under the eye photo so
       // the detailed artwork stays readable over bright basemap patches.
@@ -4454,10 +4458,12 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     if (!mapReady) return;
     setGeo('cctv', activeLayers.cctv && data.cameras ? data.cameras.map((c: any) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [c.lng, c.lat] }, properties: { id: c.id, name: c.name, city: c.city, country: c.country, source: c.source, feed_url: c.feed_url, stream_url: c.stream_url, stream_type: c.stream_type, external_url: c.external_url, heading_deg: c.heading_deg, heading_source: c.heading_source } })) : []);
     // Facing wedges: cameras with a numeric heading_deg get a cone
-    // feature. heading_source tells the two provenances apart — a
-    // source-published facing (derived 0, full opacity) vs a
-    // road-derived estimate (derived 1, fainter cone, "EST." chip).
-    setGeo('cctv-cones', activeLayers.cctv && data.cameras ? data.cameras.filter((c: any) => typeof c.heading_deg === 'number').map((c: any) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [c.lng, c.lat] }, properties: { heading: c.heading_deg, derived: c.heading_source === 'road-derived' ? 1 : 0 } })) : []);
+    // feature. heading_source tells the three provenances apart — a
+    // source-published facing (derived 0, full opacity), a
+    // road-derived estimate (derived 1, faintest cone, "EST." chip),
+    // and a facing stated in the camera's own name by its source
+    // (derived 2, 0.7 opacity — compass-point precision only).
+    setGeo('cctv-cones', activeLayers.cctv && data.cameras ? data.cameras.filter((c: any) => typeof c.heading_deg === 'number').map((c: any) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [c.lng, c.lat] }, properties: { heading: c.heading_deg, derived: c.heading_source === 'road-derived' ? 1 : c.heading_source === 'name-derived' ? 2 : 0 } })) : []);
   }, [mapReady, data.cameras, activeLayers.cctv, setGeo]);
 
   useEffect(() => {

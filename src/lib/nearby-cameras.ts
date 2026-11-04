@@ -27,10 +27,11 @@ export interface CameraCandidate {
   stream_url?: string;
   stream_type?: string;
   external_url?: string;
-  /** Facing direction in degrees: source-published ('faa') or a
-      road-derived estimate ('road-derived') — see heading_source. */
+  /** Facing direction in degrees: source-published ('faa'), stated in
+      the camera's name by its source ('name-derived'), or a road-derived
+      estimate ('road-derived') — see heading_source. */
   heading_deg?: number;
-  heading_source?: 'faa' | 'road-derived';
+  heading_source?: 'faa' | 'name-derived' | 'road-derived';
   lat: number;
   lng: number;
 }
