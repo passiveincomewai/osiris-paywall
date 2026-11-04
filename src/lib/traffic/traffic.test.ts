@@ -256,6 +256,55 @@ describe('reconcile across a re-clipped rebuild', () => {
     expect(kept).toHaveLength(1); // topped back up with a fresh spawn
     expect(kept[0]).not.toBe(v);
   });
+
+  it('keeps world direction when the twin returns with reversed vertices', () => {
+    const before = buildRoadNetwork([line([[0, 0], [0.01, 0]], { name: 'A Street' })], 14);
+    // Same physical street, vertices in the opposite order — tile clips
+    // do this; the id differs and the polyline's forward is now west.
+    const after = buildRoadNetwork([line([[0.01, 0], [0, 0]], { name: 'A Street' })], 14);
+    expect(after.roads[0].id).not.toBe(before.roads[0].id);
+    const road = before.roads[0];
+    const v: SimVehicle = { roadId: road.id, roadIndex: 0, s: 300, dir: 1, v: 8, pace: 0.9 };
+    const kept = reconcileVehicles([v], after, 1, createRng(7), () => 1, before);
+    expect(kept[0]).toBe(v);
+    expect(v.roadId).toBe(after.roads[0].id);
+    // Along-track direction flips so the car keeps driving EAST.
+    expect(v.dir).toBe(-1);
+    expect(vehicleFeature(v, after, () => 1)!.properties.bearing).toBe(90);
+    const p0 = pointAt(road, 300);
+    const p1 = pointAt(after.roads[0], v.s);
+    expect(haversineM([p0.lng, p0.lat], [p1.lng, p1.lat])).toBeLessThan(5);
+  });
+
+  it('re-homes onto the same street, not a nearer parallel road', () => {
+    const before = buildRoadNetwork([line([[0, 0], [0.01, 0]], { name: 'A Street' })], 14);
+    const after = buildRoadNetwork([
+      // The street itself, re-drawn ~4 m north under a new id…
+      line([[0, 0.00004], [0.01, 0.00004]], { name: 'A Street' }),
+      // …and a different street running parallel ~1 m north — nearer to
+      // the vehicle than its own street is. Nearest-distance matching
+      // (the old behaviour) put the car on the frontage road.
+      line([[0, 0.00001], [0.01, 0.00001]], { name: 'Frontage Road' }),
+    ], 14);
+    const twin = after.roads.find(r => r.name === 'A Street')!;
+    const road = before.roads[0];
+    const v: SimVehicle = { roadId: road.id, roadIndex: 0, s: 500, dir: 1, v: 8, pace: 0.9 };
+    const kept = reconcileVehicles([v], after, 1, createRng(7), () => 1, before);
+    expect(kept[0]).toBe(v);
+    expect(v.roadId).toBe(twin.id);
+  });
+
+  it('survives on a road a couple of hundred metres away when its street is gone', () => {
+    const before = buildRoadNetwork([line([[0, 0], [0.01, 0]], { name: 'A Street' })], 14);
+    // The rebuild's extraction lost A Street entirely (tile still
+    // loading / class filtered); the nearest street is ~150 m north.
+    const after = buildRoadNetwork([line([[0, 0.00135], [0.01, 0.00135]], { name: 'Near Street' })], 14);
+    const road = before.roads[0];
+    const v: SimVehicle = { roadId: road.id, roadIndex: 0, s: 500, dir: 1, v: 8, pace: 0.9 };
+    const kept = reconcileVehicles([v], after, 1, createRng(7), () => 1, before);
+    expect(kept[0]).toBe(v); // glides to the nearby street instead of vanishing
+    expect(v.roadId).toBe(after.roads[0].id);
+  });
 });
 
 describe('tracking numbers', () => {

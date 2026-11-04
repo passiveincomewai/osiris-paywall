@@ -108,10 +108,11 @@ function spawnVehicle(network: RoadNetwork, rng: Rng, ratioFor: RatioFor): SimVe
  * vehicles and respawned them at random positions — the fleet visibly
  * teleported on every pan/zoom and tile refresh. When the caller passes
  * the previous network, a vehicle whose road id vanished is therefore
- * re-homed onto the nearest road of the new network at its current world
- * position (projected along-track), keeping its speed and pace: the dot
- * stays where it was. Only a vehicle with no road within
- * REHOME_RADIUS_M of where it was driving is actually dropped.
+ * re-homed onto the new network's best continuation of its street
+ * (see rehomeVehicle: geometry-overlap match first, direction-aware,
+ * far-radius survival as a last resort), keeping its speed and pace.
+ * Only a vehicle with no road within REHOME_FAR_RADIUS_M of where it
+ * was driving is actually dropped.
  */
 export function reconcileVehicles(
   vehicles: SimVehicle[],
@@ -146,10 +147,34 @@ export function reconcileVehicles(
   return kept;
 }
 
-/** How far (m) a vehicle may be re-homed across a rebuild — same street, not the next one over. */
+/** Near tier for re-homing (m): the same street or its immediate continuation. */
 const REHOME_RADIUS_M = 75;
+/**
+ * Far tier for re-homing (m): last resort. A rebuild whose extraction
+ * dropped the vehicle's street entirely (tiles still loading, class
+ * filtered out at a lower zoom) used to delete the vehicle outright;
+ * gliding it onto a road a couple of hundred metres away reads far
+ * better than the whole fleet blinking out, so survival wins.
+ */
+const REHOME_FAR_RADIUS_M = 250;
+/** A candidate within this distance (m) gets its same-street overlap sampled. */
+const REHOME_OVERLAP_MAX_DIST_M = 40;
+/** Sampled points of the old road this close (m) to a candidate count as overlap. */
+const REHOME_OVERLAP_TOLERANCE_M = 15;
+/** Fraction of sampled points that must overlap for "same physical street". */
+const REHOME_OVERLAP_MIN = 0.5;
+/** Half-window (m) around the vehicle over which overlap is sampled. */
+const REHOME_OVERLAP_WINDOW_M = 60;
+/** A near-tier candidate whose bearing is off by more than this is a crossing, not a continuation. */
+const REHOME_NEAR_MAX_BEARING_DEG = 60;
 const M_PER_DEG_LAT = 110_540;
 const M_PER_DEG_LNG = 111_320;
+
+/** Smallest absolute angular distance between two bearings, degrees (0–180). */
+function angularDiffDeg(a: number, b: number): number {
+  const d = Math.abs(a - b) % 360;
+  return d > 180 ? 360 - d : d;
+}
 
 interface RehomeContext {
   next: RoadNetwork;
@@ -226,43 +251,113 @@ function projectOntoRoad(road: TrafficRoad, lng: number, lat: number): { s: numb
 }
 
 /**
- * Move `v` onto the new network's nearest road to where it was driving on
- * the previous network. Returns false when it was nowhere near any road
- * of the new network (it genuinely left the simulated area).
+ * Fraction of the old road around the vehicle (±REHOME_OVERLAP_WINDOW_M)
+ * whose sampled points project onto `road` within
+ * REHOME_OVERLAP_TOLERANCE_M. A re-clipped twin of the same street
+ * scores ~1 even when it was also split at a tile seam (only the window
+ * around the vehicle is sampled, not the whole road); a crossing street
+ * scores ~0 because the old road only touches it at one point.
+ */
+function overlapNearVehicle(oldRoad: TrafficRoad, s: number, road: TrafficRoad): number {
+  const SAMPLES = 8;
+  const lo = Math.max(0, s - REHOME_OVERLAP_WINDOW_M);
+  const hi = Math.min(oldRoad.lengthM, s + REHOME_OVERLAP_WINDOW_M);
+  let hits = 0;
+  for (let k = 0; k <= SAMPLES; k++) {
+    const p = pointAt(oldRoad, lo + ((hi - lo) * k) / SAMPLES);
+    if (projectOntoRoad(road, p.lng, p.lat).distM <= REHOME_OVERLAP_TOLERANCE_M) hits++;
+  }
+  return hits / (SAMPLES + 1);
+}
+
+interface RehomeChoice {
+  idx: number;
+  s: number;
+  dir: 1 | -1;
+  /** 0 = same physical street, 1 = near continuation, 2 = far last resort. */
+  tier: number;
+  nameMatch: number;
+  bearingDiff: number;
+  distM: number;
+}
+
+function rehomeChoiceBetter(a: RehomeChoice, b: RehomeChoice | null): boolean {
+  if (!b) return true;
+  if (a.tier !== b.tier) return a.tier < b.tier;
+  if (a.tier === 0 && a.nameMatch !== b.nameMatch) return a.nameMatch < b.nameMatch;
+  if (Math.abs(a.bearingDiff - b.bearingDiff) > 1) return a.bearingDiff < b.bearingDiff;
+  return a.distM < b.distM;
+}
+
+/**
+ * Move `v` onto the new network's road that best continues where it was
+ * driving on the previous network. Returns false only when no road of
+ * the new network is within REHOME_FAR_RADIUS_M (it genuinely left the
+ * simulated area).
+ *
+ * The previous implementation took the NEAREST road by projection
+ * distance alone. On real rebuilds — where tile re-clipping re-draws
+ * every line a few metres and can reverse a polyline's vertex order —
+ * that snapped vehicles sideways onto parallel carriageways and
+ * frontage roads, and onto re-drawn twins with the travel direction
+ * silently flipped: the fleet jittered, reversed, and landed on the
+ * wrong street (the owner's "still glitchy, doesn't seem accurate").
+ * Candidates are now ranked: (0) the same physical street, proven by
+ * sampled geometry overlap around the vehicle (or an exact name match
+ * up close); (1) a near road whose bearing continues the vehicle's
+ * travel direction; (2) any road within the far radius. Within a tier
+ * the winner is the one whose direction of travel best matches the
+ * vehicle's current bearing — and the vehicle's `dir` is set to that
+ * orientation, so a twin whose vertices came back reversed flips the
+ * along-track direction instead of the car's heading on the map.
  */
 function rehomeVehicle(v: SimVehicle, ctx: RehomeContext): boolean {
   const oldRoad = ctx.prevById.get(v.roadId);
   if (!oldRoad) return false;
   const pos = pointAt(oldRoad, v.s);
+  const travelBearing = v.dir === 1 ? pos.bearing : (pos.bearing + 180) % 360;
   const cx = Math.floor(pos.lng / ctx.cellLng);
   const cy = Math.floor(pos.lat / ctx.cellLat);
+  // Grid cells are ~REHOME_RADIUS_M across; the far tier needs a wider ring.
+  const ring = Math.max(1, Math.ceil(REHOME_FAR_RADIUS_M / REHOME_RADIUS_M));
   const candidates = new Set<number>();
-  for (let ix = cx - 1; ix <= cx + 1; ix++) {
-    for (let iy = cy - 1; iy <= cy + 1; iy++) {
+  for (let ix = cx - ring; ix <= cx + ring; ix++) {
+    for (let iy = cy - ring; iy <= cy + ring; iy++) {
       const arr = ctx.grid.get(`${ix},${iy}`);
       if (arr) for (const ri of arr) candidates.add(ri);
     }
   }
-  let best: { idx: number; s: number; distM: number } | null = null;
+  let best: RehomeChoice | null = null;
   for (const ri of candidates) {
     const road = ctx.next.roads[ri];
     const proj = projectOntoRoad(road, pos.lng, pos.lat);
-    if (proj.distM > REHOME_RADIUS_M) continue;
-    // Nearest wins; within a metre, prefer the same road class (keeps a
-    // vehicle off a parallel frontage road when its own street ties).
-    const better = !best
-      || proj.distM < best.distM - 1
-      || (proj.distM <= best.distM + 1
-        && road.roadClass === oldRoad.roadClass
-        && ctx.next.roads[best.idx].roadClass !== oldRoad.roadClass);
-    if (better) best = { idx: ri, s: proj.s, distM: proj.distM };
+    if (proj.distM > REHOME_FAR_RADIUS_M) continue;
+    // Orientation: travelling the candidate forward gives its geometric
+    // bearing at the projection; backwards (two-way only) the opposite.
+    const geomBearing = pointAt(road, proj.s).bearing;
+    let dir: 1 | -1 = 1;
+    let bearingDiff = angularDiffDeg(travelBearing, geomBearing);
+    if (!road.oneway) {
+      const backDiff = angularDiffDeg(travelBearing, (geomBearing + 180) % 360);
+      if (backDiff < bearingDiff) { bearingDiff = backDiff; dir = -1; }
+    }
+    const nameMatch = road.name !== '' && road.name === oldRoad.name ? 0 : 1;
+    let tier = 2;
+    if (proj.distM <= REHOME_OVERLAP_MAX_DIST_M
+      && (nameMatch === 0 || overlapNearVehicle(oldRoad, v.s, road) >= REHOME_OVERLAP_MIN)) {
+      tier = 0;
+    } else if (proj.distM <= REHOME_RADIUS_M && bearingDiff <= REHOME_NEAR_MAX_BEARING_DEG) {
+      tier = 1;
+    }
+    const choice: RehomeChoice = { idx: ri, s: proj.s, dir, tier, nameMatch, bearingDiff, distM: proj.distM };
+    if (rehomeChoiceBetter(choice, best)) best = choice;
   }
   if (!best) return false;
   const road = ctx.next.roads[best.idx];
   v.roadId = road.id;
   v.roadIndex = best.idx;
   v.s = Math.max(0, Math.min(road.lengthM, best.s));
-  if (road.oneway) v.dir = 1;
+  v.dir = road.oneway ? 1 : best.dir;
   return true;
 }
 

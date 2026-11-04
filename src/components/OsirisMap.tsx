@@ -1864,7 +1864,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       map.addLayer({ id: 'traffic-vehicles', type: 'symbol', source: 'traffic-vehicles', layout: {
         visibility: 'none',
         'icon-image': 'traffic-car',
-        'icon-size': ['interpolate', ['linear'], ['zoom'], 10.5, 0.55, 13, 0.8, 15, 1.15, 17, 1.6],
+        'icon-size': ['interpolate', ['linear'], ['zoom'], 10.5, 0.29, 13, 0.38, 14, 0.43, 15, 0.52, 17, 0.68],
         'icon-allow-overlap': true, 'icon-ignore-placement': true, 'icon-anchor': 'center',
       }});
       map.addLayer({ id: 'traffic-vehicles-dots', type: 'circle', source: 'traffic-vehicles', layout: {
@@ -5119,8 +5119,11 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
         return;
       }
       const b = map.getBounds();
-      const padLat = (b.getNorth() - b.getSouth()) * 0.15;
-      const padLng = (b.getEast() - b.getWest()) * 0.15;
+      // Generous margin: vehicles live on roads up to half a viewport
+      // off-screen, so a pan reveals traffic already driving instead of
+      // an empty map that only fills in at the next rebuild.
+      const padLat = (b.getNorth() - b.getSouth()) * 0.5;
+      const padLng = (b.getEast() - b.getWest()) * 0.5;
       let raw: any[] = [];
       try { raw = map.querySourceFeatures(roadSource.source, { sourceLayer: roadSource.sourceLayer }) as any[]; } catch { raw = []; }
       const net = buildRoadNetwork(adaptBasemapRoadFeatures(raw as any), zoom, {
@@ -5134,7 +5137,16 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
       // their current position instead of respawning them at random
       // (see reconcileVehicles in lib/traffic/sim).
       const prevNet = trafficNetRef.current;
-      if (net.roads.length) trafficNetRef.current = net;
+      // While tiles are still streaming in, querySourceFeatures returns
+      // a PARTIAL road set. Adopting a snapshot that shrank drastically
+      // over the network the fleet is driving on re-homes or drops most
+      // of the fleet at once — the cars blink out mid-pan and stream
+      // back over the next rebuilds. Keep the last complete network
+      // until the map settles (loaded) or the new extraction is
+      // comparably full; the periodic pass retries every 20 s.
+      const shrankWhileLoading = !!prevNet && net.roads.length > 0
+        && !map.loaded() && net.totalLengthM < prevNet.totalLengthM * 0.6;
+      if (net.roads.length && !shrankWhileLoading) trafficNetRef.current = net;
       const active = trafficNetRef.current;
       if (!active) { setChip(); return; }
       // Fleet density follows measured congestion: the network's
@@ -5144,11 +5156,23 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
       let weighted = 0;
       for (const road of active.roads) weighted += ratioFor(road) * road.lengthM;
       const meanRatio = active.totalLengthM > 0 ? weighted / active.totalLengthM : undefined;
-      trafficVehiclesStateRef.current = reconcileVehicles(
-        trafficVehiclesStateRef.current, active,
-        targetVehicleCount(active.totalLengthM, zoom, mobileLike, meanRatio), rng, ratioFor,
-        prevNet && prevNet !== active ? prevNet : undefined,
-      );
+      // Density target counts only roads touching the VISIBLE viewport:
+      // the padded margin inflates totalLengthM ~4x, and counting it
+      // would pin the fleet at the hard cap with most vehicles parked
+      // off-screen and the visible streets emptied.
+      let visibleLengthM = 0;
+      for (const road of active.roads) {
+        if (road.coords.some(([lng, lat]) => lng >= b.getWest() && lng <= b.getEast() && lat >= b.getSouth() && lat <= b.getNorth())) {
+          visibleLengthM += road.lengthM;
+        }
+      }
+      if (!shrankWhileLoading) {
+        trafficVehiclesStateRef.current = reconcileVehicles(
+          trafficVehiclesStateRef.current, active,
+          targetVehicleCount(visibleLengthM, zoom, mobileLike, meanRatio), rng, ratioFor,
+          prevNet && prevNet !== active ? prevNet : undefined,
+        );
+      }
       sampleFlow();
       setRoadFeatures();
       setVehicleFeatures();
