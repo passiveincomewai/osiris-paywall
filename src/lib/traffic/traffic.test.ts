@@ -11,7 +11,8 @@ import {
   timeOfDayFactor, simulatedRatio, effectiveRatio, speedMps, FREE_FLOW_KMH,
 } from './congestion';
 import {
-  createRng, nextFloat, reconcileVehicles, advanceVehicles, vehicleFeature, type SimVehicle,
+  createRng, nextFloat, reconcileVehicles, advanceVehicles, vehicleFeature, vehiclePointAt,
+  KIND_PARAMS, TRUCK_SHARE_BY_CLASS, type SimVehicle,
 } from './sim';
 import { matchFlowToRoads, type RawFlowFeature } from './flow';
 
@@ -476,5 +477,299 @@ describe('chip copy', () => {
   it('below city zoom the chip still explains the zoom requirement', () => {
     expect(trafficChipText('live', true)).toContain('zoom in to city level');
     expect(trafficChipText('unavailable', true)).toContain('zoom in to city level');
+  });
+});
+
+// ── Round 4: interpolation, glide, following, junctions, closures, trucks ──
+
+/** One long straight primary road (~3.3 km), alone in its network. */
+function longRoadNet(props: Record<string, unknown> = {}) {
+  return buildRoadNetwork([line([[0, 0], [0.03, 0]], { name: 'Long Road', ...props })], 14);
+}
+
+describe('render interpolation', () => {
+  it('vehicleFeature interpolates between the previous and current step states', () => {
+    const net = longRoadNet();
+    const road = net.roads[0];
+    const v: SimVehicle = {
+      roadId: road.id, roadIndex: 0, s: 1000, dir: 1, v: speedMps(road, 1), pace: 1,
+    };
+    advanceVehicles([v], net, 1 / 30, createRng(1), () => 1);
+    expect(v.ps).toBe(1000);
+    expect(v.s).toBeGreaterThan(1000);
+    const at0 = vehicleFeature(v, net, () => 1, 0)!;
+    const atHalf = vehicleFeature(v, net, () => 1, 0.5)!;
+    const at1 = vehicleFeature(v, net, () => 1, 1)!;
+    expect(at0.geometry.coordinates[0]).toBeCloseTo(pointAt(road, 1000).lng, 9);
+    expect(at1.geometry.coordinates[0]).toBeCloseTo(pointAt(road, v.s).lng, 9);
+    // Straight road: the halfway render is the midpoint of the step.
+    expect(atHalf.geometry.coordinates[0]).toBeCloseTo(
+      (at0.geometry.coordinates[0] + at1.geometry.coordinates[0]) / 2, 9,
+    );
+    // Default alpha (1) is the plain current position — old callers unchanged.
+    expect(vehicleFeature(v, net, () => 1)!.geometry.coordinates).toEqual(at1.geometry.coordinates);
+  });
+
+  it('interpolation never streaks across a road change', () => {
+    const net = abNetwork();
+    const a = net.roads.find(r => r.name === 'A Street')!;
+    const v: SimVehicle = {
+      roadId: a.id, roadIndex: net.roads.indexOf(a),
+      s: a.lengthM - 1, dir: 1, v: speedMps(a, 1), pace: 1,
+    };
+    const rng = createRng(7);
+    for (let i = 0; i < 10 && v.roadId === a.id; i++) advanceVehicles([v], net, 0.25, rng, () => 1);
+    expect(v.roadId).not.toBe(a.id); // turned onto B Street
+    const p = vehiclePointAt(v, net, 0)!;
+    const road = net.roads[v.roadIndex];
+    expect(haversineM([p.lng, p.lat], (() => { const q = pointAt(road, v.s); return [q.lng, q.lat]; })())).toBeLessThan(1);
+  });
+});
+
+describe('re-home glide', () => {
+  it('a re-homed vehicle renders where it actually was, then glides to its new line', () => {
+    const before = buildRoadNetwork([line([[0, 0], [0.01, 0]], { name: 'A Street' })], 14);
+    // The same street re-drawn ~22 m north under a new id.
+    const after = buildRoadNetwork([line([[0, 0.0002], [0.01, 0.0002]], { name: 'A Street' })], 14);
+    const oldRoad = before.roads[0];
+    const v: SimVehicle = { roadId: oldRoad.id, roadIndex: 0, s: 500, dir: 1, v: 8, pace: 0.9 };
+    const kept = reconcileVehicles([v], after, 1, createRng(7), () => 1, before);
+    expect(kept[0]).toBe(v);
+    expect(v.gDur).toBeGreaterThan(0);
+    // At the moment of the rebuild the drawn point is the OLD position —
+    // no sideways jump, however far the new line sits.
+    const atOnce = vehiclePointAt(v, after, 1)!;
+    const was = pointAt(oldRoad, 500);
+    expect(haversineM([atOnce.lng, atOnce.lat], [was.lng, was.lat])).toBeLessThan(0.5);
+    // Mid-glide it is most of the way across (ease-out cubic).
+    advanceVehicles([v], after, (v.gDur ?? 0) / 2, createRng(7), () => 1);
+    const mid = vehiclePointAt(v, after, 1)!;
+    expect(haversineM([mid.lng, mid.lat], [was.lng, was.lat])).toBeGreaterThan(12);
+    const onRoadNow = pointAt(after.roads[0], v.s);
+    expect(haversineM([mid.lng, mid.lat], [onRoadNow.lng, onRoadNow.lat])).toBeLessThan(8);
+    // After the glide the vehicle is exactly on its road and the glide is done.
+    advanceVehicles([v], after, 2, createRng(7), () => 1);
+    expect(v.gDur).toBeUndefined();
+    const done = vehiclePointAt(v, after, 1)!;
+    const onRoad = pointAt(after.roads[0], v.s);
+    expect(haversineM([done.lng, done.lat], [onRoad.lng, onRoad.lat])).toBeLessThan(0.5);
+  });
+});
+
+describe('car following', () => {
+  it('a follower queues behind a stopped leader instead of driving through it', () => {
+    const net = longRoadNet();
+    const road = net.roads[0];
+    const cruise = speedMps(road, 1);
+    const leader: SimVehicle = {
+      roadId: road.id, roadIndex: 0, s: 1600, dir: 1, v: 0, pace: 0.75, kind: 'car',
+    };
+    const follower: SimVehicle = {
+      roadId: road.id, roadIndex: 0, s: 1480, dir: 1, v: cruise, pace: 1, kind: 'car',
+    };
+    // The "leader" is held stopped by giving it a hand on the brake:
+    // its pace target is cruise, so pin it each step to model a queue head.
+    const rng = createRng(2);
+    for (let i = 0; i < 60 * 30; i++) {
+      advanceVehicles([leader, follower], net, 1 / 30, rng, () => 1);
+      leader.v = 0; leader.s = 1600; // the queue ahead is not moving
+      const gap = leader.s - follower.s - KIND_PARAMS.car.lengthM;
+      expect(gap).toBeGreaterThan(0); // never overlaps, never passes through
+    }
+    const finalGap = leader.s - follower.s - KIND_PARAMS.car.lengthM;
+    expect(finalGap).toBeGreaterThan(0.5);
+    expect(finalGap).toBeLessThan(8); // pulled up to roughly the stand gap
+    expect(follower.v).toBeLessThan(0.5); // and it is stopped, not creeping through
+  });
+
+  it('the queue discharges when the leader pulls away', () => {
+    const net = longRoadNet();
+    const road = net.roads[0];
+    const cruise = speedMps(road, 1);
+    const leader: SimVehicle = {
+      roadId: road.id, roadIndex: 0, s: 1600, dir: 1, v: 0, pace: 1, kind: 'car',
+    };
+    const follower: SimVehicle = {
+      roadId: road.id, roadIndex: 0, s: 1590, dir: 1, v: 0, pace: 1, kind: 'car',
+    };
+    const rng = createRng(2);
+    for (let i = 0; i < 30 * 30; i++) advanceVehicles([leader, follower], net, 1 / 30, rng, () => 1);
+    expect(leader.v).toBeGreaterThan(cruise * 0.8);
+    expect(follower.v).toBeGreaterThan(cruise * 0.5); // followed it away
+    const gap = leader.s - follower.s - KIND_PARAMS.car.lengthM;
+    expect(gap).toBeGreaterThan(1);
+    expect(follower.s).toBeGreaterThan(1590 + 100); // real distance covered
+  });
+
+  it('opposite-direction vehicles do not brake for each other', () => {
+    const net = longRoadNet();
+    const road = net.roads[0];
+    const cruise = speedMps(road, 1);
+    const east: SimVehicle = { roadId: road.id, roadIndex: 0, s: 1400, dir: 1, v: cruise, pace: 1 };
+    const west: SimVehicle = { roadId: road.id, roadIndex: 0, s: 1700, dir: -1, v: cruise, pace: 1 };
+    const rng = createRng(2);
+    for (let i = 0; i < 30; i++) advanceVehicles([east, west], net, 1 / 30, rng, () => 1);
+    expect(east.v).toBeGreaterThan(cruise * 0.95);
+    expect(west.v).toBeGreaterThan(cruise * 0.95);
+  });
+});
+
+describe('junction approach', () => {
+  function teeNet(withContinuation: boolean) {
+    const feats: RawRoadFeature[] = [
+      line([[0, 0], [0.02, 0]], { name: 'A Street' }),
+      line([[0.02, 0], [0.02, 0.01]], { name: 'B Street' }),
+    ];
+    if (withContinuation) feats.push(line([[0.02, 0], [0.04, 0]], { name: 'A Street' }));
+    return buildRoadNetwork(feats, 14);
+  }
+
+  it('slows for a junction with no straight continuation', () => {
+    const net = teeNet(false);
+    const a = net.roads.find(r => r.name === 'A Street')!;
+    const cruise = speedMps(a, 1);
+    const v: SimVehicle = {
+      roadId: a.id, roadIndex: net.roads.indexOf(a),
+      s: a.lengthM - 35, dir: 1, v: cruise, pace: 1,
+    };
+    const rng = createRng(4);
+    for (let i = 0; i < 20; i++) advanceVehicles([v], net, 0.1, rng, () => 1);
+    expect(v.roadId).toBe(a.id); // still approaching, has not blown through
+    expect(v.v).toBeLessThan(cruise * 0.75);
+  });
+
+  it('does not slow where the road continues straight (a tile-seam junction)', () => {
+    const net = teeNet(true);
+    const a = net.roads.find(r => r.name === 'A Street' && r.coords[0][0] === 0)!;
+    const cruise = speedMps(a, 1);
+    const v: SimVehicle = {
+      roadId: a.id, roadIndex: net.roads.indexOf(a),
+      s: a.lengthM - 35, dir: 1, v: cruise, pace: 1,
+    };
+    const rng = createRng(4);
+    for (let i = 0; i < 20; i++) advanceVehicles([v], net, 0.1, rng, () => 1);
+    expect(v.v).toBeGreaterThan(cruise * 0.95);
+  });
+});
+
+describe('closed roads', () => {
+  function twoRoadNet() {
+    return buildRoadNetwork([
+      line([[0, 0], [0.02, 0]], { name: 'Open Street', class: 'primary' }),
+      line([[0, 0.0005], [0.02, 0.0005]], { name: 'Shut Street', class: 'motorway' }),
+    ], 14);
+  }
+
+  it('never spawns on a closed road', () => {
+    const net = twoRoadNet();
+    const shut = net.roads.find(r => r.name === 'Shut Street')!;
+    const vehicles = reconcileVehicles([], net, 40, createRng(9), () => 1, undefined,
+      { closedRoadIds: new Set([shut.id]) });
+    expect(vehicles).toHaveLength(40);
+    expect(vehicles.every(v => v.roadId !== shut.id)).toBe(true);
+  });
+
+  it('re-homes a vehicle off a road that has been reported closed', () => {
+    const net = twoRoadNet();
+    const shut = net.roads.find(r => r.name === 'Shut Street')!;
+    const open = net.roads.find(r => r.name === 'Open Street')!;
+    const v: SimVehicle = {
+      roadId: shut.id, roadIndex: net.roads.indexOf(shut), s: 500, dir: 1, v: 8, pace: 0.9, num: 3,
+    };
+    const kept = reconcileVehicles([v], net, 1, createRng(9), () => 1, net,
+      { closedRoadIds: new Set([shut.id]) });
+    expect(kept[0]).toBe(v);
+    expect(v.roadId).toBe(open.id);
+    expect(v.num).toBe(3);
+  });
+
+  it('never turns onto a closed road at a junction', () => {
+    const net = buildRoadNetwork([
+      line([[0, 0], [0.01, 0]], { name: 'A Street', oneway: 1 }),
+      line([[0.01, 0], [0.01, 0.01]], { name: 'B Street', oneway: 1 }),
+    ], 14);
+    const a = net.roads.find(r => r.name === 'A Street')!;
+    const b = net.roads.find(r => r.name === 'B Street')!;
+    const v: SimVehicle = {
+      roadId: a.id, roadIndex: net.roads.indexOf(a),
+      s: a.lengthM - 2, dir: 1, v: speedMps(a, 1), pace: 1, num: 5,
+    };
+    const rng = createRng(3);
+    const opts = { closedRoadIds: new Set([b.id]) };
+    for (let i = 0; i < 60; i++) {
+      advanceVehicles([v], net, 0.25, rng, () => 1, opts);
+      expect(v.roadId).not.toBe(b.id);
+    }
+    expect(v.num).toBe(5); // it respawned on A, still itself
+  });
+});
+
+describe('semi trucks', () => {
+  it('freight share by road class: meaningful on motorways, none on minor streets', () => {
+    expect(TRUCK_SHARE_BY_CLASS.motorway).toBeGreaterThanOrEqual(0.15);
+    expect(TRUCK_SHARE_BY_CLASS.motorway).toBeLessThanOrEqual(0.25);
+    expect(TRUCK_SHARE_BY_CLASS.trunk).toBeGreaterThanOrEqual(0.15);
+    expect(TRUCK_SHARE_BY_CLASS.minor).toBe(0);
+    expect(TRUCK_SHARE_BY_CLASS.service).toBe(0);
+
+    const motorway = buildRoadNetwork([line([[0, 0], [0.05, 0]], { class: 'motorway' })], 14);
+    const fleet = reconcileVehicles([], motorway, 200, createRng(21), () => 1);
+    const trucks = fleet.filter(v => v.kind === 'truck');
+    expect(trucks.length).toBeGreaterThan(20);
+    expect(trucks.length).toBeLessThan(70);
+    // One fleet, one number sequence: trucks take numbers from the same pool.
+    expect(new Set(fleet.map(v => v.num)).size).toBe(200);
+
+    const minor = buildRoadNetwork([line([[0, 0], [0.05, 0]], { class: 'minor' })], 16);
+    const local = reconcileVehicles([], minor, 60, createRng(21), () => 1);
+    expect(local.every(v => v.kind !== 'truck')).toBe(true);
+  });
+
+  it('a truck cruises below a car on the same road and accelerates more gently', () => {
+    const net = longRoadNet();
+    const road = net.roads[0];
+    const carCruise = speedMps(road, 1);
+    const truck: SimVehicle = {
+      roadId: road.id, roadIndex: 0, s: 1200, dir: 1, v: 0, pace: 1, kind: 'truck',
+    };
+    const rng = createRng(6);
+    advanceVehicles([truck], net, 1, rng, () => 1);
+    expect(truck.v).toBeCloseTo(KIND_PARAMS.truck.accelMps2, 5); // 1 s of truck acceleration
+    for (let i = 0; i < 60; i++) advanceVehicles([truck], net, 0.5, rng, () => 1);
+    expect(truck.v).toBeLessThan(carCruise * 0.95);
+    expect(truck.v).toBeGreaterThan(carCruise * 0.8);
+  });
+
+  it('a truck keeps a larger stand gap than a car behind the same stopped leader', () => {
+    const finalGapFor = (kind: 'car' | 'truck') => {
+      const net = longRoadNet();
+      const road = net.roads[0];
+      const leader: SimVehicle = {
+        roadId: road.id, roadIndex: 0, s: 1600, dir: 1, v: 0, pace: 0.75, kind: 'car',
+      };
+      const follower: SimVehicle = {
+        roadId: road.id, roadIndex: 0, s: 1480, dir: 1, v: speedMps(road, 1), pace: 1, kind,
+      };
+      const rng = createRng(2);
+      for (let i = 0; i < 60 * 30; i++) {
+        advanceVehicles([leader, follower], net, 1 / 30, rng, () => 1);
+        leader.v = 0; leader.s = 1600;
+      }
+      return leader.s - follower.s
+        - (KIND_PARAMS.car.lengthM + KIND_PARAMS[kind].lengthM) / 2;
+    };
+    const carGap = finalGapFor('car');
+    const truckGap = finalGapFor('truck');
+    expect(carGap).toBeGreaterThan(0.5);
+    expect(truckGap).toBeGreaterThan(carGap + 1);
+  });
+
+  it('vehicleFeature reports the kind', () => {
+    const net = longRoadNet();
+    const road = net.roads[0];
+    const car: SimVehicle = { roadId: road.id, roadIndex: 0, s: 100, dir: 1, v: 5, pace: 1 };
+    const truck: SimVehicle = { ...car, kind: 'truck' };
+    expect(vehicleFeature(car, net, () => 1)!.properties.kind).toBe('car');
+    expect(vehicleFeature(truck, net, () => 1)!.properties.kind).toBe('truck');
   });
 });
