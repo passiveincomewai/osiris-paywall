@@ -41,6 +41,491 @@ export type BlogPost = {
 
 export const POSTS: BlogPost[] = [
   {
+    slug: "worldeye-in-chatgpt",
+    title: "WorldEye in ChatGPT: What It Finds Today, and What Comes Next",
+    seoTitle: "WorldEye in ChatGPT | WorldEye Blog",
+    date: "2026-11-04",
+    excerpt:
+      "We measure how ChatGPT answers questions about live cameras with a fixed set of 28 test questions. Here is the latest score, the builder route that works today, and the honest status of a WorldEye app in ChatGPT.",
+    seoDescription:
+      "ChatGPT already cites WorldEye in measured tests — 5 of 28 standard questions on November 2, 2026. The builder path, the app status, and what to ask.",
+    tags: ["ai", "chatgpt", "openai", "mcp"],
+    sections: [
+      {
+        heading: "The score, measured not guessed",
+        body: [
+          "Every week we ask ChatGPT a fixed set of 28 questions — about live webcams, trackers, places and competitors — and record whether worldeye.app is mentioned or linked. In the run on November 2, 2026, WorldEye appeared in 5 of the 28 answers (17.9%), the same total as the run a week earlier. The wins are specific: ask “What is WorldEye?” and worldeye.app was the only site cited. Ask for “a website with a live 3D globe of cameras” and the answer began, “My recommendation: Start with WorldEye.”",
+          "The gaps are just as specific: questions about trackers and about individual places scored zero, which is exactly why we keep publishing the place and tracker pages those answers would need to cite. Visibility in ChatGPT is not a setting we toggled — it is a citation we earn question by question, and the full method is written up on our [WorldEye in ChatGPT](/ai/chatgpt) page.",
+        ],
+      },
+      {
+        heading: "Three routes into ChatGPT, only two of them real today",
+        body: [
+          "Route one is the search route above: ChatGPT's web search reads worldeye.app like any other site, and our pages are written to be citable — dated statistics, named sources, one claim per page. It works now, with nothing installed.",
+          "Route two is for builders. OpenAI's API platform supports remote MCP servers with header authentication, so a developer building on OpenAI models can attach WorldEye's MCP endpoint — https://worldeye.app/api/v1/mcp — with a free WorldEye API key and give their own agent live access to the camera catalogue: search cameras, fetch a snapshot and watch link, find cameras near a place, list the latest USGS earthquakes. That is a developer pattern, not a consumer ChatGPT feature.",
+          "Route three — a WorldEye app inside ChatGPT's own app directory — is not live, and we will not imply otherwise. OpenAI opened Apps SDK submissions in December 2025. Submitting requires a verified OpenAI developer account with identity verification, five positive and three negative test cases, screenshots and a demo video, followed by OpenAI review. That account belongs to WorldEye's owner, so the submission is staged on his side. When it ships, we will say so here, with the date.",
+        ],
+      },
+      {
+        heading: "What WorldEye's tools would do inside ChatGPT",
+        body: [
+          "Wherever they are connected, the tools are deliberately narrow: five read-only calls over the cameras whose operators have cleared them for redistribution. A result is metadata, a current snapshot and a watch link that opens the camera live on WorldEye — never a raw stream URL, and never anything about WorldEye's users. The catalogue behind it is the site's 74,229-camera globe, and browsing the site itself is free; unlimited camera opens need an upgrade, and a free API key covers 100 tool requests a day.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Is there a WorldEye app in ChatGPT?",
+        a: "Not yet. OpenAI opened Apps SDK submissions in December 2025, but submitting requires the site owner's verified OpenAI developer account, so it is staged on his side. Today ChatGPT finds WorldEye through web search, and builders can connect the MCP server through the OpenAI API.",
+      },
+      {
+        q: "How often does ChatGPT mention WorldEye?",
+        a: "In our fixed 28-question probe run on November 2, 2026, ChatGPT mentioned or linked WorldEye in 5 answers (17.9%), including being the only site cited for “What is WorldEye?”. We rerun the probe weekly and publish the score on the /ai/chatgpt page.",
+      },
+      {
+        q: "Can ChatGPT show me a live camera through WorldEye?",
+        a: "ChatGPT can cite and link WorldEye pages through search. Where the MCP tools are connected (builder setups today), it can also fetch a camera's current snapshot and a watch link — the live watching itself happens on worldeye.app.",
+      },
+    ],
+  },
+  {
+    slug: "worldeye-in-claude",
+    title: "WorldEye in Claude: Connect the MCP Server in About a Minute",
+    seoTitle: "WorldEye in Claude | WorldEye Blog",
+    date: "2026-11-04",
+    excerpt:
+      "The Model Context Protocol is Anthropic's own protocol, which makes Claude the most natural home for WorldEye's MCP server. How to connect it in Claude Code, Claude Desktop and claude.ai — and the honest status of a directory listing.",
+    seoDescription:
+      "Claude speaks MCP natively. Connect WorldEye's read-only camera catalogue to Claude Code, Desktop or a custom connector with a free API key.",
+    tags: ["ai", "claude", "anthropic", "mcp"],
+    sections: [
+      {
+        heading: "Why Claude is the natural fit",
+        body: [
+          "Anthropic created the Model Context Protocol in late 2024, and the rest of the industry has been adopting it since. For WorldEye that makes Claude the simplest connection in this whole series: there is no translation layer and nothing to install on our side. The same public endpoint documented on our [developers page](/developers) — https://worldeye.app/api/v1/mcp — is the one Claude clients connect to.",
+          "The server is small on purpose: five read-only tools over the camera catalogue whose operators cleared it for redistribution, plus the USGS earthquake feed. Claude can search cameras by place or kind, fetch one camera's current snapshot and watch link, find cameras near a named place or coordinates, list the last 24 hours of magnitude 2.5+ earthquakes, and check your key's remaining quota. Every camera record carries its operating agency's credit.",
+        ],
+      },
+      {
+        heading: "Connecting, client by client",
+        body: [
+          "Start with a free key: sign in at worldeye.app, open Account Settings → API keys, and create one. It starts with wek_ and is shown once. A free key covers 100 requests a day; WorldEye plans raise that (Lite 1,000, Pro 5,000, Ultra 25,000).",
+          "Claude Code and Claude Desktop read MCP servers from a JSON config: add a “worldeye” entry with the endpoint URL and an Authorization header carrying “Bearer” plus your key, then restart the client. The key travels as a header, never as a tool argument, so it does not leak into conversations. On claude.ai, custom connectors let you add a remote MCP server by URL from the Connectors settings; if your plan's connector form asks for OAuth only, use a config-based client instead — the endpoint itself is identical. Step-by-step detail lives on our [WorldEye in Claude](/ai/claude) page.",
+        ],
+      },
+      {
+        heading: "The directory listing: not submitted yet",
+        body: [
+          "Anthropic opened a connector directory submission portal (claude.ai/directory/manage) in September 2026: submissions are scanned automatically and listed as Community connectors by default. Submitting requires signing in with a paid Claude plan — that account is the site owner's, so the listing is staged on his side, not done. Until it lands, the direct connection above is the way in, and it is fully functional. Nothing about that is a limitation of the server: it is the same endpoint either way.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Do I need a paid Claude plan to connect WorldEye?",
+        a: "No. The connection works in config-based clients (Claude Code, Claude Desktop) and as a user-added custom connector. A paid plan is only needed for submitting a public directory listing, which is the site owner's step, not yours.",
+      },
+      {
+        q: "Is my API key safe inside Claude?",
+        a: "The key is sent as an Authorization header to WorldEye's endpoint only, never as a tool argument, so it does not appear in conversation text. Keys are free, shown once at creation, and can be revoked from Account Settings at any time.",
+      },
+      {
+        q: "What can Claude do with WorldEye connected?",
+        a: "Search the cleared camera catalogue, fetch a camera's current snapshot and watch link, find cameras near a place, list the latest USGS earthquakes, and check the key's plan and remaining daily quota. It cannot stream video, change anything, or see any user data.",
+      },
+    ],
+  },
+  {
+    slug: "worldeye-in-perplexity",
+    title: "WorldEye in Perplexity: Cited, Not Connected — and Why That's Fine",
+    seoTitle: "WorldEye in Perplexity | WorldEye Blog",
+    date: "2026-11-04",
+    excerpt:
+      "Perplexity has no connector programme, no app directory and no way to plug a live tool into an answer. So WorldEye's route into Perplexity is the citation itself. Here is how we earn it, and the questions that surface our pages.",
+    seoDescription:
+      "Perplexity offers no third-party integration to join. How WorldEye earns citations in Perplexity's sourced answers, and the questions that surface us.",
+    tags: ["ai", "perplexity", "search"],
+    sections: [
+      {
+        heading: "First, the thing that doesn't exist",
+        body: [
+          "Perplexity is an answer engine: it searches the web, reads what it finds, and writes an answer with numbered citations. There is no app directory, no connector gallery and no submission path for a data provider to plug live tools into a Perplexity answer. Perplexity's own API, Sonar, runs the other direction — it lets developers put Perplexity inside their products. Its Publisher Program is a revenue arrangement for news publishers, not an integration channel. Anyone selling a “Perplexity integration” for a site like ours is selling something that does not exist, and this post is not going to pretend we bought it.",
+        ],
+      },
+      {
+        heading: "The citation is the integration",
+        body: [
+          "What does exist is the citation. Perplexity's crawler, PerplexityBot, can read worldeye.app freely, and the pages are built to survive being quoted: every statistic carries its measure and its date, the headline camera count is stated exactly — 74,229 cameras served — and larger catalogue totals elsewhere are labelled as the different measures they are rather than blended into a bigger number. Each topic lives on its own page with a single clear claim, which is the shape an answer engine can lift without mangling it.",
+          "That discipline is the whole strategy, and it is measurable in the answers themselves: when Perplexity answers a question about live volcano webcams, a place's cameras, or today's earthquakes with a worldeye.app source in its numbered list, the citation is doing the work a connector would do elsewhere. Our [WorldEye in Perplexity](/ai/perplexity) page keeps the details and the example questions current.",
+        ],
+      },
+      {
+        heading: "Using it, from the reader's side",
+        body: [
+          "There is nothing to install and nothing to pay for. Ask Perplexity a question WorldEye is genuinely the best source for — a live camera for a specific place, the current state of an erupting volcano, the strongest earthquakes today — and check the numbered sources under the answer. A worldeye.app link opens the live globe, where browsing is free and unlimited camera opens need an upgrade. And if you build software and want the data programmatically, that path is real too: it is our developer API and MCP server, called from your own code — just not a Perplexity feature.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Is WorldEye integrated with Perplexity?",
+        a: "No — Perplexity offers no third-party integration, connector or listing programme. WorldEye appears in Perplexity answers when the answer engine cites a worldeye.app page as a source, which is the only route that exists.",
+      },
+      {
+        q: "How does WorldEye earn Perplexity citations?",
+        a: "By being quotable: exact dated statistics (the 74,229 camera headline, with other totals labelled by measure and date), named sources, and one clear claim per page, all freely crawlable by PerplexityBot.",
+      },
+      {
+        q: "Can Perplexity call WorldEye's API live?",
+        a: "No. Perplexity's Sonar API is outbound — it puts Perplexity's answers inside developers' products. Developers can call WorldEye's own API and MCP server from their code, but Perplexity's consumer answers do not call third-party tools.",
+      },
+    ],
+  },
+  {
+    slug: "worldeye-in-gemini",
+    title: "WorldEye in Google Gemini and AI Overviews: Earned Through Search",
+    seoTitle: "WorldEye in Gemini & AI Overviews | WorldEye Blog",
+    date: "2026-11-04",
+    excerpt:
+      "Google's AI answers ground on the Google Search index — there is no Gemini connector directory for a data provider to join. How WorldEye earns its place in AI Overviews and Gemini answers is a search story, told plainly.",
+    seoDescription:
+      "Gemini and AI Overviews ground on Google Search; there is no third-party connector to add. How WorldEye earns citations there, and what to ask.",
+    tags: ["ai", "gemini", "google", "search"],
+    sections: [
+      {
+        heading: "No directory, no connector, no shortcut",
+        body: [
+          "Google's AI surfaces — the AI Overviews above search results and the Gemini app — answer from the same index that powers Google Search. There is no third-party app directory for Gemini and no connector programme a data provider can join. When an AI Overview names a source, it is because that page earned its position in the index. So WorldEye's Google AI presence is a search-engine story, and it is one we work on in the open: the site launched in October 2026, is fully indexable, and its sitemap is submitted and monitored.",
+        ],
+      },
+      {
+        heading: "What earns the citation",
+        body: [
+          "What helps an answer engine is what helps a search engine, tightened: pages that state one thing clearly, numbers with their measure and date attached, and structured data that says what a page is. Our camera counts are the example we hold ourselves to. The headline figure is 74,229 cameras served; the catalogue totals published elsewhere on the site are different measures from different snapshot dates, and they are labelled as such, never blended into a bigger headline. A model quoting our pages quotes them correctly because the page makes the distinction for it.",
+          "The content those answers draw on is the site itself: place and topic pages for live cameras, dated event coverage written from named sources (USGS, NWS, IMO and peers), and tracker pages whose claims are labelled live versus modelled. The details live on our [WorldEye in Gemini](/ai/gemini) page.",
+        ],
+      },
+      {
+        heading: "The builder exception, stated carefully",
+        body: [
+          "Developers building on Gemini models can call WorldEye's REST API from their own function-calling setups — that is our developer platform being used from Google's models, and it needs a free WorldEye API key. It is a builder pattern, not a Gemini feature, and no Gemini integration or listing is claimed anywhere on this site. For readers, the route in is simpler: ask Google or Gemini the way you would ask a person — “live webcams in Tokyo”, “watch the northern lights live”, “earthquakes today” — and follow the cited worldeye.app link to the globe, where browsing is free and unlimited opens need an upgrade.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Is there a WorldEye connector for Gemini?",
+        a: "No. Google offers no third-party connector directory or integration programme for Gemini or AI Overviews. WorldEye appears in Google's AI answers when its pages earn citations from the Google Search index.",
+      },
+      {
+        q: "How does WorldEye show up in AI Overviews?",
+        a: "The same way any page does: by being indexed and being the clearest answer — one claim per page, dated statistics with their measures labelled, and structured data. There is no submission or approval step for AI Overviews.",
+      },
+      {
+        q: "Can Gemini call WorldEye's tools directly?",
+        a: "Not as a Gemini feature. Developers can wire WorldEye's REST API into their own Gemini-based function-calling code with a free API key, but that integration belongs to the developer's app, not to Gemini itself.",
+      },
+    ],
+  },
+  {
+    slug: "worldeye-in-copilot",
+    title: "WorldEye in Microsoft Copilot: Grounded on Bing, Where We Already Rank",
+    seoTitle: "WorldEye in Microsoft Copilot | WorldEye Blog",
+    date: "2026-11-04",
+    excerpt:
+      "Consumer Copilot grounds its web answers on the Bing index — and in our own Bing Webmaster data, WorldEye already ranks at position 4 for the category's defining query. The numbers, and what they mean for Copilot answers.",
+    seoDescription:
+      "Copilot grounds on Bing, where WorldEye ranks position 4 for “god's eye view” (525 impressions, late Oct 2026). What that means, and what to ask.",
+    tags: ["ai", "copilot", "microsoft", "bing"],
+    sections: [
+      {
+        heading: "Copilot's answers stand on Bing's index",
+        body: [
+          "Microsoft Copilot's answers about the web are grounded in Bing's index, so for Copilot the ranking that matters is Bing's. There, WorldEye's position is genuinely strong for a site that launched in October 2026. In our Bing Webmaster data pulled in late October 2026, the query “god's eye view” — the category-defining search for live camera globes — returned 525 impressions with WorldEye at an average position of 4 and 40 clicks. The variant “gods eye view” added 371 impressions at position 7, and “world eye” drew 71 impressions with 18 clicks, a click-through rate of about 25%. When Copilot answers questions in this space, the sources it can ground on are the pages Bing already trusts — and on the defining query, we are one of them.",
+        ],
+      },
+      {
+        heading: "The other Copilot, and why we're not claiming it",
+        body: [
+          "Microsoft also sells Microsoft 365 Copilot inside companies, which takes declarative agents and plugins published through Partner Center. That is an enterprise channel for workplace tenants — a way for a business to expose its internal tools to its own staff — not a route for a consumer website's data to appear in the Copilot people chat with. We considered it and are not pursuing it, and this site claims no Copilot plugin or agent listing. The consumer route is the index, and the index is where we work.",
+        ],
+      },
+      {
+        heading: "What we do on our side",
+        body: [
+          "The lever is unglamorous and real: keep the Bing index healthy (our Webmaster account is verified and the sitemap is live there — and since this site's new pages are also submitted through IndexNow, Bing hears about them within minutes of publication), keep every page's claims exact, and keep answering the category queries — God's Eye View, live webcams, camera globes — better here than anywhere else. Ask Copilot in that space and its citations are the route in: a worldeye.app link lands on the live globe of 74,229 cameras, where browsing is free and unlimited opens need an upgrade. Our [WorldEye in Copilot](/ai/copilot) page tracks the relationship.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Does WorldEye have a Copilot plugin?",
+        a: "No. Consumer Copilot grounds answers on the Bing index, and WorldEye's presence there comes from its Bing rankings. Microsoft 365 Copilot's Partner Center agents are an enterprise channel we considered and did not pursue.",
+      },
+      {
+        q: "How does WorldEye rank on Bing?",
+        a: "In our Bing Webmaster data from late October 2026: “god's eye view” — 525 impressions, average position 4, 40 clicks; “gods eye view” — 371 impressions, position 7; “world eye” — 71 impressions, 18 clicks.",
+      },
+      {
+        q: "How do I reach WorldEye from a Copilot answer?",
+        a: "Ask Copilot about live cameras, God's Eye View, or a place you want to see, and follow the worldeye.app citation in its answer. Browsing the site is free; unlimited camera opens need an upgrade.",
+      },
+    ],
+  },
+  {
+    slug: "worldeye-in-grok",
+    title: "WorldEye in Grok: Fresh Pages Win, Because Grok Reads the Live Web",
+    seoTitle: "WorldEye in Grok | WorldEye Blog",
+    date: "2026-11-04",
+    excerpt:
+      "Grok fetches sources at question time instead of relying only on training data — good news for a young site with same-day coverage. There is no Grok integration programme; here is the visibility route and how we work it.",
+    seoDescription:
+      "Grok searches the live web and xAI runs no third-party integration programme. How WorldEye earns Grok citations with fresh, sourced event pages.",
+    tags: ["ai", "grok", "xai", "search"],
+    sections: [
+      {
+        heading: "The one route in: be the best page at question time",
+        body: [
+          "Grok answers with live web search — it fetches sources when you ask, rather than relying only on what was in its training data. That design is good news for a young site: a page published this week can be cited today if it is the best answer available. It is also the only route in. xAI's developer platform sells access to Grok itself; there is no programme for a data provider to register tools, connectors or listings with Grok, and WorldEye claims none.",
+        ],
+      },
+      {
+        heading: "Freshness, weighted",
+        body: [
+          "So our Grok strategy is the discipline we apply everywhere, weighted for freshness: event coverage published while events are actually happening — an erupting volcano, a landfalling cyclone, a flood emergency, a rocket launch — each written from named sources like USGS, NWS and IMO. Pages that lead with the answer instead of burying it. Numbers that carry their dates, so a model quoting them quotes them correctly: the 74,229-camera headline is a served-catalogue figure, and the site labels its other totals as the different measures they are.",
+          "The catalogue behind those citations is real and checkable: 74,229 public cameras on a live globe, each credited to its operator, alongside flight, ship, satellite and earthquake trackers whose pages say plainly what is live and what is modelled. When Grok cites a worldeye.app page, its reader lands on that globe — browsing free, unlimited opens on an upgrade. Our [WorldEye in Grok](/ai/grok) page collects the example questions.",
+        ],
+      },
+      {
+        heading: "The developer route, kept separate",
+        body: [
+          "If you build software, a machine-readable route does exist — WorldEye's documented REST API and MCP server, callable from your own agents whatever model drives them, including Grok's API. That is your integration, built on our documented platform with a free API key; it is not a Grok feature, and presenting it as one would be exactly the kind of claim this series exists to avoid.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Is WorldEye integrated with Grok?",
+        a: "No. xAI runs no third-party integration, connector or listing programme for Grok. WorldEye appears in Grok answers when Grok's live web search fetches and cites a worldeye.app page.",
+      },
+      {
+        q: "Why does freshness matter for Grok?",
+        a: "Grok fetches sources at question time, so same-day, well-sourced event coverage — eruptions, storms, floods, launches — can be cited immediately, instead of waiting for a training cycle.",
+      },
+      {
+        q: "Can developers use WorldEye data with Grok's API?",
+        a: "Yes, from their own code: WorldEye's REST API and MCP server are documented and take a free API key. That is a developer integration on WorldEye's platform, not a feature of Grok itself.",
+      },
+    ],
+  },
+  {
+    slug: "worldeye-in-meta-ai",
+    title: "WorldEye in Meta AI: The Assistant Inside the Apps You Already Use",
+    seoTitle: "WorldEye in Meta AI | WorldEye Blog",
+    date: "2026-11-04",
+    excerpt:
+      "Meta AI answers questions inside WhatsApp, Instagram, Facebook and Messenger, leaning on web search for facts. There is no integration programme to join — so the work is being the citable answer to casual, in-the-moment questions.",
+    seoDescription:
+      "Meta AI has no third-party integration programme. How WorldEye earns citations in Meta AI's web-grounded answers, and the questions that reach us.",
+    tags: ["ai", "meta-ai", "meta", "search"],
+    sections: [
+      {
+        heading: "Nothing to join — stated first",
+        body: [
+          "Meta AI is the assistant inside WhatsApp, Instagram, Facebook and Messenger, and its factual answers lean on web search. Meta runs no app directory, connector gallery or data-provider programme for it: there is nothing for WorldEye to join, submit to or integrate with, and any page implying a Meta AI partnership would be inventing one. What exists is the same open web every other engine reads — Meta AI's answers cite sources, and worldeye.app is built to be a citable one.",
+        ],
+      },
+      {
+        heading: "Built for the in-the-moment question",
+        body: [
+          "The audience shape here is different, though. Meta AI is where people ask casual, in-the-moment questions inside the apps they already live in: “show me a beach in Hawaii”, “is the volcano erupting”, “what did the earthquake damage”. WorldEye's place and event pages are written for exactly those questions — a named place, a live answer, and a link that opens the camera. The catalogue behind them is the 74,229-camera globe: beaches, volcanoes, ski areas, harbours, animal cams and city streets, every camera credited to its operator.",
+          "On our side the work is unglamorous: keep every place and topic someone might ask about covered by a real page with real cameras behind it, keep the claims on those pages exact — browsing is free, unlimited opens need an upgrade, stated plainly so quoted answers about cost stay correct — and keep the site fast on a phone, because that is the screen Meta AI answers are read on. Our [WorldEye in Meta AI](/ai/meta-ai) page has the running detail.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Is WorldEye integrated with Meta AI?",
+        a: "No. Meta offers no app directory, connector programme or data-provider integration for Meta AI. WorldEye appears when Meta AI's web-grounded answer cites a worldeye.app page.",
+      },
+      {
+        q: "How do I get from Meta AI to a live camera?",
+        a: "Ask Meta AI for the place or event you care about and follow the worldeye.app source link in its answer. It opens the live globe — browsing is free and needs no account; unlimited opens need an upgrade.",
+      },
+      {
+        q: "What kinds of questions surface WorldEye in Meta AI?",
+        a: "In-the-moment ones: a live beach webcam in Hawaii, whether Kilauea is erupting, live cameras for the northern lights, traffic cameras near a city — questions our place and event pages answer directly.",
+      },
+    ],
+  },
+  {
+    slug: "worldeye-in-mistral-le-chat",
+    title: "WorldEye in Mistral Le Chat: The One You Can Connect Today, Start to Finish",
+    seoTitle: "WorldEye in Mistral Le Chat | WorldEye Blog",
+    date: "2026-11-04",
+    excerpt:
+      "Le Chat's custom MCP connectors accept an API token in a header — which is exactly how WorldEye's key works. No developer account, nothing to buy: here is the complete two-minute setup, and what Le Chat can then do.",
+    seoDescription:
+      "Le Chat accepts API-token MCP connectors — exactly WorldEye's auth. The full setup: add WorldEye to Le Chat and ask it for live cameras and quakes.",
+    tags: ["ai", "mistral", "le-chat", "mcp"],
+    sections: [
+      {
+        heading: "Why Le Chat gets the longest post in this series",
+        body: [
+          "Every engine in this series gets the truth about its integration options, and for most of them the truth is “visibility only”. Le Chat is the exception. Mistral's assistant supports custom MCP connectors authenticated with an API token in a custom header — and WorldEye's MCP server authenticates in exactly that way, with a free, self-serve key sent as an Authorization header. Le Chat is therefore the one major consumer assistant where a user can connect WorldEye's live tools today, end to end, with no developer account, no directory listing and nothing to buy.",
+        ],
+      },
+      {
+        heading: "The setup, step by step",
+        body: [
+          "First, the key. Sign in at worldeye.app, open Account Settings → API keys, and create a key. It starts with wek_, is shown once, and the free tier covers 100 requests a day — plenty for chat use; WorldEye plans raise the limit (Lite 1,000, Pro 5,000, Ultra 25,000 a day).",
+          "Then, in Le Chat: open Intelligence → Connectors → Add Connector and choose “Custom MCP Connector”. Name it “WorldEye” and set the connector server to https://worldeye.app/api/v1/mcp. For authentication, choose API Token: header name Authorization, header value “Bearer” followed by your key. Create the connector, click Enable Tools, and you are set — the same steps are kept current on our [WorldEye in Le Chat](/ai/mistral) page.",
+        ],
+      },
+      {
+        heading: "What Le Chat can then do",
+        body: [
+          "With the connector enabled, Le Chat calls the same five read-only tools documented for developers. It can search the camera catalogue by place, country or kind; fetch one camera's details with its current snapshot and a watch link; find cameras near a named place or coordinates, nearest first; list the last 24 hours of USGS earthquakes (magnitude 2.5+); and check the key's plan tier and remaining daily quota. The catalogue is the site's 74,229-camera globe filtered to the cameras cleared for redistribution, each credited to its operating agency.",
+          "The limits are stated as plainly here as everywhere else: results carry metadata, a snapshot and a watch link — never a raw stream URL, because the watching happens on WorldEye; no tool changes anything; and the tools know nothing about WorldEye's users. Le Chat also isn't the only client that can do this — any MCP client that takes a URL and headers can, and the official MCP Registry has listed WorldEye since November 4, 2026 — but it is the most direct consumer route we can point to today.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Does connecting WorldEye to Le Chat cost anything?",
+        a: "No. The WorldEye API key is free (100 requests a day), and adding a custom connector is a feature of your own Le Chat account. Paid WorldEye plans only raise the daily request limit.",
+      },
+      {
+        q: "What exactly do I enter in Le Chat's connector form?",
+        a: "Server: https://worldeye.app/api/v1/mcp. Authentication: API Token, with header name “Authorization” and header value “Bearer wek_YOUR_KEY” using the key from Account Settings → API keys. Then enable the connector's tools.",
+      },
+      {
+        q: "Can Le Chat play a live camera stream for me?",
+        a: "No — and nothing connected to our API can. Tools return a camera's metadata, current snapshot and a watch link; the live stream itself opens on worldeye.app, where browsing is free and unlimited opens need an upgrade.",
+      },
+    ],
+  },
+  {
+    slug: "worldeye-in-duckduckgo",
+    title: "WorldEye in DuckDuckGo AI Chat: Privacy-First Engine, Privacy-Shaped Source",
+    seoTitle: "WorldEye in DuckDuckGo AI | WorldEye Blog",
+    date: "2026-11-04",
+    excerpt:
+      "DuckDuckGo's AI Chat answers from search results and offers no connectors at all — the index is the whole relationship. Why WorldEye's data model fits DDG's readers, and how our pages earn the citation.",
+    seoDescription:
+      "DuckDuckGo AI Chat answers from its search index; no connectors exist. How WorldEye earns the citation — and why the data model fits its readers.",
+    tags: ["ai", "duckduckgo", "privacy", "search"],
+    sections: [
+      {
+        heading: "The index is the whole relationship",
+        body: [
+          "DuckDuckGo AI Chat is a private front-end over several AI models, and its answers about the world come from DuckDuckGo search results. DuckDuckGo offers no connectors, plugins or integrations for data providers — there is no submission, no listing and no partnership to announce. The entire relationship between a website and a DuckDuckGo AI answer is the search index, and WorldEye is in that index the ordinary way: crawlable pages, a submitted sitemap, and claims an answer can quote without going wrong.",
+        ],
+      },
+      {
+        heading: "A fit worth naming",
+        body: [
+          "DuckDuckGo's users choose it because it does not track them, and WorldEye's data model is unusually aligned with that instinct. The public catalogue is cameras that are already public, credited to their operators. Our API and MCP server answer with metadata, snapshots and watch links — never anything about the people asking, because the tools hold no user data at all. And a DuckDuckGo answer that cites WorldEye sends its reader to a site where browsing works without an account: the globe opens, the 74,229 cameras are there, and only unlimited opens ask for an upgrade.",
+          "Our side of the bargain is index hygiene: one canonical page per topic, exact counts with their measures and dates attached, and nothing on a page we could not defend line by line — because a privacy-first engine's users are exactly the readers who check. Our [WorldEye in DuckDuckGo](/ai/duckduckgo) page keeps the detail and the example questions.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Is WorldEye integrated with DuckDuckGo?",
+        a: "No. DuckDuckGo offers no connectors or integrations for data providers. WorldEye appears in DuckDuckGo AI Chat when its answers draw on DuckDuckGo search results that include worldeye.app pages.",
+      },
+      {
+        q: "Does using WorldEye through DuckDuckGo track me?",
+        a: "DuckDuckGo does not track its users, and WorldEye's API tools hold no user data — they answer from the public camera catalogue and the USGS feed only. Browsing worldeye.app needs no account.",
+      },
+      {
+        q: "What should I ask DuckDuckGo AI Chat to find WorldEye?",
+        a: "Questions WorldEye answers directly: live webcams you can watch without signing up, volcano webcams live now, the biggest earthquakes in the last 24 hours, or simply “What is WorldEye?”.",
+      },
+    ],
+  },
+  {
+    slug: "worldeye-in-brave",
+    title: "WorldEye in Brave Search and Leo: The Independent Index Decides",
+    seoTitle: "WorldEye in Brave Search & Leo | WorldEye Blog",
+    date: "2026-11-04",
+    excerpt:
+      "Brave runs its own web index — the only major one besides Google's and Bing's — and its AI answers ground on it. No provider programme exists; a young site earns its place on merit. Here is how we approach it.",
+    seoDescription:
+      "Brave's AI answers ground on Brave's own index; there is no provider programme. How WorldEye earns its place there, and what to ask Leo first.",
+    tags: ["ai", "brave", "leo", "search"],
+    sections: [
+      {
+        heading: "An index of its own",
+        body: [
+          "Brave is the independence story in search: its index is its own, built from its own crawler and web-discovery data rather than rented from Google or Bing. Brave's AI answers — the summaries in Brave Search and the Leo assistant — ground on that index. Brave sells an API that lets developers consume its index; it offers no programme for data providers to plug into its answers, no submission path and no listing. WorldEye claims no integration with Brave, because there is none to claim.",
+        ],
+      },
+      {
+        heading: "No shortcuts, no incumbent bias either",
+        body: [
+          "An independent index cuts both ways for a young site. There is no shortcut via another engine's rankings — our Bing position does nothing here. But there is also no incumbent bias: a site that launched in October 2026 with the best page on a question can be found on merit. WorldEye's pages are written for exactly that evaluation — the answer first, the numbers exact, the sources named. The camera headline is 74,229 served, stated as exactly that; comparison pages say where EarthCam or God's Eye View genuinely differ from us, including where they are stronger.",
+          "For builders, one honest cross-reference: Brave's index can be queried through Brave's own API inside your stack, and WorldEye's data through ours — a documented REST API and an MCP server listed in the official MCP Registry since November 4, 2026. Combining them is your architecture to build; both halves are documented, and neither is a partnership. Our [WorldEye in Brave](/ai/brave) page tracks the visibility route and the questions that reach us.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Is WorldEye integrated with Brave or Leo?",
+        a: "No. Brave offers no data-provider programme for its answers. WorldEye appears in Brave Search and Leo when Brave's independent index surfaces a worldeye.app page for the question.",
+      },
+      {
+        q: "What is the Brave Search API, then?",
+        a: "A product developers buy to query Brave's index from their own software — it runs outbound from Brave to you. It is not a channel for getting a site's data into Brave's own answers.",
+      },
+      {
+        q: "How is Brave different from Copilot or Gemini for WorldEye?",
+        a: "Copilot grounds on Bing's index and Gemini on Google's; Brave grounds on its own independent index, so rankings earned elsewhere do not transfer. Each engine's route is covered on its own /ai page.",
+      },
+    ],
+  },
+  {
+    slug: "worldeye-on-you-com",
+    title: "WorldEye on You.com: Agent-Native Search Meets a Machine-Readable Site",
+    seoTitle: "WorldEye on You.com | WorldEye Blog",
+    date: "2026-11-04",
+    excerpt:
+      "You.com's platform is built for agents, but its APIs run outbound — there is no inbound listing for data providers. What a provider can do is be maximally legible to machines. WorldEye is: llms.txt, structured data, and a registry-listed MCP server.",
+    seoDescription:
+      "You.com's APIs run outbound; no inbound listing exists. How WorldEye stays machine-legible — llms.txt, exact claims, a registry-listed MCP server.",
+    tags: ["ai", "you-com", "agents", "mcp"],
+    sections: [
+      {
+        heading: "Agent-native, but outbound",
+        body: [
+          "You.com is the most agent-native of the AI search engines: its answers cite sources inline, and its developer platform — search, contents and research APIs — is built to be wired into other people's agents. That platform runs outbound: your agent consumes You.com's index. There is no inbound programme. A data provider cannot register a tool or listing that You.com's own answers will call, and WorldEye does not claim one — the same honesty rule as every other post in this series.",
+        ],
+      },
+      {
+        heading: "Be legible to machines",
+        body: [
+          "What a provider can do is be maximally legible to machines. WorldEye publishes an llms.txt and an llms-full.txt — the plain-text site summaries that agent frameworks increasingly read first — alongside structured data, an open sitemap, and pages whose claims carry their measures and dates: 74,229 cameras served as the headline, other catalogue totals labelled as the different measures they are. When a You.com answer, or an agent built on its APIs, needs the live-camera facts, the shortest path to a correct citation runs through those files.",
+          "And for agent builders, the other half of the stack is ready today: WorldEye's documented REST API and MCP server, with a free self-serve key, listed in the official MCP Registry as app.worldeye/worldeye since November 4, 2026 — five read-only tools over the redistribution-cleared catalogue, returning metadata, snapshots and watch links, never stream URLs and never user data. Wiring that into an agent built on You.com's APIs is a few lines; the endpoints and limits are on the [developers page](/developers), and our [WorldEye on You.com](/ai/you-com) page covers the reader-facing side.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Is WorldEye listed or integrated on You.com?",
+        a: "No. You.com offers no inbound listing or integration for data providers; its developer APIs are for consuming You.com's index in your own agents. WorldEye appears in You.com answers through web citations.",
+      },
+      {
+        q: "What is llms.txt and why does WorldEye publish one?",
+        a: "llms.txt is a plain-text summary of a site — what it is, what it costs, where the key pages are — written for AI agents and answer engines to read first. WorldEye publishes llms.txt and llms-full.txt so machine readers get our facts exactly as stated.",
+      },
+      {
+        q: "Can an agent built on You.com use WorldEye's data?",
+        a: "Yes, through WorldEye's own platform: a REST API and an MCP server (registry-listed since November 4, 2026) with a free API key. That integration lives in the agent you build, not inside You.com's answers.",
+      },
+    ],
+  },
+  {
     slug: "kilauea-episode-56-precursory-lava-alert-watch",
     title: "Kilauea Wakes Up: Lava Returns to Halemaʻumaʻu and USGS Raises the Alert to Watch",
     seoTitle: "Kilauea Alert Raised to Watch | WorldEye Blog",
