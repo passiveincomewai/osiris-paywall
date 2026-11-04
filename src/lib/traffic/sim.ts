@@ -343,7 +343,12 @@ function rehomeVehicle(v: SimVehicle, ctx: RehomeContext): boolean {
     }
     const nameMatch = road.name !== '' && road.name === oldRoad.name ? 0 : 1;
     let tier = 2;
-    if (proj.distM <= REHOME_OVERLAP_MAX_DIST_M
+    // The bearing clause only ever bites oneway candidates: for a
+    // two-way road bearingDiff is the best of both orientations, hence
+    // always ≤ 90. A oneway candidate pointing the other way is the
+    // OPPOSING carriageway of the same named road, not its twin — the
+    // name match must not promote it.
+    if (proj.distM <= REHOME_OVERLAP_MAX_DIST_M && bearingDiff <= 90
       && (nameMatch === 0 || overlapNearVehicle(oldRoad, v.s, road) >= REHOME_OVERLAP_MIN)) {
       tier = 0;
     } else if (proj.distM <= REHOME_RADIUS_M && bearingDiff <= REHOME_NEAR_MAX_BEARING_DEG) {
