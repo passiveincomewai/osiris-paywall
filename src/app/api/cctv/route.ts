@@ -207,6 +207,31 @@ async function subSource(label: string, url: string, timeoutMs: number) {
   return null;
 }
 
+/** subSource's POST sibling — same retry policy, JSON body. TravelMidwest's
+ *  map feed (us-central) is POST-only; its GET answers 405. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function subSourcePost(label: string, url: string, timeoutMs: number, body: unknown = {}): Promise<any> {
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    try {
+      const res = await stealthFetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(body),
+        signal: AbortSignal.timeout(timeoutMs),
+      });
+      if (res.ok) return await res.json();
+      if (res.status >= 400 && res.status < 500) {
+        console.warn(`[OSIRIS] ${label} returned ${res.status} — absent from this refresh, not retried`);
+        return null;
+      }
+      if (attempt === 2) console.warn(`[OSIRIS] ${label} returned ${res.status} — absent from this refresh`);
+    } catch (e) {
+      if (attempt === 2) console.warn(`[OSIRIS] ${label} failed — absent from this refresh:`, e instanceof Error ? e.message : e);
+    }
+  }
+  return null;
+}
+
 // ── CANADA: Ottawa, Toronto, Montreal, Quebec ──
 async function fetchCanadaCameras(): Promise<any[]> {
   const cams: any[] = [];
@@ -357,30 +382,74 @@ async function fetchCanadaCameras(): Promise<any[]> {
   return cams.filter((c: any) => c.lat && c.lng);
 }
 
-// ── US-CENTRAL: Chicago, Houston, Dallas, Denver ──
-async function fetchUSCentralCameras(): Promise<any[]> {
-  const cams: any[] = [];
-  // Illinois DOT
-  {
-    const data = await subSource('IDOT', 'https://www.travelmidwest.com/lmiga/cameraReport.json', 8000);
-    if (data) {
-      /* travelmidwest answers 200 with {updatedMessage, noDataMessage} and no
-         cameras at all — an object, not the array this assumed. That threw a
-         TypeError the old silent catch quietly absorbed; now it would take
-         us-central down with it, so the shape is checked. */
-      const rows = Array.isArray(data?.cameraReports) ? data.cameraReports : Array.isArray(data) ? data : [];
-      for (const cam of rows.slice(0, 800)) {
-        if (!cam.latitude || !cam.longitude) continue;
-        cams.push({
-          id: `ildot-${cams.length}`, lat: cam.latitude, lng: cam.longitude,
-          name: cam.cameraName || cam.description || 'IDOT Camera', city: 'Illinois', country: 'US',
-          feed_url: cam.imageUrl || cam.url || '', source: 'IDOT',
-        });
-      }
-    }
-  }
+// ── US-CENTRAL: Illinois (TravelMidwest / IDOT Gateway) ──
+/* The region's feed moved (found 2026-11-04, when us-central was serving
+   zero): the old GET lmiga/cameraReport.json now answers a per-user
+   "you have not selected any location yet" payload — the anonymous full
+   report was retired in TravelMidwest's redesign. The redesigned site's
+   own map loads POST lmiga/cameraMap.json, a GeoJSON FeatureCollection
+   for the whole Gateway corridor (IL/IN/WI/KY). This region's contract
+   is Illinois only — the point mapping says so repeatedly, and Indiana
+   has its own fetcher (GET concatenates regions without deduping, so
+   taking the corridor whole would double-map Indiana) — so only the
+   feed's Illinois features (id prefix IL-) are taken. */
 
-  return cams.filter((c: any) => c.lat && c.lng);
+/** Illinois sanity box — drops any stray/placeholder coordinates. */
+const IL_BOUNDS = { minLat: 37.5, maxLat: 42.7, minLng: -91.7, maxLng: -87.3 };
+
+/** One feature of the TravelMidwest cameraMap feed (only fields read). */
+export interface TravelMidwestFeature {
+  geometry?: { coordinates?: [number, number] } | null;
+  properties?: {
+    id?: string | null;
+    locDesc?: string | null;
+    src?: string | null;
+    dis?: boolean | null;
+    remUrls?: string[] | null;
+  } | null;
+}
+
+/** Map one cameraMap feature to a catalogue camera, or null. Exported for tests. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function mapTravelMidwestFeature(feature: TravelMidwestFeature): any | null {
+  const props = feature?.properties;
+  const id = props?.id?.trim();
+  if (!id || !id.startsWith('IL-')) return null;
+  if (props?.dis) return null;
+
+  const coords = feature?.geometry?.coordinates;
+  const lng = Array.isArray(coords) ? coords[0] : undefined;
+  const lat = Array.isArray(coords) ? coords[1] : undefined;
+  if (typeof lat !== 'number' || typeof lng !== 'number') return null;
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+  if (lat < IL_BOUNDS.minLat || lat > IL_BOUNDS.maxLat) return null;
+  if (lng < IL_BOUNDS.minLng || lng > IL_BOUNDS.maxLng) return null;
+
+  const remote = (props?.remUrls ?? []).find((u) => typeof u === 'string' && u.startsWith('http'));
+  return {
+    id: `ildot-${id}`,
+    lat,
+    lng,
+    name: props?.locDesc?.trim() || 'Illinois Camera',
+    city: 'Illinois',
+    country: 'US',
+    /* The snapshot the operator's own map shows for this camera; when the
+       feed carries none, its per-camera snapshot endpoint (the same
+       fallback the site's client uses). */
+    feed_url: remote ?? `https://travelmidwest.com/lmiga/snapshot?id=${encodeURIComponent(id)}`,
+    source: props?.src?.trim() || 'TravelMidwest',
+  };
+}
+
+async function fetchUSCentralCameras(): Promise<any[]> {
+  const data = await subSourcePost('TravelMidwest', 'https://travelmidwest.com/lmiga/cameraMap.json', 10_000);
+  const features: TravelMidwestFeature[] = Array.isArray(data?.features) ? data.features : [];
+  const cams: any[] = [];
+  for (const feature of features) {
+    const cam = mapTravelMidwestFeature(feature);
+    if (cam) cams.push(cam);
+  }
+  return cams;
 }
 
 // ── US-EAST: OH, DC, Florida, Georgia ──
@@ -672,10 +741,10 @@ const REGION_BUDGET_MS = 12_000;
  * How long a response waits on regions it does not already have.
  *
  * A catalogue that already holds 35,000 cameras must not be held hostage by
- * one upstream that hangs. us-central does exactly that — it burns the full
- * slot budget on every attempt — and waiting on it turned a 0.2s response
- * into a 12s one for every visitor, which is what made the cameras take so
- * long to appear. With cameras already in hand, wait only briefly for the
+ * one upstream that hangs. A region that burns the full slot budget on
+ * every attempt does exactly that, and waiting on one turned a 0.2s
+ * response into a 12s one for every visitor, which is what made the
+ * cameras take so long to appear. With cameras already in hand, wait only briefly for the
  * stragglers and let the rest land in the cache for the next caller. With
  * nothing in hand there is nothing to show anyway, so a cold start still
  * waits properly rather than returning an empty map.

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { GET, clearCctvRefreshes } from './route';
+import { GET, clearCctvRefreshes, mapTravelMidwestFeature } from './route';
 import { stealthFetch } from '@/lib/stealthFetch';
 import { clearSourceCache } from '@/lib/sourceCache';
 import { join } from 'node:path';
@@ -105,5 +105,54 @@ describe('CCTV partial responses', () => {
     vi.mocked(stealthFetch).mockResolvedValue(new Response('', { status: 503 }));
     const response = await GET(new Request('http://localhost/api/cctv?region=uk'));
     expect((await response.json()).pendingRegions).toEqual(['uk']);
+  });
+});
+
+/* The us-central feed moved to TravelMidwest's POST cameraMap GeoJSON
+   (2026-11-04). Fixtures are verbatim shapes from the live feed. */
+describe('mapTravelMidwestFeature', () => {
+  const ilFeature = {
+    geometry: { coordinates: [-88.0306, 41.73619] as [number, number] },
+    properties: {
+      id: 'IL-DUPAGECOUNTY-88',
+      locDesc: '83rd / Woodward',
+      src: 'DuPage County',
+      dis: false,
+      remUrls: ['https://cctv.travelmidwest.com/snapshots/IL-DUPAGECOUNTY_1_DuPage_SB_Woodward_4173619_-8803060_1_E.jpg'],
+    },
+  };
+
+  it('maps an Illinois feature with its published snapshot and agency', () => {
+    expect(mapTravelMidwestFeature(ilFeature)).toEqual({
+      id: 'ildot-IL-DUPAGECOUNTY-88',
+      lat: 41.73619,
+      lng: -88.0306,
+      name: '83rd / Woodward',
+      city: 'Illinois',
+      country: 'US',
+      feed_url: 'https://cctv.travelmidwest.com/snapshots/IL-DUPAGECOUNTY_1_DuPage_SB_Woodward_4173619_-8803060_1_E.jpg',
+      source: 'DuPage County',
+    });
+  });
+
+  it('takes Illinois only — the corridor states have their own coverage', () => {
+    const inFeature = { ...ilFeature, properties: { ...ilFeature.properties, id: 'IN-INDOT-12' } };
+    const wiFeature = { ...ilFeature, properties: { ...ilFeature.properties, id: 'WI-WISDOT-3' } };
+    expect(mapTravelMidwestFeature(inFeature)).toBeNull();
+    expect(mapTravelMidwestFeature(wiFeature)).toBeNull();
+  });
+
+  it('falls back to the operator snapshot endpoint when no remote URL is published', () => {
+    const bare = { ...ilFeature, properties: { ...ilFeature.properties, remUrls: [] } };
+    expect(mapTravelMidwestFeature(bare)?.feed_url).toBe(
+      'https://travelmidwest.com/lmiga/snapshot?id=IL-DUPAGECOUNTY-88',
+    );
+  });
+
+  it('drops disabled cameras and unusable records', () => {
+    expect(mapTravelMidwestFeature({ ...ilFeature, properties: { ...ilFeature.properties, dis: true } })).toBeNull();
+    expect(mapTravelMidwestFeature({ ...ilFeature, geometry: { coordinates: [-87.6, 51.5] as [number, number] } })).toBeNull();
+    expect(mapTravelMidwestFeature({ properties: { id: 'IL-X-1' } })).toBeNull();
+    expect(mapTravelMidwestFeature({})).toBeNull();
   });
 });
