@@ -107,11 +107,34 @@ added, and the chip reads `CONGESTION: SIMULATED MODEL`.
   any response or header; the client degrades to the simulated overlay
   and the chip relabels itself `TOMTOM UNAVAILABLE · SIMULATED MODEL`.
 
+## Additional measured sources (`src/app/api/traffic/flow-segments`)
+
+TomTom is the tile overlay. Three further measured sources are served
+as matchable data by `GET /api/traffic/flow-segments?bbox=w,s,e,n`
+(bbox span ≤ 1°; same access rule as the tile proxy) and merged with
+the TomTom sample by freshness, per segment, in
+`src/lib/traffic/flow-samples.ts` — every ratio keeps the source that
+produced it:
+
+- **HERE Traffic API v7** — flow + incidents as JSON shapes matched
+  onto OSM roads. Active only when `HERE_API_KEY` is set server-side.
+- **WSDOT Travel Times** (Washington) — measured corridor ratios,
+  AverageTime ÷ CurrentTime, on the same `WSDOT_ACCESS_CODE` as the
+  ski road-conditions feeds. Oregon's TripCheck API publishes no
+  measured-speed feed, so Oregon has no DOT speed source.
+- **NDW** (Netherlands) — open DATEX II detector data: ~20,600
+  geolocated sites publishing measured speeds. Samples carry km/h;
+  the ratio is computed at match time against the matched road's
+  class free-flow speed, because NDW publishes no free-flow reference.
+
 ## Attributions & licenses
 
 - Road geometry & basemap: © OpenStreetMap contributors, via CARTO
   basemaps (the map's attribution control carries both credits).
 - Congestion data, when enabled: © TomTom.
+- Corridor & detector data, where served: WSDOT (Washington State
+  Department of Transportation) and NDW (Netherlands National Road
+  Traffic Data Portal, open data); HERE data © HERE when enabled.
 - Design reference: the traffic layer architecture of
   [God's Eye View](https://github.com/bilawalsidhu/gods-eye-view)
   by Bilawal Sidhu, MIT License — Copyright (c) Bilawal Sidhu.
