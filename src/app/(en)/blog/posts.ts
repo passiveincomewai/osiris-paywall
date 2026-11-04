@@ -41,6 +41,238 @@ export type BlogPost = {
 
 export const POSTS: BlogPost[] = [
   {
+    slug: "mammoth-mountain-opens-early-november-5-2026",
+    title: "Mammoth Mountain Opens Eight Days Early: California's Ski Season Starts Thursday",
+    seoTitle: "Mammoth Opens Early Nov 5 | WorldEye Blog",
+    date: "2026-11-04",
+    excerpt:
+      "Mammoth Mountain has pulled its opening day forward by eight days. The California resort announced on Tuesday, November 3 that it will open on Thursday, November 5 instead of November 13, after more than a foot of fresh snow and a run of cold snowmaking nights — beating Mt. Rose's Friday opening by a day to become the first West Coast resort of the season.",
+    seoDescription:
+      "Mammoth Mountain opens Thursday, November 5, eight days early, after over a foot of snow: Lower Panorama Gondola, Broadway Express and three trails.",
+    tags: ["ski", "mammoth", "california", "openings"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "California's ski season starts a week early, and it starts at Mammoth. Mammoth Mountain will open for the 2026-27 season on Thursday, November 5, eight days earlier than planned, the Ikon Pass announced in a release on Tuesday, November 3. The resort's original scheduled opening day was Friday, November 13.",
+          "The reason is straightforward: more than a foot of fresh snow fell on the mountain over the past week, and temperatures cold enough for sustained snowmaking let crews finish preparing the lower mountain ahead of schedule. The early opening leapfrogs Mt. Rose-Ski Tahoe, which confirmed a Friday, November 6 opening only a day earlier — so Mammoth, not Tahoe, takes first chair on the West Coast this season.",
+        ],
+      },
+      {
+        heading: "What opens on Thursday",
+        body: [
+          "Opening day is deliberately small. Mammoth will run its Lower Panorama Gondola and Broadway Express (Chair 1), with access to three trails: Broadway, Silver Tip and Rusty's. Lifts are scheduled to start spinning at 8:30 a.m., with opening-day celebrations running until 4 p.m., including the traditional first-chair banner breakthrough and a toast to the new season at the bottom of Broadway Express.",
+          "There is an explicit caveat for beginners: beginner terrain and beginner lessons will not be available at opening. The three open trails sit off Chair 1 on the lower mountain, and the resort says it will continue to expand terrain as soon as conditions allow — the standard early-season pattern, but one first-time visitors should plan around rather than discover at the ticket window.",
+        ],
+      },
+      {
+        heading: "A foot of snow, and snow guns doing the rest",
+        body: [
+          "The weekend storm did the headline work, but the release credits the snowmaking crews with closing the gap. Snowmaking teams were able to take full advantage of the colder temperatures over the past few days to get the mountain ready for an early opening, Emily van Greuning, communications director of Mammoth Resorts, said in the release.",
+          "That combination — natural snow on the upper mountain, machine snow holding the base — is what makes a November 5 opening credible at a resort whose summit reaches 11,053 feet in California's Eastern Sierra, near the town of Mammoth Lakes. Mammoth is known for one of the longest seasons in the state, and an early start extends it at the front end.",
+        ],
+      },
+      {
+        heading: "The season is assembling, resort by resort",
+        body: [
+          "Mammoth joins a short list of Ikon Pass destinations already open: Arapahoe Basin in Colorado opened on October 28, Lake Louise in Canada opened on November 1 — five days ahead of its own schedule, as WorldEye reported in [Lake Louise's early opening story](/blog/lake-louise-opening-day-november-1-2026) — and Zermatt in Switzerland is open for glacier skiing. Mt. Rose follows on Friday, and the rest of California's resorts mostly wait until late November or early December.",
+          "For opening-day skiers, the resort is laying on complimentary coffee and cocoa while supplies last, a free Mammoth beanie for the first people in the lift line, music on the Tusks Sundeck from 10:30 a.m. to 1:30 p.m., and a season toast at 11 a.m. None of that changes the essential fact of the day: eight extra days of season, earned from one storm and a cold snap.",
+        ],
+      },
+      {
+        heading: "Check the mountain before you drive",
+        body: [
+          "Early-season openings can shrink as fast as they appear if temperatures swing, so the live picture matters more than the announcement. WorldEye's [ski webcams](/ski-webcams) collection carries the resort cameras that show what the lower mountain actually looks like this morning, and the [2026-27 ski season opening dates guide](/blog/ski-season-opening-dates-2026-27) tracks the resorts still counting down to their own first chairs.",
+          "Thursday's opening is also the first test of the season for WorldEye's [Powder Pass](/powder-pass) ski coverage — opening-day conditions, snow stakes and lift status are exactly the signals it is built to follow as more California terrain comes online through November.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When does Mammoth Mountain open for the 2026-27 season?",
+        a: "Thursday, November 5, 2026, with lifts scheduled to start at 8:30 a.m. The opening is eight days earlier than the originally scheduled Friday, November 13, the Ikon Pass announced on November 3.",
+      },
+      {
+        q: "What lifts and trails are open at Mammoth on opening day?",
+        a: "The Lower Panorama Gondola and Broadway Express (Chair 1), serving three trails: Broadway, Silver Tip and Rusty's. The resort says it will expand terrain as conditions allow.",
+      },
+      {
+        q: "Why is Mammoth opening early?",
+        a: "More than a foot of fresh snow fell over the past week, and cold temperatures allowed snowmaking crews to prepare the mountain ahead of schedule, according to the resort's November 3 release.",
+      },
+      {
+        q: "Can beginners ski at Mammoth on opening day?",
+        a: "Not comfortably: beginner terrain and beginner lessons will not be available at opening, the resort says. Opening-day terrain is limited to the three Chair 1 trails.",
+      },
+    ],
+    sources: [
+      {
+        name: "Business Wire / Ikon Pass (Alterra) — Mammoth Mountain opens early: season expands Thursday, November 5, eight days ahead of plan (November 3)",
+        url: "https://www.businesswire.com/news/home/20261103515540/en/Mammoth-Mountain-Opens-Early---More-Ikon-Pass-Winter-2627-Now",
+      },
+      {
+        name: "POWDER — Mammoth Mountain reveals surprise early opening day, Thursday November 5 at 8:30 a.m. (November 3)",
+        url: "https://www.powder.com/news/mammoth-mountain-poised-first-open-west-coast",
+      },
+      {
+        name: "SnowBrains — Mammoth Mountain moves opening day forward to November 5 after early snowfall (November 3)",
+        url: "https://snowbrains.com/mammoth-mountain-opening-day-november-5-2026/",
+      },
+    ],
+  },
+  {
+    slug: "mayon-ash-plume-november-4-strombolian-activity",
+    title: "Mayon Fires a 1,600-Metre Ash Plume: Strombolian Bursts and 11 Quakes in 24 Hours",
+    seoTitle: "Mayon Ash Plume Nov 4 | WorldEye Blog",
+    date: "2026-11-04",
+    excerpt:
+      "Mayon Volcano is still restless five days into its Alert Level 3 eruption. PHIVOLCS recorded a 1,600-metre ash plume at 8:22 a.m. on Wednesday, November 4, drifting southwest, along with minor Strombolian activity, crater glow and 11 volcanic earthquakes in 24 hours — the latest chapter in the eruption that forced more than 2,000 people from the danger zone last week.",
+    seoDescription:
+      "Mayon sent a 1,600-metre ash plume at 8:22 a.m. on November 4, with minor Strombolian activity, 11 quakes and crater glow, PHIVOLCS said at Alert Level 3.",
+    tags: ["volcano", "mayon", "philippines", "phivolcs"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "Mayon Volcano fired another column of ash on Wednesday morning, November 4. The Philippine Institute of Volcanology and Seismology (PHIVOLCS) said the volcano belched a 1,600-metre plume of ash at 8:22 a.m., which drifted southwest, while Alert Level 3 remains raised over the volcano in Albay province.",
+          "This is a new, dated development in a story WorldEye last covered on [November 1, when PHIVOLCS raised Mayon to Alert Level 3 after its October 30 eruption and more than 2,000 people left the danger zone](/blog/mayon-alert-level-3-eruption-evacuation). Wednesday's activity shows the eruption is not settling back down: the volcano is producing fresh ash, glowing at the crater and generating earthquakes at an elevated rate.",
+        ],
+      },
+      {
+        heading: "What PHIVOLCS measured in the last 24 hours",
+        body: [
+          "The agency's 24-hour monitoring report, released on Wednesday, recorded minor Strombolian activity at Mayon — occasional low-level explosions that shoot glowing-hot lava fragments, ash and gas into the air from the summit crater. Alongside the ash plume, observers recorded a crater glow, meaning incandescent material is visible at the summit after dark.",
+          "The instruments told the same story. PHIVOLCS counted 11 volcanic earthquakes in the past 24 hours, measured sulfur dioxide emissions of 1,894 tonnes per day, and observed ground deformation described as inflation of the edifice, with short-term deflation on the northeastern sector. A swelling edifice with sustained gas output is the signature of magma still moving beneath the cone, not of an eruption winding down.",
+        ],
+      },
+      {
+        heading: "Alert Level 3, five days on",
+        body: [
+          "Mayon has been under Alert Level 3 since its moderately explosive eruption on Friday, October 30 — an event that lasted nearly six minutes and sent a 3,000-metre column of ash skyward, roughly double Wednesday's plume. Alert Level 3 means the volcano is experiencing a high level of unrest, with an increased likelihood of lava flows and hazardous pyroclastic density currents, PHIVOLCS says.",
+          "Because of that, entry into the six-kilometre permanent danger zone around the volcano remains prohibited, due to the danger of pyroclastic density currents, lava flows, rockfalls and lava fountaining. PHIVOLCS also advised aircraft to avoid flying close to the volcano. The 2,462-metre Mayon, a near-perfect cone about 330 kilometres southeast of Manila, is the Philippines' most active volcano.",
+        ],
+      },
+      {
+        heading: "What would make this escalate — or ease",
+        body: [
+          "The numbers to watch are the ones in Wednesday's report. A rising earthquake count, larger or more frequent ash plumes, faster inflation or a jump in sulfur dioxide would each point toward a larger eruption building; a falling trend across several days would be the first real sign of easing. Wednesday's figures — 11 quakes, continued inflation, strong gas output — sit firmly in the 'still restless' column.",
+          "Strombolian bursts matter for a second reason: they are visible. Each burst throws incandescent fragments above the crater rim, and on a clear night the crater glow PHIVOLCS recorded is the same glow that volcano watchers around the world follow on webcams.",
+        ],
+      },
+      {
+        heading: "Watch Mayon from outside the danger zone",
+        body: [
+          "The six-kilometre zone exists because Mayon's hazards move faster than anyone can outrun, which makes remote watching the only sensible seat. WorldEye's [volcano webcams](/volcano-webcams) collection gathers live volcano views from around the world in one place, and the [earthquake tracker](/earthquake-tracker) shows the seismic activity that accompanies unrest like Mayon's.",
+          "The official word remains PHIVOLCS' daily monitoring reports and bulletins. Until the earthquake count, gas emissions and deformation all turn down together, Wednesday's plume should be read for what it is: an eruption in progress, five days after it began, with no sign yet that it is finished.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "What did Mayon do on November 4?",
+        a: "It produced a 1,600-metre ash plume at 8:22 a.m. that drifted southwest, and PHIVOLCS' 24-hour report recorded minor Strombolian activity, crater glow and 11 volcanic earthquakes, with sulfur dioxide emissions of 1,894 tonnes per day.",
+      },
+      {
+        q: "What is Mayon's alert level now?",
+        a: "Alert Level 3, where it has stood since the moderately explosive eruption on October 30. It signals a high level of unrest with an increased likelihood of lava flows and pyroclastic density currents, PHIVOLCS says.",
+      },
+      {
+        q: "Is it safe to visit Mayon?",
+        a: "No. Entry into the six-kilometre permanent danger zone is prohibited because of pyroclastic density currents, lava flows, rockfalls and lava fountaining, and aircraft are advised to avoid flying close to the volcano.",
+      },
+      {
+        q: "How does Wednesday's plume compare with the October 30 eruption?",
+        a: "Wednesday's plume reached 1,600 metres above the crater. The October 30 moderately explosive eruption, which lasted nearly six minutes, sent ash to 3,000 metres and triggered the move to Alert Level 3.",
+      },
+    ],
+    sources: [
+      {
+        name: "BusinessWorld — Mayon exhibits minor explosive activity, 11 quakes in 24 hours, PHIVOLCS 24-hour monitoring report (November 4)",
+        url: "https://bworldonline.com/the-nation/2026/11/04/791386/mayon-exhibits-minor-explosive-activity-11-quakes-in-24-hours-phivolcs/",
+      },
+      {
+        name: "Balitang Marino — Mayon belches 1,600-metre ash column at 8:22 a.m., drifting southwest, PHIVOLCS (November 4)",
+        url: "https://www.balitangmarino.com/post/mayon-belches-1-600-meter-ash-column-days-after-eruption",
+      },
+    ],
+  },
+  {
+    slug: "spacex-ussf-432-launch-moves-november-6",
+    title: "SpaceX's Classified USSF-432 Launch Slips Again, to Friday Evening From Vandenberg",
+    seoTitle: "USSF-432 Launch Moves to Nov 6 | WorldEye Blog",
+    date: "2026-11-04",
+    excerpt:
+      "There will be no Tuesday night launch from Vandenberg after all. SpaceX is now targeting Friday, November 6 for the classified USSF-432 Falcon 9 mission, with a four-hour window opening at 4:46 p.m. PT and a backup on Saturday, November 7 — the mission's second postponement in three days, after the November 3 attempt WorldEye was tracking.",
+    seoDescription:
+      "SpaceX has postponed the classified USSF-432 Falcon 9 launch from Vandenberg to Friday, November 6 at 4:46 p.m. PT, with a November 7 backup, SpaceX says.",
+    tags: ["spacex", "launch", "vandenberg", "falcon-9"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "SpaceX's first Vandenberg launch of November has slipped again. The company is now targeting Friday, November 6 for a Falcon 9 launch of the classified USSF-432 mission from Space Launch Complex 4E (SLC-4E) at Vandenberg Space Force Base in California, according to SpaceX's official mission page. The four-hour launch window opens at 4:46 p.m. PT.",
+          "That is a three-day postponement from the schedule WorldEye reported on [November 2, when USSF-432 was working toward a Tuesday, November 3 window opening at 5:28 p.m. PT](/blog/spacex-ussf-432-launch-november-3-vandenberg). The Ventura County Star, which has been tracking the mission for the USA TODAY Network, updated its coverage with the same news: the launch has been postponed to no earlier than 4:46 p.m. PT on Friday, November 6, according to a launch alert.",
+        ],
+      },
+      {
+        heading: "The new plan: Friday evening, Saturday backup",
+        body: [
+          "If Friday does not work, SpaceX says there is a backup opportunity on Saturday, November 7 at 4:32 p.m. PT. A live webcast of the mission will begin about 10 minutes before liftoff, on SpaceX's site and on X @SpaceX. Readers comparing sources may see the launch listed as November 7 at 00:46 UTC — that is the same Friday 4:46 p.m. Pacific window expressed in Coordinated Universal Time, not a different date.",
+          "The booster flying this mission is on its eighth flight, having previously launched the GPS III-8 mission and six Starlink missions. After stage separation, the first stage will land on the Of Course I Still Love You droneship, stationed in the Pacific Ocean. SpaceX again warns that residents of Santa Barbara, San Luis Obispo and Ventura counties may hear one or more sonic booms during the launch, depending on weather and other conditions.",
+        ],
+      },
+      {
+        heading: "A classified payload on a southeast trajectory",
+        body: [
+          "USSF-432 is a mission for the U.S. Space Force, and its payload is classified — SpaceX publishes the launch timeline but not what the Falcon 9 is carrying. The rocket will fly a southeast trajectory from Vandenberg, the Star reported, which is why evening launches from the base can be visible across a wide stretch of Southern California when skies are clear.",
+          "The mission is part of a record-setting year for the California base: the state notched a record 72 launches for the year at the end of October, and USSF-432 was set to be the first Vandenberg liftoff of November. The postponement does not change that — it just moves the month's first California launch to Friday evening, in a window that opens shortly before sunset on the coast.",
+        ],
+      },
+      {
+        heading: "Why Vandenberg dates keep moving",
+        body: [
+          "This mission has now moved three times in public: from November 1 to November 2, then to November 3, and now to November 6. Neither SpaceX nor the Star gave a reason for the latest slip, and with classified missions that silence is normal — range availability, vehicle readiness and coastal weather all routinely shift Vandenberg schedules by days, and the base's marine layer is famously uncooperative with evening windows.",
+          "The practical lesson is the one the Star itself gives its readers: postponements are common, and anyone planning to watch should check the current schedule on the day, not a listing written earlier in the week — including, now, the November 3 date in our own earlier story, which this update supersedes.",
+        ],
+      },
+      {
+        heading: "Follow the countdown on the tracker",
+        body: [
+          "Friday's window opens at 4:46 p.m. PT (00:46 UTC on Saturday), and the webcast starts about ten minutes before liftoff. WorldEye's [satellite tracker](/satellite-tracker) follows the spacecraft already in orbit that missions like this one join, and the [space station tracker](/space-station-tracker) keeps the crewed side of the manifest in view while the Vandenberg countdown runs.",
+          "If the launch moves again, SpaceX's mission page is the source that will change first. Until then, the plan is fixed: Falcon 9, SLC-4E, Friday evening, a droneship waiting in the Pacific, and a classified payload heading southeast into the dusk.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When will USSF-432 launch now?",
+        a: "SpaceX is targeting Friday, November 6, 2026, with a four-hour window opening at 4:46 p.m. PT from SLC-4E at Vandenberg Space Force Base. A backup opportunity follows on Saturday, November 7 at 4:32 p.m. PT.",
+      },
+      {
+        q: "Why was the USSF-432 launch postponed?",
+        a: "No reason was given by SpaceX or in the launch alert reported by the Ventura County Star. The mission had been scheduled for Tuesday, November 3 at 5:28 p.m. PT before the move to Friday.",
+      },
+      {
+        q: "What is the USSF-432 booster and where will it land?",
+        a: "The Falcon 9 first stage is flying its eighth mission, after GPS III-8 and six Starlink flights. It will land on the Of Course I Still Love You droneship in the Pacific Ocean, SpaceX says.",
+      },
+      {
+        q: "Will the launch be visible or audible?",
+        a: "The rocket flies a southeast trajectory and evening Vandenberg launches can be visible across Southern California in clear skies. SpaceX says residents of Santa Barbara, San Luis Obispo and Ventura counties may hear sonic booms, depending on conditions.",
+      },
+    ],
+    sources: [
+      {
+        name: "SpaceX — USSF-432 mission page: targeting Friday, November 6, window opens 4:46 p.m. PT, backup November 7 at 4:32 p.m. PT (accessed November 4)",
+        url: "https://www.spacex.com/launches/ussf432",
+      },
+      {
+        name: "Ventura County Star (USA TODAY Network) — SpaceX targets first California launch of November; update: postponed to no earlier than 4:46 p.m. PT Friday, November 6 (November 2, updated)",
+        url: "https://www.vcstar.com/story/news/local/california/2026/11/02/spacex-rocket-launch-today-california/92478188007/",
+      },
+    ],
+  },
+  {
     slug: "worldeye-in-chatgpt",
     title: "WorldEye in ChatGPT: What It Finds Today, and What Comes Next",
     seoTitle: "WorldEye in ChatGPT | WorldEye Blog",

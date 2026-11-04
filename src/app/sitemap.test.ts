@@ -103,7 +103,7 @@ describe("sitemap URL set", () => {
           !u.startsWith(`${BASE}/wildfires/`),
       )
       .sort();
-    expect(nonTransit.length).toBe(1147);
+    expect(nonTransit.length).toBe(1161);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     // Hash history: 6d75d0de… until the SEO audit fix #3 (2026-10-27)
     // normalised the es homepage entry from /es/ to its final /es
@@ -285,8 +285,21 @@ describe("sitemap URL set", () => {
     // Delta verified by executing sitemap() on the merged tree:
     // removing exactly those 12 URLs reproduces the 1,135 set
     // and the 74f28985… hash byte-for-byte.
+    // The Daily Blog 2026-11-04 batch (2026-11-04) then added
+    // the three sourced news posts
+    // (mammoth-mountain-opens-early-november-5-2026,
+    // mayon-ash-plume-november-4-strombolian-activity,
+    // spacex-ussf-432-launch-moves-november-6) \u2192 1,161.
+    // Delta verified by executing sitemap() on both trees the
+    // same day: the pristine tip generates 1,158 / a87ed539\u2026
+    // (its own set has drifted +11 since the 1,147 pin above
+    // \u2014 the eleven unflagged worldeye-in-*/worldeye-on-*
+    // blog posts added to posts.ts on the tip after that pin
+    // was set are present in the executed set), and the merged
+    // tree's set minus the pristine set is exactly the 3 new
+    // blog URLs, giving 1,161 / 49851da1\u2026.
     expect(hash).toBe(
-      "badace3c86a52c7c825e512286302b618b50ea8bb9117fffb02891a19003971c",
+      "49851da17df0d93e09cbb1e709195a9517a98f625e80a3db788af74412dcf101",
     );
   });
 

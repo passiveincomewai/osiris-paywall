@@ -87,6 +87,9 @@ describe("the launch story (real data, real dates)", () => {
   it("is one of the flagged posts, and every flagged post has sources", () => {
     const flagged = POSTS.filter(isNewsPost);
     expect(flagged.map((p) => p.slug)).toEqual([
+      "mammoth-mountain-opens-early-november-5-2026",
+      "mayon-ash-plume-november-4-strombolian-activity",
+      "spacex-ussf-432-launch-moves-november-6",
       "kilauea-episode-56-precursory-lava-alert-watch",
       "cyclone-murasu-crosses-ongole-landfall-complete",
       "four-corners-record-flooding-arizona-emergency-november-3",
@@ -109,6 +112,15 @@ describe("the launch story (real data, real dates)", () => {
     for (const p of flagged) {
       expect(p.sources?.length).toBeGreaterThan(0);
     }
+  });
+
+  it("the Nov 4 event stories are inside the 48-hour window on their publication day", () => {
+    const pubDay = new Date("2026-11-04T15:00:00Z");
+    const fresh = getFreshNewsPosts(POSTS, pubDay).map((p) => p.slug);
+    expect(fresh).toContain("mammoth-mountain-opens-early-november-5-2026");
+    expect(fresh).toContain("mayon-ash-plume-november-4-strombolian-activity");
+    expect(fresh).toContain("spacex-ussf-432-launch-moves-november-6");
+    expect(fresh).not.toContain(LAUNCH_SLUG);
   });
 
   it("the Nov 3 event stories are inside the 48-hour window on their publication day", () => {
