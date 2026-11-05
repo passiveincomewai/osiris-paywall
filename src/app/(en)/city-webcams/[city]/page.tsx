@@ -1045,6 +1045,34 @@ function generatedCfg(g: GenCity): CityCfg {
       ? `All ${fmt(g.count)} feeds in the ${g.name} index publish still images that refresh at short intervals rather than continuous video. That is the format the operators themselves use for road monitoring, and it is enough to judge traffic, weather and road conditions.`
       : `${fmt(g.stills)} of the ${fmt(g.count)} feeds publish still images that refresh at short intervals, and ${fmt(g.streams)} stream live video. Both show current conditions — check the featured list on this page to open either kind.`;
 
+  /* Indexation fix (2026-11-04): intro paragraph 4 used to be
+     byte-identical on all 284 generated pages. It is now composed from
+     this city's own record — the publishing sources with their counts
+     (city-pages.json carries the top 3 sources in sources[] while
+     sourceCount is the true total, so any remainder is stated as
+     counts too), further featured camera names beyond the three
+     paragraph 2 already used, and the city's share of its country
+     total as exact counts. Every number and name comes from the data. */
+  const listedSourceCams = g.sources.reduce((n, s) => n + s.count, 0);
+  const otherSourceCount = g.sourceCount - g.sources.length;
+  const otherSourceCams = g.count - listedSourceCams;
+  const sourceBreakdown = oneCam
+    ? `The one camera in the ${g.name} index is published by ${srcName(g.sources[0]?.name ?? "")}`
+    : g.sources.length === 1
+      ? `Every one of the ${fmt(g.count)} ${g.name} cameras is published by a single source, ${srcName(g.sources[0].name)} (${fmt(g.sources[0].count)} feeds)`
+      : `The ${fmt(g.count)} ${g.name} cameras come from ${fmt(g.sourceCount)} publishing sources: ${joinNames(g.sources.map((s) => `${srcName(s.name)} (${fmt(s.count)})`))}`;
+  const sourceRemainder =
+    !oneCam && otherSourceCount > 0 && otherSourceCams > 0
+      ? `, with the remaining ${fmt(otherSourceCams)} ${otherSourceCams === 1 ? "camera" : "cameras"} from ${fmt(otherSourceCount)} further ${otherSourceCount === 1 ? "source" : "sources"}`
+      : "";
+  const moreSamples = g.samples.slice(3).map((s) => s.name);
+  const samplesSentence = oneCam
+    ? ` It is the feed named in the featured list below`
+    : moreSamples.length === 0
+      ? ` The featured list below names the ${g.name} cameras in the index`
+      : ` The featured list below names ${fmt(g.samples.length)} ${g.name} cameras in all — beyond the three above, it includes ${moreSamples.length > 3 ? `${moreSamples.slice(0, 3).join(", ")} and ${fmt(moreSamples.length - 3)} more` : joinNames(moreSamples)}`;
+  const breakdownParagraph = `${sourceBreakdown}${sourceRemainder}.${samplesSentence}. In exact counts, ${g.name} holds ${fmt(g.count)} of the ${fmt(g.countryTotal)} cameras WorldEye indexes in ${inCountry(g.country)}.`;
+
   const cfg: CityCfg = {
     name: g.name,
     country: g.country,
@@ -1058,7 +1086,7 @@ function generatedCfg(g: GenCity): CityCfg {
       `There ${oneCam ? "is" : "are"} ${fmt(g.count)} live ${webcamNoun} in ${g.name}, ${g.country}, on WorldEye — public feeds published by ${srcList}, all free to watch with no signup. ${g.name} accounts for about ${shareLabel} of the ${fmt(g.countryTotal)} cameras WorldEye indexes in ${inCountry(g.country)}, and every feed sits on the same searchable live map as WorldEye's 74,229 cameras worldwide.`,
       `Featured feeds in the index include ${joinNames(feat)} — and every camera in the list below links straight into the live globe with that feed open, so you can go from this page to a live view in one tap.`,
       mixParagraph,
-      `Use the grid the way it is meant to be used: a two-minute check of the cameras on your route before you leave. What is happening on the ground — a jam, a closure, a storm moving in — shows up on these feeds as it happens, not as a forecast said it would.`,
+      breakdownParagraph,
     ],
     stats: [
       { value: fmt(g.count), label: `live ${camNoun}` },
@@ -1105,7 +1133,14 @@ function generatedCfg(g: GenCity): CityCfg {
       },
       {
         q: "Do I need an account to watch?",
-        a: "No. Every camera on WorldEye is free to watch — no account, no trial, no paywall. Open the map, find your camera, and watch.",
+        /* Indexation fix (2026-11-04): the previous answer was
+           byte-identical on all 284 generated pages and factually
+           wrong (it claimed every camera is free with no paywall).
+           This mirrors the country template's free-access ladder
+           (derivedFaqs): browsing is free, signed-out visitors get 5
+           free camera opens per device, and unlimited opens require
+           an upgrade — slotted with this city's name and count. */
+        a: `No account is needed to browse — this ${g.name} page and the WorldEye directory are always free to read. Watching on the globe follows a simple ladder: signed-out visitors get 5 free camera opens per device, adding an email or verifying a free account adds 5 more (10 in total), and paid plans remove the camera-open limit entirely. So the ${fmt(g.count)} ${g.name} ${camNoun} ${oneCam ? "is" : "are"} free to start watching, with unlimited opens on an upgrade.`,
       },
     ],
   };
