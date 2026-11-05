@@ -69,7 +69,12 @@ export async function generateMetadata({
   };
 }
 
-function faqsFor(c: BorderCrossing, camCount: number): Faq[] {
+function faqsFor(
+  c: BorderCrossing,
+  camCount: number,
+  portFact = "",
+  laneFact = "",
+): Faq[] {
   const bridgeList = c.bridges.join(", ");
   return [
     {
@@ -86,11 +91,11 @@ function faqsFor(c: BorderCrossing, camCount: number): Faq[] {
     },
     {
       q: `Where do these wait times come from?`,
-      a: `U.S. Customs and Border Protection's Border Wait Times feed — the same data behind CBP's own bwt.cbp.gov. Delays are CBP's estimates for reaching the inspection booth. WorldEye shows the feed's figures and update times verbatim and stamps when the feed was read; when the feed is down, the page says so instead of replaying an old number as if it were current.`,
+      a: `U.S. Customs and Border Protection's Border Wait Times feed — the same data behind CBP's own bwt.cbp.gov. Delays are CBP's estimates for reaching the inspection booth. WorldEye shows the feed's figures and update times verbatim and stamps when the feed was read; when the feed is down, the page says so instead of replaying an old number as if it were current.${portFact}`,
     },
     {
       q: `What do SENTRI, NEXUS and Ready lanes mean here?`,
-      a: `They are the trusted-traveller and document-ready lanes CBP reports separately. SENTRI (southbound-facing programme on the Mexican border) and NEXUS (Canadian border) lanes serve pre-approved members; Ready lanes serve travellers carrying RFID-enabled documents. Their waits are published separately because they usually move differently from the standard lanes — compare the rows in the table rather than assuming.`,
+      a: `They are the trusted-traveller and document-ready lanes CBP reports separately. SENTRI (southbound-facing programme on the Mexican border) and NEXUS (Canadian border) lanes serve pre-approved members; Ready lanes serve travellers carrying RFID-enabled documents. Their waits are published separately because they usually move differently from the standard lanes — compare the rows in the table rather than assuming.${laneFact}`,
     },
   ];
 }
@@ -145,8 +150,21 @@ export default async function BorderCrossingPage({
     .sort(byCount)
     .slice(0, 4);
   const nearestCam = records[0] ?? null;
+  const allLaneLabels = [
+    ...new Set(
+      ports.flatMap((p) => p.groups.flatMap((g) => g.lanes.map((l) => l.label))),
+    ),
+  ];
+  const portFact = ports.length
+    ? ` For ${crossing.name} the feed's rows are ${ports
+        .map((p) => `${p.portName} (port ${p.portNumber})`)
+        .join(", ")}.`
+    : "";
+  const laneFact = allLaneLabels.length
+    ? ` At ${crossing.name} specifically, the lane types CBP reports in the table above are: ${allLaneLabels.join(", ")}.`
+    : "";
 
-  const faqs = faqsFor(crossing, camCount);
+  const faqs = faqsFor(crossing, camCount, portFact, laneFact);
   const title = titleFor(crossing);
 
   const jsonLd = {
@@ -310,7 +328,7 @@ export default async function BorderCrossingPage({
       <HowTo
         title="How to cross with less waiting"
         steps={[
-          "Read the table by lane, not by headline: standard, SENTRI/NEXUS and Ready lanes at the same port can differ by an hour.",
+          `Read the table by lane, not by headline: different lane types at the same port can differ by an hour.${allLaneLabels.length ? ` This crossing's table reports ${allLaneLabels.map((l) => l.replace(/ lanes$/, "")).join(", ")} lanes — check the row for the lane you will actually use.` : " Standard, SENTRI/NEXUS and Ready lanes at the same port can differ by an hour."}`,
           "Check the CBP update note on each row — a lane marked \"Update Pending\" has no current reading, however empty it looks.",
           `Look at the approach cameras before you leave: the visible queue tail on the US-side highway is the part of the wait no table measures.${nearestCam ? ` The nearest feed in this wall is ${nearestCam.name} — start there.` : ""}`,
           "If this crossing is stacked and another nearby port is not, the wait table on that crossing's page is one tap back on the hub.",
