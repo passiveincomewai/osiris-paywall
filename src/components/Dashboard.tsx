@@ -1638,6 +1638,9 @@ export default function Dashboard() {
   );
   const sharedCameraSettled = useRef(false);
   const sharedCameraLookupTried = useRef(false);
+  const sharedCameraLookupPending = useRef(false);
+  const sharedCameraLookupRetries = useRef(0);
+  const sharedCameraRetryTimer = useRef<number | null>(null);
   useEffect(() => {
     if (!sharedCameraId || sharedCameraSettled.current) return;
     const cam: any = findCameraById(dataRef.current.cameras ?? [], sharedCameraId);
@@ -1657,9 +1660,27 @@ export default function Dashboard() {
          server (one small request) before calling the link stale. */
       if (!sharedCameraLookupTried.current) {
         sharedCameraLookupTried.current = true;
+        sharedCameraLookupPending.current = true;
         void fetchCameraById(sharedCameraId).then(record => {
+          sharedCameraLookupPending.current = false;
           if (sharedCameraSettled.current) return;
-          if (!record) { sharedCameraSettled.current = true; return; }
+          if (!record) {
+            /* A null here is also what a cold server instance returns
+               when its directory search times out — not proof the id
+               is stale. Retry a couple of times, a few seconds apart,
+               before giving up; a warm instance answers in ~90 ms. */
+            if (sharedCameraLookupRetries.current < 2) {
+              sharedCameraLookupRetries.current += 1;
+              sharedCameraLookupTried.current = false;
+              sharedCameraRetryTimer.current = window.setTimeout(() => {
+                sharedCameraRetryTimer.current = null;
+                setDataVersion(value => value + 1);
+              }, 4000);
+            } else {
+              sharedCameraSettled.current = true;
+            }
+            return;
+          }
           dataRef.current = {
             ...dataRef.current,
             cameras: mergeCameraCatalog(dataRef.current.cameras ?? [], [record]),
@@ -1668,9 +1689,16 @@ export default function Dashboard() {
         });
         return;
       }
-      sharedCameraSettled.current = true;
+      /* Never settle while a lookup is in flight or a retry is armed:
+         the in-flight answer would be discarded as stale. */
+      if (!sharedCameraLookupPending.current && !sharedCameraRetryTimer.current) {
+        sharedCameraSettled.current = true;
+      }
     }
   }, [sharedCameraId, dataVersion, camerasLoading, handleEntityClick]);
+  useEffect(() => () => {
+    if (sharedCameraRetryTimer.current) window.clearTimeout(sharedCameraRetryTimer.current);
+  }, []);
 
   /* F11 share-link loop-in: when the camera a shared link opened is
      left behind — viewer closed, or a different camera opened — the
@@ -1721,12 +1749,16 @@ export default function Dashboard() {
   const [assistedCameraId, setAssistedCameraId] = useState<string | null>(null);
   const assistedCameraSettled = useRef(false);
   const assistedCameraLookupTried = useRef(false);
+  const assistedCameraLookupPending = useRef(false);
+  const assistedCameraLookupRetries = useRef(0);
+  const assistedCameraRetryTimer = useRef<number | null>(null);
   useEffect(() => {
     const onOpenCamera = (e: Event) => {
       const id = (e as CustomEvent<{ id?: unknown }>).detail?.id;
       if (typeof id === 'string' && id) {
         assistedCameraSettled.current = false;
         assistedCameraLookupTried.current = false;
+        assistedCameraLookupRetries.current = 0;
         setAssistedCameraId(id);
       }
     };
@@ -1751,9 +1783,26 @@ export default function Dashboard() {
          camera's region may simply not be loaded on this visitor yet. */
       if (!assistedCameraLookupTried.current) {
         assistedCameraLookupTried.current = true;
+        assistedCameraLookupPending.current = true;
         void fetchCameraById(assistedCameraId).then(record => {
+          assistedCameraLookupPending.current = false;
           if (assistedCameraSettled.current) return;
-          if (!record) { assistedCameraSettled.current = true; return; }
+          if (!record) {
+            /* Same cold-instance caveat as the deep link above: a
+               null can be a timed-out directory search, so retry a
+               couple of times before treating the id as stale. */
+            if (assistedCameraLookupRetries.current < 2) {
+              assistedCameraLookupRetries.current += 1;
+              assistedCameraLookupTried.current = false;
+              assistedCameraRetryTimer.current = window.setTimeout(() => {
+                assistedCameraRetryTimer.current = null;
+                setDataVersion(value => value + 1);
+              }, 4000);
+            } else {
+              assistedCameraSettled.current = true;
+            }
+            return;
+          }
           dataRef.current = {
             ...dataRef.current,
             cameras: mergeCameraCatalog(dataRef.current.cameras ?? [], [record]),
@@ -1762,9 +1811,16 @@ export default function Dashboard() {
         });
         return;
       }
-      assistedCameraSettled.current = true;
+      /* Never settle while a lookup is in flight or a retry is armed:
+         the in-flight answer would be discarded as stale. */
+      if (!assistedCameraLookupPending.current && !assistedCameraRetryTimer.current) {
+        assistedCameraSettled.current = true;
+      }
     }
   }, [assistedCameraId, dataVersion, camerasLoading, handleEntityClick]);
+  useEffect(() => () => {
+    if (assistedCameraRetryTimer.current) window.clearTimeout(assistedCameraRetryTimer.current);
+  }, []);
 
   // ── Entity deep links (?quake= / ?fire= / ?storm= / ?flight= / ?event=) ──
   // The universal share links (lib/share/links.ts) — sibling of the
