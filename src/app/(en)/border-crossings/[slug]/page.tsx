@@ -18,7 +18,7 @@ import {
 import DirectoryExplorer from "@/components/DirectoryExplorer";
 import TrialCtaSection from "@/components/TrialCtaSection";
 import BorderWaitPanel, { type BorderWaitView } from "@/components/BorderWaitPanel";
-import { EXPLORE_SCOPES, countForDef } from "@/lib/explore-data";
+import { EXPLORE_SCOPES, countForDef, recordsForDef } from "@/lib/explore-data";
 import {
   BORDER_CROSSINGS,
   BORDER_CROSSING_BY_SLUG,
@@ -105,10 +105,13 @@ export default async function BorderCrossingPage({
   if (!crossing) notFound();
 
   const scope = EXPLORE_SCOPES[borderScopeKey(crossing)];
-  const [camCount, waits] = await Promise.all([
-    countForDef(scope),
+  const [records, waits] = await Promise.all([
+    recordsForDef(scope),
     getBorderWaitTimes(),
   ]);
+  /* countForDef is this same set's length — the count the metadata
+     quotes — so the wall's records and the quoted count cannot drift. */
+  const camCount = records.length;
   const fmt = (n: number) => n.toLocaleString("en-US");
 
   const ports = crossing.portNumbers
@@ -119,6 +122,29 @@ export default async function BorderCrossingPage({
     fetchedAt: waits.fetchedAt,
     stale: waits.stale,
   };
+
+  /* The crossing's structural facts, from the CBP rows above and the
+     wall's own records — rendered as prose in the port-by-port section
+     so each crossing's page states its own ports, lanes and sources. */
+  const camSourceCounts = new Map<string, number>();
+  const camAreaCounts = new Map<string, number>();
+  for (const r of records) {
+    const s = r.source?.trim();
+    if (s) camSourceCounts.set(s, (camSourceCounts.get(s) ?? 0) + 1);
+    const a = r.city?.trim();
+    if (a) camAreaCounts.set(a, (camAreaCounts.get(a) ?? 0) + 1);
+  }
+  const byCount = (a: { count: number; name: string }, b: { count: number; name: string }) =>
+    b.count - a.count || a.name.localeCompare(b.name);
+  const topCamSources = [...camSourceCounts.entries()]
+    .map(([name, count]) => ({ name, count }))
+    .sort(byCount)
+    .slice(0, 4);
+  const topCamAreas = [...camAreaCounts.entries()]
+    .map(([name, count]) => ({ name, count }))
+    .sort(byCount)
+    .slice(0, 4);
+  const nearestCam = records[0] ?? null;
 
   const faqs = faqsFor(crossing, camCount);
   const title = titleFor(crossing);
@@ -187,6 +213,85 @@ export default async function BorderCrossingPage({
 
       <section className="mt-12">
         <h2 className="text-xl md:text-2xl font-bold mb-3">
+          The {crossing.name} crossing, port by port
+        </h2>
+        <p className="text-sm text-white/55 leading-relaxed max-w-3xl mb-5">
+          {crossing.name} is the {crossing.usCity}–{crossing.foreignCity}{" "}
+          crossing on the {crossing.border}, in {crossing.foreignRegion} on
+          the far side.{" "}
+          {ports.length > 0 ? (
+            <>
+              CBP&rsquo;s feed carries {ports.length === 1 ? "one port" : `${ports.length} ports`}{" "}
+              for it, and this is the structure behind the wait table above —
+              which ports exist, what hours CBP lists for them, and which lane
+              types each one reports.
+            </>
+          ) : (
+            <>
+              The registry behind this page lists{" "}
+              {crossing.portNumbers.length === 1
+                ? `one CBP port — ${crossing.portNumbers[0]}`
+                : `CBP ports ${crossing.portNumbers.join(", ")}`}{" "}
+              and the facilities called {crossing.bridges.join(", ")}. The CBP
+              feed returned no port rows when this snapshot was built, so the
+              lane structure below is the registry&rsquo;s; the live table
+              above is the place for current readings.
+            </>
+          )}
+        </p>
+        {ports.length > 0 && (
+          <div className="space-y-3 max-w-3xl mb-5">
+            {ports.map((p) => (
+              <div
+                key={p.portNumber}
+                className="rounded-2xl border border-white/10 bg-white/[0.03] p-5"
+              >
+                <span className="font-semibold text-white/90">
+                  {p.portName} — CBP port {p.portNumber}
+                </span>
+                <span className="block text-sm text-white/55 mt-1 leading-relaxed">
+                  {p.hours
+                    ? `CBP lists this port's hours as "${p.hours}". `
+                    : ""}
+                  {p.groups.length > 0
+                    ? p.groups
+                        .map(
+                          (g) =>
+                            `${g.label}${
+                              g.maximumLanes !== null
+                                ? ` (up to ${g.maximumLanes} lanes)`
+                                : ""
+                            }: ${g.lanes.map((l) => l.label).join(", ")}`,
+                        )
+                        .join(". ") + "."
+                    : "CBP publishes no lane-group breakdown for this port."}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+        {camCount > 0 && topCamSources.length > 0 && (
+          <p className="text-sm text-white/55 leading-relaxed max-w-3xl">
+            The camera wall itself: {fmt(camCount)} catalogue records within{" "}
+            {crossing.radiusKm} km, filed under{" "}
+            {camSourceCounts.size === 1
+              ? `a single source — ${topCamSources[0].name}`
+              : `${camSourceCounts.size} sources — ${topCamSources
+                  .map((s) => `${s.name} (${fmt(s.count)})`)
+                  .join(", ")}`}
+            {topCamAreas.length > 1
+              ? `, and split by the records' own area names across ${camAreaCounts.size} areas, largest first: ${topCamAreas.map((a) => `${a.name} (${fmt(a.count)})`).join(", ")}`
+              : ""}
+            {nearestCam
+              ? `. The nearest record to the crossing point is ${nearestCam.name}`
+              : ""}
+            .
+          </p>
+        )}
+      </section>
+
+      <section className="mt-12">
+        <h2 className="text-xl md:text-2xl font-bold mb-3">
           Live cameras near the {crossing.name} crossing
         </h2>
         <p className="text-sm text-white/55 leading-relaxed max-w-3xl mb-5">
@@ -207,7 +312,7 @@ export default async function BorderCrossingPage({
         steps={[
           "Read the table by lane, not by headline: standard, SENTRI/NEXUS and Ready lanes at the same port can differ by an hour.",
           "Check the CBP update note on each row — a lane marked \"Update Pending\" has no current reading, however empty it looks.",
-          "Look at the approach cameras before you leave: the visible queue tail on the US-side highway is the part of the wait no table measures.",
+          `Look at the approach cameras before you leave: the visible queue tail on the US-side highway is the part of the wait no table measures.${nearestCam ? ` The nearest feed in this wall is ${nearestCam.name} — start there.` : ""}`,
           "If this crossing is stacked and another nearby port is not, the wait table on that crossing's page is one tap back on the hub.",
           "Carry the documents the lane requires — a Ready or SENTRI lane entered without the right card ends at the booth, slowly.",
         ]}
