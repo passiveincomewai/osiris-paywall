@@ -23,6 +23,7 @@ import { propagateTLE } from "@/lib/orbit";
 import {
   ISS_CITIES,
   ISS_CITY_RADIUS_KM,
+  ISS_INCLINATION_DEG,
   VISIBILITY_LABELS,
   findPasses,
   formatDuration,
@@ -76,6 +77,43 @@ export default async function IssOverCityPage({ params }: Params) {
     : [];
   const nextVisible = passes.find((p) => p.visibility === "visible") ?? null;
   const position = tle ? propagateTLE(tle.line1, tle.line2, now) : null;
+
+  /* This city's counted facts — the pass list and camera wall this page
+     already computes, summarised as prose in the counted section below. */
+  const visCounts = new Map<string, number>();
+  for (const p of passes) {
+    visCounts.set(p.visibility, (visCounts.get(p.visibility) ?? 0) + 1);
+  }
+  const visSplit = (["visible", "twilight", "daylight", "eclipsed"] as const)
+    .filter((k) => (visCounts.get(k) ?? 0) > 0)
+    .map((k) => `${visCounts.get(k)} labelled ${k}`)
+    .join(", ");
+  const highestPass = passes.length
+    ? passes.reduce((a, b) => (b.maxElevationDeg > a.maxElevationDeg ? b : a))
+    : null;
+  const longestPass = passes.length
+    ? passes.reduce((a, b) =>
+        b.end.getTime() - b.start.getTime() > a.end.getTime() - a.start.getTime()
+          ? b
+          : a,
+      )
+    : null;
+  const wallSourceCounts = new Map<string, number>();
+  const wallAreaCounts = new Map<string, number>();
+  for (const r of wall) {
+    const s = r.source?.trim();
+    if (s) wallSourceCounts.set(s, (wallSourceCounts.get(s) ?? 0) + 1);
+    const a = r.city?.trim();
+    if (a) wallAreaCounts.set(a, (wallAreaCounts.get(a) ?? 0) + 1);
+  }
+  const byCount = (a: { count: number; name: string }, b: { count: number; name: string }) =>
+    b.count - a.count || a.name.localeCompare(b.name);
+  const topWallSources = [...wallSourceCounts.entries()]
+    .map(([name, count]) => ({ name, count }))
+    .sort(byCount)
+    .slice(0, 4);
+  const latLabel = `${Math.abs(city.lat).toFixed(2)}° ${city.lat >= 0 ? "N" : "S"}`;
+  const lngLabel = `${Math.abs(city.lng).toFixed(2)}° ${city.lng >= 0 ? "E" : "W"}`;
   const globeUrl = buildGeoUrl({ lat: city.lat, lng: city.lng, radiusM: 25000 }, "") ?? "/";
 
   const faqs = [
@@ -91,7 +129,7 @@ export default async function IssOverCityPage({ params }: Params) {
     },
     {
       q: "What do the labels mean?",
-      a: "Visible: at the pass's peak the sun is more than 6 degrees below your horizon and the station is out of Earth's shadow — the classic bright crossing, the one to watch. Twilight: the station is lit but the sky is not yet fully dark. Daylight: a real pass, but the sky is bright — you will not see it unaided. Eclipsed: at peak the station is inside Earth's shadow and reflects no sunlight at all; those passes are listed so the gaps in the visible list are explained rather than hidden.",
+      a: `Visible: at the pass's peak the sun is more than 6 degrees below your horizon and the station is out of Earth's shadow — the classic bright crossing, the one to watch. Twilight: the station is lit but the sky is not yet fully dark. Daylight: a real pass, but the sky is bright — you will not see it unaided. Eclipsed: at peak the station is inside Earth's shadow and reflects no sunlight at all; those passes are listed so the gaps in the visible list are explained rather than hidden.${passes.length ? ` In this build's 72-hour table for ${city.name} the split is ${visSplit} — ${city.name}'s own ratio, set by its latitude and this week's orbit geometry, not a template figure.` : ""}`,
     },
     {
       q: `Why pair the passes with ${city.name}'s cameras?`,
@@ -207,6 +245,59 @@ export default async function IssOverCityPage({ params }: Params) {
 
       <section className="mt-12">
         <h2 className="text-xl md:text-2xl font-bold mb-2">
+          {city.name}&rsquo;s next 72 hours, counted
+        </h2>
+        {passes.length > 0 && highestPass && longestPass ? (
+          <p className="text-sm text-white/55 leading-relaxed max-w-3xl mb-4">
+            Counted from the table above: {passes.length}{" "}
+            {passes.length === 1 ? "crossing" : "crossings"} above 10 degrees
+            in the next 72 hours — {visSplit}. The highest of them peaks at{" "}
+            {formatPassTime(highestPass.peak, city.timeZone)} {city.name}{" "}
+            time, reaching {Math.round(highestPass.maxElevationDeg)} degrees;
+            the longest keeps the station above 10 degrees for{" "}
+            {formatDuration(longestPass.start, longestPass.end)} (rises{" "}
+            {formatPassTime(longestPass.start, city.timeZone)}, sets{" "}
+            {formatPassTime(longestPass.end, city.timeZone)}). Those two
+            numbers — how high, how long — are the ones that decide whether a
+            pass is a glance or a show, and they are {city.name}&rsquo;s alone:
+            every city&rsquo;s table counts differently because the geometry
+            over each latitude is different.
+          </p>
+        ) : (
+          <p className="text-sm text-white/55 leading-relaxed max-w-3xl mb-4">
+            This build has no pass table to count — the reason is stated
+            above, and the table returns at the next hourly refresh. The
+            counted facts that stand regardless are {city.name}&rsquo;s
+            coordinates and its camera wall, below.
+          </p>
+        )}
+        <p className="text-sm text-white/55 leading-relaxed max-w-3xl mb-4">
+          Every time on this page is computed for one point: {latLabel},{" "}
+          {lngLabel} — {city.name}, {city.country} — in the {city.timeZone}{" "}
+          time zone. The station&rsquo;s orbit is inclined{" "}
+          {ISS_INCLINATION_DEG} degrees to the equator, and {city.name} sits
+          inside that band, so near-overhead passes are geometrically
+          possible here; the peak column in the table shows how close each
+          actual crossing gets.
+        </p>
+        {wall.length > 0 && topWallSources.length > 0 && (
+          <p className="text-sm text-white/55 leading-relaxed max-w-3xl">
+            On the ground, the wall under those passes is {wall.length}{" "}
+            public cameras within {ISS_CITY_RADIUS_KM} km of the centre,
+            filed under{" "}
+            {wallSourceCounts.size === 1
+              ? `a single catalogue source — ${topWallSources[0].name}`
+              : `${wallSourceCounts.size} catalogue sources — ${topWallSources.map((s) => `${s.name} (${s.count})`).join(", ")}`}
+            {wallAreaCounts.size > 1
+              ? `, with the records' own area names spanning ${wallAreaCounts.size} areas of the city`
+              : ""}
+            .
+          </p>
+        )}
+      </section>
+
+      <section className="mt-12">
+        <h2 className="text-xl md:text-2xl font-bold mb-2">
           {city.name} from the ground — live cameras
         </h2>
         <p className="text-sm text-white/55 leading-relaxed max-w-3xl mb-5">
@@ -225,7 +316,7 @@ export default async function IssOverCityPage({ params }: Params) {
         title={`How to watch a pass over ${city.name}`}
         steps={[
           "Choose a pass labelled visible from the table — dark sky, station in sunlight.",
-          "Be outside at the rise time, facing open sky; a peak above 40 degrees needs no particular direction — it will cross the whole sky.",
+          `Be outside at the rise time, facing open sky; a peak above 40 degrees needs no particular direction — it will cross the whole sky.${highestPass ? ` In this table the highest pass over ${city.name} peaks at ${Math.round(highestPass.maxElevationDeg)}°, at ${formatPassTime(highestPass.peak, city.timeZone)}.` : ""}`,
           "Look for a bright, steady light moving fast and silently, with no blinking — aircraft blink; the station does not.",
           "It brightens as it climbs and, on eclipsed exits, can vanish mid-sky as it enters Earth's shadow — the table's label tells you if this pass ends that way at its peak.",
           "Missed it? Passes come in runs across consecutive evenings and mornings — the 72-hour table holds the next chance.",
