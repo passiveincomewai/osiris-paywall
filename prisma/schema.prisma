@@ -3192,3 +3192,54 @@ model FrGeoYearlySummary {
   @@unique([datasetVersion, engine, layer])
   @@index([datasetVersion])
 }
+
+// ── Content Studio (autonomous content engine) admin controls ────────
+// The admin panel at /admin/content-studio sets control state ONLY —
+// modes, pauses — for the content engine that runs on Cosmo's VM
+// (~/workspace/content-engine, SQLite store is its system of record).
+// The panel never publishes anything itself. The engine reads control
+// state through /api/internal/content-studio/controls and pushes
+// status snapshots back; the snapshot table below is that read model.
+//
+// Platform rows are seeded by the migration. One reserved row,
+// platform = "__global__", carries the global pause flag in `paused`;
+// it is not a platform and is never listed as one.
+model ContentPlatformState {
+  platform         String   @id
+  // manual | hybrid | autonomous — never above `ceiling` (enforced
+  // server-side on every write; ceilings mirror the engine's store:
+  // reddit manual forever, tiktok hybrid max).
+  mode             String   @default("manual")
+  ceiling          String   @default("manual")
+  paused           Boolean  @default(false)
+  // Free-form connection status string written by the seed/sync, e.g.
+  // connected_studio_browser | link_dropped | draft_only.
+  connectionStatus String   @default("not_connected")
+  updatedAt        DateTime @updatedAt
+}
+
+// One row per control change made from the admin panel (the engine
+// polls these via the internal controls endpoint and applies the ones
+// it has not seen; application is idempotent on the engine side).
+model ContentControlEvent {
+  id        String   @id @default(cuid())
+  actor     String?
+  action    String
+  platform  String?
+  payload   Json
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+// Status snapshots pushed by the engine (sections: overview | queue |
+// errors). The panel renders ONLY what the latest snapshot per section
+// carries — no snapshot, no numbers.
+model ContentEngineSnapshot {
+  id        String   @id @default(cuid())
+  section   String
+  payload   Json
+  createdAt DateTime @default(now())
+
+  @@index([section, createdAt])
+}
