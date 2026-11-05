@@ -28,6 +28,8 @@ interface ProjectLite {
   sourceKind: string;
   sourceRef: string | null;
   durationSec: number | null;
+  analysisSummary?: string | null;
+  analysisMeasured?: { metadata: boolean; scenes: boolean; audio: boolean } | null;
   transcript?: string | null;
 }
 interface VariationLite {
@@ -406,8 +408,35 @@ export default function EditorClient({ projectId }: { projectId: string }) {
             {v.title}
           </button>
         ))}
-        {variations.length === 0 && <p className="text-sm text-slate-500">No variations yet — generate some in the Machine first.</p>}
       </div>
+
+      {variations.length === 0 && (
+        <section className="rounded-2xl border border-sky-400/25 bg-sky-500/[0.06] p-5 space-y-3">
+          {project.analysisSummary ? (
+            <>
+              <h2 className="font-bold text-white">Analyzed and ready — no variations yet</h2>
+              <p className="text-sm text-slate-300 leading-relaxed">
+                This project has been analyzed, so it&apos;s ready to generate. Variations are created in the
+                Repurposing Machine — pick how many you want and their creative directions there, and each one
+                appears here for timeline, caption and branding edits.
+              </p>
+            </>
+          ) : (
+            <>
+              <h2 className="font-bold text-white">This project hasn&apos;t been analyzed yet</h2>
+              <p className="text-sm text-slate-300 leading-relaxed">
+                The editor works on generated variations, and variations are built from the video analysis — so a
+                new project needs two quick steps in the Repurposing Machine first: <strong>1.</strong> analyze the
+                video, then <strong>2.</strong> generate variations. After that, reopen this editor and your
+                variations will be here to trim, caption and brand.
+              </p>
+            </>
+          )}
+          <Link href={`/affiliates/studio/repurpose?project=${project.id}`} className={BTN} style={BTN_STYLE}>
+            Open this project in the Machine →
+          </Link>
+        </section>
+      )}
 
       {comp && selected && (
         <div className="grid lg:grid-cols-2 gap-5 items-start">

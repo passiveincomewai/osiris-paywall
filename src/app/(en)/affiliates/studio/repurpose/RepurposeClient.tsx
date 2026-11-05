@@ -1098,7 +1098,13 @@ export default function RepurposeClient() {
                   <option key={f} value={f}>{f.replace(/_/g, " ")}</option>
                 ))}
               </select>
-              <a href={`/affiliates/studio/editor/${p.id}`} className={GHOST}>Open in Editor →</a>
+              {open.variations.length > 0 ? (
+                <a href={`/affiliates/studio/editor/${p.id}`} className={GHOST}>Open in Editor →</a>
+              ) : (
+                <span className="font-mono text-[11px] text-slate-500 self-center">
+                  Editor unlocks after you generate variations
+                </span>
+              )}
               <input
                 defaultValue={open.project.campaignTag ?? ""}
                 key={open.project.id + (open.project.campaignTag ?? "")}
