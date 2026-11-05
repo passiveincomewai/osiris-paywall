@@ -1083,7 +1083,7 @@ function generatedCfg(g: GenCity): CityCfg {
     h1: `${g.name} Live Webcams`,
     sub: `Watch ${fmt(g.count)} live ${camNoun} in ${g.name} — free on the WorldEye globe.`,
     intro: [
-      `There ${oneCam ? "is" : "are"} ${fmt(g.count)} live ${webcamNoun} in ${g.name}, ${g.country}, on WorldEye — public feeds published by ${srcList}, all free to watch with no signup. ${g.name} accounts for about ${shareLabel} of the ${fmt(g.countryTotal)} cameras WorldEye indexes in ${inCountry(g.country)}, and every feed sits on the same searchable live map as WorldEye's 74,229 cameras worldwide.`,
+      `There ${oneCam ? "is" : "are"} ${fmt(g.count)} live ${webcamNoun} in ${g.name}, ${g.country}, on WorldEye — public feeds published by ${srcList}, free to browse, with 5 free camera opens per device for signed-out visitors and unlimited opens on an upgrade. ${g.name} accounts for about ${shareLabel} of the ${fmt(g.countryTotal)} cameras WorldEye indexes in ${inCountry(g.country)}, and every feed sits on the same searchable live map as WorldEye's 74,229 cameras worldwide.`,
       `Featured feeds in the index include ${joinNames(feat)} — and every camera in the list below links straight into the live globe with that feed open, so you can go from this page to a live view in one tap.`,
       mixParagraph,
       breakdownParagraph,
