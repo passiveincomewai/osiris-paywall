@@ -305,8 +305,51 @@ function derivedIntro(c: CountryEntry): string[] {
       : "The cameras are spread across the country rather than clustered in one place.";
   return [
     `WorldEye's live index holds ${plural(c.count, "camera")} in ${c.name} — public feeds from transport agencies, weather networks, resorts, harbours and city operators, all watchable free in the grid below and on the globe. ${areasLine}`,
-    "Every card below is the camera's actual live feed, grouped by area with the largest first. Search the whole country, filter by area, and open any camera to watch it in full. The index is rebuilt from the same catalogue that powers the WorldEye globe, so the count on this page is the count the globe serves.",
+    derivedAreaParagraph(c),
   ];
+}
+
+/* Intro paragraph 2 for derived pages, composed from the country's own
+   index entry: how its cameras distribute across its named areas. Every
+   name and number below is read from that entry (topCities is the
+   index's largest-first area list, capped at 10), so the paragraph is
+   different on every page because the distribution is. */
+function derivedAreaParagraph(c: CountryEntry): string {
+  const fmt = (n: number) => n.toLocaleString("en-US");
+  const share = (part: number): string => {
+    const pct = (part / c.count) * 100;
+    return pct >= 10 ? `${Math.round(pct)}%` : `${pct.toFixed(1)}%`;
+  };
+  const [first, second, third] = c.topCities;
+  if (!first) {
+    return `The grid below lists ${plural(c.count, "camera")} for ${c.name}, each card the camera's actual live feed. Search the whole country, filter by area, and open any camera to watch it in full.`;
+  }
+  if (c.cityCount <= 1 || c.topCities.length <= 1) {
+    if (c.count === 1) {
+      return `The index holds a single camera for ${c.name}, listed under ${first.name} — the grid below is the country's complete index, one card. Open it to watch its actual live feed, or jump from the camera to the same spot on the globe.`;
+    }
+    return `Every one of the ${plural(c.count, "camera")} sits in a single named area, ${first.name} (${plural(first.count, "camera")}) — the largest area holds the whole ${c.name} network, so the grid below is the country's complete index on one list. Open any card to watch its actual live feed, or jump from a camera to the same spot on the globe.`;
+  }
+  if (c.cityCount === 2 && second) {
+    return `The cameras group into just 2 named areas: ${first.name} leads with ${plural(first.count, "camera")} of the ${fmt(c.count)} total (about ${share(first.count)}), and ${second.name} holds the other ${plural(second.count, "camera")}. Filter the grid by area to browse one cluster at a time, and open any card to watch its actual live feed.`;
+  }
+  /* When every area is listed (cityCount <= 10), the tail is the sum of
+     the listed areas beyond the top three; when the list is capped, it
+     is everything outside the top three. The two differ if a camera is
+     unattributed to a named area (Ukraine: 7 counted, 6 listed). */
+  const restCount =
+    c.topCities.length >= c.cityCount
+      ? c.topCities.slice(3).reduce((n, a) => n + a.count, 0)
+      : c.count - first.count - (second?.count ?? 0) - (third?.count ?? 0);
+  const restAreas = c.cityCount - 3;
+  const leaders = third
+    ? `${first.name} leads with ${plural(first.count, "camera")} of the ${fmt(c.count)} total (about ${share(first.count)}), followed by ${second.name} (${plural(second.count, "camera")}) and ${third.name} (${plural(third.count, "camera")})`
+    : `${first.name} leads with ${plural(first.count, "camera")} of the ${fmt(c.count)} total (about ${share(first.count)})`;
+  const tail =
+    restAreas > 0 && restCount > 0
+      ? ` The other ${plural(restCount, "camera")} ${restCount === 1 ? "is" : "are"} spread across the remaining ${plural(restAreas, "named area")}, so no single cluster tells the whole story.`
+      : "";
+  return `Grouped by area with the largest first, ${leaders}.${tail} Filter the grid by area to browse one cluster at a time, and open any card to watch its actual live feed.`;
 }
 
 function derivedFaqs(c: CountryEntry): Array<{ q: string; a: string }> {
@@ -324,7 +367,7 @@ function derivedFaqs(c: CountryEntry): Array<{ q: string; a: string }> {
     },
     {
       q: `Is it free to watch ${c.name} cameras?`,
-      a: `Yes — browsing this directory page is always free, with no account. Watching on the globe follows a simple ladder: your first 5 camera opens on any device are free, add your email for 5 more (10 in total), and a verified free account reaches the same 10. Paid plans remove the camera-open limit entirely. The feeds belong to their operators and public sources; a camera whose stream has gone off air shows as unavailable rather than playing a recording.`,
+      a: `Yes — browsing the ${c.name} directory page is always free, with no account, and all ${plural(c.count, "camera")} listed for ${c.name} sit in the grid below. Watching on the globe follows a simple ladder: your first 5 camera opens on any device are free, add your email for 5 more (10 in total), and a verified free account reaches the same 10. Paid plans remove the camera-open limit entirely. The feeds belong to their operators and public sources; a camera whose stream has gone off air shows as unavailable rather than playing a recording.`,
     },
   ];
 }

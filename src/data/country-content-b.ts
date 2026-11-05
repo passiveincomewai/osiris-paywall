@@ -9,7 +9,7 @@ export type CountryContent = {
 export const countryContentB: Record<string, CountryContent> = {
   "united-states": {
     intro: [
-      "The United States hosts the largest live camera network in our directory: 23,059 cameras across 12 coverage areas. Georgia alone accounts for 4,330 feeds, with Utah (2,082) and Houston (1,158) next in line.",
+      "The United States hosts the largest live camera network in our directory: 41,355 cameras across 12 coverage areas. Georgia alone accounts for 4,330 feeds, with Utah (2,082) and Houston (1,158) next in line.",
       "The vast majority are highway and traffic cameras. Expect interstate views like the I-64 corridor in Indiana, canyon roads along Utah's SR-210, and metro feeds from Dallas, Phoenix, and Miami-Dade County.",
       "That makes the US collection especially practical for drivers: you can check real road conditions live before heading out, and every feed is free to watch on WorldEye.",
       "The state-level breakdown is where the network gets practical. Georgia's 4,330 feeds, Utah's 2,082, and the Houston area's 1,158 are the big three, but Dallas, Indiana, Nevada, Phoenix, and Miami-Dade County all carry heavy coverage of their own. If you drive one corridor regularly, learn its cameras.",
@@ -20,7 +20,7 @@ export const countryContentB: Record<string, CountryContent> = {
     faqs: [
       {
         q: "How many live cameras are there in the United States?",
-        a: "WorldEye currently lists 23,059 live cameras across 12 US coverage areas - the largest national network in our directory.",
+        a: "WorldEye currently lists 41,355 live cameras across 12 US coverage areas - the largest national network in our directory.",
       },
       {
         q: "Which US areas have the most cameras?",
@@ -36,7 +36,7 @@ export const countryContentB: Record<string, CountryContent> = {
       },
       {
         q: "Do I need an account to watch US cameras?",
-        a: "No account is needed to start. Every one of the 23,059 feeds can be watched on WorldEye — open the map, zoom to your route, and tap a camera marker. Your first 5 camera opens on a device are free; add your email for 5 more (10 in total, the same as a verified free account), and paid plans remove the limit. Browsing the directory is always free.",
+        a: "No account is needed to start. Every one of the 41,355 feeds can be watched on WorldEye — open the map, zoom to your route, and tap a camera marker. Your first 5 camera opens on a device are free; add your email for 5 more (10 in total, the same as a verified free account), and paid plans remove the limit. Browsing the directory is always free.",
       },
       {
         q: "Are these cameras live video or still images?",
@@ -137,7 +137,7 @@ export const countryContentB: Record<string, CountryContent> = {
   },
   "hong-kong": {
     intro: [
-      "Few territories are as densely covered as Hong Kong: 1,185 traffic cameras across 12 districts. Yuen Long leads with 170 feeds, ahead of Sha Tin (153) and Tsuen Wan (121).",
+      "Few territories are as densely covered as Hong Kong: 1,350 traffic cameras across 12 districts. Yuen Long leads with 170 feeds, ahead of Sha Tin (153) and Tsuen Wan (121).",
       "The feeds are district-level road cameras - Tai Po Road, Kwun Tong Road, Castle Peak Road - capturing the territory's famously busy streets in real time.",
       "For commuters and the curious alike, it's a live pulse of the city, from Kowloon to the New Territories. Every feed is free on WorldEye.",
       "The district breakdown is the practical part: Yuen Long's 170 feeds and Sha Tin's 153 cover the New Territories' busiest corridors, while Tsuen Wan (121) and Tuen Mun (96) watch the western approaches. If your commute runs Tai Po Road or Kwun Tong Road, those district feeds are your daily check.",
@@ -148,7 +148,7 @@ export const countryContentB: Record<string, CountryContent> = {
     faqs: [
       {
         q: "How many live cameras are there in Hong Kong?",
-        a: "WorldEye lists 1,185 live cameras across 12 districts in Hong Kong, one of the densest traffic-camera networks we carry.",
+        a: "WorldEye lists 1,350 live cameras across 12 districts in Hong Kong, one of the densest traffic-camera networks we carry.",
       },
       {
         q: "Which Hong Kong districts have the most cameras?",
@@ -168,7 +168,7 @@ export const countryContentB: Record<string, CountryContent> = {
       },
       {
         q: "Do I need an account to watch?",
-        a: "No account is needed to start — all 1,185 Hong Kong feeds can be watched on WorldEye. Your first 5 camera opens on a device are free; add your email for 5 more (10 in total, the same as a verified free account), and paid plans remove the limit. Browsing the directory is always free.",
+        a: "No account is needed to start — all 1,350 Hong Kong feeds can be watched on WorldEye. Your first 5 camera opens on a device are free; add your email for 5 more (10 in total, the same as a verified free account), and paid plans remove the limit. Browsing the directory is always free.",
       },
     ],
   },
@@ -220,22 +220,22 @@ export const countryContentB: Record<string, CountryContent> = {
   },
   "united-kingdom": {
     intro: [
-      "The United Kingdom's camera map is essentially London's: 890 of the country's 899 cameras sit in the capital, spread across 10 areas. Feeds cover major routes like the A406 North Circular, the A12 at the Blackwall Tunnel, and Clapham's A3.",
+      "The United Kingdom's camera map is essentially London's: 890 of the country's 1,403 cameras sit in the capital, spread across 10 areas. Feeds cover major routes like the A406 North Circular, the A12 at the Blackwall Tunnel, and Clapham's A3.",
       "That density makes the UK collection a live traffic board for London - check a junction before you drive or watch the city move in real time, free on WorldEye.",
       "Outside the capital the pickings are thin but real: Manchester Airport and the Isle of Wight carry the few non-London feeds. If you are flying out of Manchester or crossing to the island, those cameras are worth a look — otherwise, this collection is London's.",
       "The London feeds cluster on the routes drivers actually use: the A406 North Circular ringing the north, the A12 feeding the Blackwall Tunnel, the A3 through Clapham. Check your junction before the school run or the evening peak — the cameras show the same congestion the traffic reports describe, live.",
-      "All 899 feeds are free on WorldEye with no account. Open the map, zoom to London, and tap a marker near your route.",
+      "All 1,403 feeds are free on WorldEye with no account. Open the map, zoom to London, and tap a marker near your route.",
     ],
     blurb:
       "Watch 899 live cameras across the United Kingdom on WorldEye - hundreds of London traffic and street feeds, streaming live and always free to watch.",
     faqs: [
       {
         q: "How many live cameras are there in the United Kingdom?",
-        a: "WorldEye streams 899 live cameras across 10 areas in the United Kingdom.",
+        a: "WorldEye streams 1,403 live cameras across 10 areas in the United Kingdom.",
       },
       {
         q: "Is almost all UK camera coverage in London?",
-        a: "Yes - 890 of the 899 UK cameras are in London. A handful of feeds elsewhere, like Manchester Airport and the Isle of Wight, round out the map.",
+        a: "Yes - 890 of the 1,403 UK cameras are in London. A handful of feeds elsewhere, like Manchester Airport and the Isle of Wight, round out the map.",
       },
       {
         q: "Can I check London traffic live?",

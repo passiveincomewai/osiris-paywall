@@ -8,7 +8,7 @@ export type CountryContent = {
 export const countryContentC: Record<string, CountryContent> = {
   "new-zealand": {
     intro: [
-      "New Zealand's live camera network on WorldEye runs to 249 cameras, and Auckland does the heavy lifting with 98 of them - streets, harbour views, and motorway feeds around the country's biggest city.",
+      "New Zealand's live camera network on WorldEye runs to 257 cameras, and Auckland does the heavy lifting with 98 of them - streets, harbour views, and motorway feeds around the country's biggest city.",
       "The South Island is well represented too: Canterbury has 78 cameras and Otago 13, covering everything from Christchurch traffic to southern alpine and lake country, while Wellington adds 37 feeds around the capital's harbour and hills.",
       "Smaller clusters in Waikato, the West Coast, Nelson/Marlborough, and the Bay of Plenty round out the map - handy for checking road conditions before a drive, or just watching the weather roll in.",
       "Auckland's 98 feeds are the workhorse of the network: motorway cameras for the commute, street feeds through the city, and harbour views that double as weather checks. If you live in Auckland, learn which motorway cameras sit on your route and check them before the morning peak.",
@@ -19,7 +19,7 @@ export const countryContentC: Record<string, CountryContent> = {
     faqs: [
       {
         q: "How many live cameras are there in New Zealand?",
-        a: "WorldEye lists 249 live cameras across New Zealand, spread over 10 regions - from Auckland's motorways to West Coast alpine passes.",
+        a: "WorldEye lists 257 live cameras across New Zealand, spread over 10 regions - from Auckland's motorways to West Coast alpine passes.",
       },
       {
         q: "Which areas in New Zealand have the most cameras?",
@@ -137,7 +137,7 @@ export const countryContentC: Record<string, CountryContent> = {
   },
   "south-korea": {
     intro: [
-      "South Korea's 138 live cameras on WorldEye read like a tour of its biggest cities. Seoul leads with 35 feeds, followed by Busan (17), Incheon (11), and Daegu (9) - dense urban views, traffic corridors, and night-lit streetscapes.",
+      "South Korea's 1,610 live cameras on WorldEye read like a tour of its biggest cities. Seoul leads with 35 feeds, followed by Busan (17), Incheon (11), and Daegu (9) - dense urban views, traffic corridors, and night-lit streetscapes.",
       "The network fans out across a dozen areas: Gwangju and Changwon in the south, Goyang and Gimpo near the capital, Pohang and Geoje (사등면) on the coast, and the planned city of Sejong.",
       "Coastal cameras in Busan, Pohang, and Geoje catch harbours and sea views; the Seoul and Incheon feeds are the best bet for watching the city's pulse after dark.",
       "Seoul's 35 feeds are the densest single-city cluster: traffic corridors by day, neon streetscapes by night. Incheon adds 11 more around the airport approaches and the coast — useful if you are heading to or from the airport and want a look at road conditions first.",
@@ -148,7 +148,7 @@ export const countryContentC: Record<string, CountryContent> = {
     faqs: [
       {
         q: "How many live cameras are there in South Korea?",
-        a: "WorldEye carries 138 live cameras across South Korea, covering 12 areas from Seoul to the southern coast.",
+        a: "WorldEye carries 1,610 live cameras across South Korea, covering 12 areas from Seoul to the southern coast.",
       },
       {
         q: "Which South Korean cities have the most cameras?",
