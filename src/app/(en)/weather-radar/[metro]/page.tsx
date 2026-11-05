@@ -175,7 +175,7 @@ export default async function RadarMetroPage({
     },
     {
       q: "Is it free?",
-      a: "Yes — the radar frame and every camera on this page are free, with no account and no signup. NOAA's data is public domain; the cameras are the same public feeds the directory serves everywhere.",
+      a: `Yes — the radar frame and every camera on this page are free, with no account and no signup. NOAA's data is public domain; the cameras are the same public feeds the directory serves everywhere — on this page that is ${fmt(n)} feeds ${topSources.length === 1 ? `from a single source, ${topSources[0].name}` : `across ${sourceCounts.size} sources, led by ${topSources[0].name}`}, itemised in the field breakdown below.`,
     },
   ];
 
@@ -365,7 +365,7 @@ export default async function RadarMetroPage({
           `Find the cell, then find its cameras: the wall is nearest-first from the same centre the radar window uses${featured.length > 0 ? ` — the first card is ${featured[0].name}${nearestKm !== null ? `, ${nearestKm.toFixed(1)} km from the centre` : ""}` : ""} — so a storm crossing the frame is crossing the top of the wall.`,
           `Check timestamps on the cameras before trusting a frame — a camera and a radar sweep minutes apart can tell different stories in fast weather.${medianKm !== null ? ` On this wall the median camera stands ${medianKm.toFixed(1)} km from the ${m.name} centre; start with the feeds inside that ring for the cell over the middle of the metro.` : ""}`,
           "For warnings, the National Weather Service is the authority: this page shows the radar picture and the ground view, and prints no warning of its own.",
-          "Open the globe's radar layer for the animated loop and the lightning overlay — this page is the still frame, the globe is the movie.",
+          `Open the globe's radar layer for the animated loop and the lightning overlay — this page is the still frame, the globe is the movie. The nearest other radar metros to ${m.name} are ${siblings.map((s) => s.name).join(", ")} — each with its own frame and its own camera field.`,
         ]}
       />
 
