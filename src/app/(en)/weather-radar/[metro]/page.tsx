@@ -108,9 +108,37 @@ export default async function RadarMetroPage({
   const n = records.length;
   const fmt = (x: number) => x.toLocaleString("en-US");
   const areas = await areasForDef(def, 5);
+  const allAreas = await areasForDef(def);
   const featured: Sample[] = records
     .slice(0, 8)
     .map((r) => ({ name: r.name, city: r.city, id: r.id }));
+
+  /* The field's own composition — the per-source breakdown and the
+     distance spread of the records this page already loads. Rendered
+     as prose below so each metro's page states its own field's facts. */
+  const sourceCounts = new Map<string, number>();
+  for (const r of records) {
+    const s = r.source?.trim();
+    if (s) sourceCounts.set(s, (sourceCounts.get(s) ?? 0) + 1);
+  }
+  const topSources = [...sourceCounts.entries()]
+    .map(([name, count]) => ({ name, count }))
+    .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name))
+    .slice(0, 5);
+  const distances: number[] = [];
+  for (const r of records) {
+    if (typeof r.lat === "number" && typeof r.lng === "number") {
+      distances.push(haversineKm(m.lat, m.lng, r.lat, r.lng));
+    }
+  }
+  distances.sort((a, b) => a - b);
+  const nearestKm = distances.length ? distances[0] : null;
+  const medianKm = distances.length
+    ? distances[Math.floor(distances.length / 2)]
+    : null;
+  const within10Km = distances.filter((d) => d <= 10).length;
+  const band10to20Km = distances.filter((d) => d > 10 && d <= 20).length;
+  const pctOfWall = (c: number) => Math.round((c / n) * 100);
 
   const frameIso = radarFrameIso();
   const frame = frameLabel(frameIso, m.tz);
@@ -257,12 +285,85 @@ export default async function RadarMetroPage({
         <SampleGrid title={`Nearest cameras to the ${m.name} centre`} samples={featured} />
       )}
 
+      <section className="mt-12">
+        <h2 className="text-xl md:text-2xl font-bold mb-3">
+          {m.name}&rsquo;s camera field, by source and distance
+        </h2>
+        <p className="text-sm text-white/55 leading-relaxed max-w-3xl mb-4">
+          {topSources.length === 1 ? (
+            <>
+              Every one of the {fmt(n)} cameras in this wall is filed under a
+              single catalogue source — {topSources[0].name}. The wall&rsquo;s
+              coverage is therefore exactly that source&rsquo;s network: where
+              it has placed no camera, this page has none either, and the
+              field&rsquo;s density map is that one network&rsquo;s placement
+              across the metro.
+            </>
+          ) : (
+            <>
+              No single source is this wall: the {fmt(n)} cameras are filed
+              under {sourceCounts.size} catalogue sources. The largest,{" "}
+              {topSources[0].name}, supplies {fmt(topSources[0].count)} of them
+              ({pctOfWall(topSources[0].count)}% of the wall)
+              {topSources[1]
+                ? `, and ${topSources[1].name} adds ${fmt(topSources[1].count)} (${pctOfWall(topSources[1].count)}%)`
+                : ""}
+              . The breakdown below is counted from the same records the
+              explorer serves — a composite field reads differently from a
+              single network&rsquo;s, and this one is a composite.
+            </>
+          )}
+        </p>
+        <ul className="text-sm text-white/55 leading-relaxed max-w-3xl space-y-1.5 mb-4 list-disc pl-5">
+          {topSources.map((s) => (
+            <li key={s.name}>
+              {s.name} — {fmt(s.count)} cameras ({pctOfWall(s.count)}% of the
+              wall)
+            </li>
+          ))}
+        </ul>
+        <p className="text-sm text-white/55 leading-relaxed max-w-3xl mb-4">
+          {allAreas.length > 1 ? (
+            <>
+              By the area names the records themselves carry, the field splits
+              across {allAreas.length} areas — largest first:{" "}
+              {allAreas
+                .slice(0, 4)
+                .map((a) => `${a.name} (${fmt(a.count)})`)
+                .join(", ")}
+              . The explorer&rsquo;s area chips use these same names, so the
+              split you read here is the split you can filter by.
+            </>
+          ) : allAreas.length === 1 ? (
+            <>
+              Every record in the field carries the same area name —{" "}
+              {allAreas[0].name} — so the explorer&rsquo;s area chips offer no
+              finer split for this metro; distance from the centre is the
+              useful cut here.
+            </>
+          ) : null}
+        </p>
+        {nearestKm !== null && medianKm !== null && (
+          <p className="text-sm text-white/55 leading-relaxed max-w-3xl">
+            Measured from the cluster centre ({m.lat.toFixed(2)},{" "}
+            {m.lng.toFixed(2)}), the nearest camera
+            {featured.length > 0 ? <> — {featured[0].name} —</> : null} stands{" "}
+            {nearestKm.toFixed(1)} km away. {fmt(within10Km)} cameras sit
+            within 10 km of the centre and {fmt(band10to20Km)} more between 10
+            and 20 km; the field&rsquo;s median camera is {medianKm.toFixed(1)}{" "}
+            km out, and the farthest record inside the {m.radiusKm} km rule
+            is {distances[distances.length - 1].toFixed(1)} km from the
+            centre.
+          </p>
+        )}
+      </section>
+
       <HowTo
         title={`How to read ${m.name}'s weather on WorldEye`}
         steps={[
           "Start with the frame stamp: the mosaic republishes about every five minutes, and the time under the image is the frame you are actually seeing.",
-          "Find the cell, then find its cameras: the wall is nearest-first from the same centre the radar window uses, so a storm crossing the frame is crossing the top of the wall.",
-          "Check timestamps on the cameras before trusting a frame — a camera and a radar sweep minutes apart can tell different stories in fast weather.",
+          `Find the cell, then find its cameras: the wall is nearest-first from the same centre the radar window uses${featured.length > 0 ? ` — the first card is ${featured[0].name}${nearestKm !== null ? `, ${nearestKm.toFixed(1)} km from the centre` : ""}` : ""} — so a storm crossing the frame is crossing the top of the wall.`,
+          `Check timestamps on the cameras before trusting a frame — a camera and a radar sweep minutes apart can tell different stories in fast weather.${medianKm !== null ? ` On this wall the median camera stands ${medianKm.toFixed(1)} km from the ${m.name} centre; start with the feeds inside that ring for the cell over the middle of the metro.` : ""}`,
           "For warnings, the National Weather Service is the authority: this page shows the radar picture and the ground view, and prints no warning of its own.",
           "Open the globe's radar layer for the animated loop and the lightning overlay — this page is the still frame, the globe is the movie.",
         ]}
