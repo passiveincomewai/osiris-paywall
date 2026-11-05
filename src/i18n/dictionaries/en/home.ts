@@ -274,6 +274,14 @@ export const enHome: HomeCopy = {
         a: "WorldEye aggregates publicly available camera feeds from around the world — traffic, city streets, landmarks and nature — into one browsable layer on the globe. They are third-party public sources, so individual feeds can go offline and coverage varies by region.",
       },
       {
+        q: "Can anyone watch public street cameras?",
+        a: "Yes — anyone. Every camera on WorldEye is a feed its operator already publishes openly on the web: transport departments, cities, resorts and parks put them online for the public to view. WorldEye gathers them onto one map; it never unlocks, intercepts or accesses a private camera.",
+      },
+      {
+        q: "Are the cameras really live?",
+        a: "The feeds are live sources. Many stream real-time video; others, including much of the DOT networks, refresh a still image every minute or two — current either way, and each feed carries its timestamp. A camera whose source stops updating is marked unavailable, never replayed from a recording.",
+      },
+      {
         q: "Does WorldEye work on my phone?",
         a: "Yes. WorldEye runs in any modern browser — Chrome, Edge, Firefox and Safari — on desktop and mobile. There is nothing to install; just open worldeye.app.",
       },

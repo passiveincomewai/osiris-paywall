@@ -42,6 +42,14 @@ const CAMERA_FAQS: Array<{ q: string; a: string }> = [
     a: "WorldEye aggregates publicly available camera feeds from around the world — traffic, city streets, landmarks and nature — into one browsable layer on the map. The feeds are operated by cities, transport agencies, resorts and businesses that already publish them openly on the web.",
   },
   {
+    q: "Can anyone watch public street cameras?",
+    a: "Yes. Every camera in the directory is a feed its operator publishes openly on the web — transport departments, cities, resorts and businesses stream them for the public to view. WorldEye gathers the feeds onto one map; it does not unlock, intercept or access any private camera, and the directory holds no doorbell, home or business-security cameras.",
+  },
+  {
+    q: "Is it legal to watch these cameras?",
+    a: "These are publicly published feeds intended for public viewing — agencies run traffic and city cameras so anyone can check road conditions and public places before travelling. Viewing is one-way: nobody watching can control a camera, and the feeds carry no audio.",
+  },
+  {
     q: "Why is a camera offline?",
     a: "Because the feeds are third-party public sources, individual cameras can go offline, move, or change without notice, and coverage varies by region: some cities publish hundreds of public cameras, others publish none. A camera whose stream has gone off air shows as unavailable rather than playing a recording.",
   },

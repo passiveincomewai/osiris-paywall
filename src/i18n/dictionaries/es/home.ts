@@ -167,6 +167,14 @@ export const esHome: HomeCopy = {
         a: "WorldEye agrega feeds de cámaras disponibles públicamente de todo el mundo (tráfico, calles de ciudades, lugares emblemáticos y naturaleza) en una sola capa navegable sobre el globo. Son fuentes públicas de terceros, así que algunos feeds pueden desconectarse y la cobertura varía por región.",
       },
       {
+        q: "¿Puede cualquiera ver las cámaras públicas de las calles?",
+        a: "Sí, cualquiera. Cada cámara de WorldEye es un feed que su operador ya publica abiertamente en la web: departamentos de transporte, ciudades, estaciones y parques los ponen en línea para que el público los vea. WorldEye los reúne en un solo mapa; nunca desbloquea, intercepta ni accede a una cámara privada.",
+      },
+      {
+        q: "¿Las cámaras son realmente en vivo?",
+        a: "Los feeds son fuentes en vivo. Muchos transmiten video en tiempo real; otros, incluida gran parte de las redes de los departamentos de transporte, actualizan una imagen fija cada uno o dos minutos: actuales en ambos casos, y cada feed lleva su marca de tiempo. Una cámara cuya fuente deja de actualizarse se marca como no disponible, nunca se repite desde una grabación.",
+      },
+      {
         q: "¿WorldEye funciona en mi teléfono?",
         a: "Sí. WorldEye funciona en cualquier navegador moderno (Chrome, Edge, Firefox y Safari), en escritorio y móvil. No hay nada que instalar; solo abre worldeye.app.",
       },

@@ -89,10 +89,10 @@ const ES_TRANCHE_DATE = "2026-10-26";
 // SHA-256 over each slug's English dictionary (src/i18n/source-hash.ts),
 // computed at publish time; dictionaries.test.ts recomputes and pins them.
 const ES_SOURCE_HASHES: Record<string, string> = {
-  "": "d1e20181cb37f8f70a2ee2254f443bbc3ad8dcf70960dc7e7713428a2db0f74e",
+  "": "50f38f9f755317ccc03cad2de028ea2d37654e04788d3428dfbad98f2f9c6c56",
   pricing: "baa2c2545a18d6cab0e2561cd8d13c89b09d4775492816a286680bdd3e2e07ac",
   "live-webcams": "5b6ebf74176e177bba6b13c296da76b85f2003d4bb65c15a904a7041821d1c8f",
-  faq: "b9437dac3bacb6f5e5a61ce2961b5aaa04928a05c0b1e4285cb2b1e5aabbfacf",
+  faq: "310dd5cf01093f128168be46d21f0f35170de1f249b0772edc15dfd97afa9ecb",
   "live-flight-tracker": "f6098a009698c4a81bbdf8d413acc89dbf3d5bce2b506ab3e4627f2c168c1cf8",
   "ship-tracker": "07aa958ab9475efa3c61062044fcfe2f3fb461b4d8dee9ad29f711b86632d99d",
 };
@@ -216,6 +216,12 @@ const ES_SOURCE_HASHES: Record<string, string> = {
 // so the live-webcams and ship-tracker hashes moved (this also
 // clears the live-webcams hash drift the dictionary had
 // accumulated); their updatedAt stays 2026-10-29 / 2026-10-31.
+// Re-sync (2026-11-04, question-ranking plays): the home and faq
+// dictionaries gained the "can you / is it legal" camera FAQ family
+// (can anyone watch public street cameras; is it legal; where the
+// cameras come from; are they really live); the Spanish dictionaries
+// were re-synced the same day, so the home and faq hashes moved;
+// their updatedAt stays 2026-10-31.
 const ES_UPDATED_AT: Record<string, string> = {
   "": "2026-10-31",
   pricing: "2026-10-31",

@@ -270,6 +270,22 @@ export const enFaq: FaqCopy = {
             "WorldEye aggregates publicly available camera feeds from around the world — traffic, city streets, landmarks, nature — into one browsable layer on the map. They're third-party public sources, so individual feeds can go offline; coverage varies by region. Free for everyone.",
         },
         plain(
+          "Can anyone watch public street and traffic cameras?",
+          "Yes. The cameras on WorldEye are feeds that transport departments, cities and other operators already publish openly on the web for anyone to view — the same feeds you would find on a state 511 site. WorldEye gathers them onto one map; it doesn't unlock, intercept or access any private camera, and there are no doorbell, home or business-security cameras in the directory."
+        ),
+        plain(
+          "Is it legal to watch public cameras online?",
+          "Watching them is what they are published for: agencies put traffic and city cameras online so the public can check road conditions and see public places, and these are publicly published feeds intended for public viewing. It is one-way viewing of public spaces — WorldEye can't control a camera, the feeds carry no audio, and no camera shows anywhere its operator didn't point it."
+        ),
+        plain(
+          "Where do the cameras on WorldEye come from?",
+          "From the operators who publish them: state and national transport departments (the 511 networks), city agencies, airports, ski resorts, harbours, parks and businesses that stream their locations openly. WorldEye indexes 74,229 of these public feeds and labels each one with its source. The operators keep full control of their cameras, and a feed disappears from WorldEye when its operator stops publishing it."
+        ),
+        plain(
+          "Are the cameras really live?",
+          "The feeds are live sources, but live comes in two forms: many cameras stream real-time video, while others — a large share of the DOT networks — publish a fresh still image every minute or two. WorldEye shows each feed as its operator provides it, timestamp included, and a camera whose source has stopped updating shows as unavailable rather than replaying an old recording."
+        ),
+        plain(
           "How accurate is the flight tracking?",
           "Positions come from ADS-B broadcasts that aircraft transmit continuously, so live coverage is genuinely real-time where receiver networks have coverage. Over oceans and remote areas, updates can be sparser."
         ),

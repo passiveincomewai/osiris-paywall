@@ -186,6 +186,22 @@ export const esFaq: FaqCopy = {
             "WorldEye agrega feeds de cámaras disponibles públicamente de todo el mundo —tráfico, calles de ciudades, lugares emblemáticos, naturaleza— en una sola capa explorable sobre el mapa. Son fuentes públicas de terceros, así que algunos feeds pueden desconectarse; la cobertura varía por región. Gratis para todos.",
         },
         plain(
+          "¿Puede cualquiera ver las cámaras públicas de calles y tráfico?",
+          "Sí. Las cámaras de WorldEye son feeds que departamentos de transporte, ciudades y otros operadores ya publican abiertamente en la web para que cualquiera los vea: los mismos feeds que encontrarías en el sitio 511 de un estado. WorldEye los reúne en un solo mapa; no desbloquea, intercepta ni accede a ninguna cámara privada, y en el directorio no hay cámaras de timbres, hogares ni sistemas de seguridad de negocios."
+        ),
+        plain(
+          "¿Es legal ver cámaras públicas en línea?",
+          "Verlas es exactamente para lo que se publican: las agencias ponen las cámaras de tráfico y de ciudades en línea para que el público pueda consultar el estado de las carreteras y ver lugares públicos, y son feeds publicados públicamente destinados a la visualización pública. Es visualización en un solo sentido de espacios públicos: WorldEye no puede controlar una cámara, los feeds no llevan audio y ninguna cámara muestra un lugar hacia donde su operador no la haya apuntado."
+        ),
+        plain(
+          "¿De dónde vienen las cámaras de WorldEye?",
+          "De los operadores que las publican: departamentos de transporte estatales y nacionales (las redes 511), agencias municipales, aeropuertos, estaciones de esquí, puertos, parques y negocios que transmiten sus ubicaciones abiertamente. WorldEye indexa 74.229 de estos feeds públicos y etiqueta cada uno con su fuente. Los operadores mantienen el control total de sus cámaras, y un feed desaparece de WorldEye cuando su operador deja de publicarlo."
+        ),
+        plain(
+          "¿Las cámaras son realmente en vivo?",
+          "Los feeds son fuentes en vivo, pero «en vivo» tiene dos formas: muchas cámaras transmiten video en tiempo real, mientras que otras —una gran parte de las redes de los departamentos de transporte— publican una imagen fija nueva cada uno o dos minutos. WorldEye muestra cada feed tal como lo proporciona su operador, con su marca de tiempo incluida, y una cámara cuya fuente ha dejado de actualizarse se muestra como no disponible en lugar de repetir una grabación antigua."
+        ),
+        plain(
           "¿Qué tan preciso es el seguimiento de vuelos?",
           "Las posiciones vienen de las emisiones ADS-B que los aviones transmiten continuamente, así que la cobertura en vivo es realmente en tiempo real donde las redes de receptores tienen cobertura. Sobre océanos y zonas remotas, las actualizaciones pueden ser más espaciadas."
         ),
