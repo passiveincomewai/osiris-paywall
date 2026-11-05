@@ -103,7 +103,7 @@ describe("sitemap URL set", () => {
           !u.startsWith(`${BASE}/wildfires/`),
       )
       .sort();
-    expect(nonTransit.length).toBe(1162);
+    expect(nonTransit.length).toBe(1120);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     // Hash history: 6d75d0de… until the SEO audit fix #3 (2026-10-27)
     // normalised the es homepage entry from /es/ to its final /es
@@ -305,8 +305,18 @@ describe("sitemap URL set", () => {
     // 49851da1… and the merged tree's set minus the pristine
     // set is exactly the 1 new blog URL, giving 1,162 /
     // 6ea16898….
+    // The indexation fix (2026-11-04) then removed the 42 URLs
+    // whose own templates serve noindex — 40 generated cities
+    // (the 6 scoped count-gate slugs + 34 cities in the 50–70
+    // element band with <2 data elements) and the 2 below-line
+    // states (mississippi, rhode-island) → 1,120. Delta verified
+    // by executing sitemap() on both trees: the pristine tip
+    // generates 1,162 / 6ea16898… and the new set is exactly the
+    // old set minus those 42 URLs (the removed set was computed
+    // with the templates' own gate functions before the change),
+    // giving 1,120 / abb18c4a….
     expect(hash).toBe(
-      "6ea16898714f6fb9b49e5983e43e85a7ec3765f9025e746c6b9881f13f071b72",
+      "abb18c4abedd9e194fc9b365fb232313c0b10f3afc3d46851e2a75b52345d001",
     );
   });
 
@@ -359,6 +369,47 @@ describe("sitemap URL set", () => {
       "/border-crossings/derby-line",
       "/border-crossings/brownsville",
       "/border-crossings/champlain",
+    ]) {
+      expect(has(p), p).toBe(true);
+    }
+  });
+
+  it("applies the city/state noindex tiering (indexation fix, 2026-11-04)", () => {
+    const has = (path: string) => byUrl.has(`${BASE}${path}`);
+    // Tiered out: the 6 scoped count-gate cities, a sample of the 34
+    // element-band failures (50–70 cameras, <2 data elements), and the
+    // 2 below-line states whose §4.2 blocks do not build. Their pages
+    // stay live; their templates serve noindex, so the sitemap must
+    // not list them (mirrors generatedCityRobots / stateRobots via
+    // the same gate functions — src/lib/indexation-gates.ts).
+    for (const p of [
+      "/city-webcams/albany",
+      "/city-webcams/cleveland",
+      "/city-webcams/marysville",
+      "/city-webcams/riverside",
+      "/city-webcams/san-bernardino",
+      "/city-webcams/yoakum",
+      "/city-webcams/birmingham",
+      "/city-webcams/leon",
+      "/city-webcams/mobile",
+      "/city-webcams/laramie",
+      "/city-webcams/stafford",
+      "/city-webcams/tatsuno-city",
+      "/us-traffic-cameras/mississippi",
+      "/us-traffic-cameras/rhode-island",
+    ]) {
+      expect(has(p), p).toBe(false);
+    }
+    // Still listed: big cities, band cities with ≥2 elements, and DC
+    // (below the state line but both §4.2 blocks build).
+    for (const p of [
+      "/city-webcams/austin",
+      "/city-webcams/newcastle",
+      "/city-webcams/milwaukee",
+      "/city-webcams/los-angeles",
+      "/city-webcams/seoul",
+      "/us-traffic-cameras/district-of-columbia",
+      "/us-traffic-cameras/utah",
     ]) {
       expect(has(p), p).toBe(true);
     }

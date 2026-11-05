@@ -35,16 +35,27 @@ import { RAIL_PLACE_SLUGS, RAIL_PLACES } from "@/lib/railfan-places";
 import { agencySeoData, seoAgencies } from "@/lib/transit/seo-data";
 import { feedVersionDate, transitPathsForAgency } from "@/lib/transit/seo";
 import {
+  CITY_MIN_ELEMENTS,
+  cityFailsCountGate,
+  cityInElementBand,
+  countCityElements,
   isConsolidatedCountry,
   isFoldedResort,
   isNoindexUniversity,
   beachSpokeNoindex,
   interstateCorridorNoindex,
   parkSpokeNoindex,
+  stateBelowLine,
+  stateBlocksBuildable,
   surfSpokeNoindex,
   trainSpokeNoindex,
   volcanoSpokeNoindex,
 } from "@/lib/indexation-gates";
+import {
+  loadCityBreakdown,
+  loadStateBreakdown,
+  operatorRows,
+} from "@/lib/place-breakdown";
 import { EXPLORE_SCOPES, countForDef, loadCountryChunk } from "@/lib/explore-data";
 import { CORRIDORS, buildCorridor } from "@/lib/corridors";
 
@@ -709,10 +720,76 @@ async function thinWallNoindexPaths(): Promise<ReadonlySet<string>> {
   return out;
 }
 
+/**
+ * Indexation fix (2026-11-04): the generated-city and state families
+ * carried the same contradiction the R38 wall tiering removed for the
+ * wall families — pages whose own templates serve `noindex, follow`
+ * were still listed here. A sitemap must not advertise URLs the site
+ * itself tells crawlers not to index: Google spends crawl budget on
+ * them and files them as crawled-not-indexed. This set mirrors the
+ * templates' robots decisions exactly, using the same gate functions
+ * and the same place-breakdown measurements the page metadata calls
+ * (generatedCityRobots in city-webcams/[city]/page.tsx, stateRobots
+ * in us-traffic-cameras/[state]/page.tsx), so the sitemap and the
+ * robots metadata cannot disagree. The pages stay live for users;
+ * only their sitemap entries go. Measured at the committed snapshot:
+ * 40 generated cities (the 6 scoped count-gate slugs + 34 cities in
+ * the 50–70 band with fewer than 2 data elements) and 2 states
+ * (Mississippi, Rhode Island — below the line, neither §4.2 block
+ * builds; DC builds both and stays listed).
+ */
+async function thinCityStateNoindexPaths(): Promise<ReadonlySet<string>> {
+  const out = new Set<string>();
+  const cities = (
+    cityPages as unknown as {
+      cities: Array<{
+        slug: string;
+        name: string;
+        countrySlug: string;
+        sourceCount: number;
+      }>;
+    }
+  ).cities;
+  await Promise.all(
+    cities.map(async (g) => {
+      if (cityFailsCountGate(g.slug)) {
+        out.add(`/city-webcams/${g.slug}`);
+        return;
+      }
+      if (cityInElementBand(g.slug)) {
+        const bd = await loadCityBreakdown(g.countrySlug, g.name);
+        const elements = countCityElements({
+          sources: g.sourceCount,
+          corridors: bd ? bd.corridors.length : -1,
+          mixKinds: bd ? bd.mix.length : -1,
+        });
+        if (elements < CITY_MIN_ELEMENTS) {
+          out.add(`/city-webcams/${g.slug}`);
+        }
+      }
+    }),
+  );
+  const states = (usStates as { states: Array<{ slug: string }> }).states;
+  await Promise.all(
+    states.map(async (s) => {
+      if (!stateBelowLine(s.slug)) return;
+      const bd = await loadStateBreakdown(s.slug);
+      const blocks = stateBlocksBuildable({
+        breakdownTotal: bd ? bd.total : null,
+        corridors: bd ? bd.corridors.length : 0,
+        operatorRows: bd ? operatorRows(bd.sources).length : 0,
+      });
+      if (!blocks.any) out.add(`/us-traffic-cameras/${s.slug}`);
+    }),
+  );
+  return out;
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const transitEntries = await transitSitemapEntries();
   const wildfireEntries = await wildfireSitemapEntries();
   const thinWallPaths = await thinWallNoindexPaths();
+  const thinCityStatePaths = await thinCityStateNoindexPaths();
   // Honest lastmod (SEO #11, 2026-10-26; completed by the index-recovery
   // remainder, 2026-10-27): every URL used to be stamped "now" on every
   // render, which teaches crawlers to distrust the signal. The rule now:
@@ -899,7 +976,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly" as const,
       priority: 0.6,
     })),
-    ...SEO_PAGES_WAVE8.map((p) => ({
+    ...SEO_PAGES_WAVE8.filter((p) => !thinCityStatePaths.has(p)).map((p) => ({
       url: `${BASE}${p}`,
       lastModified: cityPagesDate,
       changeFrequency: "monthly" as const,
@@ -910,7 +987,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly" as const,
       priority: 0.6,
     })),
-    ...SEO_PAGES_STATES.map((p) => ({
+    ...SEO_PAGES_STATES.filter((p) => !thinCityStatePaths.has(p)).map((p) => ({
       url: `${BASE}${p}`,
       lastModified: statesDate,
       changeFrequency: "monthly" as const,

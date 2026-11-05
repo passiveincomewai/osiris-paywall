@@ -335,6 +335,16 @@ export default function CamerasPage() {
         <RelatedLinks
           links={[
             {
+              label: "Cameras by country",
+              desc: "Every country in the directory — each with its own page listing all of its live cameras, area by area.",
+              href: "/cameras/countries",
+            },
+            {
+              label: "City webcams",
+              desc: "Live cameras city by city — pick a city and see every public feed the directory holds for it.",
+              href: "/city-webcams",
+            },
+            {
               label: "Live cams worldwide",
               desc: "The watch-first hub — live cams and webcams from around the world, gathered into one browsable directory.",
               href: "/live-webcams",
