@@ -41,6 +41,238 @@ export type BlogPost = {
 
 export const POSTS: BlogPost[] = [
   {
+    slug: "iss-spacewalk-101-final-solar-array-november-5",
+    title: "Spacewalk 101 Is Under Way: Astronauts Install the ISS's Eighth and Final Solar Array",
+    seoTitle: "ISS Spacewalk 101 Final Array | WorldEye Blog",
+    date: "2026-11-05",
+    excerpt:
+      "U.S. spacewalk 101 began at 8:36 a.m. EST on Thursday, November 5, when NASA astronaut Anil Menon and Canadian astronaut Joshua Kutryk left the International Space Station to install and deploy the eighth and final roll-out solar array — completing the power augmentation upgrade that began in 2021.",
+    seoDescription:
+      "Spacewalk 101 began at 8:36 a.m. EST Nov 5: Menon and Kutryk install the eighth and final ISS solar array on the 3B channel, NASA said.",
+    tags: ["iss", "spacewalk", "nasa", "space-station"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "The last piece of the International Space Station's power upgrade is being bolted on today. NASA astronaut Anil Menon and CSA (Canadian Space Agency) astronaut Joshua Kutryk began a spacewalk at 8:36 a.m. EST on Thursday, November 5, outside the station's Quest airlock, NASA said in its space station blog. The walk had been scheduled to begin at about 8:30 a.m. EST and to last more than six and a half hours.",
+          "This is U.S. spacewalk 101 and the 286th spacewalk supporting space station assembly, maintenance and upgrades. It follows directly from the work WorldEye covered on [October 30, when the same pair installed the seventh array in U.S. spacewalk 100](/blog/iss-spacewalk-100-seventh-solar-array) — today they finish the job on the opposite side of the station.",
+        ],
+      },
+      {
+        heading: "What are the astronauts installing today?",
+        body: [
+          "Menon and Kutryk are installing and deploying the eighth and final International Space Station Roll-Out Solar Array, known as an IROSA, on the 3B power channel of the station, NASA said. When it is deployed, the power augmentation upgrades are complete.",
+          "NASA said the eighth array will provide additional power to support critical station operations, including its safe and controlled deorbit at the end of the station's life. USA TODAY, reporting NASA's figures, put the overall gain at about 30 percent — the eight new arrays are intended to lift generating capacity from about 160 kilowatts to about 215 kilowatts.",
+        ],
+      },
+      {
+        heading: "Who is outside, and whose walk is it?",
+        body: [
+          "Kutryk is spacewalk crew member 1, wearing the suit with red stripes, and Menon is crew member 2, wearing the unmarked suit, NASA said. This is Menon's fifth spacewalk and Kutryk's second — the second coming just a week after his first, on October 29.",
+          "That pairing is deliberate continuity: the same two astronauts who installed the seventh array on the 2A channel now close out the programme on 3B, with the station's crew supporting them from inside and the Canadarm2 operation that USA TODAY noted is handled by colleagues aboard.",
+        ],
+      },
+      {
+        heading: "Where can I watch the spacewalk live?",
+        body: [
+          "NASA is streaming the spacewalk live. Its pre-walk post said coverage was already running as the astronauts suited up, and its walk-begins post pointed viewers to NASA's live page for the platforms carrying it. USA TODAY listed NASA's free NASA+ service and streams on Amazon Prime, discovery+, X and YouTube, with coverage that began at 7 a.m. ET.",
+          "A spacewalk is slow television by design — long transits, bolt by bolt work, and checks between every step — but the deployment of a roll-out array is the visual payoff: a compact roll unfurling into a full wing in front of the station's original panels.",
+        ],
+      },
+      {
+        heading: "Follow the station while they work",
+        body: [
+          "While Menon and Kutryk work on the truss, the station itself keeps circling Earth roughly every 90 minutes. WorldEye's [space station tracker](/space-station-tracker) shows where the ISS is right now, and the [guide to watching the ISS live](/blog/how-to-watch-the-iss-live) explains how to catch a visible pass from the ground after dark.",
+          "By the end of today, if the walk goes to plan, a multi-year upgrade will be finished in a single shift: eight new arrays, a station generating up to about 30 percent more power than before the programme, and no ninth array left on the manifest.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When did spacewalk 101 start?",
+        a: "At 8:36 a.m. EST on Thursday, November 5, 2026, NASA said. It was scheduled to begin at about 8:30 a.m. EST and to last more than six and a half hours.",
+      },
+      {
+        q: "What are Menon and Kutryk installing?",
+        a: "The eighth and final International Space Station Roll-Out Solar Array (IROSA), on the station's 3B power channel, completing the power augmentation upgrades, NASA said.",
+      },
+      {
+        q: "How much more power will the ISS have?",
+        a: "About 30 percent more, according to NASA figures reported by USA TODAY: the eight arrays lift generating capacity from about 160 kilowatts to about 215 kilowatts.",
+      },
+      {
+        q: "Where can I watch spacewalk 101 live?",
+        a: "NASA is streaming it live via NASA+ and other platforms including Amazon Prime, discovery+, X and YouTube, with coverage that began at 7 a.m. ET, USA TODAY reported.",
+      },
+    ],
+    sources: [
+      {
+        name: "NASA Space Station Blog — Spacewalk begins to install last roll-out solar array, began 8:36 a.m. EST (November 5)",
+        url: "https://www.nasa.gov/blogs/spacestation/2026/11/05/spacewalk-begins-to-install-last-roll-out-solar-array/",
+      },
+      {
+        name: "NASA Space Station Blog — Astronauts suit up for final power upgrade spacewalk, U.S. spacewalk 101, 286th station walk (November 5)",
+        url: "https://www.nasa.gov/blogs/spacestation/2026/11/05/astronauts-suit-up-for-final-power-upgrade-spacewalk/",
+      },
+      {
+        name: "USA TODAY — NASA's 101st ISS spacewalk aims to boost station power by 30%, how to watch (November 5)",
+        url: "https://www.usatoday.com/story/tech/space/2026/11/05/nasa-astronauts-iss-spacewalk-today-how-watch/92585854007/",
+      },
+    ],
+  },
+  {
+    slug: "mccaysville-copperhill-record-flood-emergency-november-5",
+    title: "Record Flood Emergency in McCaysville and Copperhill: River Tops Its 1990 Mark",
+    seoTitle: "McCaysville Record Flood Nov 5 | WorldEye Blog",
+    date: "2026-11-05",
+    excerpt:
+      "Flash flood emergencies — the National Weather Service's highest flood warning — hit McCaysville, Georgia and Copperhill, Tennessee on Thursday morning, November 5, after up to 6 inches of rain fell in six hours. The Toccoa-Ocoee River crested at 18.05 feet, above its 1990 record of 17.8 feet, and crews made more than 30 water rescues.",
+    seoDescription:
+      "Flash flood emergencies hit McCaysville and Copperhill Nov 5: the Toccoa-Ocoee crested at 18.05 ft, above the 1990 record, with 30-plus rescues.",
+    tags: ["flooding", "georgia", "tennessee", "weather"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "Two towns that share one river woke up to a record flood on Thursday, November 5. Flash flood emergencies were in effect for McCaysville, Georgia and Copperhill, Tennessee, on the Georgia-Tennessee border, CNN reported, citing the National Weather Service — a flash flood emergency is the highest level of flood warning the service issues.",
+          "The river that runs through both towns — the Toccoa River in Georgia, becoming the Ocoee River across the line in Tennessee — crested just above its previous record, set in 1990, just after 6 a.m. ET, above the level the weather service associates with a catastrophic flood event in the two towns. WVLT, citing a weather service graphic, put the crest at Copperhill at 18.05 feet, against a previous record of 17.8 feet.",
+        ],
+      },
+      {
+        heading: "How much rain fell, and how fast?",
+        body: [
+          "Widespread totals of 3 to 6 inches fell from slow-moving overnight storms across parts of north Georgia, with more than 8 inches in isolated spots, CNN reported. Up to 6 inches fell in just six hours at multiple gauges — a rate CNN described as at least a 1-in-200-year rainfall.",
+          "That speed is what turned a heavy-rain night into an emergency before dawn: the water arrived faster than creeks and streets could drain it, and the river kept rising into the morning even as the rain itself moved out.",
+        ],
+      },
+      {
+        heading: "What is happening in McCaysville and Copperhill?",
+        body: [
+          "A state of emergency was issued in McCaysville and the city was closed until further notice, according to the city's police chief, Michael Earley, CNN reported. Crews in Georgia performed more than 30 water rescues as of Thursday morning, WVLT reported, and CNN said numerous residents in Fannin County, where McCaysville sits, still needed evacuation early Thursday, with evacuations ordered on West Tennessee Avenue and East Tennessee Avenue.",
+          "In Tennessee, the weather service said the flooding had caused major flooding of the Ocoee River in far southeastern Tennessee, specifically Polk County, and that river levels were expected to stay flooded through the rest of today, WVLT reported. The flash flood emergency there was extended to 11 a.m. A separate flash flood emergency was also issued overnight for other parts of Fannin County and Gilmer County in Georgia, CNN said.",
+        ],
+      },
+      {
+        heading: "Is the danger over now the rain has stopped?",
+        body: [
+          "Not yet. CNN reported the rain had ended across northern Georgia and southern Tennessee, with no additional downpours expected through the weekend — but dangerous river flooding would remain a threat throughout the day. A river that has just set a record does not fall back to its banks in an hour; the crest moving downstream is the hazard for the rest of Thursday.",
+          "Anyone in the affected counties should follow the National Weather Service and local emergency management, not a news summary: road closures, evacuation orders and the all-clear will come from them first, and flooded roads in hill country can be cut off well away from the river itself.",
+        ],
+      },
+      {
+        heading: "Watch the weather system, not just the headlines",
+        body: [
+          "The same cross-country storm system is now moving its rain toward the East Coast. WorldEye's [weather radar](/weather-radar) and [weather tracker](/weather-tracker) show the system's progress, and the [U.S. traffic cameras](/us-traffic-cameras) collection is the practical check for road conditions before any trip through the southern Appalachians today.",
+          "For McCaysville and Copperhill, Thursday's number will stand in the record books either way: 18.05 feet, above a mark that had held since February 1990. What matters for the rest of the day is the fall — how fast the Toccoa-Ocoee drops, and how soon the rescues can give way to the count of what the water took.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "What happened in McCaysville and Copperhill on November 5?",
+        a: "Flash flood emergencies were declared for both towns after heavy overnight rain. The Toccoa-Ocoee River crested at 18.05 feet at Copperhill, above its 1990 record of 17.8 feet, CNN and WVLT reported, citing the National Weather Service.",
+      },
+      {
+        q: "How many water rescues were made?",
+        a: "More than 30 in Georgia as of Thursday morning, WVLT reported, and CNN said numerous Fannin County residents still needed evacuation early Thursday.",
+      },
+      {
+        q: "How much rain caused the flooding?",
+        a: "Widespread 3 to 6 inches across north Georgia, over 8 inches in isolated spots, with up to 6 inches in six hours at multiple gauges — at least a 1-in-200-year rate, CNN reported.",
+      },
+      {
+        q: "Is McCaysville closed?",
+        a: "Yes. A state of emergency was issued and the city was closed until further notice, according to Police Chief Michael Earley, CNN reported.",
+      },
+    ],
+    sources: [
+      {
+        name: "CNN — Water rescues, evacuations underway as catastrophic flood event hits North Georgia and southern Tennessee (November 5)",
+        url: "https://www.cnn.com/2026/11/05/weather/flooding-georgia-tennessee-mccaysville-copperhill-climate?cid=external-feeds_iluminar_meta",
+      },
+      {
+        name: "WVLT — Heavy rains prompt flash flood emergency in southeast Tennessee, NWS Morristown: crest 18.05 ft vs 17.8 ft record, 30-plus rescues (November 5)",
+        url: "https://www.wvlt.tv/2026/11/05/heavy-rains-prompt-flash-flood-emergency-southeast-tennessee-weather-service-says/",
+      },
+    ],
+  },
+  {
+    slug: "noaa-g1-storm-watch-november-6-7-aurora",
+    title: "NOAA Says G1 Storms Are Likely Friday and Saturday: Aurora Watch for November 6–7",
+    seoTitle: "NOAA G1 Storm Watch Nov 6-7 | WorldEye Blog",
+    date: "2026-11-05",
+    excerpt:
+      "NOAA's Space Weather Prediction Center, in its 3-day forecast issued at 12:30 UTC on Thursday, November 5, says G1 (minor) or greater geomagnetic storms are likely on November 6–7, driven by a coronal hole high-speed stream — with the strongest period, Kp 5, expected around 00–03 UTC on November 7.",
+    seoDescription:
+      "NOAA SWPC forecast issued Nov 5: G1 storms likely Nov 6-7 from a coronal hole stream, greatest Kp 5 around 00-03 UTC Nov 7. Aurora watch details.",
+    tags: ["aurora", "space-weather", "noaa", "northern-lights"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "The aurora odds improve at the end of this week. NOAA's Space Weather Prediction Center (SWPC) said in its 3-day forecast, issued at 12:30 UTC on Thursday, November 5, that G1 (minor) or greater geomagnetic storms are likely on November 6–7, due to coronal hole high-speed stream influences.",
+          "The greatest expected three-hour Kp index for November 5–7 is 5.00, which is the G1 threshold, SWPC said. The past 24 hours, by contrast, were quiet: the greatest observed three-hour Kp was 3, below NOAA scale levels — so this is a forecast step up, not a storm already in progress.",
+        ],
+      },
+      {
+        heading: "When is the G1 storm most likely?",
+        body: [
+          "SWPC's Kp breakdown puts the strongest window at 00–03 UTC on Saturday, November 7, at Kp 5.00 (G1), with the preceding period — 21–00 UTC on November 6 — at 4.67, just below the G1 line. Activity builds through Friday evening UTC, with Kp 4.00 expected at 18–21 UTC on November 6.",
+          "For North American watchers, that timing is promising: 00–03 UTC on November 7 is Friday evening, 7–10 p.m. EST. EarthSky's November 5 sun report, describing the same system, expected active conditions on November 6 as a glancing blow from a November 1 coronal mass ejection combines with the early arrival of fast solar wind, and active conditions continuing November 7 as the coronal hole stream arrives.",
+        ],
+      },
+      {
+        heading: "What is driving this storm?",
+        body: [
+          "A coronal hole — a region of the sun's outer atmosphere where the magnetic field opens into space — is rotating into a position where its fast solar wind can reach Earth. EarthSky noted on November 5 that the large, L-shaped coronal hole it has tracked since November 3 is rotating into a geoeffective position, and because it is so large, part of it already faces Earth, so its high-speed stream may arrive early.",
+          "EarthSky also reported the geomagnetic field ranged from quiet to unsettled over the past day, with Kp values of 1 to 3, and that a slow coronal mass ejection from November 1 had a modelled arrival around November 5 that could add to the stream's effect. SWPC's own rationale is narrower and official: G1 or greater storms are likely on November 6–7 due to the coronal hole stream.",
+        ],
+      },
+      {
+        heading: "Where could the aurora be visible?",
+        body: [
+          "A G1 storm is the entry level of NOAA's geomagnetic scale: it typically brightens the aurora at high latitudes rather than pushing it deep into mid-latitudes. EarthSky said that if the November 1 ejection and the stream both contribute, high-latitude watchers in northern Scotland, Scandinavia and similar latitudes could get a show.",
+          "That is the honest expectation to plan around — a good night for the far north and the northern horizon of border regions under dark, clear skies, not a guaranteed display for everyone. Cloud, moonlight and light pollution will decide more gardens than Kp will, which is why checking a live camera before driving out is the practical move.",
+        ],
+      },
+      {
+        heading: "Where can I watch the aurora live?",
+        body: [
+          "WorldEye's [aurora webcams](/aurora-webcams) and [northern lights webcams](/northern-lights-webcams) collections gather live night-sky cameras from aurora country, so you can see whether the oval is lighting up before you head outside. If the stream arrives early or stronger than forecast, those cameras show it first.",
+          "SWPC will update its 3-day forecast daily, and its rationale can change as the stream arrives. The plan for this weekend is simple: watch Friday evening North American time — Saturday 00–03 UTC — keep expectations at the G1 level SWPC actually forecast, and let the cameras confirm it.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When is the G1 geomagnetic storm expected?",
+        a: "NOAA SWPC says G1 or greater storms are likely on November 6-7, 2026, with the greatest expected Kp of 5.00 at 00-03 UTC on November 7, in its 3-day forecast issued at 12:30 UTC on November 5.",
+      },
+      {
+        q: "What is causing the November 6-7 storm?",
+        a: "A coronal hole high-speed stream, SWPC said. EarthSky added that a glancing blow from a November 1 coronal mass ejection may combine with the stream's early arrival on November 6.",
+      },
+      {
+        q: "Where will the aurora be visible?",
+        a: "At G1, mainly high latitudes. EarthSky said northern Scotland, Scandinavia and similar latitudes could get a show if both the ejection and the stream contribute; dark, clear skies are essential.",
+      },
+      {
+        q: "Is a storm happening right now?",
+        a: "No. SWPC said the greatest observed Kp over the past 24 hours was 3, below NOAA scale levels. The G1 is a forecast for November 6-7, not a storm in progress on November 5.",
+      },
+    ],
+    sources: [
+      {
+        name: "NOAA Space Weather Prediction Center — 3-day forecast issued 12:30 UTC November 5: G1 or greater likely Nov 6-7 due to CH HSS, greatest Kp 5.00",
+        url: "https://services.swpc.noaa.gov/text/3-day-forecast.txt",
+      },
+      {
+        name: "EarthSky — Sun news for November 5, 2026: L-shaped coronal hole rotating into geoeffective position, Nov 6-7 active conditions expected",
+        url: "https://earthsky.org/sun/sun-news-activity-solar-flare-cme-aurora-updates/",
+      },
+    ],
+  },
+  {
     slug: "how-to-watch-traffic-cameras-live",
     title: "How to Watch Traffic Cameras Live",
     seoTitle: "How to Watch Traffic Cameras Live | WorldEye Blog",
