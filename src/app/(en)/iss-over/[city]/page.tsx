@@ -125,7 +125,7 @@ export default async function IssOverCityPage({ params }: Params) {
     },
     {
       q: "How are these times computed?",
-      a: "WorldEye fetches the ISS's current two-line element set from CelesTrak — the same feed as the globe's satellites layer — and propagates it with SGP4, the standard orbital model, converting future positions into rise, peak and set times for this city's coordinates. Rise and set are bisected to the second at the 10-degree threshold. It is a computation from the station's real elements, not a copied schedule.",
+      a: `WorldEye fetches the ISS's current two-line element set from CelesTrak — the same feed as the globe's satellites layer — and propagates it with SGP4, the standard orbital model, converting future positions into rise, peak and set times for this city's coordinates. Rise and set are bisected to the second at the 10-degree threshold. It is a computation from the station's real elements, not a copied schedule.${tle ? ` For ${city.name} the observer point is ${latLabel}, ${lngLabel} (${city.timeZone}), and the elements behind this build are dated ${tle.epoch.toISOString().slice(0, 10)}.` : ` For ${city.name} the observer point is ${latLabel}, ${lngLabel} (${city.timeZone}).`}`,
     },
     {
       q: "What do the labels mean?",
@@ -186,7 +186,7 @@ export default async function IssOverCityPage({ params }: Params) {
       />
       <Intro
         paragraphs={[
-          `The space station passes over ${city.name} on a rhythm set by its orbit — a few crossings a day above the horizon, of which only some arrive in the magic configuration: your sky dark, the station still in sunlight 420 kilometres up, shining like a slow meteor that never burns. The table below computes every crossing of the next 72 hours from the station's current orbital elements and labels each with its true prospects, so the pass you plan around is the pass that will actually show.`,
+          `The space station passes over ${city.name} on a rhythm set by its orbit — a few crossings a day above the horizon, of which only some arrive in the magic configuration: your sky dark, the station still in sunlight 420 kilometres up, shining like a slow meteor that never burns. The table below computes every crossing of the next 72 hours from the station's current orbital elements and labels each with its true prospects, so the pass you plan around is the pass that will actually show.${passes.length ? ` This build counts ${passes.length} crossings for ${city.name} — ${visSplit}.` : ""}`,
           tle
             ? `The elements behind this table are dated ${tle.epoch.toISOString().slice(0, 10)} (their TLE epoch) and the table is recomputed hourly, so the times age with the orbit's own accuracy — good to the second for days ahead, drifting slowly after. ${position ? `As this page was built, the station stood at ${Math.abs(position.lat).toFixed(1)}° ${position.lat >= 0 ? "N" : "S"}, ${Math.abs(position.lng).toFixed(1)}° ${position.lng >= 0 ? "E" : "W"}, ${Math.round(position.altKm)} km up — already somewhere else by the time you read this, which is rather the point of a live tracker.` : ""}`
             : "This build of the page could not fetch the station's orbital elements, so the pass table is empty rather than invented — the cameras below and the live tracker are unaffected, and the table returns at the next hourly refresh.",
@@ -315,7 +315,7 @@ export default async function IssOverCityPage({ params }: Params) {
       <HowTo
         title={`How to watch a pass over ${city.name}`}
         steps={[
-          "Choose a pass labelled visible from the table — dark sky, station in sunlight.",
+          `Choose a pass labelled visible from the table — dark sky, station in sunlight.${nextVisible ? ` In the current table over ${city.name} that is the pass peaking at ${formatPassTime(nextVisible.peak, city.timeZone)}, reaching ${Math.round(nextVisible.maxElevationDeg)}°.` : ` The current 72-hour table over ${city.name} holds no visible-labelled pass — the counted section above shows the split this week.`}`,
           `Be outside at the rise time, facing open sky; a peak above 40 degrees needs no particular direction — it will cross the whole sky.${highestPass ? ` In this table the highest pass over ${city.name} peaks at ${Math.round(highestPass.maxElevationDeg)}°, at ${formatPassTime(highestPass.peak, city.timeZone)}.` : ""}`,
           "Look for a bright, steady light moving fast and silently, with no blinking — aircraft blink; the station does not.",
           "It brightens as it climbs and, on eclipsed exits, can vanish mid-sky as it enters Earth's shadow — the table's label tells you if this pass ends that way at its peak.",
