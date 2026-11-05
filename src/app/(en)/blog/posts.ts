@@ -41,6 +41,77 @@ export type BlogPost = {
 
 export const POSTS: BlogPost[] = [
   {
+    slug: "how-to-watch-traffic-cameras-live",
+    title: "How to Watch Traffic Cameras Live",
+    seoTitle: "How to Watch Traffic Cameras Live | WorldEye Blog",
+    date: "2026-11-04",
+    excerpt:
+      "Traffic cameras are public, free and already watching your route. Here is how to find the cameras on any drive, tell live video from a refreshing still, read what a feed is telling you, and check a whole trip on one map instead of a dozen DOT sites.",
+    seoDescription:
+      "How to watch traffic cameras live: find the DOT cameras on your route, read a feed for snow, ice and queues, and check every camera on one map before you drive.",
+    tags: ["cameras", "guide", "traffic"],
+    sections: [
+      {
+        heading: "The short answer",
+        body: [
+          "Traffic cameras are public. Transport departments and road agencies install them to manage traffic, then publish the feeds openly so drivers can check conditions before travelling. Watching them costs nothing and needs no account: open a feed and you are looking at the road as it is right now — or, for the many networks that publish still images, as it was a minute ago.",
+          "There are three ways in: your state or national road agency's own site, a 511 portal if your region runs one, or a map that gathers many networks at once. This guide walks through each, explains how to tell a live stream from a refreshing still, and ends with the short routine that makes cameras genuinely useful on a real drive. For the deep version of reading a feed — pavement, spray, brake lights, visibility — see [how to check road conditions with live traffic cameras](/blog/checking-road-conditions-live-traffic-cameras).",
+        ],
+      },
+      {
+        heading: "Where traffic cameras come from",
+        body: [
+          "Almost every traffic camera you will ever watch belongs to a public agency: a state department of transportation on the US interstates, National Highways in England, a provincial ministry in Canada, a motorway operator in Europe. They were installed for traffic-management centers — to spot crashes, verify congestion and time the response — and the public feeds are a by-product that turned out to be one of the most useful things agencies publish.",
+          "In the US, the front door is usually a 511 traveler-information portal: nearly every state runs one, with a camera map of its own network. The feeds are free because they are taxpayer-funded and published for public use. What no single agency gives you is the whole trip — cross a state line and you cross into another portal, another map, another interface.",
+        ],
+      },
+      {
+        heading: "How to watch: the five-minute routine",
+        body: [
+          "Start with your route, not with a map of everything. Pick the cameras at the points where conditions decide the trip: the mountain pass, the long bridge, the tunnel, the interchange where two freeways merge. On [WorldEye's camera map](/cameras) you can fly straight to each of those places; the [US traffic cameras by state](/us-traffic-cameras) pages gather each state's DOT feeds if you would rather work from a list.",
+          "Check the timestamp before you trust the picture — every honest feed prints one. A camera whose image is an hour old is a photograph, and conditions have moved on without it. Then read the feed itself: pavement colour, spray behind tyres, brake-light bunching, visibility to the far signs. Three cameras along the route — start, chokepoint, destination — tell you more than any single forecast.",
+          "Re-check just before you leave, and again at fuel stops on a long drive. Storms move faster than plans: the pass that was clear at noon can be under chain controls by four. If the camera you need is offline, bracket it with the cameras on either side and the agency's written road report.",
+        ],
+      },
+      {
+        heading: "Live video or refreshing stills — and why both work",
+        body: [
+          "Not every 'live' camera streams video. Many DOT networks publish a still image that refreshes every 30 seconds to a few minutes — cheaper to run, kinder to rural connections, and for road conditions usually enough: between one frame and the next, snow either is or is not sticking. Other networks, and most city, resort and landmark cameras, stream continuous video.",
+          "WorldEye shows each feed exactly as its operator provides it — video where the source streams video, the latest still where it does not — with the feed's own timestamp. Treat a stills feed like a heartbeat monitor rather than a television: you are checking the state of the road, not watching a show, and for that job a fresh frame every minute does the work.",
+        ],
+      },
+      {
+        heading: "One map instead of a dozen DOT sites",
+        body: [
+          "The friction in all of this is fragmentation: every agency publishes its own map, and a three-state drive means three of them. [WorldEye](/cameras) gathers 74,229 public cameras — traffic feeds from the DOT networks alongside city, beach, ski, airport and nature cameras — onto one searchable globe, so a whole route, or a whole country, is one place to look. The [live webcams](/live-webcams) hub is the browsing way in; the map is the searching way in.",
+          "Browsing is free, and no account is needed to look around. Watching comes with a free allowance of 5 camera opens per device; paid plans remove the limit and make opens unlimited. That is the whole deal — the cameras themselves stay the agencies' public feeds, free at the source, whichever door you walk in through.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "How can I watch traffic cameras live for free?",
+        a: "Open your state or region's 511 portal or road-agency camera map — the feeds are published free for public use — or use a gathered map like WorldEye, where browsing is free with no account and watching includes a free allowance of camera opens per device. The cameras are the same public feeds either way.",
+      },
+      {
+        q: "Are traffic cameras actually live?",
+        a: "Many stream near-live video; many DOT networks instead refresh a still image every 30 seconds to a few minutes. Both show current conditions — check the timestamp on the feed. A camera whose timestamp has stopped advancing is frozen or offline, and its picture should not be trusted.",
+      },
+      {
+        q: "Is it legal to watch traffic cameras?",
+        a: "Yes — agencies publish these feeds for the public to view, and checking road conditions is exactly what they are for. The feeds show public roads and public places, they are view-only (watching cannot control a camera), and they carry no audio.",
+      },
+      {
+        q: "Why is the traffic camera I need offline?",
+        a: "The feeds belong to their operators, and storms, power cuts and maintenance knock cameras out — often exactly when conditions are worst. Bracket the gap with cameras on either side of it and the agency's written road-condition report, and treat a frozen timestamp as no information rather than good news.",
+      },
+      {
+        q: "Can I watch traffic cameras on my phone?",
+        a: "Yes. Agency portals are mobile websites, and WorldEye runs in any modern phone browser with nothing to install — search for the place or pass you care about and the nearest cameras open inline.",
+      },
+    ],
+  },
+  {
     slug: "mammoth-mountain-opens-early-november-5-2026",
     title: "Mammoth Mountain Opens Eight Days Early: California's Ski Season Starts Thursday",
     seoTitle: "Mammoth Opens Early Nov 5 | WorldEye Blog",

@@ -103,7 +103,7 @@ describe("sitemap URL set", () => {
           !u.startsWith(`${BASE}/wildfires/`),
       )
       .sort();
-    expect(nonTransit.length).toBe(1161);
+    expect(nonTransit.length).toBe(1162);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     // Hash history: 6d75d0de… until the SEO audit fix #3 (2026-10-27)
     // normalised the es homepage entry from /es/ to its final /es
@@ -298,8 +298,15 @@ describe("sitemap URL set", () => {
     // was set are present in the executed set), and the merged
     // tree's set minus the pristine set is exactly the 3 new
     // blog URLs, giving 1,161 / 49851da1\u2026.
+    // The question-ranking guide (2026-11-04) then added the
+    // evergreen post /blog/how-to-watch-traffic-cameras-live
+    // → 1,162. Delta verified by executing sitemap() on both
+    // trees the same day: the pristine tip generates 1,161 /
+    // 49851da1… and the merged tree's set minus the pristine
+    // set is exactly the 1 new blog URL, giving 1,162 /
+    // 6ea16898….
     expect(hash).toBe(
-      "49851da17df0d93e09cbb1e709195a9517a98f625e80a3db788af74412dcf101",
+      "6ea16898714f6fb9b49e5983e43e85a7ec3765f9025e746c6b9881f13f071b72",
     );
   });
 
