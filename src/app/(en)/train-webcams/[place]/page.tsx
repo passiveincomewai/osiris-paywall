@@ -167,8 +167,7 @@ export default async function TrainPlacePage({
               </p>
               <p>
                 By the area field each record carries,{" "}
-                {fmt(areaGroupsAll.length)} area{areaGroupsAll.length === 1 ? "" : "s"}{" "}
-                appear
+                {fmt(areaGroupsAll.length)} area{areaGroupsAll.length === 1 ? " appears" : "s appear"}
                 {areaGroups[0] &&
                   ` — ${areaGroups[0].name} accounts for ${fmt(areaGroups[0].count)} of the feeds (${share(areaGroups[0].count)})`}
                 . {fmt(within(5))} cameras sit within 5 km of the anchor
