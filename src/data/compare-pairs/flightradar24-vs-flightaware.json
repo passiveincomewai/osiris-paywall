@@ -31,8 +31,27 @@
     {
       "a": "WorldEye's globe shows live flights free with no signup, combined with ships, satellites, weather and 74,229 public cameras. For history, alerts and aircraft records, Flightradar24 and FlightAware remain the specialists.",
       "q": "Is there a free flight tracker with no signup?"
+    },
+    {
+      "a": "For most viewers, Flightradar24: its map renders smooth live flight paths from a network of roughly 45,000 ADS-B feeders, and its apps add polished 3D and cockpit-style views — it is the enthusiast favourite for watching the sky itself. FlightAware's visualization is plainer, but its flight-status, schedule and US delay data runs deeper, which matters more when you are following a specific trip. WorldEye draws live flight paths free on its 3D globe next to cameras, ships and satellites, but it is a glanceable picture, not a rival to either specialist's data depth.",
+      "q": "Which flight-tracking company has the best flight-path visualization?"
     }
   ],
+  "featuredCams": {
+    "blurb": "Real cameras from WorldEye's live catalogue — no account, no install. Tap any frame to open that exact camera on the globe.",
+    "categories": [
+      "airports"
+    ],
+    "ids": [
+      "occ-airportwebcams-targovishte-airport-1",
+      "occ-openwebcamdb-nagoya-airport-runway-action",
+      "cal-177",
+      "ottawa-muni-229",
+      "cal-634",
+      "ndot-7570"
+    ],
+    "title": "Live on WorldEye right now"
+  },
   "features": [
     {
       "a": "yes",
@@ -113,20 +132,5 @@
   ],
   "verdictA": "Choose Flightradar24 if you track for the love of it — planespotting, following aircraft globally, digging into history and aircraft detail, or wanting the best mobile apps and 3D views.",
   "verdictB": "Choose FlightAware if you track for a reason — a specific flight's status, US airport delays, a general-aviation aircraft you operate, or aviation data for a business.",
-  "worldEye": "If you mainly want to glance at the sky rather than study it, WorldEye shows live flights free on a 3D globe — no signup — alongside live ships, satellites, weather, earthquakes, wildfires and 74,229 public cameras in the same view. It is deliberately not a rival to either specialist's history or data feeds; it is the free, everything-at-once picture. An optional Pro tier ($7.99/week, $13.99/month or $74.99/year) adds the OSINT toolkit and intel feeds.",
-  "featuredCams": {
-    "categories": [
-      "airports"
-    ],
-    "ids": [
-      "occ-airportwebcams-targovishte-airport-1",
-      "occ-openwebcamdb-nagoya-airport-runway-action",
-      "cal-177",
-      "ottawa-muni-229",
-      "cal-634",
-      "ndot-7570"
-    ],
-    "title": "Live on WorldEye right now",
-    "blurb": "Real cameras from WorldEye's live catalogue — no account, no install. Tap any frame to open that exact camera on the globe."
-  }
+  "worldEye": "If you mainly want to glance at the sky rather than study it, WorldEye shows live flights free on a 3D globe — no signup — alongside live ships, satellites, weather, earthquakes, wildfires and 74,229 public cameras in the same view. It is deliberately not a rival to either specialist's history or data feeds; it is the free, everything-at-once picture. An optional Pro tier ($7.99/week, $13.99/month or $74.99/year) adds the OSINT toolkit and intel feeds."
 }

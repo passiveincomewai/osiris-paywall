@@ -234,6 +234,14 @@ const FAQS = [
     q: "Can I get camera data from these platforms programmatically?",
     a: "From WorldEye, yes — through the Enterprise camera feed and REST API, where every camera is filtered by a per-camera rights registry before it ships. EarthCam arranges business services per project and publishes no self-serve API. SkylineWebcams publishes no public API. Windy's API products cover its weather and map data, not a webcam feed.",
   },
+  {
+    q: "What are the best live webcam platforms?",
+    a: "It depends what you watch for. WorldEye is the breadth pick — 74,229 public cameras on one free 3D globe, with flights, satellites and weather in the same view. EarthCam is strongest at famous places, with decades of tourism cameras and apps on every platform including TV. SkylineWebcams is the travel directory — deep in Italy and tourist destinations, with a time-lapse built for every hosted webcam and the cheapest premium tier in this comparison. Windy is the pick when the weather itself is the point: its webcams support forecast-model maps nothing else here matches.",
+  },
+  {
+    q: "What are the most popular live cam platforms today?",
+    a: "The established names are EarthCam (running since 1996), SkylineWebcams and Windy, with WorldEye the newer entry built around a live globe. Popularity splits by use: EarthCam for landmark and TV viewing, SkylineWebcams for travel browsing, Windy for weather watchers, and WorldEye for seeing cameras, flights, ships and satellites together in one place. All four can be used free, so the honest test is opening each with the place you actually want to watch.",
+  },
 ];
 
 const faqJsonLd = {
