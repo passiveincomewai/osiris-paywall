@@ -29,7 +29,7 @@
       "q": "Which flight tracker has the best app?"
     },
     {
-      "a": "WorldEye's globe shows live flights free with no signup, combined with ships, satellites, weather and 74,229 public cameras. For history, alerts and aircraft records, Flightradar24 and FlightAware remain the specialists.",
+      "a": "WorldEye's globe shows live flights free with no signup, combined with satellites, weather and 74,229 public cameras, plus a ship layer whose AIS feed is not currently returning live vessel positions. For history, alerts and aircraft records, Flightradar24 and FlightAware remain the specialists.",
       "q": "Is there a free flight tracker with no signup?"
     },
     {
@@ -132,5 +132,5 @@
   ],
   "verdictA": "Choose Flightradar24 if you track for the love of it — planespotting, following aircraft globally, digging into history and aircraft detail, or wanting the best mobile apps and 3D views.",
   "verdictB": "Choose FlightAware if you track for a reason — a specific flight's status, US airport delays, a general-aviation aircraft you operate, or aviation data for a business.",
-  "worldEye": "If you mainly want to glance at the sky rather than study it, WorldEye shows live flights free on a 3D globe — no signup — alongside live ships, satellites, weather, earthquakes, wildfires and 74,229 public cameras in the same view. It is deliberately not a rival to either specialist's history or data feeds; it is the free, everything-at-once picture. An optional Pro tier ($7.99/week, $13.99/month or $74.99/year) adds the OSINT toolkit and intel feeds."
+  "worldEye": "If you mainly want to glance at the sky rather than study it, WorldEye shows live flights free on a 3D globe — no signup — alongside satellites, weather, earthquakes, wildfires and 74,229 public cameras in the same view, plus a ship layer whose AIS feed is not currently returning live vessel positions. It is deliberately not a rival to either specialist's history or data feeds; it is the free, everything-at-once picture. An optional Pro tier ($7.99/week, $13.99/month or $74.99/year) adds the OSINT toolkit and intel feeds."
 }

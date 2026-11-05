@@ -29,7 +29,7 @@
       "q": "Which is better for free ship tracking?"
     },
     {
-      "a": "WorldEye shows live ship positions free on its 3D globe — no registration — together with flights, satellites, weather and 74,229 cameras. For port schedules, playback and history, MarineTraffic and VesselFinder remain the specialists.",
+      "a": "WorldEye puts a ship layer on its free 3D globe — no registration — together with flights, satellites, weather and 74,229 cameras, but its AIS feed is not currently returning live vessel positions. For live ship positions today — and for port schedules, playback and history — MarineTraffic and VesselFinder remain the specialists.",
       "q": "Is there a free ship tracker with no registration?"
     },
     {
@@ -137,5 +137,5 @@
   ],
   "verdictA": "Choose MarineTraffic if ships are your job — port operations, fleet management, journalism or compliance — and you need schedules, ETAs, playback and years of history more than you need a low price.",
   "verdictB": "Choose VesselFinder if you track a fleet or a few favourite ships on a budget, want satellite ocean coverage without enterprise pricing, and prefer subscriptions that never renew behind your back.",
-  "worldEye": "For casual watching, WorldEye shows live ships free on a 3D globe — no registration at all — in the same view as live flights, satellites, weather, earthquakes, wildfires and 74,229 public cameras. It has neither MarineTraffic's port machinery nor VesselFinder's satellite plans; it's the free, everything-at-once picture. An optional Pro tier ($7.99/week, $13.99/month or $74.99/year) adds the OSINT toolkit and maritime intel feeds."
+  "worldEye": "For casual watching, WorldEye's free 3D globe — no registration at all — puts live flights, satellites, weather, earthquakes, wildfires and 74,229 public cameras in the same view, with a ship layer alongside them; its AIS feed is not currently returning live vessel positions, so the ship layer is quiet until the feed resumes. It has neither MarineTraffic's port machinery nor VesselFinder's satellite plans; it's the free, everything-at-once picture. An optional Pro tier ($7.99/week, $13.99/month or $74.99/year) adds the OSINT toolkit and maritime intel feeds."
 }
