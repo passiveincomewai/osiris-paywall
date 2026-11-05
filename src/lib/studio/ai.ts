@@ -339,6 +339,59 @@ export async function expireStaleAiJobs(
   return expired;
 }
 
+// ── DB: stale render-job expiry (auto-refund) ─────────────────────────────
+
+export const RENDER_EXPIRED_ERROR =
+  "Render never completed — credits automatically refunded.";
+
+/**
+ * Renders run entirely in the browser and normally settle within seconds
+ * (the observed successful render settled in 18s); an hour is far beyond
+ * any legitimate in-browser render, including a realtime capture of a
+ * long source video.
+ */
+export const RENDER_JOB_STALE_MS = 60 * 60 * 1000;
+
+/**
+ * Refund every repurpose_render job that has been queued longer than
+ * RENDER_JOB_STALE_MS. Unlike AI jobs, render jobs are settled by the
+ * browser (settle call, or the tab-close beacon as a fallback) — when
+ * both are lost (e.g. a mobile tab swipe-away, where beforeunload /
+ * sendBeacon are unreliable) the charge used to strand forever: the
+ * client's settle path assumes "the server reaps stale jobs and
+ * auto-refunds", but expireStaleAiJobs above is scoped to AI kinds.
+ * This is the matching reap for renders. Scoped to one profile when
+ * profileId is given, global when null. Safe to call often: settled
+ * jobs are terminal and settle is a noop for them.
+ */
+export async function expireStaleRenderJobs(
+  profileId: string | null,
+  now: Date = new Date(),
+): Promise<number> {
+  const cutoff = new Date(now.getTime() - RENDER_JOB_STALE_MS);
+  const stale = (await dbAny.generationJob.findMany({
+    where: {
+      status: "queued",
+      kind: "repurpose_render",
+      createdAt: { lt: cutoff },
+      ...(profileId ? { profileId } : {}),
+    },
+    orderBy: { createdAt: "asc" },
+    take: 50,
+  })) as GenerationJobRow[];
+  let expired = 0;
+  for (const job of stale) {
+    const settled = await settleGenerationJob({
+      profileId: job.profileId,
+      jobId: job.id,
+      outcome: "failed",
+      error: RENDER_EXPIRED_ERROR,
+    });
+    if (settled && settled.status === "refunded") expired += 1;
+  }
+  return expired;
+}
+
 // ── DB: completion (Cosmo delivers a result) ──────────────────────────────
 
 export type CompleteAiJobResult =

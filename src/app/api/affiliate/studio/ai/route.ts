@@ -26,6 +26,7 @@ import {
   buildAiJobParams,
   evaluateAiCharge,
   expireStaleAiJobs,
+  expireStaleRenderJobs,
   getAiMonthUsage,
 } from "@/lib/studio/ai";
 import { requireStudioAccess } from "../../_util";
@@ -44,6 +45,9 @@ export async function GET() {
   // Honesty housekeeping: any of the caller's jobs that sat in the queue
   // for over 7 days are refunded before the list is shown.
   await expireStaleAiJobs(profile.id).catch(() => 0);
+  // Same housekeeping for the caller's browser-settled render jobs whose
+  // settle call and tab-close beacon were both lost (1-hour threshold).
+  await expireStaleRenderJobs(profile.id).catch(() => 0);
 
   const jobs = (await dbAny.generationJob.findMany({
     where: { profileId: profile.id, kind: { in: ["ai_caption", "ai_hooks", "ai_script", "ai_video_ideas", "ai_image", "ai_background"] } },

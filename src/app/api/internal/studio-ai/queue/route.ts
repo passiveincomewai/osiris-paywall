@@ -10,6 +10,7 @@
 import { NextResponse } from "next/server";
 import {
   expireStaleAiJobs,
+  expireStaleRenderJobs,
   listQueuedAiJobs,
   studioAiConfigured,
   verifyStudioAiBearer,
@@ -28,6 +29,9 @@ export async function GET(req: Request) {
 
   // Housekeeping on every poll: jobs queued >7 days refund themselves.
   const expired = await expireStaleAiJobs(null).catch(() => 0);
+  // Render jobs whose browser settle + tab-close beacon were both lost
+  // refund after 1 hour queued (see expireStaleRenderJobs).
+  await expireStaleRenderJobs(null).catch(() => 0);
   const jobs = await listQueuedAiJobs(20);
 
   return NextResponse.json({
