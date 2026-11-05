@@ -312,7 +312,7 @@ export default async function AirportPage({
             {sourceGroups[1] &&
               `, followed by ${sourceGroups[1].name} with ${fmt(sourceGroups[1].count)}`}
             . By the area field each record carries,{" "}
-            {fmt(areaGroupsAll.length)} area{areaGroupsAll.length === 1 ? "" : "s"} appear
+            {fmt(areaGroupsAll.length)} area{areaGroupsAll.length === 1 ? " appears" : "s appear"}
             {areaGroups[0] &&
               ` — ${areaGroups[0].name} alone accounts for ${fmt(areaGroups[0].count)} cameras (${share(areaGroups[0].count)})`}
             .
