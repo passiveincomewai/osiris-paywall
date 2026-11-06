@@ -6,6 +6,7 @@ import DirectoryExplorer from "@/components/DirectoryExplorer";
 import RouteCameraFinder from "@/components/RouteCameraFinder";
 import {
   cityChunkStats,
+  COUNTRY_INDEX,
   loadCountryChunk,
   recordsForDef,
   resolveExploreDef,
@@ -38,7 +39,6 @@ import PlaceWeatherPanel from "@/components/PlaceWeatherPanel";
 /* Weather data is cached per location for 30 minutes in lib/weather-api;
    ISR at the same cadence keeps the baked page from going staler. */
 export const revalidate = 1800;
-import directory from "@/data/camera-directory.json";
 import cityPages from "@/data/city-pages.json";
 import {
   BASE,
@@ -106,24 +106,24 @@ const CITIES: Record<string, CityCfg> = {
     name: "London",
     country: "United Kingdom",
     countrySlug: "united-kingdom",
-    count: 890,
-    title: "London Live Traffic Cameras & CCTV — 890 TfL Road Feeds",
+    count: 887,
+    title: "London Live Traffic Cameras & CCTV — 887 TfL Road Feeds",
     blurb:
-      "Watch 890 live London CCTV and traffic cameras — TfL JamCams on the North Circular, Blackwall Tunnel approaches and West End traffic views — free on the WorldEye map. No signup needed.",
+      "Watch 887 live London CCTV and traffic cameras — TfL JamCams on the North Circular, Blackwall Tunnel approaches and West End traffic views — free on the WorldEye map. No signup needed.",
     h1: "London Live Webcams",
-    sub: "Watch 890 live London CCTV and traffic cameras — free on the WorldEye globe.",
+    sub: "Watch 887 live London CCTV and traffic cameras — free on the WorldEye globe.",
     intro: [
-      "London accounts for 890 of the 899 cameras indexed in the United Kingdom — effectively the entire national feed is the capital's street and traffic camera grid. The views are working road cameras: the A406 North Circular, the A12 Blackwall Tunnel approaches, the A3 through Clapham, and junctions like Tottenham High Road and Stoke Newington Road. These are London's public traffic CCTV cameras — the TfL JamCams drivers check before they travel.",
+      "London accounts for 887 of the 1,403 cameras indexed in the United Kingdom — nearly two-thirds of the national feed is the capital's street and traffic camera grid. The views are working road cameras: the A406 North Circular, the A12 Blackwall Tunnel approaches, the A3 through Clapham, and junctions like Tottenham High Road and Stoke Newington Road. These are London's public traffic CCTV cameras — the TfL JamCams drivers check before they travel.",
       "Several featured feeds sit around Westfield Stratford and the Olympic Park — Montfichet Road, Westfield Avenue, and the car parks — useful for checking event-day congestion. These are the same class of fixed road feeds Transport for London publishes for its network status.",
-      "All 890 open free on the WorldEye map. Tap any marker across the capital to see current street conditions before you travel.",
+      "All 887 open free on the WorldEye map. Tap any marker across the capital to see current street conditions before you travel.",
       "The Blackwall Tunnel approaches are the feeds to watch when the river crossings jam. The A12 cameras on the northern approach show the queue building in real time — if the tunnel is the problem, you will see it here before the traffic reports catch up. The North Circular works the same way: the Telford Road and Bounds Green cameras show exactly where the ring seizes, junction by junction.",
       "Event days rewrite the pattern. When Westfield Stratford or the Olympic Park host something big, the Montfichet Road, Westfield Avenue and car park cameras show the surge building hours before it peaks — check them if you are heading to an event, or steer clear of the area based on what you see.",
       "Use these feeds the way they are meant to be used: a quick glance at your route's cameras before you leave. They are published for traffic monitoring, not sightseeing, and a two-minute check beats sitting in a queue on the North Circular that you could have avoided.",
     ],
     stats: [
-      { value: "890", label: "live cameras" },
+      { value: "887", label: "live cameras" },
       { value: "#1", label: "of 10 UK areas" },
-      { value: "99%", label: "of UK cameras" },
+      { value: "63%", label: "of UK cameras" },
     ],
     samples: [
       { name: "A406 North Circular Rd/Telford Rd/Bounds Green Rd", city: "London" },
@@ -191,14 +191,14 @@ const CITIES: Record<string, CityCfg> = {
     name: "Ottawa",
     country: "Canada",
     countrySlug: "canada",
-    count: 428,
-    title: "Ottawa Live Webcams — 428 Traffic Cameras",
+    count: 444,
+    title: "Ottawa Live Webcams — 444 Traffic Cameras",
     blurb:
-      "See 428 live Ottawa traffic cameras across Canada's capital — check downtown road conditions and winter weather free on the WorldEye map. No signup needed.",
+      "See 444 live Ottawa traffic cameras across Canada's capital — check downtown road conditions and winter weather free on the WorldEye map. No signup needed.",
     h1: "Ottawa Live Webcams",
-    sub: "See 428 live Ottawa traffic cameras across Canada's capital — free on the WorldEye globe.",
+    sub: "See 444 live Ottawa traffic cameras across Canada's capital — free on the WorldEye globe.",
     intro: [
-      "Ottawa is the single largest metro in Canada's camera index: 428 feeds, more than a quarter of the country's 1,509 cameras. The grid covers the capital's arterial network — the Queensway (Highway 417), downtown intersections, and the crossings to Gatineau.",
+      "Ottawa is the single largest metro in Canada's camera index: 444 feeds, about a tenth of the country's 4,685 cameras. The grid covers the capital's arterial network — the Queensway (Highway 417), downtown intersections, and the crossings to Gatineau.",
       "As the national capital in a snow-belt city, Ottawa's cameras earn their reputation in winter. Snow-clearing operations, freezing rain, and rush-hour collisions on the Queensway are all visible here — check the 417 feeds before a January commute, not during it.",
       "Every feed opens free on the WorldEye map. Zoom to Ottawa, tap a marker, and you are watching the same intersections the city's traffic center monitors.",
       "The Queensway is the spine of the whole grid. Highway 417 carries the east–west commuter load across the city, and the densest camera coverage follows it — which means the feeds sit exactly where the collisions, lane closures and winter pileups happen. If you only check one corridor, make it the 417.",
@@ -206,9 +206,9 @@ const CITIES: Record<string, CityCfg> = {
       "Winter is when this grid pays for itself. Ottawa's snow-clearing operations run around the clock in a storm, and the arterial cameras show plow progress, drifting snow and freezing-rain glaze in real time. Summer construction season is the other peak — lane closures on the Queensway show up here first.",
     ],
     stats: [
-      { value: "428", label: "live cameras" },
-      { value: "#1", label: "of 12 Canadian areas" },
-      { value: "28%", label: "of Canada's cameras" },
+      { value: "444", label: "live cameras" },
+      { value: "#2", label: "of 10 Canadian areas" },
+      { value: "9%", label: "of Canada's cameras" },
     ],
     howtoTitle: "How to check Ottawa road conditions",
     howto: [
@@ -223,7 +223,7 @@ const CITIES: Record<string, CityCfg> = {
     faqs: [
       {
         q: "Why does Ottawa have more cameras than Toronto in this index?",
-        a: "The index reflects published municipal and provincial feeds. Ottawa's traffic-camera grid is the densest published network in the Canadian data at 428 feeds, ahead of Toronto's 339.",
+        a: "The index reflects published municipal and provincial feeds. Ottawa's traffic-camera grid is the densest published network in the Canadian data at 444 feeds, ahead of Toronto's 413.",
       },
       {
         q: "Can I check winter road conditions in Ottawa?",
@@ -259,24 +259,24 @@ const CITIES: Record<string, CityCfg> = {
     name: "Toronto",
     country: "Canada",
     countrySlug: "canada",
-    count: 339,
-    title: "Toronto Live Webcams — 339 Street Cameras",
+    count: 413,
+    title: "Toronto Live Webcams — 413 Street Cameras",
     blurb:
-      "Watch 339 live Toronto street and highway cameras — check 400-series highways and downtown traffic conditions free on the WorldEye map. No signup needed.",
+      "Watch 413 live Toronto street and highway cameras — check 400-series highways and downtown traffic conditions free on the WorldEye map. No signup needed.",
     h1: "Toronto Live Webcams",
-    sub: "Watch 339 live Toronto street and highway cameras — free on the WorldEye globe.",
+    sub: "Watch 413 live Toronto street and highway cameras — free on the WorldEye globe.",
     intro: [
-      "Toronto's 339 cameras make it the second-largest metro in Canada's index, behind Ottawa. Coverage follows the 400-series highways — the 401 across the top of the city, the 427, the Gardiner Expressway, and the Don Valley Parkway — plus major downtown arterials.",
+      "Toronto's 413 cameras make it the second-largest metro in Canada's index, behind Ottawa. Coverage follows the 400-series highways — the 401 across the top of the city, the 427, the Gardiner Expressway, and the Don Valley Parkway — plus major downtown arterials.",
       "The 401 through Toronto is one of the widest and busiest highways in North America, and these feeds are how commuters check whether it is moving before merging on. Lake-effect snow in winter and construction season in summer both show up clearly on the highway cameras.",
-      "All 339 feeds open free on the WorldEye map — no account needed.",
+      "All 413 feeds open free on the WorldEye map — no account needed.",
       "The 401 deserves its reputation. It is among the widest highways on the continent through Toronto, and when it seizes — which it does daily at rush hour — the camera grid shows which lanes are moving and which are parked. Check the 401 feeds at your on-ramp's segment, not just the highway in general; conditions change dramatically between interchanges.",
       "The Gardiner Expressway and Don Valley Parkway are the downtown lifelines, and both spend long stretches as construction zones. Lane reductions that last for months show up on these cameras every single day — the feeds are how locals learn which days the DVP is actually moving.",
       "Winter adds lake-effect snow to the mix and summer adds construction season. The highway cameras show both in real time: whiteouts on the 401's open stretches, and the slow crawl through work zones on the Gardiner. Check before you merge, every time.",
     ],
     stats: [
-      { value: "339", label: "live cameras" },
-      { value: "#2", label: "of 12 Canadian areas" },
-      { value: "22%", label: "of Canada's cameras" },
+      { value: "413", label: "live cameras" },
+      { value: "#3", label: "of 10 Canadian areas" },
+      { value: "9%", label: "of Canada's cameras" },
     ],
     howtoTitle: "How to check Toronto highway conditions",
     howto: [
@@ -291,7 +291,7 @@ const CITIES: Record<string, CityCfg> = {
     faqs: [
       {
         q: "Is Highway 401 covered by these cameras?",
-        a: "Yes. Toronto's 339-camera index concentrates on the 400-series highways, and the 401 — the busiest stretch through the city — has the densest coverage.",
+        a: "Yes. Toronto's 413-camera index concentrates on the 400-series highways, and the 401 — the busiest stretch through the city — has the densest coverage.",
       },
       {
         q: "Are downtown Toronto streets covered too?",
@@ -334,7 +334,7 @@ const CITIES: Record<string, CityCfg> = {
     h1: "Madrid Live Webcams",
     sub: "See 370 live Madrid traffic cameras — free on the WorldEye globe.",
     intro: [
-      "Madrid leads Spain's camera index with 370 feeds — the largest of 12 Spanish areas and nearly a fifth of the country's 1,997 cameras. The network watches the M-30 ring road, the radial autovías (A-1 through A-6), and major city arteries.",
+      "Madrid leads Spain's camera index with 370 feeds — the largest of the Spanish areas in the index and more than a sixth of the country's 2,120 cameras. The network watches the M-30 ring road, the radial autovías (A-1 through A-6), and major city arteries.",
       "Madrid's rush hours run later than in most European capitals — the morning peak builds from 8:00 and the evening one stretches past 20:00. These feeds show the M-30 tunnels and access points where congestion concentrates, so check before driving across town.",
       "Every feed opens free on the WorldEye map. These are traffic cameras, not tourist views — for Plaza Mayor and Gran Vía on foot, the city's street life is better seen in person.",
       "The M-30 is really two roads: the surface ring and the tunnel system underneath. The tunnels are where congestion concentrates — enclosed, limited exits, and the first place to jam when something goes wrong. The camera grid watches both, so check the tunnel feeds specifically if your route goes underground.",
@@ -343,8 +343,8 @@ const CITIES: Record<string, CityCfg> = {
     ],
     stats: [
       { value: "370", label: "live cameras" },
-      { value: "#1", label: "of 12 Spanish areas" },
-      { value: "19%", label: "of Spain's cameras" },
+      { value: "#1", label: "of 10 Spanish areas" },
+      { value: "17%", label: "of Spain's cameras" },
     ],
     howtoTitle: "How to check Madrid traffic",
     howto: [
@@ -395,24 +395,24 @@ const CITIES: Record<string, CityCfg> = {
     name: "Houston",
     country: "United States",
     countrySlug: "united-states",
-    count: 1158,
-    title: "Houston Live Webcams — 1158 Traffic Cameras",
+    count: 1174,
+    title: "Houston Live Webcams — 1174 Traffic Cameras",
     blurb:
-      "Watch 1158 live Houston freeway and traffic cameras — check freeway congestion and storm conditions free on the WorldEye map. No signup needed.",
+      "Watch 1174 live Houston freeway and traffic cameras — check freeway congestion and storm conditions free on the WorldEye map. No signup needed.",
     h1: "Houston Live Webcams",
-    sub: "Watch 1158 live Houston freeway and traffic cameras — free on the WorldEye globe.",
+    sub: "Watch 1174 live Houston freeway and traffic cameras — free on the WorldEye globe.",
     intro: [
-      "Houston's 1,158 cameras make it the third-largest metro grid in the United States index — behind Georgia's statewide network and Utah, and ahead of every other city. The grid is a working freeway-camera system covering the metro's sprawling freeway network: the corridors commuters use every day and the underpasses that flood first in a storm.",
+      "Houston's 1,174 cameras make it the third-largest metro grid in the United States index — behind Georgia's statewide network and Utah, and ahead of every other city. The grid is a working freeway-camera system covering the metro's sprawling freeway network: the corridors commuters use every day and the underpasses that flood first in a storm.",
       "Houston is a city where the camera grid doubles as weather infrastructure. Gulf downpours can drop inches of rain in an hour, and the freeway feeds show standing water, slow-moving traffic and ponding on low sections in real time — check the cameras on your route during a storm, not after you're in it. Hurricane season makes this habit worth building year-round.",
-      "All 1,158 feeds open free on the WorldEye map. Zoom to Houston, tap a freeway marker, and you are watching the same corridors the region's traffic managers watch.",
+      "All 1,174 feeds open free on the WorldEye map. Zoom to Houston, tap a freeway marker, and you are watching the same corridors the region's traffic managers watch.",
       "The underpasses are the critical detail. Houston's freeway system dips under cross streets all over the metro, and those low sections are the first to pond in a downpour — sometimes while the elevated mainlanes are still dry. The camera grid shows the low sections directly, which is why checking the cameras on your exact route matters more than checking Houston traffic in general.",
       "Hurricane season rewrites the rules. When a tropical system approaches the Gulf, the freeway cameras become evacuation-route monitors — showing which corridors are moving and which are already jammed. Build the camera-check habit in ordinary rain so it is automatic when it matters.",
       "Construction is the year-round constant. Houston's freeways are perpetually being widened, and the lane closures move week to week. The camera feeds show the current work zones in real time — the closures on your corridor today may not be the ones from last week.",
     ],
     stats: [
-      { value: "1158", label: "live cameras" },
-      { value: "#3", label: "of 12 US areas" },
-      { value: "5%", label: "of US cameras" },
+      { value: "1174", label: "live cameras" },
+      { value: "#3", label: "of 10 US areas" },
+      { value: "3%", label: "of US cameras" },
     ],
     howtoTitle: "How to check Houston freeway conditions",
     howto: [
@@ -470,7 +470,7 @@ const CITIES: Record<string, CityCfg> = {
     h1: "Dallas Live Webcams",
     sub: "Watch 843 live Dallas CCTV and freeway traffic cameras — free on the WorldEye globe.",
     intro: [
-      "Dallas accounts for 843 of the 23,059 cameras indexed in the United States — the fourth-largest of 12 US areas, behind Georgia, Utah and Houston. The grid watches the Dallas–Fort Worth metro's freeway network, the corridors where the region's long commutes concentrate. Fort Worth is indexed separately with another 489 feeds, so the DFW metro's combined coverage is among the deepest in the country. These are the metro's public traffic CCTV cameras — the fixed road feeds drivers across North Texas check before they merge on.",
+      "Dallas accounts for 843 of the 41,355 cameras indexed in the United States — the fourth-largest US area in the index, behind Georgia, Utah and Houston. The grid watches the Dallas–Fort Worth metro's freeway network, the corridors where the region's long commutes concentrate. Fort Worth is indexed separately with another 489 feeds, so the DFW metro's combined coverage is among the deepest in the country. These are the metro's public traffic CCTV cameras — the fixed road feeds drivers across North Texas check before they merge on.",
       "DFW's commutes are long, its construction zones are constant, and its weather swings from ice storms to severe thunderstorms. The freeway cameras earn their keep in all three: check for ice on the elevated sections in winter, hail and high water in spring, and the ever-present construction slowdowns before you merge on.",
       "All 843 feeds open free on the WorldEye map. Zoom to Dallas–Fort Worth, find the markers on your corridor, and check conditions before you drive.",
       "The Fort Worth split matters for how you use the grid. Dallas's 843 feeds and Fort Worth's 489 are indexed separately, but on the live map they sit side by side — zoom out and the whole DFW metro's freeway network lights up. If your commute crosses between the two, check cameras on both sides of the metroplex.",
@@ -479,8 +479,8 @@ const CITIES: Record<string, CityCfg> = {
     ],
     stats: [
       { value: "843", label: "live cameras" },
-      { value: "#4", label: "of 12 US areas" },
-      { value: "4%", label: "of US cameras" },
+      { value: "#4", label: "of 10 US areas" },
+      { value: "2%", label: "of US cameras" },
     ],
     howtoTitle: "How to check Dallas freeway conditions",
     howto: [
@@ -622,7 +622,7 @@ const CITIES: Record<string, CityCfg> = {
     h1: "Sydney Live Webcams",
     sub: "Watch 186 live Sydney metro traffic cameras — free on the WorldEye globe.",
     intro: [
-      "Sydney dominates Australia's camera index: 186 metro feeds across the central, north, west and south corridors — about 74% of the country's 250 cameras and the largest of 10 Australian areas. The grid watches the harbour crossings, the freeway network, and the routes that carry weekend traffic to the eastern beaches.",
+      "Sydney dominates Australia's camera index: 186 metro feeds across the central, north, west and south corridors — about 44% of the country's 421 cameras and the largest cluster in the country's index. The grid watches the harbour crossings, the freeway network, and the routes that carry weekend traffic to the eastern beaches.",
       "The harbour bridges and tunnels are the city's natural chokepoints, and the camera grid shows them as they are right now: peak-hour queues, lane closures, and the beach-route crawl on a hot summer Saturday. Sudden downpours — Sydney gets its share — show up on the road feeds before they show up on your windshield.",
       "All 186 feeds open free on the WorldEye map. Zoom to Sydney, tap a marker on your route, and check conditions before you drive.",
       "The corridors tell the story. The grid is organized across central, north, west and south Sydney — and each corridor has its own rhythm. The northern routes carry the commuter load, the western freeways move the freight and the beach routes clog on summer weekends. Find your corridor's cameras and learn its pattern.",
@@ -631,8 +631,8 @@ const CITIES: Record<string, CityCfg> = {
     ],
     stats: [
       { value: "186", label: "live cameras" },
-      { value: "#1", label: "of 10 Australian areas" },
-      { value: "74%", label: "of Australia's cameras" },
+      { value: "#1", label: "in Australia" },
+      { value: "44%", label: "of Australia's cameras" },
     ],
     howtoTitle: "How to check Sydney traffic conditions",
     howto: [
@@ -659,7 +659,7 @@ const CITIES: Record<string, CityCfg> = {
       },
       {
         q: "Which corridors have the most cameras?",
-        a: "Coverage spans Sydney's central, north, west and south corridors — 186 metro feeds, the largest of 10 Australian areas. Find your corridor's cameras on the live map.",
+        a: "Coverage spans Sydney's central, north, west and south corridors — 186 metro feeds, the largest cluster in Australia's index. Find your corridor's cameras on the live map.",
       },
       {
         q: "Can I avoid the harbour crossing queues?",
@@ -690,7 +690,7 @@ const CITIES: Record<string, CityCfg> = {
     h1: "Auckland Live Webcams",
     sub: "Watch 98 live Auckland motorway cameras — free on the WorldEye globe.",
     intro: [
-      "Auckland's 98 cameras are NZTA motorway and state-highway feeds — the largest city cluster in New Zealand's 249-camera index, accounting for 39% of the national total. The grid follows the motorway network that carries the country's biggest city: SH1 running north–south through the isthmus, SH16 heading northwest, and SH20 and SH20A linking the city to the airport.",
+      "Auckland's 98 cameras are NZTA motorway and state-highway feeds — the largest city cluster in New Zealand's 257-camera index, accounting for 38% of the national total. The grid follows the motorway network that carries the country's biggest city: SH1 running north–south through the isthmus, SH16 heading northwest, and SH20 and SH20A linking the city to the airport.",
       "The featured feeds read like an Auckland commute in miniature: the SH1/SH16 Central Motorway Junction where the two motorways merge in the city centre, the SH20A George Bolt Memorial Drive cameras on the airport route, and the SH18 Brigham Creek Interchange out west. These are the same class of fixed highway feeds NZTA publishes for network monitoring.",
       "All 98 open free on the WorldEye map. Tap any marker across the motorway network to see current conditions before you travel.",
       "The Central Motorway Junction is the feed to watch when the centre jams. It is where SH1 and SH16 braid together through the middle of the city, and when it seizes — which it does most weekday peaks — the queues spill onto both motorways at once. The junction camera shows the merge itself, so you can see whether the problem is your direction or the other one before you commit.",
@@ -700,7 +700,7 @@ const CITIES: Record<string, CityCfg> = {
     stats: [
       { value: "98", label: "live cameras" },
       { value: "#1", label: "of 10 NZ areas" },
-      { value: "39%", label: "of NZ cameras" },
+      { value: "38%", label: "of NZ cameras" },
     ],
     samples: [
       { name: "SH1 Walter Strevens Dr Overbridge (Southbound)", city: "Auckland" },
@@ -768,7 +768,7 @@ const CITIES: Record<string, CityCfg> = {
     h1: "Fort Worth Live Webcams",
     sub: "Watch 489 live Fort Worth CCTV and freeway cameras — free on the WorldEye globe.",
     intro: [
-      "Fort Worth accounts for 489 of the 23,059 cameras indexed in the United States — the tenth-largest of 12 US areas. The grid is a TxDOT district freeway-camera network covering the western half of the Dallas–Fort Worth metroplex: the I-35W, I-20 and I-820 corridors commuters use every day. Dallas is indexed separately with another 843 feeds, so the DFW metro's combined coverage is among the deepest in the country.",
+      "Fort Worth accounts for 489 of the 41,355 cameras indexed in the United States — the tenth-largest US area in the index. The grid is a TxDOT district freeway-camera network covering the western half of the Dallas–Fort Worth metroplex: the I-35W, I-20 and I-820 corridors commuters use every day. Dallas is indexed separately with another 843 feeds, so the DFW metro's combined coverage is among the deepest in the country.",
       "The three corridors divide the work. I-35W is the north–south spine through Fort Worth, I-20 runs the southern side of the metro, and I-820 loops the city — and between them they carry the commute, the freight, and the cross-metro trips that make DFW driving what it is. The cameras sit on those corridors, which is exactly where the incidents and slowdowns happen.",
       "All 489 feeds open free on the WorldEye map. Zoom to Fort Worth, tap a freeway marker, and you are watching the same corridors the district's traffic managers watch.",
       "The Dallas split matters for how you use the grid. Fort Worth's 489 feeds and Dallas's 843 are indexed separately, but on the live map they sit side by side — zoom out and the whole DFW metroplex lights up. If your commute crosses between the two cities, check cameras on both sides before you leave; a clear I-35W says nothing about what waits on the Dallas side.",
@@ -777,8 +777,8 @@ const CITIES: Record<string, CityCfg> = {
     ],
     stats: [
       { value: "489", label: "live cameras" },
-      { value: "#10", label: "of 12 US areas" },
-      { value: "2%", label: "of US cameras" },
+      { value: "#10", label: "of 10 US areas" },
+      { value: "1%", label: "of US cameras" },
     ],
     howtoTitle: "How to check Fort Worth freeway conditions",
     howto: [
@@ -883,10 +883,10 @@ type GenCity = {
 const GEN_CITIES = cityPages.cities as unknown as GenCity[];
 const GEN_BY_SLUG = new Map(GEN_CITIES.map((g) => [g.slug, g]));
 
-// Country pages exist for the directory's top-33 countries (the same set
+// Country pages exist for the camera index's top-33 countries (the same set
 // the sitemap emits); generated pages link there when they can.
 const COUNTRY_PAGE_SLUGS = new Set(
-  directory.countries.slice(0, 33).map((c) => c.slug),
+  COUNTRY_INDEX.slice(0, 33).map((c) => c.slug),
 );
 
 const fmt = (n: number) => n.toLocaleString("en-US");
@@ -1367,7 +1367,7 @@ async function resolveCity(slug: string): Promise<ResolvedCity | null> {
   if (curated) {
     return {
       cfg: curated,
-      updatedIso: directory.generatedAt,
+      updatedIso: cityPages.generatedAt,
       related: RELATED.filter((l) => l.href !== `/city-webcams/${slug}`),
       backHref: `/cameras/countries/${curated.countrySlug}`,
     };
@@ -1673,7 +1673,7 @@ export default async function CityWebcamPage({
         direction: compassDirection(selfPoint, n),
       }))
     : [];
-  const countryEntry = directory.countries.find(
+  const countryEntry = COUNTRY_INDEX.find(
     (d) => d.slug === c.countrySlug,
   );
   const relatedSearches = buildRelatedSearches({
