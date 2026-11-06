@@ -54,6 +54,11 @@
 - [Enterprise](https://worldeye.app/enterprise): WorldEye Enterprise ($999/year) is Ultra plus a key-gated camera-feed API, an embed player and a per-camera rights registry (about 96% of cameras are eligible; Windy cameras are excluded).
 - [Ambient mode](https://worldeye.app/ambient-mode): WorldEye Ambient ($4.99/month, 10-day free trial) is a Slow TV player of live cameras for TVs and second screens. It is an add-on, not a plan tier; Lite, Pro and Ultra members are not charged for it.
 
+## Developers
+
+- [Developer docs](https://worldeye.app/developers): WorldEye's developer platform — a REST API over the redistribution-cleared camera catalogue and the USGS earthquake feed, plus an MCP server for AI agents. Free self-serve API keys, plan-based daily quotas, read-only.
+- [MCP server](https://worldeye.app/api/v1/mcp): WorldEye's Model Context Protocol server (app.worldeye/worldeye, Streamable HTTP, listed on the official MCP Registry). Five read-only tools: search_cameras (search the cleared catalogue by text, country and media kind), get_camera (one camera by id — metadata, snapshot URL and watch link), cameras_near (radius search around coordinates or a named place), latest_earthquakes (USGS magnitude 2.5+ events from the last 24 hours), get_usage (the calling key's plan tier and remaining daily quota). Auth: a free API key sent as an Authorization: Bearer header — create one at https://worldeye.app/settings/api-keys. The API serves metadata, snapshots and watch links only, never live stream URLs.
+
 ## Learn
 
 - [Blog](https://worldeye.app/blog): Guides and explainers on live tracking, cameras and open-source intelligence.

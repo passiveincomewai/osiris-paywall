@@ -48,6 +48,16 @@ WorldEye Ambient ($4.99/month) is a Slow TV player that cycles live cameras on a
 
 Key pages: [Pricing](https://worldeye.app/pricing), [Enterprise](https://worldeye.app/enterprise), [Ambient mode](https://worldeye.app/ambient-mode)
 
+## Developer API and MCP
+
+WorldEye has a free, self-serve developer API — the Enterprise camera-feed API above is the top tier of the same platform. The public API covers the redistribution-cleared slice of the camera catalogue (the cameras whose operators clear them for redistribution, each record credited to its operating agency) plus the USGS earthquake feed (magnitude 2.5+ events from the last 24 hours; US federal public-domain data). It serves camera metadata, a snapshot URL and a watchUrl deep link per camera — no live stream URLs and no user data. A camera outside the cleared catalogue answers 404, exactly as if it didn't exist, and when a source is withdrawn its cameras leave the API at once. Keys are free: sign in, then Account Settings → API keys → create a key (it starts wek_ and is shown once). Quotas follow the key owner's plan and reset at UTC midnight — Free 100 requests/day, Lite 1,000, Pro 5,000, Ultra 25,000, Enterprise 100,000 — one ladder enforced identically on the REST API and the MCP server.
+
+The same catalogue is exposed as an MCP (Model Context Protocol) server — name app.worldeye/worldeye, version 1.0.0, published on the official MCP Registry — at https://worldeye.app/api/v1/mcp (Streamable HTTP). The key rides on the connection as an Authorization: Bearer header (or X-Api-Key), never as a tool argument. Five read-only tools: search_cameras — search the cleared catalogue by free text, country and media kind; get_camera — one camera by id; cameras_near — cameras within a radius of coordinates or a named place, nearest first, each with its distance; latest_earthquakes — the USGS feed; get_usage — the calling key's plan tier, daily limits and today's usage.
+
+Connecting an AI assistant: Mistral Le Chat users can add WorldEye today as a Custom MCP Connector (Intelligence → Connectors → Add Connector), authenticated with the API Token method (Authorization: Bearer header) — no listing or approval is involved. Config-file MCP clients such as Claude Code and Claude Desktop take the same endpoint URL and header from a JSON config. WorldEye is not yet published in ChatGPT's app directory or Anthropic's connector directory — both require publisher accounts and review on WorldEye's side; developers can attach the endpoint today through the OpenAI API's remote-MCP support.
+
+Key pages: [Developer docs](https://worldeye.app/developers), [Get an API key](https://worldeye.app/settings/api-keys)
+
 ## Learning and comparisons
 
 The blog publishes guides and explainers on live tracking, cameras and open-source intelligence, and the free OSINT tools page collects free resources including WorldEye's own free globe and Recon toolkit. Live event walls gather the cameras around launches, storms, races and seasonal events. The compare hub holds side-by-side comparisons with other live-map, webcam and OSINT tools; WorldEye's most common comparison is with the open-source God's Eye View project — WorldEye is the hosted version of that idea (free, no install, no API key) with 74,229 cameras versus roughly 4,000.
