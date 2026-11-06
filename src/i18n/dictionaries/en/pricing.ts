@@ -65,6 +65,15 @@
  * the manifest's pricing sourceHash was recomputed (updatedAt
  * stays 2026-10-31).
  *
+ * Amended 2026-11-06 (pricing improvements): the "How many cameras
+ * can I watch?" FAQ now states the real free-tier camera-opens
+ * ladder (5 per device while signed out; 10 on a free account once
+ * its email is verified — src/lib/camera-ladder.ts), and the Lite
+ * card / detail copy no longer lists "satellite views" among Lite's
+ * premium layers (the satellite basemap is free for everyone since
+ * 2026-10-26). Spanish re-synced the same day; the manifest's
+ * pricing sourceHash was recomputed (updatedAt stays 2026-10-31).
+ *
  * NOT covered (separate components keep their own copy; they render
  * in English on localized pricing pages until their own conversion —
  * see the build REPORT): TeamSection, CancelReassurance,
@@ -396,7 +405,7 @@ export const enPricing: PricingCopy = {
   },
   liteFeatures: [
     { title: "Every camera, unlimited", desc: "Watch as many of the 74,229 live cameras as you like — paid plans have no open limits." },
-    { title: "Premium map layers", desc: "Modeled traffic flow, satellite views and the rest of the premium layer set on the globe." },
+    { title: "Premium map layers", desc: "Modeled traffic flow and the rest of the premium layer set on the globe." },
     { title: "OI AI Assistant", desc: "Talk to the map. Forecasts, analysis and recon — powered by WorldEye's built-in AI, with nothing to set up." },
     { title: "Advanced search filters", desc: "Narrow camera results by country, type and live feeds — places are never filtered." },
     { title: "Camera Recording Studio", desc: "Record live camera feeds right in your browser — up to 5 cameras at once — and save the clips." },
@@ -512,7 +521,7 @@ export const enPricing: PricingCopy = {
     },
     {
       q: "How many cameras can I watch?",
-      a: "The directory holds 74,229 public cameras, and none of them is locked behind a tier — every camera in the directory can be opened on any plan. The free tier includes an allowance of camera opens; Lite, Pro and Ultra remove the camera-open limits, so watching is unlimited there. What the plans change is recording and alerts: record 5 cameras at once on Lite, 20 on Pro and 40 on Ultra, with camera alert rules — none on Lite, 2 on Pro, 10 on Ultra.",
+      a: "The directory holds 74,229 public cameras, and none of them is locked behind a tier — every camera in the directory can be opened on any plan. The free tier includes an allowance of camera opens — 5 per device while signed out, and 10 on a free account once its email is verified; Lite, Pro and Ultra remove the camera-open limits, so watching is unlimited there. What the plans change is recording and alerts: record 5 cameras at once on Lite, 20 on Pro and 40 on Ultra, with camera alert rules — none on Lite, 2 on Pro, 10 on Ultra.",
     },
   ],
   compareTeasers: {
@@ -646,7 +655,7 @@ export const enPricing: PricingCopy = {
       ],
       includes: [
         { title: "Every camera, unlimited", desc: "Watch as many of the 74,229 live cameras as you like — paid plans have no open limits." },
-        { title: "Premium map layers", desc: "Modeled traffic flow, satellite views and the rest of the premium layer set on the globe." },
+        { title: "Premium map layers", desc: "Modeled traffic flow and the rest of the premium layer set on the globe." },
         { title: "OI AI Assistant", desc: "Talk to the map. Forecasts, analysis and recon — powered by WorldEye's built-in AI, with nothing to set up." },
         { title: "Advanced search filters", desc: "Narrow camera results by country, type and live feeds — places are never filtered." },
         { title: "Camera Recording Studio", desc: "Record live camera feeds right in your browser — up to 5 cameras at once — and save the clips." },

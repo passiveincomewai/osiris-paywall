@@ -90,7 +90,7 @@ const ES_TRANCHE_DATE = "2026-10-26";
 // computed at publish time; dictionaries.test.ts recomputes and pins them.
 const ES_SOURCE_HASHES: Record<string, string> = {
   "": "50f38f9f755317ccc03cad2de028ea2d37654e04788d3428dfbad98f2f9c6c56",
-  pricing: "baa2c2545a18d6cab0e2561cd8d13c89b09d4775492816a286680bdd3e2e07ac",
+  pricing: "4eef59a72a9551719435806e6dae3fdf3de817d536c9d8ccce448cf4ea1babfe",
   "live-webcams": "5b6ebf74176e177bba6b13c296da76b85f2003d4bb65c15a904a7041821d1c8f",
   faq: "310dd5cf01093f128168be46d21f0f35170de1f249b0772edc15dfd97afa9ecb",
   "live-flight-tracker": "f6098a009698c4a81bbdf8d413acc89dbf3d5bce2b506ab3e4627f2c168c1cf8",
@@ -222,6 +222,13 @@ const ES_SOURCE_HASHES: Record<string, string> = {
 // cameras come from; are they really live); the Spanish dictionaries
 // were re-synced the same day, so the home and faq hashes moved;
 // their updatedAt stays 2026-10-31.
+// Re-sync (2026-11-06, pricing improvements): the pricing
+// dictionary's camera-opens FAQ now states the real free-tier
+// ladder (5 opens per device signed out; 10 on a free verified
+// account) and the Lite copy no longer lists satellite views among
+// Lite's premium layers (the basemap is free for everyone); the
+// Spanish dictionary was re-synced the same day, so the pricing
+// hash moved; its updatedAt stays 2026-10-31.
 const ES_UPDATED_AT: Record<string, string> = {
   "": "2026-10-31",
   pricing: "2026-10-31",

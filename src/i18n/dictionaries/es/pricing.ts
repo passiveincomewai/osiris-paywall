@@ -24,6 +24,12 @@
  * strip, card trust row + detail links, why-upgrade row, `planDetails`
  * copy for /pricing/lite|pro|ultra, and the single money-back mention,
  * mirroring the English source.
+ *
+ * Re-synced 2026-11-06 (pricing improvements): the camera-opens FAQ
+ * states the real free-tier ladder (5 por dispositivo sin iniciar
+ * sesión; 10 en una cuenta gratuita una vez verificado su correo)
+ * and the Lite copy no longer lists "vistas satelitales" among its
+ * premium layers, mirroring the English source.
  */
 
 import type { PricingCopy } from "../en/pricing";
@@ -184,7 +190,7 @@ export const esPricing: PricingCopy = {
   },
   liteFeatures: [
     { title: "Todas las cámaras, sin límite", desc: "Mira tantas de las 74.229 cámaras en vivo como quieras: los planes de pago no tienen límite de aperturas." },
-    { title: "Capas premium del mapa", desc: "Flujo de tráfico modelado, vistas satelitales y el resto del conjunto de capas premium sobre el globo." },
+    { title: "Capas premium del mapa", desc: "Flujo de tráfico modelado y el resto del conjunto de capas premium sobre el globo." },
     { title: "Asistente de IA OI", desc: "Habla con el mapa. Pronósticos, análisis y reconocimiento, con la IA integrada de WorldEye y sin configurar nada." },
     { title: "Filtros de búsqueda avanzados", desc: "Reduce los resultados de cámaras por país, tipo y feeds en vivo; los lugares nunca se filtran." },
     { title: "Estudio de grabación de cámaras", desc: "Graba feeds de cámaras en vivo directamente en tu navegador — hasta 5 cámaras a la vez — y guarda los clips." },
@@ -312,7 +318,7 @@ export const esPricing: PricingCopy = {
     },
     {
       q: "¿Cuántas cámaras puedo ver?",
-      a: "El directorio reúne 74.229 cámaras públicas, y ninguna está bloqueada por nivel: cualquier cámara del directorio se puede abrir con cualquier plan. El nivel gratuito incluye una asignación de aperturas de cámaras; Lite, Pro y Ultra eliminan los límites de apertura, así que puedes ver sin límite. Lo que cambian los planes es la grabación y las alertas: graba 5 cámaras a la vez en Lite, 20 en Pro y 40 en Ultra, con reglas de alertas de cámara: ninguna en Lite, 2 en Pro y 10 en Ultra.",
+      a: "El directorio reúne 74.229 cámaras públicas, y ninguna está bloqueada por nivel: cualquier cámara del directorio se puede abrir con cualquier plan. El nivel gratuito incluye una asignación de aperturas de cámaras: 5 por dispositivo sin iniciar sesión, y 10 en una cuenta gratuita una vez verificado su correo; Lite, Pro y Ultra eliminan los límites de apertura, así que puedes ver sin límite. Lo que cambian los planes es la grabación y las alertas: graba 5 cámaras a la vez en Lite, 20 en Pro y 40 en Ultra, con reglas de alertas de cámara: ninguna en Lite, 2 en Pro y 10 en Ultra.",
     },
   ],
   compareTeasers: {
@@ -446,7 +452,7 @@ export const esPricing: PricingCopy = {
       ],
       includes: [
         { title: "Todas las cámaras, sin límite", desc: "Mira tantas de las 74.229 cámaras en vivo como quieras: los planes de pago no tienen límite de aperturas." },
-        { title: "Capas premium del mapa", desc: "Flujo de tráfico modelado, vistas satelitales y el resto del conjunto de capas premium sobre el globo." },
+        { title: "Capas premium del mapa", desc: "Flujo de tráfico modelado y el resto del conjunto de capas premium sobre el globo." },
         { title: "Asistente de IA OI", desc: "Habla con el mapa. Pronósticos, análisis y reconocimiento, con la IA integrada de WorldEye y sin configurar nada." },
         { title: "Filtros de búsqueda avanzados", desc: "Reduce los resultados de cámaras por país, tipo y feeds en vivo; los lugares nunca se filtran." },
         { title: "Estudio de grabación de cámaras", desc: "Graba feeds de cámaras en vivo directamente en tu navegador — hasta 5 cámaras a la vez — y guarda los clips." },
