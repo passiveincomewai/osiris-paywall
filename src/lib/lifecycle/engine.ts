@@ -21,9 +21,10 @@
 
 import { db } from "../db";
 import { stripe } from "../stripe";
-import { sendEmail } from "../email";
+import { sendEmail, appUrl } from "../email";
 import { appBaseUrl } from "../app-url";
 import { checkoutPlanSummary } from "../billing/trial-checkout";
+import { resolvePriceId, entitlementsFor, legacyVipFor } from "../billing/plans";
 import { formatMoney, formatTrialEnd, planByPriceIdFromEnv, describeStripePrice } from "../billing/trial-reminders";
 import {
   currentDiscountOffer,
@@ -41,6 +42,7 @@ import {
   VERIFICATION_REMINDER_MIN_AGE_MS,
   VERIFICATION_REMINDER_MAX_AGE_MS,
   REGION_WINDOW_MS,
+  TRIAL_DAY5_FEATURE_MAX_AGE_MS,
   DAY_MS,
 } from "./config";
 import { evaluateGuards, type EmailKind } from "./guards";
@@ -63,17 +65,32 @@ import {
   affiliateSignupDue,
   affiliateFirstCommissionDue,
   regionInterestDue,
+  trialTrackKind,
+  trialDay1RecapDue,
+  trialDay2CtaDue,
+  trialDay5FeatureDue,
+  trialPrechargeRecapDue,
 } from "./triggers";
 import {
   aggregateRegionStats,
   summarizeRegionInterest,
   COUNTRY_PATH_PREFIX,
+  countrySlugFromPath,
 } from "./region";
 import countriesIndex from "../../data/camera-countries.json";
 
 const COUNTRY_BY_SLUG = new Map(
   (countriesIndex as { countries: { slug: string; name: string; count: number }[] }).countries.map(
     (c) => [c.slug, c] as const,
+  ),
+);
+import citiesIndex from "../../data/city-pages.json";
+
+// City pages are named from city-pages.json — slug → name ONLY. That
+// file's camera counts are stale and are never read anywhere here.
+const CITY_NAME_BY_SLUG = new Map(
+  (citiesIndex as { cities: { slug: string; name: string }[] }).cities.map(
+    (c) => [c.slug, c.name] as const,
   ),
 );
 import {
@@ -96,6 +113,13 @@ import {
   affiliateSignupEmail,
   affiliateFirstCommissionEmail,
   regionInterestEmail,
+  trialDay1RecapEmail,
+  trialDay2CtaEmail,
+  trialDay5FeatureEmail,
+  trialPrechargeRecapEmail,
+  type TrialPlaceLine,
+  type TrialFeatureLine,
+  type TrialDay2Cta,
   type RenderedEmail,
 } from "./templates";
 import { buildUnsubscribeUrl, unsubscribeSecret } from "./unsubscribe";
@@ -107,6 +131,10 @@ export type LifecycleTemplate =
   | "retarget_pricing"
   | "retarget_checkout"
   | "trial_started"
+  | "trial_day1_recap"
+  | "trial_day2_cta"
+  | "trial_day5_feature"
+  | "trial_precharge_recap"
   | "trial_ended_winback"
   | "trial_ended_winback_30d"
   | "annual_renewal_notice"
@@ -159,6 +187,38 @@ interface RecipientUser {
 }
 
 const LIVE_STATUSES = new Set(["active", "trialing"]);
+
+const CITY_PATH_PREFIX = "/city-webcams/";
+
+/** Day-5 feature shortlist: public, every-paid-tier pages only. The
+ * ship tracker is deliberately absent — its AIS feed currently
+ * returns no vessels, and this track never pitches a broken feature. */
+const TRIAL_FEATURES: TrialFeatureLine[] = [
+  {
+    name: "Earthquake Tracker",
+    blurb:
+      "Live earthquakes worldwide from the USGS feed, plotted on the same globe as the cameras — see where the ground just moved, then look at it.",
+    path: "/earthquake-tracker",
+  },
+  {
+    name: "Satellite Tracker",
+    blurb:
+      "Satellites tracked overhead in real time, including the International Space Station — see what is passing over you right now.",
+    path: "/satellite-tracker",
+  },
+  {
+    name: "Weather Radar",
+    blurb:
+      "Live precipitation radar laid over the map, so you can watch a storm arrive before it reaches the cameras below it.",
+    path: "/weather-radar",
+  },
+  {
+    name: "Recording Studio",
+    blurb:
+      "Record a clip from any live camera and keep it — a sunrise, a storm rolling in, rush hour in a city you love.",
+    path: "/recording",
+  },
+];
 
 export async function runLifecycleEmails(
   opts: LifecycleRunOptions = {},
@@ -515,6 +575,293 @@ export async function runLifecycleEmails(
             trialEndsLabel: sub.trial_end ? formatTrialEnd(sub.trial_end) : null,
           }),
       });
+    }
+  });
+
+  // ── (d-eng) Trialist engagement track (marketing) ────────────────
+  // Touches DURING a live trial — the gap this section closes: the
+  // onboarding drip covers verified FREE accounts and the win-backs
+  // own dead trials, but until now nothing emailed a trialist while
+  // the trial was running. Stripe is the source of truth for trial
+  // state (the DB Subscription row carries no trial end); track kind
+  // derives from the sub's REAL trial span. All four templates are
+  // kind "marketing": emailOptOut honoured, max 1 marketing send per
+  // rolling 48h, once-only per (user, template, subscription) via the
+  // log. Figures come from the live Stripe price object
+  // (describeStripePrice) and the user's own rows — nothing restated,
+  // and no camera name is ever invented (camera_open rows carry no
+  // camera id; see the day-1 recap's sources below).
+  await section("trial_engagement", async () => {
+    const s = stripe();
+    const list = await s.subscriptions.list({
+      status: "trialing",
+      // Wide enough for the oldest reachable band: a 10-day trial in
+      // its day-5 window or pre-charge window started at most
+      // (8d max band + slack) ago.
+      created: {
+        gte: Math.floor((now.getTime() - (TRIAL_DAY5_FEATURE_MAX_AGE_MS + 4 * DAY_MS)) / 1000),
+      },
+      limit: 100,
+    });
+    for (const sub of list.data) {
+      if (!sub.trial_end) continue;
+      const trialEndSec = sub.trial_end;
+      const dbSub = await db.subscription.findUnique({
+        where: { stripeSubscriptionId: sub.id },
+        select: { userId: true, stripePriceId: true },
+      });
+      if (!dbSub) continue;
+      const user = await db.user.findUnique({ where: { id: dbSub.userId }, select: userSelect });
+      if (!user) continue;
+
+      const trialStartSec = sub.trial_start ?? sub.created;
+      const trialStart = new Date(trialStartSec * 1000);
+      const trialEnd = new Date(trialEndSec * 1000);
+      const track = trialTrackKind({ trialStartSec, trialEndSec });
+      const price = sub.items.data[0]?.price ?? null;
+      const desc = price
+        ? describeStripePrice(
+            {
+              id: price.id,
+              unit_amount: price.unit_amount,
+              currency: price.currency,
+              recurring: price.recurring
+                ? { interval: price.recurring.interval, interval_count: price.recurring.interval_count }
+                : null,
+            },
+            planByPriceId,
+          )
+        : null;
+
+      const sinceStart = { userId: user.id, createdAt: { gte: trialStart } };
+      const opensTotal = await db.pageView.count({
+        where: { ...sinceStart, event: "camera_open" },
+      });
+
+      if (track === "long") {
+        // Day-1 recap: the first 24h as it actually happened — opens
+        // counted, place pages actually viewed (country pages via the
+        // region section's own index; city pages by name only), and
+        // cameras the user saved that day.
+        if (trialDay1RecapDue({ stripeStatus: sub.status, track, trialStart }, now).due) {
+          const day1End = new Date(trialStart.getTime() + DAY_MS);
+          const day1Rows = await db.pageView.findMany({
+            where: { userId: user.id, createdAt: { gte: trialStart, lt: day1End } },
+            select: { path: true, event: true },
+            take: 2000,
+          });
+          let opensDay1 = 0;
+          const places: TrialPlaceLine[] = [];
+          const seenPlaces = new Set<string>();
+          for (const row of day1Rows) {
+            if (row.event === "camera_open") {
+              opensDay1++;
+              continue;
+            }
+            if (row.event !== null) continue;
+            const cSlug = countrySlugFromPath(row.path);
+            if (cSlug) {
+              if (!seenPlaces.has(`c:${cSlug}`)) {
+                const entry = COUNTRY_BY_SLUG.get(cSlug);
+                if (entry) {
+                  seenPlaces.add(`c:${cSlug}`);
+                  places.push({ name: entry.name, href: appUrl(`/cameras/countries/${cSlug}`) });
+                }
+              }
+              continue;
+            }
+            if (row.path.startsWith(CITY_PATH_PREFIX)) {
+              const slug = row.path.slice(CITY_PATH_PREFIX.length).split(/[/?#]/)[0]?.toLowerCase();
+              if (slug && !seenPlaces.has(`city:${slug}`)) {
+                const name = CITY_NAME_BY_SLUG.get(slug);
+                if (name) {
+                  seenPlaces.add(`city:${slug}`);
+                  places.push({ name, href: appUrl(`/city-webcams/${slug}`) });
+                }
+              }
+            }
+          }
+          const savedDay1 = await db.savedCamera.findMany({
+            where: { userId: user.id, createdAt: { gte: trialStart, lt: day1End } },
+            select: { name: true },
+            orderBy: { createdAt: "asc" },
+            take: 3,
+          });
+          // Zero-activity fallback: the site's most-watched PLACES over
+          // the trailing 7 days (country opens weigh double — they are
+          // the strongest signal), labelled as most-watched places in
+          // the template. Still never a camera name.
+          let popularPlaces: TrialPlaceLine[] = [];
+          if (opensDay1 === 0 && places.length === 0 && savedDay1.length === 0) {
+            const weekRows = await db.pageView.findMany({
+              where: {
+                createdAt: { gte: new Date(now.getTime() - 7 * DAY_MS) },
+                OR: [
+                  { path: { startsWith: COUNTRY_PATH_PREFIX }, event: "camera_open" },
+                  { path: { startsWith: COUNTRY_PATH_PREFIX }, event: null },
+                  { path: { startsWith: CITY_PATH_PREFIX }, event: null },
+                ],
+              },
+              select: { path: true, event: true },
+              take: 20000,
+            });
+            const tally = new Map<string, { place: TrialPlaceLine; score: number }>();
+            for (const row of weekRows) {
+              const cSlug = countrySlugFromPath(row.path);
+              if (cSlug) {
+                const entry = COUNTRY_BY_SLUG.get(cSlug);
+                if (!entry) continue;
+                const key = `c:${cSlug}`;
+                const t = tally.get(key) ?? {
+                  place: { name: entry.name, href: appUrl(`/cameras/countries/${cSlug}`) },
+                  score: 0,
+                };
+                t.score += row.event === "camera_open" ? 2 : 1;
+                tally.set(key, t);
+                continue;
+              }
+              const slug = row.path.slice(CITY_PATH_PREFIX.length).split(/[/?#]/)[0]?.toLowerCase();
+              if (!slug) continue;
+              const name = CITY_NAME_BY_SLUG.get(slug);
+              if (!name) continue;
+              const key = `city:${slug}`;
+              const t = tally.get(key) ?? {
+                place: { name, href: appUrl(`/city-webcams/${slug}`) },
+                score: 0,
+              };
+              t.score += 1;
+              tally.set(key, t);
+            }
+            popularPlaces = [...tally.values()]
+              .sort((a, b) => b.score - a.score)
+              .slice(0, 3)
+              .map((t) => t.place);
+          }
+          await deliver({
+            user,
+            template: "trial_day1_recap",
+            contextKey: sub.id,
+            kind: "marketing",
+            render: () =>
+              trialDay1RecapEmail({
+                name: user.name,
+                planLabel: desc?.planLabel ?? "Pro plan",
+                opensCount: opensDay1,
+                places: places.slice(0, 3),
+                savedCameraNames: savedDay1.map((c) => c.name),
+                popularPlaces,
+                unsubscribeUrl: unsubFor(user.id),
+              }),
+          });
+        }
+
+        // Day-2 CTA: ONE next step, first applicable on the ladder —
+        // an alert when the tier carries alerts and none exist yet,
+        // else a first saved camera, else a recording.
+        if (trialDay2CtaDue({ stripeStatus: sub.status, track, trialStart }, now).due) {
+          const resolution = resolvePriceId(price?.id ?? dbSub.stripePriceId, env);
+          // tier is null only for the standalone prices (ambient /
+          // ski): they carry no tier alert cap, so the alert rung
+          // simply does not apply and the ladder falls through.
+          // (Unknown prices resolve to the Pro default inside
+          // resolvePriceId — a paying subscriber is never stripped.)
+          const ent = resolution.tier
+            ? entitlementsFor(resolution.tier, {
+                legacyVip: legacyVipFor(resolution, new Date(sub.created * 1000)),
+              })
+            : null;
+          const [ruleCount, savedCount] = await Promise.all([
+            db.alertRule.count({ where: { userId: user.id, active: true } }),
+            db.savedCamera.count({ where: { userId: user.id } }),
+          ]);
+          const cta: TrialDay2Cta =
+            ent && ent.alertCap > 0 && ruleCount === 0
+              ? { kind: "alert", alertCap: ent.alertCap }
+              : savedCount === 0
+                ? { kind: "save" }
+                : { kind: "record" };
+          await deliver({
+            user,
+            template: "trial_day2_cta",
+            contextKey: sub.id,
+            kind: "marketing",
+            render: () =>
+              trialDay2CtaEmail({
+                name: user.name,
+                planLabel: desc?.planLabel ?? "Pro plan",
+                cta,
+                unsubscribeUrl: unsubFor(user.id),
+              }),
+          });
+        }
+
+        // Day-5 feature: the first shortlist page with ZERO views
+        // since the trial started. All four viewed → no email.
+        if (trialDay5FeatureDue({ stripeStatus: sub.status, track, trialStart }, now).due) {
+          const viewed = await db.pageView.findMany({
+            where: { ...sinceStart, event: null, path: { in: TRIAL_FEATURES.map((f) => f.path) } },
+            select: { path: true },
+            distinct: ["path"],
+          });
+          const seenPaths = new Set(viewed.map((v) => v.path));
+          const feature = TRIAL_FEATURES.find((f) => !seenPaths.has(f.path));
+          if (feature) {
+            await deliver({
+              user,
+              template: "trial_day5_feature",
+              contextKey: sub.id,
+              kind: "marketing",
+              render: () =>
+                trialDay5FeatureEmail({
+                  name: user.name,
+                  planLabel: desc?.planLabel ?? "Pro plan",
+                  feature,
+                  unsubscribeUrl: unsubFor(user.id),
+                }),
+            });
+          }
+        }
+      }
+
+      // Pre-charge recap (both tracks; the short track's only touch).
+      // Skipped entirely when the price is unreadable — no honest
+      // charge figure, no email.
+      if (
+        desc &&
+        trialPrechargeRecapDue({ stripeStatus: sub.status, track, trialStart, trialEnd }, now).due
+      ) {
+        const [savedTotal, ruleTotal, activityRows] = await Promise.all([
+          db.savedCamera.count({ where: { userId: user.id } }),
+          db.alertRule.count({ where: { userId: user.id, active: true } }),
+          db.pageView.findMany({
+            where: sinceStart,
+            select: { createdAt: true },
+            take: 5000,
+          }),
+        ]);
+        // Distinct days with any recorded activity (UTC day buckets —
+        // a count of active days, never a per-day claim).
+        const activeDays = new Set(activityRows.map((r) => r.createdAt.toISOString().slice(0, 10))).size;
+        await deliver({
+          user,
+          template: "trial_precharge_recap",
+          contextKey: sub.id,
+          kind: "marketing",
+          render: () =>
+            trialPrechargeRecapEmail({
+              name: user.name,
+              planLabel: desc.planLabel,
+              chargeLabel: desc.chargeLabel,
+              perMonthLabel: desc.perMonthLabel,
+              trialEndsLabel: formatTrialEnd(trialEndSec),
+              opensCount: opensTotal,
+              activeDays,
+              savedCameraCount: savedTotal,
+              alertRuleCount: ruleTotal,
+              unsubscribeUrl: unsubFor(user.id),
+            }),
+        });
+      }
     }
   });
 
