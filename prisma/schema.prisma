@@ -1780,6 +1780,35 @@ model PartnershipApplication {
   @@index([createdAt])
 }
 
+// ── Camera requests (demand capture from search empty states) ─────────
+// A visitor searched the globe or the camera directory for a place,
+// found nothing, and asked us to look for a feed there ("Request this
+// camera"). The DEMAND side of coverage — the supply side is
+// CameraSubmission below, where a visitor hands us a specific feed URL.
+// A request carries no URL and promises nothing; rows are read by
+// admins in /admin/camera-requests as the expansion demand signal.
+model CameraRequest {
+  id        String @id @default(cuid())
+  // The exact failed search text, when the surface has one.
+  query     String?
+  // The place the visitor wants a camera for.
+  placeText String
+  // Optional notify-me address — never required.
+  email     String?
+  // Signed-in user who asked, when there is one (set server-side).
+  userId    String?
+  // Analytics session id (we_sid), when available.
+  sessionId String?
+  // One of CAMERA_REQUEST_STATUSES (src/lib/camera-requests).
+  status    String @default("new")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, createdAt])
+  @@index([placeText])
+}
+
 // ── Submit-a-camera intake (public /submit-camera) ─────────────────────
 // Anyone can send us a camera: operators list their own feed, everyone
 // else suggests a public one. Submissions land here for human review in
