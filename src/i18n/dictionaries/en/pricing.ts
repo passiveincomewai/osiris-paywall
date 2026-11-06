@@ -188,6 +188,17 @@ export interface PricingCopy {
     allLabel: string;
   };
   trust: string[];
+  /** Real-numbers strip above the plan grid (owner-approved
+      2026-11-05). Labels only — the figures themselves are imported
+      from src/lib/site-stats (the canonical counts module) by the
+      client, never typed into copy: the globe headline and the
+      Live Camera Index served measure, the latter always carrying
+      its snapshot date because the two measure different things. */
+  statsBand: {
+    liveLabel: string;
+    servedLabel: string;
+    servedSnapshot: string;
+  };
   /** "Why upgrade" icon row under the plan grid (reference design). */
   whyUpgrade: {
     h2Before: string;
@@ -521,6 +532,11 @@ export const enPricing: PricingCopy = {
     "Stripe-secured checkout",
     "No ads, no data selling",
   ],
+  statsBand: {
+    liveLabel: "live cameras on the globe",
+    servedLabel: "cameras served",
+    servedSnapshot: "Oct 31, 2026 snapshot",
+  },
   whyUpgrade: {
     h2Before: "Why upgrade to ",
     h2Accent: "Pro?",

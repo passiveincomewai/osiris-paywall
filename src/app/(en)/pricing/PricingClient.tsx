@@ -14,6 +14,7 @@ import {
   ENTERPRISE_SUPPORT_LINE,
 } from "@/lib/enterprise/offer";
 import { recordLastViewedPlan } from "@/lib/billing/trial-prompt";
+import { LIVE_CAMERA_COUNT_LABEL, CAMERA_INDEX_SNAPSHOT } from "@/lib/site-stats";
 import { trackPlanSelected } from "@/lib/billing/picker-analytics";
 import { preloadStripeJs } from "@/lib/billing/stripe-preload";
 import type { CheckoutPlanId } from "@/lib/billing/trial-checkout";
@@ -638,8 +639,39 @@ export default function PricingPage({
           </div>
         </div>
 
+        {/* Real-numbers strip (owner-approved 2026-11-05): the two
+            published camera measures, imported from the canonical
+            site-stats module — never literals here. The headline is
+            the standing globe count; the served figure is the Live
+            Camera Index snapshot measure and always carries its
+            date, because the two measure different things. */}
+        <div
+          aria-label="WorldEye camera counts"
+          className="mt-8 grid grid-cols-2 gap-2 max-w-2xl mx-auto"
+        >
+          <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-center">
+            <div className="text-xl md:text-2xl font-bold tabular-nums text-[#D4AF37]">
+              {LIVE_CAMERA_COUNT_LABEL}
+            </div>
+            <div className="mt-0.5 text-[10px] font-mono uppercase tracking-[0.18em] text-white/45">
+              {copy.statsBand.liveLabel}
+            </div>
+          </div>
+          <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-center">
+            <div className="text-xl md:text-2xl font-bold tabular-nums text-[#D4AF37]">
+              {CAMERA_INDEX_SNAPSHOT.servedLabel}
+            </div>
+            <div className="mt-0.5 text-[10px] font-mono uppercase tracking-[0.18em] text-white/45">
+              {copy.statsBand.servedLabel}
+            </div>
+            <div className="mt-0.5 text-[10px] text-white/35">
+              ({copy.statsBand.servedSnapshot})
+            </div>
+          </div>
+        </div>
+
         {/* The 3-tier grid */}
-        <div id="plans" className="mt-8 grid gap-5 md:grid-cols-3 items-stretch">
+        <div id="plans" className="mt-3 grid gap-5 md:grid-cols-3 items-stretch">
           {(["lite", "pro", "ultra"] as TierKey[]).map((tier) => (
             <TierCard key={tier} copy={copy} tier={tier} period={period} onCheckout={setSheetPlan} />
           ))}

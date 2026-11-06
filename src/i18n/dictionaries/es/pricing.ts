@@ -332,6 +332,11 @@ export const esPricing: PricingCopy = {
     "Pago seguro con Stripe",
     "Sin anuncios, sin venta de datos",
   ],
+  statsBand: {
+    liveLabel: "cámaras en vivo en el globo",
+    servedLabel: "cámaras servidas",
+    servedSnapshot: "instantánea del 31 de octubre de 2026",
+  },
   whyUpgrade: {
     h2Before: "¿Por qué mejorar a ",
     h2Accent: "Pro?",
