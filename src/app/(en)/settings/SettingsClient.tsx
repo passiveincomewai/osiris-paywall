@@ -9,6 +9,7 @@ import {
   MailCheck, MailWarning, MailPlus, Camera, KeyRound,
 } from "lucide-react";
 import AccountSections from "./AccountSections";
+import InviteProPanel from "@/components/InviteProPanel";
 
 type Profile = {
   name: string | null;
@@ -574,6 +575,8 @@ export default function SettingsClient({
               Sign out
             </button>
           </Section>
+
+          <InviteProPanel />
 
           <AccountSections />
         </div>
