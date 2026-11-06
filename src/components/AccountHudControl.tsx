@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import HeaderProfileMenu from "./HeaderProfileMenu";
+import { trackAnalyticsEvent } from "@/components/AnalyticsTracker";
 import {
   readSessionIdentity,
   shouldRecheckEntitlement,
@@ -64,6 +65,7 @@ export default function AccountHudControl({
     <Link
       href="/pricing"
       aria-label="Upgrade to PRO"
+      onClick={() => trackAnalyticsEvent("header_upgrade_click")}
       className={
         variant === "desktop"
           ? "upgrade-pill-glow pointer-events-auto inline-block"
