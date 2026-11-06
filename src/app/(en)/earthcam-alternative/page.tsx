@@ -34,7 +34,7 @@ const DIMENSIONS = [
   {
     icon: Camera,
     title: "Camera count",
-    desc: "WorldEye's directory indexes 74,229 live public cameras across 109 countries — from US DOT highway networks to city plazas, beaches, harbors and mountain resorts. A real, countable index that keeps growing as new public feeds are found and mapped.",
+    desc: "WorldEye's catalogue indexes 74,229 live public cameras across 109 countries, with directory pages for 74 of them — from US DOT highway networks to city plazas, beaches, harbors and mountain resorts. A real, countable index that keeps growing as new public feeds are found and mapped.",
   },
   {
     icon: Wallet,
@@ -68,7 +68,7 @@ const FAQS = [
   },
   {
     q: "Can I find cameras in my city?",
-    a: "Search any place on the live map, or browse the camera directory by country — 109 countries are indexed, with dedicated pages for the 30 busiest. Coverage follows public infrastructure, so highways, city centers and tourist areas are the densest.",
+    a: "Search any place on the live map, or browse the camera directory by country — 109 countries are indexed, with dedicated pages for 74 of them. Coverage follows public infrastructure, so highways, city centers and tourist areas are the densest.",
   },
   {
     q: "Do I need to download an app?",
@@ -375,8 +375,8 @@ export default function EarthcamAlternativePage() {
             Open the camera directory
           </Link>
           <p className="mt-6 text-sm text-white/55 leading-relaxed">
-            What Pro adds: unlimited camera opens, the OI assistant and
-            camera alerts on paid plans — see{" "}
+            What paid plans add: unlimited camera opens and the OI assistant
+            on any paid plan, and camera alerts on Pro and Ultra — see{" "}
             <Link href="/pricing" className="text-[#D4AF37] hover:underline">
               plans and pricing
             </Link>
@@ -400,7 +400,7 @@ export default function EarthcamAlternativePage() {
             },
             {
               label: "Live cameras",
-              desc: "The full camera directory — 74,229 live public cameras in 109 countries.",
+              desc: "The full camera directory — 74,229 live public cameras across 109 countries, on 74 country pages.",
               href: "/cameras",
             },
             {
@@ -410,7 +410,7 @@ export default function EarthcamAlternativePage() {
             },
             {
               label: "Features",
-              desc: "Everything the globe can do — free forever layers and Pro intelligence tools.",
+              desc: "Everything the globe can do — free-to-browse layers and paid-plan intelligence tools.",
               href: "/features",
             },
             {

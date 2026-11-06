@@ -251,16 +251,18 @@ export default function BestGlobalIntelligenceDashboardsPage() {
 
       {/* Pro */}
       <section className="mt-16 max-w-3xl mx-auto rounded-3xl border border-white/10 bg-white/[0.03] p-8 md:p-10">
-        <h2 className="text-2xl md:text-3xl font-bold">Where WorldEye Pro fits in the stack</h2>
+        <h2 className="text-2xl md:text-3xl font-bold">Where WorldEye&apos;s paid plans fit in the stack</h2>
         <div className="mt-5 space-y-4 text-white/60 leading-relaxed">
           <p>
-            The free globe is the awareness layer. Pro (weekly $7.99, monthly
-            $13.99, annual $74.99) strengthens the detection and analysis
-            layers: premium intel feeds across cyber, GDELT, maritime,
-            conflict and live news; the AI analyst assistant for summarizing
-            developing situations; high-resolution satellite imagery;
-            advanced search filters; and the in-browser OSINT
-            toolkit. One subscription, all three layers on one screen.
+            The free globe is the awareness layer. Paid plans (Lite from
+            $4.99/week; Pro $7.99/week, $13.99/month, $74.99/year) strengthen
+            the detection and analysis layers: the AI analyst assistant for
+            summarizing developing situations and advanced search filters on
+            any paid plan; the in-browser OSINT toolkit on Pro; and, on
+            Ultra, the premium intel feeds across cyber, GDELT, maritime,
+            conflict and live news. High-resolution satellite imagery is
+            free for everyone. One subscription, all three layers on one
+            screen.
           </p>
         </div>
       </section>
@@ -370,7 +372,7 @@ export default function BestGlobalIntelligenceDashboardsPage() {
           },
           {
             label: "Features",
-            desc: "Everything the globe can do — free forever layers and Pro intelligence tools.",
+            desc: "Everything the globe can do — free-to-browse layers and paid-plan intelligence tools.",
             href: "/features",
           },
           {

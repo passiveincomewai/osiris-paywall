@@ -254,9 +254,10 @@ export default function BestConflictMonitoringToolsPage() {
             This is the OSINT discipline applied to breaking news, and
             it&apos;s why visual platforms belong in every conflict watcher&apos;s
             setup. WorldEye exists for exactly this: the free globe is the
-            visual-evidence layer, and Pro adds live-news and conflict intel
-            feeds, high-res satellite imagery, the AI analyst assistant, and
-            the OSINT toolkit for going deeper.
+            visual-evidence layer. Paid plans add the AI analyst assistant,
+            Pro adds the OSINT toolkit for going deeper, and Ultra adds
+            live-news and conflict intel feeds. High-res satellite imagery
+            is free for everyone.
           </p>
           <div className="flex flex-wrap gap-3 pt-2">
             {[
@@ -404,7 +405,7 @@ export default function BestConflictMonitoringToolsPage() {
           },
           {
             label: "Features",
-            desc: "Everything the globe can do — free forever layers and Pro intelligence tools.",
+            desc: "Everything the globe can do — free-to-browse layers and paid-plan intelligence tools.",
             href: "/features",
           },
           {

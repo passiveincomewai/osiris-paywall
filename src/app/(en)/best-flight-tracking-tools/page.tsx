@@ -57,7 +57,7 @@ const TOOLS: Tool[] = [
     tag: "Best free immersive tracker",
     href: "/live-flight-tracker",
     cta: "Open the live flight tracker",
-    body: "Live flight tracking on a free 3D globe — no signup — with the planet attached: satellites overhead, weather systems, 74,229 ground cameras, ships and quakes on the same screen. The pick for watching the sky as part of the world, not as dots on a rectangle. The flight layer is free forever; Pro adds analyst tools, not more planes.",
+    body: "Live flight tracking on a free 3D globe — no signup — with the planet attached: satellites overhead, weather systems, 74,229 ground cameras, ships and quakes on the same screen. The pick for watching the sky as part of the world, not as dots on a rectangle. The flight layer is free to browse; paid plans add analyst tools, not more planes.",
   },
   {
     icon: Plane,

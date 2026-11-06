@@ -365,8 +365,8 @@ export default function ResourcesClient({ demo }: { demo?: { link: string; code:
       <div className="rounded-2xl border border-amber-400/25 bg-amber-400/[0.05] p-5">
         <div className="text-sm font-bold text-amber-300 mb-1">Truthful claims only</div>
         <p className="text-sm text-slate-400 leading-relaxed">
-          Stick to what&apos;s real: 74,229 live cameras, a free globe with no signup, Pro unlocks the AI analyst,
-          satellite view, live traffic, advanced search filters, and the OSINT toolkit on weekly or monthly plans, or VIP Pro (billed yearly). Never promise
+          Stick to what&apos;s real: 74,229 live cameras, a free globe with no signup, paid plans unlock the AI analyst,
+          live traffic and advanced search filters, Pro adds the OSINT toolkit, and Ultra adds the premium intel feeds — the satellite view is free for everyone. Plans run weekly or monthly, or VIP Pro (Pro billed yearly). Never promise
           income, never imply recruitment alone earns anything, and always disclose your affiliate link with #ad.
         </p>
       </div>

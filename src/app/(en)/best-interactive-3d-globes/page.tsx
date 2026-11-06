@@ -305,9 +305,11 @@ export default function BestInteractive3DGlobesPage() {
           <div>
             <h3 className="text-lg font-semibold text-white/90">What does WorldEye Pro add to the globe?</h3>
             <p className="text-white/55 leading-relaxed mt-2">
-              High-resolution satellite imagery view, the AI analyst assistant,
-              premium intel feeds, the OSINT toolkit, and advanced search filters. Weekly $7.99, monthly $13.99, annual $74.99 —
-              the live globe itself stays free.
+              The AI analyst assistant and advanced search filters on any paid
+              plan, the OSINT toolkit on Pro, and premium intel feeds on Ultra —
+              the satellite imagery view is free for everyone. Paid plans from
+              $4.99/week (Pro $7.99/week, $13.99/month, $74.99/year) —
+              the live globe itself stays free to browse.
             </p>
           </div>
         </div>
@@ -362,7 +364,7 @@ export default function BestInteractive3DGlobesPage() {
           },
           {
             label: "Features",
-            desc: "Everything the globe can do — free forever layers and Pro tools.",
+            desc: "Everything the globe can do — free-to-browse layers and paid-plan tools.",
             href: "/features",
           },
           {
