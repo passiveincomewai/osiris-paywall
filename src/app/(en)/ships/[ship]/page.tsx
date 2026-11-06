@@ -12,6 +12,7 @@ import {
   PageShell,
   RelatedLinks,
 } from "@/components/directory-page";
+import AisFeedNotice from "@/components/AisFeedNotice";
 import ShipLiveCard from "@/components/ShipLiveCard";
 import { getLiveShipsForTracking } from "@/app/api/maritime/route";
 import {
@@ -198,6 +199,10 @@ export default async function ShipPage({
           &ldquo;not reporting&rdquo; when she isn&apos;t.
         </p>
       </div>
+
+      {/* Feed-level honesty (audit A4): explains a dead AIS feed next to
+          the per-ship "not reporting" card; renders only while unset. */}
+      <AisFeedNotice locale="en" className="mt-8" />
 
       <div className="mt-8">
         <ShipLiveCard slug={s.slug} shipName={s.name} initial={initialView(s)} />

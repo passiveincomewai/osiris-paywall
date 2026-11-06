@@ -1,3 +1,4 @@
+import AisFeedNotice from "@/components/AisFeedNotice";
 import VoiceQA from "@/components/seo/VoiceQA";
 import LanguageHeaderControl from "@/components/translate/LanguageHeaderControl";
 import { mergePlaceFaqs } from "@/lib/place-answers";
@@ -137,6 +138,10 @@ export default function ShipTrackerPage({
             </Link>
           </div>
         </div>
+
+        {/* Feed-level honesty (audit A4): renders only while the AIS
+            vessel feed is not configured/returning positions. */}
+        <AisFeedNotice locale={locale} className="mt-10 max-w-3xl mx-auto" />
 
         {/* The one-map answer */}
         <div className="mt-16 md:mt-20 max-w-3xl mx-auto rounded-3xl border border-[#D4AF37]/25 bg-[#D4AF37]/[0.04] p-8 md:p-10">

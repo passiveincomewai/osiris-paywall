@@ -13,6 +13,7 @@ import {
   PageShell,
   RelatedLinks,
 } from "@/components/directory-page";
+import AisFeedNotice from "@/components/AisFeedNotice";
 import TrialCtaSection from "@/components/TrialCtaSection";
 import { getLiveShipsForTracking } from "@/app/api/maritime/route";
 import {
@@ -160,6 +161,10 @@ export default function ShipsHubPage() {
         sub="Live AIS positions for the flagship ships of Royal Caribbean, Carnival, Norwegian and Disney — one page per ship, with verified facts and homeport cameras. Free, no signup."
       />
       <Intro paragraphs={intro} />
+
+      {/* Feed-level honesty (audit A4): renders only while the AIS
+          vessel feed is not configured/returning positions. */}
+      <AisFeedNotice locale="en" className="mt-8" />
 
       {lines.map((line) => (
         <section key={line} className="mt-12">
