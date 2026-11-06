@@ -1621,7 +1621,7 @@ export const POSTS: BlogPost[] = [
       {
         heading: "A page for almost everywhere",
         body: [
-          "WorldEye's [country pages](/countries) are the directory of that window: 109 countries with public cameras, each opening onto city and place pages beneath it. The big camera countries offer hundreds of doorways — whole regions of harbors, slopes, squares, and highways. Smaller countries may sit on regional hubs rather than a dedicated page of their own, which is the honest shape of the public camera world: coverage follows where cameras happen to be public, not where longing happens to point.",
+          "WorldEye's [country pages](/countries) are the directory of that window: 74 countries with their own pages, drawn from a catalogue spanning 109 countries with public cameras, each page opening onto city and place pages beneath it. The big camera countries offer hundreds of doorways — whole regions of harbors, slopes, squares, and highways. Smaller countries may sit on regional hubs rather than a dedicated page of their own, which is the honest shape of the public camera world: coverage follows where cameras happen to be public, not where longing happens to point.",
           "What matters is the habit the directory makes possible. Home stops being a search problem. It's a bookmark: your town's page, your harbor's camera, open in two taps whenever the hour comes around.",
         ],
       },
@@ -1643,7 +1643,7 @@ export const POSTS: BlogPost[] = [
     faqs: [
       {
         q: "How many countries have live cameras on WorldEye?",
-        a: "109 countries, per the country directory at worldeye.app/countries — part of a network of 74,229 public cameras. Larger countries have many city and place pages; the smallest sit on regional hubs.",
+        a: "109 countries have cameras in the catalogue; 74 of them have their own pages in the country directory at worldeye.app/countries — part of a network of 74,229 public cameras. Larger countries have many city and place pages; the smallest sit on regional hubs.",
       },
       {
         q: "Can I watch my hometown's cameras from another country?",
@@ -1655,7 +1655,7 @@ export const POSTS: BlogPost[] = [
       },
     ],
     sources: [
-      { name: "WorldEye country directory — 109 countries", url: "https://worldeye.app/countries" },
+      { name: "WorldEye country directory — 74 country pages", url: "https://worldeye.app/countries" },
     ],
   },
   {
@@ -6541,19 +6541,19 @@ export const POSTS: BlogPost[] = [
   },
   {
     slug: "live-cameras-by-country",
-    title: "Every Country, Live: 109 Country Pages for 74,229 Cameras",
-    seoTitle: "109 Country Camera Pages | WorldEye Blog",
+    title: "Every Country, Live: Country Pages for 74,229 Cameras",
+    seoTitle: "Country Camera Pages | WorldEye Blog",
     date: "2026-10-20",
     excerpt:
-      "The camera network now has a page for every country it covers — 109 country explorers with real local counts, from 41,355 cameras in the United States to 118 in Thailand.",
+      "The camera network has explorers for its biggest countries — 74 country pages with real local counts, from 41,355 cameras in the United States to 118 in Thailand, drawn from a catalogue spanning 109 countries.",
     seoDescription:
-      "Browse WorldEye's 74,229 verified live cameras by country: 109 country pages with real local counts — 41,355 in the US, 10,472 in Japan, 118 in Thailand.",
+      "Browse WorldEye's 74,229 verified live cameras by country: 74 country pages with real local counts — 41,355 in the US, 10,472 in Japan, 118 in Thailand.",
     tags: ["cameras", "announcement"],
     sections: [
       {
         heading: "A page for every country in the network",
         body: [
-          "WorldEye's [country index](/cameras/countries) now carries a dedicated page for each of the 109 countries in the camera network. Every page is a working explorer, not a stub: that country's cameras with a real count, a breakdown by area and city, featured feeds, and search and filters for drilling in. The globe is still the front door — the country pages are for when you already know where you want to look.",
+          "WorldEye's [country index](/cameras/countries) carries dedicated pages for 74 countries, drawn from the 109 countries in the camera network — the smallest are grouped into regional hubs. Every page is a working explorer, not a stub: that country's cameras with a real count, a breakdown by area and city, featured feeds, and search and filters for drilling in. The globe is still the front door — the country pages are for when you already know where you want to look.",
           "The pages exist because the network got big enough to need them. With [74,229 verified cameras](/blog/76000-live-cameras-new-layers) on the globe, 'show me Thailand' deserves a better answer than panning a map and hoping. Now it's one click: [Thailand's country page](/cameras/countries/thailand), all 118 feeds.",
         ],
       },
@@ -6590,7 +6590,7 @@ export const POSTS: BlogPost[] = [
     faqs: [
       {
         q: "How many countries have camera pages?",
-        a: "109 — every country with at least one verified public feed in the WorldEye network. Each page shows that country's camera count, its areas and cities, featured feeds, and filters for browsing them.",
+        a: "74 — the countries with the deepest verified coverage in the WorldEye network; the catalogue spans 109 countries in total, and the smallest sit on regional hubs. Each page shows that country's camera count, its areas and cities, featured feeds, and filters for browsing them.",
       },
       {
         q: "Why does the United States have 41,355 cameras but Thailand only 118?",
