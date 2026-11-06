@@ -39,6 +39,17 @@ import {
   EXIT_SURVEY_MAX_AGE_MS,
   VERIFICATION_REMINDER_MIN_AGE_MS,
   VERIFICATION_REMINDER_MAX_AGE_MS,
+  TRIAL_TRACK_SHORT_MAX_SPAN_MS,
+  TRIAL_DAY1_RECAP_MIN_AGE_MS,
+  TRIAL_DAY1_RECAP_MAX_AGE_MS,
+  TRIAL_DAY2_CTA_MIN_AGE_MS,
+  TRIAL_DAY2_CTA_MAX_AGE_MS,
+  TRIAL_DAY5_FEATURE_MIN_AGE_MS,
+  TRIAL_DAY5_FEATURE_MAX_AGE_MS,
+  TRIAL_PRECHARGE_MIN_UNTIL_END_MS,
+  TRIAL_PRECHARGE_MAX_UNTIL_END_MS,
+  TRIAL_PRECHARGE_SHORT_MIN_AGE_MS,
+  TRIAL_PRECHARGE_SHORT_MIN_REMAINING_MS,
   DAY_MS,
   AFFILIATE_SIGNUP_WINDOW_MS,
   AFFILIATE_COMMISSION_WINDOW_MS,
@@ -371,6 +382,83 @@ export function trialExitSurveyDue(
   const sinceEnd = now.getTime() - input.trialEndSec * 1000;
   if (sinceEnd < EXIT_SURVEY_MIN_AGE_MS) return no("too_early");
   if (sinceEnd > EXIT_SURVEY_MAX_AGE_MS) return no("too_old");
+  return DUE;
+}
+
+// ── (t) Trialist engagement track ────────────────────────────────────
+// Touches DURING a live trial. Track kind derives from the sub's REAL
+// trial span (trial_start → trial_end), never from restated plan
+// constants: the weekly trial spans 3 days, the rest span 10, and the
+// 5-day cut separates them with room on both sides. The engine only
+// evaluates these for subs Stripe reports as trialing; the status
+// gate is repeated here so the pure contract stands alone in tests.
+export type TrialTrackKind = "short" | "long";
+
+export function trialTrackKind(input: {
+  /** Unix seconds: trial start (Stripe trial_start, else sub created). */
+  trialStartSec: number;
+  /** Unix seconds: Stripe trial_end. */
+  trialEndSec: number;
+}): TrialTrackKind {
+  const spanMs = (input.trialEndSec - input.trialStartSec) * 1000;
+  return spanMs <= TRIAL_TRACK_SHORT_MAX_SPAN_MS ? "short" : "long";
+}
+
+interface TrialEngagementInput {
+  stripeStatus: string;
+  track: TrialTrackKind;
+  /** Trial start (Stripe trial_start, else subscription created). */
+  trialStart: Date;
+}
+
+export function trialDay1RecapDue(input: TrialEngagementInput, now: Date): TriggerVerdict {
+  if (input.stripeStatus !== "trialing") return no("not_trialing");
+  if (input.track !== "long") return no("short_track");
+  const age = now.getTime() - input.trialStart.getTime();
+  if (age < TRIAL_DAY1_RECAP_MIN_AGE_MS) return no("too_early");
+  if (age >= TRIAL_DAY1_RECAP_MAX_AGE_MS) return no("too_old");
+  return DUE;
+}
+
+export function trialDay2CtaDue(input: TrialEngagementInput, now: Date): TriggerVerdict {
+  if (input.stripeStatus !== "trialing") return no("not_trialing");
+  if (input.track !== "long") return no("short_track");
+  const age = now.getTime() - input.trialStart.getTime();
+  if (age < TRIAL_DAY2_CTA_MIN_AGE_MS) return no("too_early");
+  if (age >= TRIAL_DAY2_CTA_MAX_AGE_MS) return no("too_old");
+  return DUE;
+}
+
+export function trialDay5FeatureDue(input: TrialEngagementInput, now: Date): TriggerVerdict {
+  if (input.stripeStatus !== "trialing") return no("not_trialing");
+  if (input.track !== "long") return no("short_track");
+  const age = now.getTime() - input.trialStart.getTime();
+  if (age < TRIAL_DAY5_FEATURE_MIN_AGE_MS) return no("too_early");
+  if (age >= TRIAL_DAY5_FEATURE_MAX_AGE_MS) return no("too_old");
+  return DUE;
+}
+
+// The last engagement touch before the charge. Long track: purely the
+// (24h, 48h]-to-end window — disjoint from the transactional
+// trial-reminders email, which owns the final 24h. Short track: the
+// ONLY touch (the generic cadence can't fit a 3-day trial under the
+// 48h cap after the welcome), gated to age ≥48h with ≥6h remaining so
+// it lands mid-final-day, never on top of the reminder.
+export function trialPrechargeRecapDue(
+  input: TrialEngagementInput & { trialEnd: Date },
+  now: Date,
+): TriggerVerdict {
+  if (input.stripeStatus !== "trialing") return no("not_trialing");
+  const untilEnd = input.trialEnd.getTime() - now.getTime();
+  if (input.track === "short") {
+    const age = now.getTime() - input.trialStart.getTime();
+    if (age < TRIAL_PRECHARGE_SHORT_MIN_AGE_MS) return no("too_early");
+    if (untilEnd < TRIAL_PRECHARGE_SHORT_MIN_REMAINING_MS) return no("ending_too_soon");
+    if (untilEnd > TRIAL_PRECHARGE_MAX_UNTIL_END_MS) return no("too_early");
+    return DUE;
+  }
+  if (untilEnd <= TRIAL_PRECHARGE_MIN_UNTIL_END_MS) return no("ending_too_soon");
+  if (untilEnd > TRIAL_PRECHARGE_MAX_UNTIL_END_MS) return no("too_early");
   return DUE;
 }
 

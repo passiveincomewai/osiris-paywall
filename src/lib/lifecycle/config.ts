@@ -67,6 +67,34 @@ export const TRIAL_WINBACK_WINDOW_MS = 7 * DAY_MS;
 export const TRIAL_WINBACK2_MIN_AGE_MS = 28 * DAY_MS;
 export const TRIAL_WINBACK2_MAX_AGE_MS = 38 * DAY_MS;
 
+/** Trialist engagement track (conversion lever #1, owner-approved
+ * 2026-11-05): touches DURING a live trial — the onboarding drip
+ * covers free accounts and the win-backs own dead trials; this owns
+ * the living middle. Track kind derives from the sub's REAL trial
+ * span (trial start → trial end): ≤5d = "short" (the weekly 3-day
+ * trial), else "long" (the 10-day trials). Bands are wide and
+ * disjoint per codebase discipline; the 48h marketing cap spaces the
+ * actual sends inside them (deliver() skips on cap WITHOUT logging,
+ * so a cap-blocked touch lands later inside its band).
+ * Long track, ages measured from trial start: day-1 recap
+ * [24h, 4d) · day-2 CTA [48h, 6d) · day-5 feature [5d, 8d).
+ * Pre-charge recap (both tracks): fires when the trial ends in
+ * (24h, 48h] — disjoint from trial-reminders' final-24h
+ * transactional window by construction. On the short track it is the
+ * ONLY touch, and it additionally requires trial age ≥48h with ≥6h
+ * of trial still remaining. */
+export const TRIAL_TRACK_SHORT_MAX_SPAN_MS = 5 * DAY_MS;
+export const TRIAL_DAY1_RECAP_MIN_AGE_MS = 24 * HOUR_MS;
+export const TRIAL_DAY1_RECAP_MAX_AGE_MS = 4 * DAY_MS;
+export const TRIAL_DAY2_CTA_MIN_AGE_MS = 48 * HOUR_MS;
+export const TRIAL_DAY2_CTA_MAX_AGE_MS = 6 * DAY_MS;
+export const TRIAL_DAY5_FEATURE_MIN_AGE_MS = 5 * DAY_MS;
+export const TRIAL_DAY5_FEATURE_MAX_AGE_MS = 8 * DAY_MS;
+export const TRIAL_PRECHARGE_MIN_UNTIL_END_MS = 24 * HOUR_MS;
+export const TRIAL_PRECHARGE_MAX_UNTIL_END_MS = 48 * HOUR_MS;
+export const TRIAL_PRECHARGE_SHORT_MIN_AGE_MS = 48 * HOUR_MS;
+export const TRIAL_PRECHARGE_SHORT_MIN_REMAINING_MS = 6 * HOUR_MS;
+
 /** Annual renewal advance notice: inside the final week before an
  * annual period ends and the card is charged for another year. The
  * trial-ending email covers only a trial's FIRST charge; this covers
