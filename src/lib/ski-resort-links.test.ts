@@ -237,7 +237,15 @@ const EXCEPTIONS: Record<string, Partial<Record<SkiLinkKind, { host: string; rea
 
 const LINKS = linksData as Record<string, SkiResortLinks>;
 const LOGOS = logosData as Record<string, { domain: string }>;
-const KINDS: SkiLinkKind[] = ["tickets", "trailMap", "lodging"];
+const KINDS: SkiLinkKind[] = [
+  "tickets",
+  "trailMap",
+  "lodging",
+  "lessons",
+  "rentals",
+  "parking",
+  "snowReport",
+];
 const RESORT_SLUGS = new Set(SKI_RESORTS.map(r => r.slug));
 
 function hostOf(url: string): string {
@@ -257,7 +265,7 @@ describe("ski-resort-links.json integrity", () => {
     }
   });
 
-  it("entries hold only the three link kinds, at least one present", () => {
+  it("entries hold only the pinned link kinds, at least one present", () => {
     for (const [slug, entry] of Object.entries(LINKS)) {
       const keys = Object.keys(entry);
       expect(keys.length, slug).toBeGreaterThan(0);

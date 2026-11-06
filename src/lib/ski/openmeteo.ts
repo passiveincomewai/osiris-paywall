@@ -412,6 +412,12 @@ export async function fetchResortSnow(
     fetchImpl?: SnowFetch;
     timeoutMs?: number;
     now?: Date;
+    /**
+     * Opt-in Next data-cache lifetime (seconds) for page renders, so a
+     * statically generated page can refresh its model figures via ISR.
+     * Unset (the email features' behaviour) leaves the fetch uncached.
+     */
+    revalidateSeconds?: number;
   } = {},
 ): Promise<ResortSnowData | null> {
   const fetchImpl = opts.fetchImpl ?? fetch;
@@ -428,6 +434,9 @@ export async function fetchResortSnow(
     const res = await fetchImpl(`https://api.open-meteo.com/v1/forecast?${qs.toString()}`, {
       signal: AbortSignal.timeout(opts.timeoutMs ?? 8000),
       headers: { "User-Agent": "WorldEye-PowderPass/1.0" },
+      ...(opts.revalidateSeconds != null
+        ? { next: { revalidate: opts.revalidateSeconds } }
+        : {}),
     });
     if (!res.ok) return null;
     const json: unknown = await res.json();

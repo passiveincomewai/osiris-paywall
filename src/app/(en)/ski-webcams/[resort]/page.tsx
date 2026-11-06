@@ -8,6 +8,7 @@ import SkiCameraGrid from "@/components/SkiCameraGrid";
 import SkiSnowStake from "@/components/SkiSnowStake";
 import { stakeCamForResort } from "@/data/ski-stake-cams";
 import SkiConditions from "@/components/SkiConditions";
+import SkiSnowReport from "@/components/SkiSnowReport";
 import SkiRouteTool from "@/components/SkiRouteTool";
 import SkiSidebar from "@/components/SkiSidebar";
 import SkiFollowButton from "@/components/SkiFollowButton";
@@ -374,6 +375,16 @@ export default async function SkiResortPage({
           </p>
         </div>
 
+        {/* Snow report (Wave 2 item 8, 2026-11-06) — modelled snowfall
+            (labelled, with fetch time), the operator's stake camera,
+            live DOT plows and the link out to the resort's own snow
+            report. Every block renders only on real data. */}
+        <SkiSnowReport
+          resort={r}
+          stakeCam={stakeCam}
+          snowReportUrl={links?.snowReport}
+        />
+
         {/* Trip reminders (P9a) — book-ahead email nudges for a
             planned trip to this resort; reminders only, no booking. */}
         <section id="reminders" className="mt-12 scroll-mt-24">
@@ -621,7 +632,7 @@ export default async function SkiResortPage({
             frame replay once captures exist. Renders only where a
             verified operator-labelled stake feed exists. */}
         {stakeCam && (
-          <section className="mt-12">
+          <section id="snow-stake" className="mt-12 scroll-mt-24">
             <h2 className="text-xl md:text-2xl font-bold mb-2">
               Snow stake — watch the night&apos;s snow pile up
             </h2>

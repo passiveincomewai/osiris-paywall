@@ -9,7 +9,7 @@
  */
 import { useState } from "react";
 import Link from "next/link";
-import { BedDouble, Car, ExternalLink, Globe, GraduationCap, Map as MapIcon, Ticket, Wrench } from "lucide-react";
+import { BedDouble, Car, ExternalLink, Globe, GraduationCap, Map as MapIcon, Snowflake, Ticket, Wrench } from "lucide-react";
 import type { SkiResortLogoMap } from "@/lib/ski-directory";
 import { resortInitials } from "@/lib/ski-directory";
 import {
@@ -49,6 +49,7 @@ function LogoTile({ resort, logos }: { resort: CompareResortData; logos: SkiReso
 
 const LINK_ICONS: Record<SkiLinkKind, typeof Ticket> = {
   tickets: Ticket,
+  snowReport: Snowflake,
   trailMap: MapIcon,
   lodging: BedDouble,
   lessons: GraduationCap,
@@ -59,7 +60,7 @@ const LINK_ICONS: Record<SkiLinkKind, typeof Ticket> = {
 function ResortLinkButtons({ resort }: { resort: CompareResortData }) {
   const links = resort.links;
   const kinds = (
-    ["tickets", "trailMap", "lodging", "lessons", "rentals", "parking"] as SkiLinkKind[]
+    ["tickets", "snowReport", "trailMap", "lodging", "lessons", "rentals", "parking"] as SkiLinkKind[]
   ).filter(k => links?.[k]);
   if (!resort.website && kinds.length === 0) return null;
   return (

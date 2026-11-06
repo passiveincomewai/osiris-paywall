@@ -34,6 +34,13 @@ export interface SkiResortLinks {
   rentals?: string;
   /** The resort's official parking / getting-here page. */
   parking?: string;
+  /** The resort's official snow report / mountain conditions page —
+   *  the measured snowfall, base depth and lift-status source the
+   *  resort pages link out to (Wave 2 item 8, 2026-11-06; verified to
+   *  the same standard as every other kind: resolved from the
+   *  resort's verified official domain, fetched, and confirmed to be
+   *  that resort's own snow report / conditions page). */
+  snowReport?: string;
 }
 
 export type SkiLinkKind = keyof SkiResortLinks;
@@ -45,6 +52,7 @@ export const SKI_LINK_KINDS: SkiLinkKind[] = [
   "lessons",
   "rentals",
   "parking",
+  "snowReport",
 ];
 
 export const SKI_LINK_LABELS: Record<SkiLinkKind, string> = {
@@ -54,6 +62,7 @@ export const SKI_LINK_LABELS: Record<SkiLinkKind, string> = {
   lessons: "Ski lessons",
   rentals: "Gear rentals",
   parking: "Parking",
+  snowReport: "Official snow report",
 };
 
 const LINKS = linksData as Record<string, SkiResortLinks>;
