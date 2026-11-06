@@ -586,6 +586,34 @@ model CameraBonusGrant {
   @@index([inviterUserId])
 }
 
+// ── Invite-a-friend Pro-days reward ─────────────────────────────────
+// A signed-in user earns +7 days of Pro when a friend who joined
+// through their /ref link verifies their email (lib/invite-pro). The
+// days are granted ONLY through the comp engine (synthetic comp
+// subscription rows) — a real Stripe subscription is never touched.
+// The ledger keys the reward to the invited account: one reward per
+// referred account, ever. status:
+//   granted — the comp days were applied to the inviter (appliedAt);
+//   banked  — the inviter had a real Stripe subscription row, which
+//             the comp engine never touches; the days sit here and
+//             are applied once that row is gone (the Stripe webhook
+//             deletes it when the paid sub ends);
+//   capped  — the inviter already had 5 rewarded invites in that
+//             calendar month; recorded (with the nominal days) so
+//             this invitee can never pay out on a later re-fire.
+model InviteProGrant {
+  id            String    @id @default(cuid())
+  inviteeUserId String    @unique
+  inviterUserId String
+  days          Int       @default(7)
+  status        String    @default("granted")
+  createdAt     DateTime  @default(now())
+  appliedAt     DateTime?
+
+  @@index([inviterUserId])
+  @@index([inviterUserId, createdAt])
+}
+
 // ── Universal share identity ─────────────────────────────────────────
 // Everyone gets a personal share code — the affiliate link system,
 // opened to visitors who have no account. A signed-in user's share

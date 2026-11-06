@@ -14,7 +14,7 @@
 import { db } from "@/lib/db";
 import { rankFor, RANKS, type RankDef } from "@/lib/affiliate/ranks";
 
-export type CompSource = "creator" | "visionary";
+export type CompSource = "creator" | "visionary" | "invite";
 
 export const COMP_PRICE_ID = "comp_free_pro";
 export const COMP_ID_PREFIX = "comp_";
@@ -88,6 +88,67 @@ export async function grantCompPro(
     where: { userId },
     create: { userId, ...data },
     update: data,
+  });
+  return { granted: true, currentPeriodEnd: sub.currentPeriodEnd };
+}
+
+/**
+ * Pure: the base an additive days grant extends from — the existing
+ * comp period end while it is still in the future, else now (an
+ * expired comp period restarts from today, never from the past).
+ */
+export function compExtendBase(
+  existing: { currentPeriodEnd: Date } | null | undefined,
+  now: Date,
+): Date {
+  return existing && existing.currentPeriodEnd > now
+    ? existing.currentPeriodEnd
+    : now;
+}
+
+/**
+ * Grant `days` of complimentary Pro, ADDED to any comp time the user
+ * already has (unlike grantCompPro, which sets a fresh period). Same
+ * hard rule: a real Stripe subscription row blocks the grant entirely
+ * (granted:false) and is never touched. Extending an existing comp row
+ * preserves its original synthetic ids — only the period moves.
+ */
+export async function grantCompProDays(
+  userId: string,
+  source: CompSource,
+  days: number,
+): Promise<CompGrantResult> {
+  const existing = await db.subscription.findUnique({ where: { userId } });
+  if (compGrantDecision(existing) === "skip_paid") {
+    return { granted: false, reason: "paid_subscription_exists" };
+  }
+
+  const now = new Date();
+  const base = isCompSubscription(existing)
+    ? compExtendBase(existing, now)
+    : now;
+  const end = new Date(base.getTime() + days * 86_400_000);
+  const syntheticId = compSyntheticId(source, userId);
+
+  const sub = await db.subscription.upsert({
+    where: { userId },
+    create: {
+      userId,
+      stripeCustomerId: syntheticId,
+      stripeSubscriptionId: syntheticId,
+      stripePriceId: COMP_PRICE_ID,
+      status: "active" as const,
+      currentPeriodStart: now,
+      currentPeriodEnd: end,
+      cancelAtPeriodEnd: false,
+    },
+    // Existing comp row: move ONLY the period (and revive a revoked
+    // row); its ids keep naming the source that created it.
+    update: {
+      status: "active" as const,
+      currentPeriodEnd: end,
+      cancelAtPeriodEnd: false,
+    },
   });
   return { granted: true, currentPeriodEnd: sub.currentPeriodEnd };
 }

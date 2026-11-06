@@ -6,6 +6,10 @@ import { auth } from "@/auth";
 import { attributeUserToAffiliate } from "@/lib/affiliate/attribution";
 import { attributeUserToShareCode } from "@/lib/share/identity";
 import { grantInviteCameraBonus } from "@/lib/camera-bonus";
+import {
+  grantInviteProReward,
+  applyBankedInviteProDays,
+} from "@/lib/invite-pro";
 
 export const runtime = "nodejs";
 
@@ -37,6 +41,26 @@ export async function POST() {
     await grantInviteCameraBonus(userId);
   } catch (e) {
     console.error("[sync-signup] invite camera bonus failed:", e);
+  }
+  // Invite-a-friend Pro-days reward: a VERIFIED referred account earns
+  // their inviter +7 days of Pro (comp engine only, lib/invite-pro).
+  // This route is the OAuth path's hook — Google accounts are verified
+  // by provider and never see the verify-email route — and it also
+  // catches attributions flushed after verification. Idempotent per
+  // invitee (unique grant ledger). Best-effort, like the bonus.
+  try {
+    await grantInviteProReward(userId);
+  } catch (e) {
+    console.error("[sync-signup] invite pro reward failed:", e);
+  }
+  // Banked invite days: if THIS user earned Pro days while a paid
+  // subscription blocked the comp grant, apply them now — the paid
+  // row may be gone (the webhook deletes it when the sub ends), and
+  // every sign-in is a fresh chance. Best-effort.
+  try {
+    await applyBankedInviteProDays(userId);
+  } catch (e) {
+    console.error("[sync-signup] banked invite pro days failed:", e);
   }
   return NextResponse.json({ attributed: !!attr, affiliateProfileId: attr?.affiliateProfileId ?? null, share });
 }

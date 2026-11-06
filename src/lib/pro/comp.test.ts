@@ -9,6 +9,7 @@ import {
   compGrantDecision,
   compRevokeDecision,
   compSyntheticId,
+  compExtendBase,
   isVisionaryXp,
   COMP_PRICE_ID,
 } from "./comp";
@@ -31,6 +32,7 @@ describe("comp subscription detection", () => {
   it("builds synthetic ids in the comp_<source>_<userId> shape", () => {
     expect(compSyntheticId("creator", "u1")).toBe("comp_creator_u1");
     expect(compSyntheticId("visionary", "u1")).toBe("comp_visionary_u1");
+    expect(compSyntheticId("invite", "u1")).toBe("comp_invite_u1");
     expect(COMP_PRICE_ID).toBe("comp_free_pro");
   });
 });
@@ -48,6 +50,22 @@ describe("comp grant decision (paid customers are untouchable)", () => {
 
   it("skips when a real Stripe subscription exists — any status", () => {
     expect(compGrantDecision(realRow)).toBe("skip_paid");
+  });
+});
+
+describe("comp extend base (additive days grants)", () => {
+  const now = new Date("2026-11-05T12:00:00Z");
+  it("extends from a comp period end still in the future", () => {
+    const end = new Date("2026-11-20T12:00:00Z");
+    expect(compExtendBase({ currentPeriodEnd: end }, now)).toBe(end);
+  });
+  it("restarts from now when the comp period already ended", () => {
+    const end = new Date("2026-10-01T12:00:00Z");
+    expect(compExtendBase({ currentPeriodEnd: end }, now)).toBe(now);
+  });
+  it("starts from now with no existing row", () => {
+    expect(compExtendBase(null, now)).toBe(now);
+    expect(compExtendBase(undefined, now)).toBe(now);
   });
 });
 

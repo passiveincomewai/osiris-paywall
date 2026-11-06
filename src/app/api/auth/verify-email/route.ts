@@ -9,6 +9,7 @@ import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { normalizeEmail, tokensEqual, VERIFY_ID_PREFIX } from "@/lib/password-auth";
 import { appUrl } from "@/lib/email";
+import { grantInviteProReward } from "@/lib/invite-pro";
 
 export const runtime = "nodejs";
 
@@ -36,6 +37,22 @@ export async function GET(req: Request) {
     db.user.update({ where: { email }, data: { emailVerified: new Date() } }),
     db.verificationToken.delete({ where: { token } }),
   ]);
+
+  // Invite-a-friend Pro-days reward: this click is the moment a
+  // referred account becomes verified, so their inviter's reward is
+  // decided here (lib/invite-pro; idempotent per invitee). Best-effort
+  // — a reward hiccup must never break the verification landing.
+  // OAuth accounts verify by provider instead and never see this
+  // route; their hook is POST /api/affiliate/sync-signup.
+  try {
+    const verifiedUser = await db.user.findUnique({
+      where: { email },
+      select: { id: true },
+    });
+    if (verifiedUser) await grantInviteProReward(verifiedUser.id);
+  } catch (e) {
+    console.error("[verify-email] invite pro reward failed:", e);
+  }
 
   const session = await auth().catch(() => null);
   const signedInAsThisUser =
