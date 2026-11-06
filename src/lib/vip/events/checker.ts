@@ -80,20 +80,40 @@ async function fireEvent(
     return;
   }
   summary.eventsCreated++;
-  if (rule.emailEnabled && rule.user.email) {
+  if (rule.emailEnabled) {
     // User-level alert preferences gate the send (items 13/14):
-    // event channel + quiet hours in the user's timezone. Fail-open on
-    // a preferences error, same as the camera-alert checker.
+    // event channel + quiet hours in the user's timezone. The
+    // decision is computed ONCE for both channels. Fail-open on a
+    // preferences error for email, fail-closed for push, same as the
+    // camera-alert checker.
     let deliver = true;
+    let deliverPush = false;
     try {
       const { getPreferences } = await import("@/lib/account/preferences");
       const { alertDeliveryDecision } = await import("@/lib/account/delivery");
       const prefs = await getPreferences(rule.userId);
-      deliver = alertDeliveryDecision(prefs, "event", new Date()).email;
+      const decision = alertDeliveryDecision(prefs, "event", new Date());
+      deliver = decision.email;
+      deliverPush = decision.push;
     } catch {
       deliver = true;
+      deliverPush = false;
     }
-    if (!deliver) return;
+    if (deliverPush) {
+      const { sendPushToUser } = await import("@/lib/push/send");
+      const pushed = await sendPushToUser(rule.userId, {
+        title: draft.title,
+        body: draft.body,
+        url: "/settings/alerts",
+        tag: `event-alert-${rule.id}`,
+      }).catch(() => null);
+      if (pushed && pushed.accepted > 0) {
+        await db.eventAlertEvent
+          .update({ where: { id: event.id }, data: { pushSent: true } })
+          .catch(() => undefined);
+      }
+    }
+    if (!deliver || !rule.user.email) return;
     const mail = eventAlertEmail({ title: draft.title, body: draft.body });
     const sent = await sendEmail(rule.user.email, mail.subject, mail.html).catch(() => false);
     if (sent) {

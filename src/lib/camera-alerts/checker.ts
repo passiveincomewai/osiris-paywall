@@ -194,17 +194,36 @@ export async function runAlertChecks(
     if (rule.emailEnabled) {
       // User-level alert preferences gate the send (items 13/14):
       // channel choice + quiet hours in the user's own timezone. The
-      // event is already recorded above either way — only the email
-      // is held. Fail-open on a preferences error: a settings hiccup
-      // must never silently swallow a safety-relevant alert.
+      // event is already recorded above either way — only delivery
+      // is held. The decision is computed ONCE for both channels.
+      // Fail-open on a preferences error for EMAIL (a settings hiccup
+      // must never silently swallow a safety-relevant alert) but
+      // fail-CLOSED for push: an unknown preference can never invent
+      // a channel the user did not choose.
       let deliver = true;
+      let deliverPush = false;
       if (deps.prefsOf) {
         try {
           const { alertDeliveryDecision } = await import("@/lib/account/delivery");
           const prefs = await deps.prefsOf(rule.userId);
-          deliver = alertDeliveryDecision(prefs, "camera", now).email;
+          const decision = alertDeliveryDecision(prefs, "camera", now);
+          deliver = decision.email;
+          deliverPush = decision.push;
         } catch {
           deliver = true;
+          deliverPush = false;
+        }
+      }
+      if (deliverPush) {
+        const { sendPushToUser } = await import("@/lib/push/send");
+        const pushed = await sendPushToUser(rule.userId, {
+          title: `Camera alert: ${rule.cameraName}`,
+          body: observation,
+          url: `/?camera=${encodeURIComponent(rule.cameraId)}`,
+          tag: `camera-alert-${rule.id}`,
+        }).catch(() => null);
+        if (pushed && pushed.accepted > 0) {
+          await db.alertEvent.update({ where: { id: event.id }, data: { pushSent: true } }).catch(() => {});
         }
       }
       const to = deliver ? await deps.userEmail(rule.userId).catch(() => null) : null;

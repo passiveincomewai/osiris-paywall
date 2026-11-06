@@ -14,6 +14,7 @@ import type { Preferences } from "@/lib/account/preferences";
 import { SIDEBAR_TOOLS, resolveSidebarToolOrder, type SidebarToolId } from "@/lib/sidebar-tools";
 import { DISCOVERY_SOURCES, discoverySourceLabel } from "@/lib/discovery-sources";
 import SecuritySections from "./SecuritySections";
+import PushDeviceControl from "./PushDeviceControl";
 
 function Section({ icon: Icon, title, children }: { icon: any; title: string; children: React.ReactNode }) {
   return (
@@ -599,6 +600,7 @@ export default function AccountSections() {
           </div>
         </div>
         <p className="text-xs text-white/35 mt-2">Browser push arrives with the WorldEye app install (PWA). Until push is active on your device, a push-only choice means alerts wait — we never silently reroute them.</p>
+        <PushDeviceControl />
         <div className="divide-y divide-white/5 mt-2">
           <Toggle value={prefs.quietHoursEnabled} onChange={(v) => set("quietHoursEnabled", v)} label="Quiet hours" hint="Alert emails pause during these hours (your timezone above)." />
         </div>
