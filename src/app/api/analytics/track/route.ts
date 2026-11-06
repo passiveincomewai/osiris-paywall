@@ -7,6 +7,8 @@ import {
   parseVisitorId,
   parseEventDetail,
   parseSearchDetail,
+  parseCameraId,
+  parseCameraName,
   SEARCH_PERFORMED_EVENT,
   deviceClassFromUserAgent,
 } from "@/lib/analytics/ingest-fields";
@@ -41,6 +43,15 @@ export const runtime = "nodejs";
  *           Exception: the `search_performed` event carries a structured
  *           "<resultCount>_<query token>" detail, validated by
  *           parseSearchDetail (see lib/analytics/search-event.ts).
+ *  cameraId / cameraName: for the `camera_open` event ONLY — the id of
+ *           the camera the visitor opened plus an ingest-time name
+ *           snapshot, validated by parseCameraId/parseCameraName and
+ *           stored in the dedicated PageView columns (the :detail suffix
+ *           cannot carry a real camera id). Sent by any other event, or
+ *           malformed, they are ignored — the row stores NULL, exactly
+ *           like pre-instrumentation history. Powers the "pick up where
+ *           you left off" rail; render-time resolution via /api/cctv?id=
+ *           stays authoritative over the name snapshot.
  */
 export async function POST(req: NextRequest) {
   try {
@@ -75,6 +86,12 @@ export async function POST(req: NextRequest) {
           ? parseSearchDetail(body.detail)
           : parseEventDetail(body.detail);
       const event = (detail ? `${body.event}:${detail}` : body.event).slice(0, 80);
+      // Camera identity is meaningful on camera_open rows only; any
+      // other event carrying these fields has them ignored (NULL stored).
+      const camera =
+        body.event === "camera_open"
+          ? { cameraId: parseCameraId(body.cameraId), cameraName: parseCameraName(body.cameraName) }
+          : null;
       await db.pageView.create({
         data: {
           path,
@@ -84,6 +101,7 @@ export async function POST(req: NextRequest) {
           event,
           variant,
           device,
+          ...(camera ? { cameraId: camera.cameraId, cameraName: camera.cameraName } : {}),
         },
       });
     } else {

@@ -335,7 +335,7 @@ export default function CaliforniaFireCameraExplorer() {
   }, [shown, filtering, groups]);
 
   const openCamera = (cam: AlertCam) => {
-    trackAnalyticsEvent('camera_open');
+    trackAnalyticsEvent('camera_open', undefined, { id: cam.id, name: cam.name });
     setActive(cam);
   };
 

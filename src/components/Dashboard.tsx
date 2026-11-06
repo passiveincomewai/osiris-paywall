@@ -1057,7 +1057,7 @@ export default function Dashboard() {
         if (j && typeof j.balance === 'number') setCameraBonus(j.balance);
         if (j?.consumed) {
           recordCameraClick();
-          trackAnalyticsEvent('camera_open');
+          trackAnalyticsEvent('camera_open', undefined, { id: entity.id, name: entity.name });
           setActiveCamera(entity);
           setCameraEverOpened(true);
           return;
@@ -1576,7 +1576,7 @@ export default function Dashboard() {
           const action = blockedCameraAction(check, cameraBonus !== null && cameraBonus > 0);
           if (action === 'open') {
             setIsPremiumUser(true);
-            trackAnalyticsEvent('camera_open');
+            trackAnalyticsEvent('camera_open', undefined, { id: entity.id, name: entity.name });
             setActiveCamera(entity);
             setCameraEverOpened(true);
             return;
@@ -1604,7 +1604,7 @@ export default function Dashboard() {
         }
         recordCameraClick();
       }
-      trackAnalyticsEvent('camera_open');
+      trackAnalyticsEvent('camera_open', undefined, { id: entity.id, name: entity.name });
       setActiveCamera(entity);
       setCameraEverOpened(true);
       return;

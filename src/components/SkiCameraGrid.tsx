@@ -59,7 +59,7 @@ export default function SkiCameraGrid({
               <CameraFeedCard
                 cam={cam}
                 onOpen={c => {
-                  trackAnalyticsEvent('camera_open');
+                  trackAnalyticsEvent('camera_open', undefined, { id: c.id, name: c.name });
                   setActive(c);
                 }}
               />

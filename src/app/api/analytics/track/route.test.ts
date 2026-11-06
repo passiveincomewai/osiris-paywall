@@ -140,3 +140,38 @@ describe("POST /api/analytics/track — visitorId stamping", () => {
     expect(created[0].visitorId).toBeNull();
   });
 });
+
+describe("POST /api/analytics/track — camera_open camera identity", () => {
+  const CAM_ID = "sky-maldives-sunset-beach-veligandu-maldives-resort-island-5535";
+
+  it("stamps cameraId + cameraName on a camera_open carrying them", async () => {
+    await POST(
+      req({ path: "/", sessionId: "s8", event: "camera_open", cameraId: CAM_ID, cameraName: "Veligandu Sunset Beach" }),
+    );
+    expect(created[0]).toMatchObject({ event: "camera_open", cameraId: CAM_ID, cameraName: "Veligandu Sunset Beach" });
+  });
+
+  it("stores NULLs when the id is malformed (row = pre-instrumentation shape)", async () => {
+    await POST(req({ path: "/", sessionId: "s8", event: "camera_open", cameraId: "not a camera id!", cameraName: 7 }));
+    expect(created[0].cameraId).toBeNull();
+    expect(created[0].cameraName).toBeNull();
+  });
+
+  it("stores NULLs when a camera_open omits the fields entirely", async () => {
+    await POST(req({ path: "/", sessionId: "s8", event: "camera_open" }));
+    expect(created[0].cameraId).toBeNull();
+    expect(created[0].cameraName).toBeNull();
+  });
+
+  it("ignores camera fields on any other event", async () => {
+    await POST(req({ path: "/", sessionId: "s8", event: "upgrade_gate_shown", cameraId: CAM_ID, cameraName: "Nope" }));
+    expect("cameraId" in created[0]).toBe(false);
+    expect("cameraName" in created[0]).toBe(false);
+  });
+
+  it("never stamps camera fields on plain page views", async () => {
+    await POST(req({ path: "/", sessionId: "s8", cameraId: CAM_ID, cameraName: "Nope" }));
+    expect("cameraId" in created[0]).toBe(false);
+    expect("event" in created[0]).toBe(false);
+  });
+});

@@ -5,6 +5,10 @@ import {
   parseVisitorId,
   parseEventDetail,
   parseSearchDetail,
+  parseCameraId,
+  parseCameraName,
+  CAMERA_ID_MAX,
+  CAMERA_NAME_MAX,
   SEARCH_PERFORMED_EVENT,
   deviceClassFromUserAgent,
   splitEvent,
@@ -118,5 +122,42 @@ describe("parseSearchDetail (search_performed payload)", () => {
     expect(cleaned).not.toBeNull();
     expect(cleaned!.length).toBe(60);
     expect(`search_performed:${cleaned}`.length).toBeLessThanOrEqual(80);
+  });
+});
+
+describe("parseCameraId", () => {
+  it("accepts real camera ids verbatim — dashed slugs and CAM- codes", () => {
+    expect(parseCameraId("sky-maldives-sunset-beach-veligandu-maldives-resort-island-5535")).toBe(
+      "sky-maldives-sunset-beach-veligandu-maldives-resort-island-5535",
+    );
+    expect(parseCameraId("CAM-9009-4833")).toBe("CAM-9009-4833");
+    expect(parseCameraId("12345")).toBe("12345");
+  });
+  it("rejects non-strings, blanks, whitespace and overlong values", () => {
+    expect(parseCameraId(undefined)).toBeNull();
+    expect(parseCameraId(null)).toBeNull();
+    expect(parseCameraId(42)).toBeNull();
+    expect(parseCameraId("")).toBeNull();
+    expect(parseCameraId("   ")).toBeNull();
+    expect(parseCameraId("has spaces")).toBeNull();
+    expect(parseCameraId("a/b?c")).toBeNull();
+    expect(parseCameraId("x".repeat(CAMERA_ID_MAX + 1))).toBeNull();
+    expect(parseCameraId("x".repeat(CAMERA_ID_MAX))).toBe("x".repeat(CAMERA_ID_MAX));
+  });
+  it("trims surrounding whitespace", () => {
+    expect(parseCameraId("  CAM-1  ")).toBe("CAM-1");
+  });
+});
+
+describe("parseCameraName", () => {
+  it("keeps a normal display name", () => {
+    expect(parseCameraName("Sukiyabashi Crossing, Tokyo")).toBe("Sukiyabashi Crossing, Tokyo");
+  });
+  it("rejects non-strings and blanks, strips control chars, caps length", () => {
+    expect(parseCameraName(undefined)).toBeNull();
+    expect(parseCameraName("")).toBeNull();
+    expect(parseCameraName("   ")).toBeNull();
+    expect(parseCameraName("a\u0000b")).toBe("a b");
+    expect(parseCameraName("n".repeat(CAMERA_NAME_MAX + 50))!.length).toBe(CAMERA_NAME_MAX);
   });
 });

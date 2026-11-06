@@ -209,7 +209,7 @@ export default function CountryCameraExplorer({
   }, [total, area, debouncedQuery]);
 
   const doOpenCamera = (cam: CountryCamera) => {
-    trackAnalyticsEvent('camera_open');
+    trackAnalyticsEvent('camera_open', undefined, { id: cam.id, name: cam.name });
     setActive(cam);
   };
 

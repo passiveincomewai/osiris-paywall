@@ -175,7 +175,7 @@ export default function DirectoryExplorer({
   }, [hasMore, loading, loadMore]);
 
   const openCamera = (cam: CountryCamera) => {
-    trackAnalyticsEvent('camera_open');
+    trackAnalyticsEvent('camera_open', undefined, { id: cam.id, name: cam.name });
     setActive(cam);
   };
 

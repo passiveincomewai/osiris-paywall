@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { getVisitorId } from "@/lib/analytics/visitor-id";
+import { rememberRecentCamera } from "@/lib/analytics/recent-cameras";
 
 function sessionId(): string {
   try {
@@ -67,9 +68,25 @@ export function captureUtm(): Record<string, string> {
  * `event:detail` — see lib/analytics/ingest-fields. (Exception: the
  * `search_performed` event's structured count+query token, built by
  * lib/analytics/search-event and allowed up to 60 chars server-side.)
+ * `camera` is for the `camera_open` event only: the opened camera's id
+ * and its name at open time. The id travels as its own payload field —
+ * the detail token would mangle it (dashes stripped, 24-char cap) — and
+ * the ingest route stamps it into PageView.cameraId for camera_open
+ * rows only. The same open is also recorded into the localStorage
+ * recents list (lib/analytics/recent-cameras) that powers the "pick up
+ * where you left off" rail for signed-out visitors.
  */
-export function trackAnalyticsEvent(event: string, detail?: string) {
+export function trackAnalyticsEvent(
+  event: string,
+  detail?: string,
+  camera?: { id: string; name: string },
+) {
   try {
+    const cam =
+      event === "camera_open" && camera && typeof camera.id === "string" && camera.id.length > 0
+        ? { cameraId: camera.id, ...(camera.name ? { cameraName: camera.name } : {}) }
+        : null;
+    if (cam) rememberRecentCamera({ id: camera!.id, name: camera!.name ?? "" });
     const sid = sessionId();
     fetch("/api/analytics/track", {
       method: "POST",
@@ -80,6 +97,7 @@ export function trackAnalyticsEvent(event: string, detail?: string) {
         visitorId: visitorId(),
         event,
         ...(detail ? { detail } : {}),
+        ...(cam ?? {}),
       }),
       keepalive: true,
     }).catch(() => {});

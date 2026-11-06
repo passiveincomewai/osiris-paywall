@@ -763,6 +763,15 @@ model PageView {
   // written before this column existed and whenever the client sent no
   // (or a malformed) ID.
   visitorId   String?
+  // Camera identity for camera_open event rows (Wave 2 item 7), stamped
+  // by the analytics ingest route ONLY when the event is camera_open and
+  // the client sent a well-formed id. cameraName is the ingest-time label
+  // snapshot; the "pick up where you left off" rail re-resolves the live
+  // record via /api/cctv?id= at render time and treats that as
+  // authoritative. Null on every other row and on ALL pre-instrumentation
+  // history — the id was never recorded before, so no backfill exists.
+  cameraId    String?
+  cameraName  String?
   createdAt  DateTime @default(now())
 
   @@index([createdAt])
@@ -771,6 +780,7 @@ model PageView {
   @@index([event, createdAt])
   @@index([utmCampaign, createdAt])
   @@index([visitorId, createdAt])
+  @@index([userId, event, createdAt])
 }
 
 // ── Competitor comparisons (powers /compare + /compare/[slug]) ─────────

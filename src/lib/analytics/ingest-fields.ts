@@ -120,3 +120,33 @@ export function parseSearchDetail(v: unknown): string | null {
   const cleaned = v.toLowerCase().replace(/[^a-z0-9_]/g, "").slice(0, SEARCH_DETAIL_MAX);
   return SEARCH_DETAIL_SHAPE.test(cleaned) ? cleaned : null;
 }
+
+/**
+ * Camera identity on `camera_open` event rows (Wave 2 item 7 — the
+ * "pick up where you left off" rail). The event:detail suffix cannot
+ * carry a camera id (it sanitizes to [a-z0-9_], max 24 chars, while real
+ * ids are long dashed slugs like
+ * "sky-maldives-sunset-beach-veligandu-maldives-resort-island-5535" or
+ * "CAM-9009-4833"), so the id and an ingest-time name snapshot travel as
+ * their own payload fields and land in dedicated nullable PageView
+ * columns. The route stamps them ONLY for camera_open events; the
+ * parsers here just validate shape. Anything malformed → null, and the
+ * row then looks like pre-instrumentation history.
+ */
+export const CAMERA_ID_MAX = 160;
+export const CAMERA_NAME_MAX = 200;
+const CAMERA_ID_SHAPE = /^[A-Za-z0-9][A-Za-z0-9._-]*$/;
+
+export function parseCameraId(v: unknown): string | null {
+  if (typeof v !== "string") return null;
+  const s = v.trim();
+  if (s.length === 0 || s.length > CAMERA_ID_MAX) return null;
+  return CAMERA_ID_SHAPE.test(s) ? s : null;
+}
+
+export function parseCameraName(v: unknown): string | null {
+  if (typeof v !== "string") return null;
+  // Strip control characters; a display label never legitimately has any.
+  const s = v.replace(/[\u0000-\u001f\u007f]/g, " ").trim().slice(0, CAMERA_NAME_MAX);
+  return s.length > 0 ? s : null;
+}
