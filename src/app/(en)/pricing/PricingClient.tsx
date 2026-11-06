@@ -82,9 +82,14 @@ const CARD_TRUST_ICONS = [BadgeCheck, Lock, Check];
 // Comparison-table checkmarks stay in code, in dictionary row order.
 // Columns are the FREE tier and the three paid tiers. Lite carries
 // the binary paid gates (premium layers, OI, search, recording
-// studio, satellite view); alerts and OSINT start
+// studio); alerts and OSINT start
 // at Pro; intel feeds + timelapse are Ultra-only. Mirrors
 // src/lib/billing/plans.ts entitlementsFor — keep the two in step.
+// One deliberate exception to the entitlement mirror: the "Satellite
+// imagery view" row is ✓ for Free — the satellite basemap view is
+// free for everyone by the owner's 2026-10-26 order and is the
+// default view (src/lib/basemap-mode.ts). Satellite TRACKING is the
+// separate row near the top and follows the layer gates.
 const COMPARE_BOOLEANS: { free: boolean; lite: boolean; pro: boolean; ultra: boolean }[] = [
   { free: true, lite: true, pro: true, ultra: true },
   { free: true, lite: true, pro: true, ultra: true },
@@ -100,7 +105,7 @@ const COMPARE_BOOLEANS: { free: boolean; lite: boolean; pro: boolean; ultra: boo
   { free: false, lite: false, pro: false, ultra: false },
   { free: true, lite: true, pro: true, ultra: true },
   { free: false, lite: true, pro: true, ultra: true },
-  { free: false, lite: true, pro: true, ultra: true },
+  { free: true, lite: true, pro: true, ultra: true },
   { free: false, lite: true, pro: true, ultra: true },
   { free: false, lite: true, pro: true, ultra: true },
   { free: false, lite: false, pro: true, ultra: true },
