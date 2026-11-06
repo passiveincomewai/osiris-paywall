@@ -222,7 +222,20 @@ function CheckoutButton({
   );
 }
 
-function StickyMobileCta({ copy, period }: { copy: PricingCopy; period: Period }) {
+/** Sticky mobile bar (appears after 700px of scroll): the featured
+ *  Pro plan at the visitor's selected period. Its button carries the
+ *  card's own checkout label, so it starts that checkout in the
+ *  sheet — the same one tap the card's CTA makes (2026-11-06: it
+ *  previously only scrolled to the card, a labelled-CTA dead end). */
+function StickyMobileCta({
+  copy,
+  period,
+  onCheckout,
+}: {
+  copy: PricingCopy;
+  period: Period;
+  onCheckout: (plan: CheckoutPlanId) => void;
+}) {
   const [show, setShow] = useState(false);
   useEffect(() => {
     const onScroll = () => setShow(window.scrollY > 700);
@@ -257,7 +270,7 @@ function StickyMobileCta({ copy, period }: { copy: PricingCopy; period: Period }
               </p>
             </div>
             <button
-              onClick={() => document.getElementById("pro-card")?.scrollIntoView({ behavior: "smooth", block: "center" })}
+              onClick={() => onCheckout(checkoutKeyFor("pro", period))}
               className="flex-1 py-3 rounded-xl bg-gradient-to-b from-[#e8c55a] to-[#D4AF37] text-black font-bold text-sm hover:brightness-110 active:scale-[0.99] transition"
             >
               {proPlan.cta}
@@ -886,7 +899,7 @@ export default function PricingPage({
           })}
         </div>
       </div>
-      <StickyMobileCta copy={copy} period={period} />
+      <StickyMobileCta copy={copy} period={period} onCheckout={setSheetPlan} />
       <CheckoutSheet plan={sheetPlan} onClose={closeSheet} analyticsSurface="pricing" />
       <SiteFooter copy={getChromeCopy(locale)} locale={locale} slug="pricing" />
     </main>
