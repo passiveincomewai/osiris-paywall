@@ -89,12 +89,12 @@ const ES_TRANCHE_DATE = "2026-10-26";
 // SHA-256 over each slug's English dictionary (src/i18n/source-hash.ts),
 // computed at publish time; dictionaries.test.ts recomputes and pins them.
 const ES_SOURCE_HASHES: Record<string, string> = {
-  "": "50f38f9f755317ccc03cad2de028ea2d37654e04788d3428dfbad98f2f9c6c56",
-  pricing: "4eef59a72a9551719435806e6dae3fdf3de817d536c9d8ccce448cf4ea1babfe",
-  "live-webcams": "5b6ebf74176e177bba6b13c296da76b85f2003d4bb65c15a904a7041821d1c8f",
-  faq: "310dd5cf01093f128168be46d21f0f35170de1f249b0772edc15dfd97afa9ecb",
-  "live-flight-tracker": "f6098a009698c4a81bbdf8d413acc89dbf3d5bce2b506ab3e4627f2c168c1cf8",
-  "ship-tracker": "07aa958ab9475efa3c61062044fcfe2f3fb461b4d8dee9ad29f711b86632d99d",
+  "": "4bd60efc2e764eddb691f4976ca021ee100244830049e30bad1ed7c6e96c2fc2",
+  pricing: "ee1ba86c3fb048afebbb82396689686ce7ff6d6ac3e40a894cec16a441f44622",
+  "live-webcams": "4d16ef5f2d7d573e832b1a7d5eed2fda1c29531edd2f0b054c3d07abafc5b959",
+  faq: "53cddf1d5352cf5d1b00c2ea7d3787c56c05daa518eaa9631a19632e44afb7e2",
+  "live-flight-tracker": "f62d7fceef5d66a56c9a5c87cc82d737c82ca29a039f7d8e8649c3f5f7d6f887",
+  "ship-tracker": "2fe37978a4ca2748e99acd79818ca606480d558d8f31f83f95f879fa26f8a51a",
 };
 
 // Rebase note (2026-10-27): the foundation was rebased onto production
