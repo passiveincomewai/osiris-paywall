@@ -124,3 +124,55 @@ export function rememberRecentCamera(
     /* storage blocked — recents simply don't persist */
   }
 }
+
+/* ── The rail's merge (P2) ───────────────────────────────────────────
+ * The rail combines two candidate sources. Signed-in history comes
+ * from the server (GET /api/analytics/recent-cameras collapses the
+ * caller's stamped camera_open PageView rows); signed-out history is
+ * this device's localStorage list above. Both arrive newest-first.
+ * The helpers below are pure so the merge rules are unit-tested
+ * without a database or a browser. */
+
+/** How many entries the rail works with at most. Kept below
+ *  RECENT_CAMERAS_MAX so ids dropped at resolution leave headroom in
+ *  the stored list for the next visit. */
+export const RECENT_RAIL_MAX = 8;
+
+/**
+ * A candidate proposed by one history source, before render-time
+ * resolution against /api/cctv. The server source
+ * (GET /api/analytics/recent-cameras) sends {id, name} only — its
+ * array order IS the recency, so `at` is absent there; localStorage
+ * entries always carry it. The merge never compares timestamps
+ * across sources (server order wins by design), so the field is
+ * optional here and defaults to 0 in the merged output.
+ */
+export interface RecentCandidate {
+  id: string;
+  name: string;
+  /** Epoch ms of the most recent open, when the source tracks it. */
+  at?: number;
+}
+
+/**
+ * Merge the rail's two candidate sources: server history first (it is
+ * the authoritative recency — it follows the account across devices),
+ * then this device's localStorage entries the server did not return
+ * (cameras opened while signed out), deduped by id, capped. Order
+ * within each source is preserved.
+ */
+export function mergeRecentCameras(
+  server: readonly RecentCandidate[],
+  local: readonly RecentCandidate[],
+  cap: number = RECENT_RAIL_MAX,
+): RecentCamera[] {
+  const seen = new Set<string>();
+  const out: RecentCamera[] = [];
+  for (const c of [...server, ...local]) {
+    if (!c.id || seen.has(c.id)) continue;
+    seen.add(c.id);
+    out.push({ id: c.id, name: c.name, at: c.at ?? 0 });
+    if (out.length >= cap) break;
+  }
+  return out;
+}

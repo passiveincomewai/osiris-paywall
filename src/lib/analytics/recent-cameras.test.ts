@@ -5,6 +5,8 @@ import { describe, it, expect } from "vitest";
 import {
   RECENT_CAMERAS_KEY,
   RECENT_CAMERAS_MAX,
+  RECENT_RAIL_MAX,
+  mergeRecentCameras,
   parseRecentCameras,
   recordRecentCamera,
   readRecentCameras,
@@ -86,5 +88,39 @@ describe("rememberRecentCamera / readRecentCameras", () => {
     };
     expect(() => rememberRecentCamera({ id: "x", name: "X" }, hostile, 1)).not.toThrow();
     expect(readRecentCameras(hostile)).toEqual([]);
+  });
+});
+
+describe("mergeRecentCameras", () => {
+  it("puts server history first, then local-only entries, deduped by id", () => {
+    const server = [cam("s1", 500), cam("shared", 400)];
+    const local = [cam("shared", 900), cam("l1", 300)];
+    const merged = mergeRecentCameras(server, local);
+    // The server's entry for "shared" wins even though the local one is
+    // newer — server recency is authoritative by design.
+    expect(merged.map((r) => r.id)).toEqual(["s1", "shared", "l1"]);
+    expect(merged[1].at).toBe(400);
+  });
+
+  it("works with either source empty and caps the merged list", () => {
+    expect(mergeRecentCameras([], [])).toEqual([]);
+    expect(mergeRecentCameras([], [cam("a", 1)])).toEqual([cam("a", 1)]);
+    const many = Array.from({ length: RECENT_RAIL_MAX + 4 }, (_, i) => cam(`c${i}`, 100 - i));
+    expect(mergeRecentCameras(many, [])).toHaveLength(RECENT_RAIL_MAX);
+    expect(mergeRecentCameras([], many, 3)).toHaveLength(3);
+  });
+
+  it("accepts server candidates without timestamps (server order is the recency)", () => {
+    const server = [
+      { id: "s1", name: "Server one" },
+      { id: "s2", name: "Server two" },
+    ];
+    const merged = mergeRecentCameras(server, [cam("l1", 50)]);
+    expect(merged.map((r) => r.id)).toEqual(["s1", "s2", "l1"]);
+    expect(merged[0]).toEqual({ id: "s1", name: "Server one", at: 0 });
+  });
+
+  it("ignores candidates with an empty id", () => {
+    expect(mergeRecentCameras([{ id: "", name: "Ghost" }], [cam("a", 1)])).toEqual([cam("a", 1)]);
   });
 });

@@ -120,6 +120,7 @@ const TeaserSignupCard = dynamic(() => import('@/components/TeaserSignupCard'), 
 // lazy + client-only like onboarding — it renders nothing until the
 // splash has gone, so it can never delay the map.
 const NearYouStrip = dynamic(() => import('@/components/NearYouStrip'), { ssr: false });
+const ReturnRail = dynamic(() => import('@/components/ReturnRail'), { ssr: false });
 // Speed pass (#29): four more panels that only appear after a deliberate
 // action join the split set above — the route planner and its corridor
 // cameras (opened explicitly, or once a route exists), the alerts rail
@@ -317,6 +318,7 @@ export default function Dashboard() {
      and whether the prompt itself is visible — prompts never stack. */
   const [onboardingUiActive, setOnboardingUiActive] = useState(false);
   const [firstCameraPromptVisible, setFirstCameraPromptVisible] = useState(false);
+  const [returnRailVisible, setReturnRailVisible] = useState(false);
   /** Set on this session's first successful camera open (the gated,
    *  counted path in handleEntityClick) — mounts the once-per-device
    *  email capture card (lib/newsletter/capture). Deliberately NOT
@@ -3703,8 +3705,24 @@ export default function Dashboard() {
         cameras={data.cameras ?? []}
         catalogueSettled={!camerasLoading}
         cameraOpened={cameraEverOpened}
-        suppressed={onboardingUiActive || showCameraSignup || showSharePrompt || timedPopupVisible}
+        suppressed={onboardingUiActive || showCameraSignup || showSharePrompt || timedPopupVisible || returnRailVisible}
         onVisibilityChange={setFirstCameraPromptVisible}
+      />
+
+      {/* ── RETURN RAIL — "Pick up where you left off" ──
+          For visitors WITH camera history (components/ReturnRail.tsx):
+          their own previously opened cameras, one tap to reopen. It
+          shares the bottom-centre prompt slot with the first-camera
+          prompt above: while the rail is visible the prompt yields
+          (its suppressed includes returnRailVisible), and the rail
+          itself honours the same prompt arbitration — it never renders
+          while another proactive surface owns the stage or a camera is
+          open. History exists only from the camera-id instrumentation
+          onward; earlier opens carried no id and are never backfilled. */}
+      <ReturnRail
+        active={splashGone && !sharedCameraId}
+        suppressed={onboardingUiActive || showCameraSignup || showSharePrompt || timedPopupVisible || activeCamera !== null}
+        onVisibilityChange={setReturnRailVisible}
       />
 
       {/* ── GLOBAL STATUS TICKER (bottom) ── */}
