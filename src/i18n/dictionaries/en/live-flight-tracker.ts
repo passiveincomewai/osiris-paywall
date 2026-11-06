@@ -130,7 +130,7 @@ export const enLiveFlightTracker: LiveFlightTrackerCopy = {
     h1: [tx("Track every flight, "), ac("live"), tx(".")],
     sub: "This airplane tracker is a flight eye on the live sky: it plots aircraft in real time on a 3D globe — position, altitude, speed and routes. It's a flight radar that costs nothing and asks for nothing: no signup, no account, no paywall.",
     ctaPrimary: "Open live tracker",
-    freeNote: "Free forever · No signup",
+    freeNote: "Free to browse · No signup",
   },
   heroImage: {
     caption: "Live flight tracking on the globe",
@@ -318,13 +318,13 @@ export const enLiveFlightTracker: LiveFlightTrackerCopy = {
   },
   proStrip: {
     eyebrow: "WANT MORE THAN TRACKING?",
-    heading: "Pro adds an AI analyst that works the map for you",
+    heading: "Paid plans add an AI analyst that works the map for you",
     body: [
-      tx("The flight tracker is free forever. "),
-      lk("pricing", "WorldEye Pro"),
-      tx(" adds the OI AI assistant, live traffic, advanced search filters and premium intel feeds — from $7.99/week."),
+      tx("The flight tracker is free to browse. "),
+      lk("pricing", "WorldEye paid plans"),
+      tx(" add the OI AI assistant, live traffic and advanced search filters — from $4.99/week — and Ultra adds the premium intel feeds."),
     ],
-    cta: "See Pro plans",
+    cta: "See paid plans",
   },
   related: [
     {
@@ -341,7 +341,7 @@ export const enLiveFlightTracker: LiveFlightTrackerCopy = {
     },
     {
       label: "All features",
-      desc: "Everything WorldEye can do — free forever layers and Pro tools.",
+      desc: "Everything WorldEye can do — free-to-browse layers and paid-plan tools.",
     },
     {
       label: "Live plane spotting",
@@ -352,5 +352,5 @@ export const enLiveFlightTracker: LiveFlightTrackerCopy = {
       desc: "Live vessel traffic on the same globe — ports, shipping lanes and the open ocean.",
     },
   ],
-  trust: ["Free forever", "No signup required", "Public ADS-B data"],
+  trust: ["Free to browse", "No signup required", "Public ADS-B data"],
 };

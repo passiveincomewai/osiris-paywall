@@ -263,7 +263,7 @@ export const enShipTracker: ShipTrackerCopy = {
     },
     {
       label: "Features",
-      desc: "Everything the globe can do — free forever layers and Pro intelligence tools.",
+      desc: "Everything the globe can do — free-to-browse layers and paid-plan intelligence tools.",
     },
     {
       label: "Pricing",

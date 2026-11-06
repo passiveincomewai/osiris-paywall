@@ -253,13 +253,13 @@ export const enPricing: PricingCopy = {
   meta: {
     title: "Pricing — Free, Lite, Pro, Ultra & Enterprise Plans",
     description:
-      "WorldEye pricing: the live globe, 74,229 cameras and flight tracking are free forever. Three paid tiers — Lite ($4.99/week, $8.99/month, $44.99/year), Pro ($7.99/week, $13.99/month, $74.99/year) and Ultra ($12.99/week, $24.99/month, $149.99/year) — with a 3-day free trial on weekly plans and 10 days on monthly and annual. Enterprise — the camera feed API and embed — is $999/year. Cancel anytime.",
+      "WorldEye pricing: the live globe and flight tracking are free to browse forever, and the 74,229 cameras are free to browse with a free allowance of opens — paid plans make opens unlimited. Three paid tiers — Lite ($4.99/week, $8.99/month, $44.99/year), Pro ($7.99/week, $13.99/month, $74.99/year) and Ultra ($12.99/week, $24.99/month, $149.99/year) — with a 3-day free trial on weekly plans and 10 days on monthly and annual. Enterprise — the camera feed API and embed — is $999/year. Cancel anytime.",
     ogTitle: "Pricing — Free, Lite, Pro, Ultra & Enterprise Plans | WorldEye",
     ogDescription:
-      "The live globe, 74,229 cameras and flight tracking are free forever. Lite from $4.99/week, Pro from $7.99/week, Ultra from $12.99/week — every plan starts with a free trial. Enterprise camera feed $999/year. Cancel anytime.",
+      "The live globe and flight tracking are free to browse forever; the 74,229 cameras are free to browse with an allowance — paid plans make opens unlimited. Lite from $4.99/week, Pro from $7.99/week, Ultra from $12.99/week — every plan starts with a free trial. Enterprise camera feed $999/year. Cancel anytime.",
   },
   schemaFreeOfferDescription:
-    "Free forever — the live globe, 74,229 cameras, flight and satellite tracking, weather, earthquakes and basic search. No account needed.",
+    "Free to browse forever — the live globe, 74,229 cameras, flight and satellite tracking, weather, earthquakes and basic search. No account needed; paid plans make camera opens unlimited.",
   backToMap: "Back to the map",
   proBadge: "PRO",
   hero: {
@@ -477,7 +477,7 @@ export const enPricing: PricingCopy = {
     },
     {
       q: "Is the map really free?",
-      a: "Yes. The 3D globe, live flights, 74,229 street cameras, satellites, transit, launch tracking, street-level photos, basic search and natural-hazard layers are free forever — no account, no credit card. Lite removes the camera-open limits and unlocks the premium layers, the AI assistant, advanced search and the recording studio. Pro adds the OSINT toolkit and camera alerts. Ultra adds the premium intel feeds and camera timelapse, with the highest alert and recording limits.",
+      a: "Yes. The 3D globe, live flights, 74,229 street cameras, satellites, transit, launch tracking, street-level photos, basic search and natural-hazard layers are free to browse forever — no account, no credit card. Lite removes the camera-open limits and unlocks the premium layers, the AI assistant, advanced search and the recording studio. Pro adds the OSINT toolkit and camera alerts. Ultra adds the premium intel feeds and camera timelapse, with the highest alert and recording limits.",
     },
     {
       q: "Do I need my own API key for the AI assistant?",

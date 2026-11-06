@@ -38,13 +38,13 @@ export const esPricing: PricingCopy = {
   meta: {
     title: "Precios — Planes Free, Lite, Pro, Ultra y Enterprise",
     description:
-      "Precios de WorldEye: el globo en vivo, 74.229 cámaras y el seguimiento de vuelos son gratis para siempre. Tres niveles de pago — Lite ($4.99/semana, $8.99/mes, $44.99/año), Pro ($7.99/semana, $13.99/mes, $74.99/año) y Ultra ($12.99/semana, $24.99/mes, $149.99/año) — con una prueba gratuita de 3 días en los planes semanales y de 10 días en los mensuales y anuales. Enterprise — la API de cámaras y la inserción — cuesta $999/año. Cancela cuando quieras.",
+      "Precios de WorldEye: el globo en vivo y el seguimiento de vuelos son gratis para explorar para siempre, y las 74.229 cámaras se pueden explorar gratis con una cantidad gratuita de aperturas: los planes de pago hacen las aperturas ilimitadas. Tres niveles de pago — Lite ($4.99/semana, $8.99/mes, $44.99/año), Pro ($7.99/semana, $13.99/mes, $74.99/año) y Ultra ($12.99/semana, $24.99/mes, $149.99/año) — con una prueba gratuita de 3 días en los planes semanales y de 10 días en los mensuales y anuales. Enterprise — la API de cámaras y la inserción — cuesta $999/año. Cancela cuando quieras.",
     ogTitle: "Precios — Planes Free, Lite, Pro, Ultra y Enterprise | WorldEye",
     ogDescription:
-      "El globo en vivo, 74.229 cámaras y el seguimiento de vuelos son gratis para siempre. Lite desde $4.99/semana, Pro desde $7.99/semana, Ultra desde $12.99/semana: todos los planes empiezan con una prueba gratuita. Cámaras Enterprise $999/año. Cancela cuando quieras.",
+      "El globo en vivo y el seguimiento de vuelos son gratis para explorar para siempre; las 74.229 cámaras se pueden explorar gratis con una cantidad de aperturas: los planes de pago las hacen ilimitadas. Lite desde $4.99/semana, Pro desde $7.99/semana, Ultra desde $12.99/semana: todos los planes empiezan con una prueba gratuita. Cámaras Enterprise $999/año. Cancela cuando quieras.",
   },
   schemaFreeOfferDescription:
-    "Gratis para siempre: el globo en vivo, 74.229 cámaras, seguimiento de vuelos y satélites, clima, terremotos y búsqueda básica. No necesitas cuenta.",
+    "Gratis para explorar para siempre: el globo en vivo, 74.229 cámaras, seguimiento de vuelos y satélites, clima, terremotos y búsqueda básica. No necesitas cuenta; los planes de pago hacen las aperturas de cámara ilimitadas.",
   backToMap: "Volver al mapa",
   proBadge: "PRO",
   hero: {
@@ -274,7 +274,7 @@ export const esPricing: PricingCopy = {
     },
     {
       q: "¿El mapa es realmente gratis?",
-      a: "Sí. El globo 3D, los vuelos en vivo, 74.229 cámaras callejeras, los satélites, el transporte, el seguimiento de lanzamientos, las fotos a nivel de calle, la búsqueda básica y las capas de riesgos naturales son gratis para siempre, sin cuenta ni tarjeta. Lite elimina los límites de apertura de cámaras y desbloquea las capas premium, el asistente de IA, la búsqueda avanzada y el estudio de grabación. Pro añade el kit OSINT y las alertas de cámara. Ultra añade los feeds de inteligencia premium y el timelapse de cámaras, con los límites de alertas y grabación más altos.",
+      a: "Sí. El globo 3D, los vuelos en vivo, 74.229 cámaras callejeras, los satélites, el transporte, el seguimiento de lanzamientos, las fotos a nivel de calle, la búsqueda básica y las capas de riesgos naturales son gratis para explorar para siempre, sin cuenta ni tarjeta. Lite elimina los límites de apertura de cámaras y desbloquea las capas premium, el asistente de IA, la búsqueda avanzada y el estudio de grabación. Pro añade el kit OSINT y las alertas de cámara. Ultra añade los feeds de inteligencia premium y el timelapse de cámaras, con los límites de alertas y grabación más altos.",
     },
     {
       q: "¿Necesito mi propia clave API para el asistente de IA?",

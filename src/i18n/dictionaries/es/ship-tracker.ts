@@ -214,7 +214,7 @@ export const esShipTracker: ShipTrackerCopy = {
     },
     {
       label: "Funciones",
-      desc: "Todo lo que el globo puede hacer: capas gratis para siempre y herramientas de inteligencia Pro.",
+      desc: "Todo lo que el globo puede hacer: capas gratuitas para explorar y herramientas de inteligencia de los planes de pago.",
     },
     {
       label: "Precios",

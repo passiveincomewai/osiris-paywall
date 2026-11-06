@@ -42,7 +42,7 @@ export const esLiveFlightTracker: LiveFlightTrackerCopy = {
     h1: [tx("Sigue cada vuelo, "), ac("en vivo"), tx(".")],
     sub: "Este rastreador de aviones es tu ojo en el cielo en directo: sitúa las aeronaves en tiempo real sobre un globo 3D — posición, altitud, velocidad y rutas. Es un radar de vuelos que no cuesta nada y no pide nada: sin registro, sin cuenta, sin muro de pago.",
     ctaPrimary: "Abrir el rastreador en vivo",
-    freeNote: "Gratis para siempre · Sin registro",
+    freeNote: "Gratis para explorar · Sin registro",
   },
   heroImage: {
     caption: "Seguimiento de vuelos en vivo en el globo",
@@ -174,7 +174,7 @@ export const esLiveFlightTracker: LiveFlightTrackerCopy = {
   faqs: [
     {
       q: "¿El rastreador de vuelos en vivo es gratis?",
-      a: "Sí, completamente gratis, para siempre. La capa de seguimiento de vuelos forma parte del mapa gratuito de WorldEye, junto con el globo 3D, los satélites, el clima, los terremotos y 74.229 cámaras públicas. Sin cuenta, sin tarjeta, sin cuenta atrás de prueba.",
+      a: "Sí, gratis para explorar, para siempre. La capa de seguimiento de vuelos forma parte del mapa gratuito de WorldEye, junto con el globo 3D, los satélites, el clima, los terremotos y 74.229 cámaras públicas. Sin cuenta, sin tarjeta, sin cuenta atrás de prueba.",
     },
     {
       q: "¿Necesito una cuenta para seguir vuelos?",
@@ -259,13 +259,13 @@ export const esLiveFlightTracker: LiveFlightTrackerCopy = {
   },
   proStrip: {
     eyebrow: "¿QUIERES MÁS QUE SEGUIMIENTO?",
-    heading: "Pro añade un analista de IA que trabaja el mapa por ti",
+    heading: "Los planes de pago añaden un analista de IA que trabaja el mapa por ti",
     body: [
-      tx("El rastreador de vuelos es gratis para siempre. "),
-      lk("pricing", "WorldEye Pro"),
-      tx(" añade el asistente de IA OI, el tráfico en vivo, los filtros de búsqueda avanzados y los feeds de inteligencia premium, desde $7.99/semana."),
+      tx("El rastreador de vuelos es gratis para explorar. "),
+      lk("pricing", "los planes de pago de WorldEye"),
+      tx(" añaden el asistente de IA OI, el tráfico en vivo y los filtros de búsqueda avanzados, desde $4.99/semana, y Ultra añade los feeds de inteligencia premium."),
     ],
-    cta: "Ver los planes Pro",
+    cta: "Ver los planes de pago",
   },
   related: [
     {
@@ -282,7 +282,7 @@ export const esLiveFlightTracker: LiveFlightTrackerCopy = {
     },
     {
       label: "Todas las funciones",
-      desc: "Todo lo que WorldEye puede hacer: capas gratis para siempre y herramientas Pro.",
+      desc: "Todo lo que WorldEye puede hacer: capas gratuitas para explorar y herramientas de los planes de pago.",
     },
     {
       label: "Observación de aviones en vivo",
@@ -293,5 +293,5 @@ export const esLiveFlightTracker: LiveFlightTrackerCopy = {
       desc: "Tráfico de barcos en vivo en el mismo globo: puertos, rutas marítimas y océano abierto.",
     },
   ],
-  trust: ["Gratis para siempre", "Sin registro", "Datos públicos ADS-B"],
+  trust: ["Gratis para explorar", "Sin registro", "Datos públicos ADS-B"],
 };
