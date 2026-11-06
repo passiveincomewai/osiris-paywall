@@ -10,12 +10,12 @@ import { ORGANIZATION_ID, WEBSITE_ID } from "@/lib/seo/entity-schema";
 export const metadata: Metadata = {
   title: "About WorldEye — Open Planetary Intelligence for Everyone",
   description:
-    "WorldEye is a free live 3D globe: flights, satellites, transit, weather, quakes and 74,229 public cameras with no signup. Pro adds the OI AI assistant and intel tools.",
+    "WorldEye is a free live 3D globe: flights, satellites, transit, weather, quakes and 74,229 public cameras with no signup. Paid plans add the OI AI assistant and intelligence tools; Ultra adds the premium intel feeds.",
   alternates: { canonical: "/about" },
   openGraph: {
     title: "About WorldEye",
     description:
-      "A live 3D globe of the planet. Free forever, no signup — Pro unlocks intelligence-grade tools.",
+      "A live 3D globe of the planet. Free to browse forever, no signup — paid plans unlock intelligence-grade tools.",
     type: "website",
     url: "/about",
   },
@@ -35,8 +35,8 @@ const jsonLd = {
 const PRINCIPLES = [
   {
     icon: Globe,
-    title: "The map is free forever",
-    body: "The live 3D globe — flights, satellites, weather, earthquakes, wildfires and 74,229 public CCTV cameras — costs nothing and requires no account. That will not change.",
+    title: "The map is free to browse forever",
+    body: "The live 3D globe — flights, satellites, weather, earthquakes, wildfires and 74,229 public CCTV cameras — costs nothing to browse and requires no account; camera watching comes with a free allowance of opens, and paid plans make opens unlimited. Free browsing will not change.",
   },
   {
     icon: Eye,
@@ -111,15 +111,17 @@ export default function AboutPage() {
             </p>
             <p>
               The free tier is the whole map — everything listed above, with no signup
-              and no paywall, basic search included. A <Link href="/pricing" className="text-[#D4AF37] hover:underline">Pro subscription</Link> adds
-              intelligence-grade tools on top: the OI AI assistant (which runs on your
-              own OpenAI key), high-resolution satellite imagery view, the live traffic
-              layer, advanced search filters, an in-browser OSINT toolkit, a camera
-              recording studio with timelapse, and premium intel feeds covering cyber
-              threats, GDELT events, maritime tracking and live news.
+              and no paywall, basic search included. A <Link href="/pricing" className="text-[#D4AF37] hover:underline">paid subscription</Link> adds
+              intelligence-grade tools on top: the OI AI assistant (built into
+              WorldEye — no key to bring) on every paid plan, the live traffic
+              layer, advanced search filters and a camera recording studio; Pro
+              adds an in-browser OSINT toolkit, and Ultra adds premium intel feeds
+              covering cyber threats, GDELT events, maritime tracking and live
+              news, plus camera timelapse. The satellite imagery view is free for
+              everyone.
             </p>
             <p>
-              Pro exists for one reason: it funds the servers, data feeds and
+              Paid plans exist for one reason: they fund the servers, data feeds and
               development that keep the free map running.
             </p>
           </div>
@@ -252,9 +254,9 @@ export default function AboutPage() {
               <p className="text-white/55 leading-relaxed mt-2">
                 Yes. The globe, the 74,229 cameras (with 5 free camera opens
                 per device), flights, satellites, weather, earthquakes,
-                fires, transit and basic search are free with no signup. Pro
-                ($7.99/week, $13.99/month, $74.99/year as VIP Pro) adds the
-                intelligence toolkit on top — it never puts the map itself
+                fires, transit and basic search are free with no signup. Paid plans
+                (Lite from $4.99/week, Pro $7.99/week, Ultra from $12.99/week) add the
+                intelligence toolkit on top — they never put the map itself
                 behind a paywall.
               </p>
             </div>
@@ -331,7 +333,7 @@ export default function AboutPage() {
           links={[
             {
               label: "Features",
-              desc: "Everything the globe can do — free forever layers and Pro intelligence tools.",
+              desc: "Everything the globe can do — free-to-browse layers and paid-plan intelligence tools.",
               href: "/features",
             },
             {
