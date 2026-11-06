@@ -8,8 +8,8 @@ import React from "react";
 import { renderToString } from "react-dom/server";
 import AdminNav, { type AdminSection } from "./AdminNav";
 
-const HREFS = ["/admin", "/admin/conversion", "/admin/affiliates", "/admin/competitor-seo", "/admin/seo", "/admin/discovery", "/admin/contact", "/admin/partnerships", "/admin/camera-submissions", "/admin/demo-studio", "/"];
-const ACTIVES: AdminSection[] = ["dashboard", "conversion", "affiliates", "competitor-seo", "seo", "discovery", "contact", "partnerships", "camera-submissions", "demo-studio"];
+const HREFS = ["/admin", "/admin/conversion", "/admin/affiliates", "/admin/competitor-seo", "/admin/seo", "/admin/discovery", "/admin/contact", "/admin/partnerships", "/admin/camera-submissions", "/admin/camera-requests", "/admin/demo-studio", "/"];
+const ACTIVES: AdminSection[] = ["dashboard", "conversion", "affiliates", "competitor-seo", "seo", "discovery", "contact", "partnerships", "camera-submissions", "camera-requests", "demo-studio"];
 
 describe("AdminNav", () => {
   it("links every admin section from every page", () => {

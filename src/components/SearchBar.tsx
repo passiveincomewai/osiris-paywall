@@ -18,6 +18,7 @@ import {
 import { cameraMediaKind, type CameraMediaKind } from '@/lib/country-cameras';
 import { buildSearchPerformedDetail } from '@/lib/analytics/search-event';
 import { trackAnalyticsEvent } from './AnalyticsTracker';
+import RequestCameraForm from './RequestCameraForm';
 import { Highlight, Key, KindTile, PlaceRow, type PlaceLike } from './places';
 
 /* ═══════════════════════════════════════════════════════════════
@@ -533,6 +534,7 @@ export default function SearchBar({ onLocate, center = null, onClose, onDirectio
             <p className="mt-1 max-w-[320px] text-[11.5px] leading-relaxed text-[var(--text-muted)]">
               Try a city, a street, a landmark, a camera name, or coordinates such as 48.8584, 2.2945.
             </p>
+            <RequestCameraForm initialPlace={value.trim()} query={value.trim()} />
           </div>
         )}
 

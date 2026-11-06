@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { Loader2, MapPin, RefreshCw, Search } from 'lucide-react';
 import { trackAnalyticsEvent } from '@/components/AnalyticsTracker';
+import RequestCameraForm from '@/components/RequestCameraForm';
 import { usePreferences } from '@/components/PreferencesProvider';
 import { COUNTRY_CITY_EVENT } from '@/components/CountryCitySearch';
 import { CameraFeedCard, LazyCameraViewer } from '@/components/camera-feed-card';
@@ -470,6 +471,12 @@ export default function CountryCameraExplorer({
             >
               <RefreshCw className="w-4 h-4" /> Try again
             </button>
+          </div>
+          <div className="flex justify-center">
+            <RequestCameraForm
+              initialPlace={filtering ? query.trim() : countryName}
+              query={filtering ? query.trim() : null}
+            />
           </div>
         </div>
       ) : rows ? (
