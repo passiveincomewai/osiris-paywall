@@ -103,7 +103,7 @@ describe("sitemap URL set", () => {
           !u.startsWith(`${BASE}/wildfires/`),
       )
       .sort();
-    expect(nonTransit.length).toBe(1123);
+    expect(nonTransit.length).toBe(1124);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     // Hash history: 6d75d0de… until the SEO audit fix #3 (2026-10-27)
     // normalised the es homepage entry from /es/ to its final /es
@@ -323,8 +323,16 @@ describe("sitemap URL set", () => {
     // verified by executing sitemap() on the merged tree:
     // removing exactly those 3 URLs reproduces the 1,120 set
     // and the abb18c4a… hash byte-for-byte.
+    // The featured collections gallery (2026-11-06) then added
+    // the /collections gallery index → 1,124. Delta verified by
+    // executing sitemap() on both trees (probe-stubbed live
+    // transit/wildfire doors, whose URLs this pinned set filters
+    // out; the pristine generator under the same probe
+    // reproduces 1,123 / 93b987a6… exactly): the staged set
+    // minus the pristine set is exactly the 1 new /collections
+    // URL, giving 1,124 / 5332f0a1….
     expect(hash).toBe(
-      "93b987a6f227cb3234137ead936c8a83b1994e5d1ac94d7c9d6defecafc40624",
+      "5332f0a1ac6ff4785f5b235bbf4cec8c9eff709930903b59ed1c12c8517b0ae5",
     );
   });
 

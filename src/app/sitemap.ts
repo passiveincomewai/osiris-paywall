@@ -909,6 +909,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE}/gods-eye-view`, changeFrequency: "weekly", priority: 0.9 },
     { url: `${BASE}/gods-eye-view-online`, changeFrequency: "weekly", priority: 0.9 },
     { url: `${BASE}/cameras`, lastModified: catalogueDate, changeFrequency: "daily", priority: 0.9 },
+    { url: `${BASE}/collections`, changeFrequency: "daily", priority: 0.7 },
     { url: `${BASE}/live-flight-tracker`, changeFrequency: "weekly", priority: 0.8, alternates: { languages: hreflangMapFor("live-flight-tracker") } },
     { url: `${BASE}/satellite-tracker`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${BASE}/earthquake-tracker`, changeFrequency: "weekly", priority: 0.8 },
