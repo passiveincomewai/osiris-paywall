@@ -133,8 +133,8 @@ const data: AltData = {
       What WorldEye deliberately did <em>not</em> carry over is the active
       recon toolkit — no port scans, no vulnerability probing; the product is
       a watching globe, not an attack-surface tool. In exchange it added the
-      monitoring layer: multi-camera recording (20 on Pro, 40 on VIP Pro),
-      timelapse, and camera alerts that check a feed for a condition you
+      monitoring layer: multi-camera recording (20 on Pro, 40 on Ultra),
+      timelapse on Ultra, and camera alerts that check a feed for a condition you
       describe and notify you when it changes. Same spirit, different species:
       OSIRIS is the workshop; WorldEye is the window.
     </>,
@@ -154,7 +154,7 @@ const data: AltData = {
     },
     {
       title: "Recording, timelapse and alerts built in",
-      body: "Pro records 20 cameras at once; VIP Pro records 40, adds timelapse and plain-language camera alerts with photo notifications.",
+      body: "Pro records 20 cameras at once; Ultra records 40 and adds timelapse. Plain-language camera alerts with photo notifications run on Pro and Ultra.",
     },
   ],
   chips: [
@@ -167,13 +167,13 @@ const data: AltData = {
     "Parent project and hosted descendant, compared without embarrassment in either direction.",
   rows: [
     { feature: "How you get it", competitor: "Self-host it (Docker/Node); a demo instance circulates", worldEye: "Open worldeye.app — hosted, nothing to run" },
-    { feature: "Price", competitor: "Free and open source (MIT); you pay for hosting and keys", worldEye: "Free tier, no signup; Pro from $7.99/week" },
+    { feature: "Price", competitor: "Free and open source (MIT); you pay for hosting and keys", worldEye: "Free tier, no signup; paid plans from $4.99/week" },
     { feature: "Live cameras", competitor: "17,000+ (its README)", worldEye: "74,229 served" },
     { feature: "Flights & satellites", competitor: "OpenSky aviation, N2YO satellites", worldEye: "Live flights and satellite tracking, free" },
-    { feature: "Maritime & conflict", competitor: "Reference data — 39 ports/10 chokepoints, 13 conflict zones", worldEye: "Live global layers; GDELT events on VIP Pro" },
+    { feature: "Maritime & conflict", competitor: "Reference data — 39 ports/10 chokepoints, 13 conflict zones", worldEye: "Live global layers; GDELT events on Ultra" },
     { feature: "Active recon toolkit", competitor: "Yes — port scan, DNS, WHOIS, SSL, vuln scan, wallet tracing", worldEye: "No active scanning; OSINT toolkit is viewing/analysis-side" },
     { feature: "Recording & alerts", competitor: "Not a feature of the project", worldEye: "Multi-cam recording, timelapse, camera alerts" },
-    { feature: "AI assistant", competitor: "Yes, on your own API key", worldEye: "Built into the Pro toolkit; no key to bring" },
+    { feature: "AI assistant", competitor: "Yes, on your own API key", worldEye: "Built in on every paid plan; no key to bring" },
     { feature: "Code access", competitor: "Full source, forkable", worldEye: "Hosted product; no source" },
     { feature: "Maintenance", competitor: "Yours", worldEye: "The WorldEye team's" },
   ],
@@ -219,7 +219,7 @@ const data: AltData = {
     },
     {
       title: "Add the product layer",
-      body: "If you outgrew the dashboard, Pro/VIP add recording, timelapse, alerts and intel layers the project doesn't ship.",
+      body: "If you outgrew the dashboard, paid plans add recording, alerts and — on Ultra — timelapse and intel layers the project doesn't ship.",
     },
     {
       title: "Keep OSIRIS for the toolkit",

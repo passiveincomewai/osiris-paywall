@@ -135,10 +135,10 @@ const data: AltData = {
       place.
     </>,
     <>
-      WorldEye is not feed-less: its VIP Pro tier adds the intel layers —
+      WorldEye is not feed-less: its Ultra tier adds the intel layers —
       cyber, maritime and GDELT global-event data with live news — plotted on
       the globe rather than listed in panels, plus the action layer World
-      Monitor lacks: multi-camera recording, timelapse, and camera alerts
+      Monitor lacks: multi-camera recording, timelapse on Ultra, and camera alerts
       that watch a feed for a condition you describe and notify you with a
       photo when it changes. Honest trade, stated plainly: World
       Monitor&apos;s feed catalogue — markets, macro series, six variants —
@@ -157,11 +157,11 @@ const data: AltData = {
     },
     {
       title: "Alerts tied to places",
-      body: "VIP Pro camera alerts watch up to 10 feeds for plain-language conditions and notify you on change, photo attached.",
+      body: "Ultra camera alerts watch up to 10 feeds for plain-language conditions and notify you on change, photo attached.",
     },
     {
       title: "Recording and timelapse",
-      body: "Record up to 20 cameras at once on Pro (40 on VIP Pro) and build timelapses — evidence, not just awareness.",
+      body: "Record up to 20 cameras at once on Pro (40 on Ultra) and build timelapses — evidence, not just awareness.",
     },
   ],
   chips: [
@@ -177,9 +177,9 @@ const data: AltData = {
     { feature: "Form", competitor: "Dense intelligence console of panels and feeds", worldEye: "Interactive 3D globe with layered live data" },
     { feature: "Price", competitor: "Free hosted tier; Pro $39.99/mo ($359.99/yr); API tiers above", worldEye: "Free tier; Pro $7.99/wk or $13.99/mo; VIP Pro $74.99/yr" },
     { feature: "Live cameras", competitor: "No camera network", worldEye: "74,229 live public cameras" },
-    { feature: "Data feeds", competitor: "500+ feeds / 770 providers — conflict, markets, macro, climate", worldEye: "Focused live layers: flights, satellites, weather, quakes, fires, transit; GDELT + cyber/maritime on VIP Pro" },
+    { feature: "Data feeds", competitor: "500+ feeds / 770 providers — conflict, markets, macro, climate", worldEye: "Focused live layers: flights, satellites, weather, quakes, fires, transit; GDELT + cyber/maritime on Ultra" },
     { feature: "Markets & macro data", competitor: "Yes — FRED, IMF, BIS and market feeds are a speciality", worldEye: "No markets/macro console" },
-    { feature: "AI briefs", competitor: "AI country briefs built in", worldEye: "AI assistant in the Pro toolkit; live news layer on VIP Pro" },
+    { feature: "AI briefs", competitor: "AI country briefs built in", worldEye: "AI assistant on every paid plan; live news layer on Ultra" },
     { feature: "Alerts & recording", competitor: "Dashboard watching; no place-based camera alerts or recording", worldEye: "Camera alerts, multi-cam recording, timelapse" },
     { feature: "Open source", competitor: "Yes — AGPL-3.0, self-hostable", worldEye: "Hosted product" },
     { feature: "Mobile experience", competitor: "Desktop-first console", worldEye: "Full globe in a mobile browser" },
@@ -226,7 +226,7 @@ const data: AltData = {
     },
     {
       title: "Verify with a camera",
-      body: "Search the city from the headline and open a live feed — 74,229 cameras across 109 countries.",
+      body: "Search the city from the headline and open a live feed — 74,229 cameras across 109 countries (74 with their own directory pages).",
     },
     {
       title: "Watch the approaches",
@@ -234,7 +234,7 @@ const data: AltData = {
     },
     {
       title: "Set an alert and walk away",
-      body: "On VIP Pro, point a camera alert at the place and get notified with a photo when it changes.",
+      body: "On Pro or Ultra, point a camera alert at the place and get notified with a photo when it changes.",
     },
   ],
   verdictHeading: "Which one should you use?",

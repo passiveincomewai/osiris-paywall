@@ -137,8 +137,9 @@ const data: AltData = {
     </>,
     <>
       The paid tiers close more of the Dataminr-shaped gap. Pro adds the
-      OSINT toolkit and live news context; VIP Pro adds the intel layers —
-      cyber, maritime and GDELT global event data plotted on the globe — and{" "}
+      OSINT toolkit; Ultra adds the intel layers —
+      cyber, maritime and GDELT global event data plotted on the globe, with
+      live news — and paid tiers bring{" "}
       <span className="text-white/85 font-semibold">camera alerts</span>:
       describe a condition in plain language (&ldquo;snow on the road&rdquo;,
       &ldquo;crowd gathering&rdquo;), and WorldEye checks the feed on an
@@ -151,15 +152,15 @@ const data: AltData = {
   worldEyePoints: [
     {
       title: "See it, don't just read it",
-      body: "74,229 live cameras across 109 countries turn any alert — from any source — into something you can verify with your own eyes in seconds.",
+      body: "74,229 live cameras across 109 countries (74 with their own directory pages) turn any alert — from any source — into something you can verify with your own eyes in seconds.",
     },
     {
       title: "Event and intel layers on the globe",
-      body: "VIP Pro plots GDELT global events, cyber and maritime intel and live news onto the same map as flights, fires and quakes.",
+      body: "Ultra plots GDELT global events, cyber and maritime intel and live news onto the same map as flights, fires and quakes.",
     },
     {
       title: "Alerts a person can actually buy",
-      body: "VIP Pro camera alerts watch up to 10 feeds for conditions you describe and notify on change — no sales call, no contract.",
+      body: "Ultra camera alerts watch up to 10 feeds for conditions you describe and notify on change — no sales call, no contract.",
     },
     {
       title: "A price printed in public",
@@ -177,12 +178,12 @@ const data: AltData = {
   rows: [
     { feature: "Who can get it", competitor: "Enterprises, governments and newsrooms, via sales", worldEye: "Anyone — open the site, no signup for the core" },
     { feature: "Pricing", competitor: "Not published; annual enterprise licences", worldEye: "Free tier; Pro $7.99/wk or $13.99/mo; VIP Pro $74.99/yr" },
-    { feature: "Real-time event alerts", competitor: "Yes — its core product, AI-triaged from 500,000+ public sources", worldEye: "Event layers on the globe (GDELT on VIP Pro); camera alerts for watched feeds" },
+    { feature: "Real-time event alerts", competitor: "Yes — its core product, AI-triaged from 500,000+ public sources", worldEye: "Event layers on the globe (GDELT on Ultra); camera alerts for watched feeds" },
     { feature: "Live cameras", competitor: "No camera network", worldEye: "74,229 live public cameras" },
     { feature: "Live map / globe", competitor: "Geovisual context inside Pulse (WatchKeeper heritage)", worldEye: "A full interactive 3D globe — the product itself" },
     { feature: "Flights, satellites, ships", competitor: "Not its focus", worldEye: "All live on the globe, free" },
     { feature: "Crisis playbooks & team response", competitor: "Yes — a core Pulse feature", worldEye: "No — monitoring and alerting, not response management" },
-    { feature: "Newsroom product", competitor: "Yes — Dataminr for News", worldEye: "Live news layer on VIP Pro; not a newsroom alerting service" },
+    { feature: "Newsroom product", competitor: "Yes — Dataminr for News", worldEye: "Live news layer on Ultra; not a newsroom alerting service" },
     { feature: "Time to start", competitor: "A procurement cycle", worldEye: "About thirty seconds" },
   ],
   pricingHeading: "Pricing: a quote you'll never see vs a page you can read",
@@ -203,11 +204,12 @@ const data: AltData = {
       : the globe, cameras, flights, satellites, weather, quakes and fires are
       free with no signup.{" "}
       <span className="text-white/85 font-semibold">Pro</span> is $7.99/week or
-      $13.99/month (3-day trial on Weekly, 10 days on Monthly) for the OSINT toolkit, satellite view,
-      traffic and 20-camera recording.{" "}
-      <span className="text-white/85 font-semibold">VIP Pro</span> is
-      $74.99/year (10-day trial) adding intel layers, timelapse, camera alerts
-      and 40-camera recording. Every first charge has a 7-day money-back
+      $13.99/month (3-day trial on Weekly, 10 days on Monthly) for the OSINT toolkit and
+      20-camera recording — traffic, the AI analyst and advanced search come
+      with any paid plan, and the satellite view is free.{" "}
+      <span className="text-white/85 font-semibold">Ultra</span> — from
+      $12.99/week, $149.99/year — adds intel layers, timelapse and 40-camera
+      recording, with camera alerts up to 10 feeds. Every first charge has a 7-day money-back
       guarantee. Want the feature-by-feature breakdown? The head-to-head
       lives at{" "}
       <Link href="/compare/dataminr" className="text-[#0096FF] hover:underline">
@@ -224,14 +226,14 @@ const data: AltData = {
     },
     {
       title: "Learn the event layers",
-      body: "Toggle the globe's layers to build your picture: GDELT events and live news (VIP Pro), fires, quakes, storms and transit.",
+      body: "Toggle the globe's layers to build your picture: GDELT events and live news (Ultra), fires, quakes, storms and transit.",
     },
     {
       title: "Put cameras on your places",
       body: "Find the feeds covering the locations you care about — facilities, routes, neighbourhoods — from 74,229 cameras.",
     },
     {
-      title: "Set camera alerts (VIP Pro)",
+      title: "Set camera alerts (Pro and Ultra)",
       body: "Describe the change you want to know about in plain language; WorldEye checks the feed and notifies you with a photo when it happens.",
     },
   ],
@@ -266,7 +268,7 @@ const data: AltData = {
     },
     {
       q: "Is there a free alternative to Dataminr?",
-      a: "For raw event data, GDELT is free and public. For a usable free product, WorldEye's free tier gives you the live globe — cameras, flights, satellites, weather, quakes, fires — with no signup. Its VIP Pro tier adds GDELT event layers and camera alerts for $74.99/year.",
+      a: "For raw event data, GDELT is free and public. For a usable free product, WorldEye's free tier gives you the live globe — cameras, flights, satellites, weather, quakes, fires — with no signup. Its Ultra tier adds GDELT event layers, and camera alerts run on Pro and Ultra — Ultra from $12.99/week.",
     },
     {
       q: "Dataminr vs WorldEye — what's the real difference?",
@@ -274,7 +276,7 @@ const data: AltData = {
     },
     {
       q: "Does WorldEye send real-time alerts?",
-      a: "WorldEye's camera alerts (VIP Pro) check the feeds you choose on an interval and notify you — with a photo — when a condition you described in plain language appears or changes. It also surfaces live event layers (GDELT, fires, quakes, news) on the globe. It does not replicate Dataminr's AI-triaged breaking-news alerting, and doesn't claim to.",
+      a: "WorldEye's camera alerts (Pro and Ultra) check the feeds you choose on an interval and notify you — with a photo — when a condition you described in plain language appears or changes. It also surfaces live event layers (GDELT, fires, quakes, news) on the globe. It does not replicate Dataminr's AI-triaged breaking-news alerting, and doesn't claim to.",
     },
   ],
   midCta: {
