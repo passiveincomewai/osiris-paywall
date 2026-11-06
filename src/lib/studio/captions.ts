@@ -52,15 +52,15 @@ type Feature = CaptionRequest["feature"];
 
 // Verified product facts only (see marketing-studio PLAN.md / site copy).
 const FEATURE_FACTS: Record<Feature, string> = {
-  cameras: "74,229 live cameras in 105 countries",
+  cameras: "74,229 live cameras in 109 countries",
   globe:
     "one live 3D globe — cameras, flights, satellites, weather, quakes and wildfires in real time",
   recording: "record multiple live cameras from one dashboard",
   flights: "every flight, tracked live on the globe",
   weather: "live weather radar, earthquakes and wildfire maps",
-  osint: "a free OSINT toolkit — intel layers, GDELT events, cyber and maritime feeds",
+  osint: "an OSINT toolkit on Pro — and intel layers with GDELT events, cyber and maritime feeds on Ultra",
   premium:
-    "WorldEye Pro: satellite view, live traffic, advanced search filters, the AI analyst and the full OSINT toolkit",
+    "WorldEye paid plans: live traffic, advanced search filters and the AI analyst — Pro adds the full OSINT toolkit, and the satellite view is free for everyone",
 };
 
 const HOOKS: Record<Style, string[]> = {

@@ -15,7 +15,7 @@
  *    and sourceNote says exactly that — no fake claims about what was
  *    filmed.
  *  - Hooks/scripts describe verified product facts only (76,000+ live
- *    cameras in 105 countries, recording, Pro OSINT/AI/satellite).
+ *    cameras in 109 countries, recording, Pro OSINT/AI/satellite).
  *
  * Layers shape for video rows: the `layers` Json column stores a single
  * object (NOT the TemplateLayer[] array image templates use):
@@ -158,7 +158,7 @@ export const SEED_VIDEOS: SeedVideo[] = [
       durationSec: 30,
       hook: "Here's what you can unlock with WorldEye Premium.",
       script:
-        "Premium angle: the full 30-second ad — the free live globe first, then what Pro unlocks: the OSINT toolkit, AI analyst briefs, satellite map view and camera recording. End card carries your link (and your discount code if you have one).",
+        "Premium angle: the full 30-second ad — the free live globe first, then what paid plans unlock: AI analyst briefs and camera recording on any paid plan, and the OSINT toolkit on Pro — the satellite map view is free. End card carries your link (and your discount code if you have one).",
       cta: "Go Premium.",
       sourceNote:
         "Real worldeye.app footage — the delivered 30-second cinematic ad, recorded from the actual site (no fictional interfaces).",

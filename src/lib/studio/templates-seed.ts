@@ -6,7 +6,7 @@
  * with sharp, then composites the QR / logo layers listed in `layers`.
  *
  * Copy rules (verified product facts only):
- *  - "74,229 live cameras in 105 countries" — never the stale 40,207 figure.
+ *  - "74,229 live cameras in 109 countries" — never the stale 40,207 figure.
  *  - Features: live flights, satellites, weather radar, earthquakes,
  *    wildfires, camera recording, OSINT toolkit (Pro), AI analyst (Pro).
  *  - No income promises. Discount templates (category "discount") render
@@ -284,7 +284,7 @@ export const SEED_TEMPLATES: SeedTemplate[] = [
       ctaPill(370, 730, 340, 72) +
       qrFrame(892, 880, 120) +
       urlText(64, 1014, "start", 19)),
-    editableFields: std("EVERY CAMERA. ONE MAP.", "74,229 live cameras in 105 countries, on one map.", "WATCH LIVE"),
+    editableFields: std("EVERY CAMERA. ONE MAP.", "74,229 live cameras in 109 countries, on one map.", "WATCH LIVE"),
     layers: [qr(892, 880, 120)],
     carouselGroup: null,
     slideIndex: null,
@@ -340,7 +340,7 @@ export const SEED_TEMPLATES: SeedTemplate[] = [
       T(64, 246, 70, "#ffffff", "{{HEADLINE}}", { weight: 800 }) +
       T(64, 300, 29, "#94a3b8", "{{SUBHEAD}}", { weight: 400 }) +
       glassPanel(64, 356, 952, 660, 32) +
-      featureRow(112, 452, "C", "Live Cameras", "74,229 feeds in 105 countries", 36) +
+      featureRow(112, 452, "C", "Live Cameras", "74,229 feeds in 109 countries", 36) +
       featureRow(112, 580, "F", "Live Flights", "Aircraft tracked in real time", 36) +
       featureRow(112, 708, "S", "Satellites", "Orbits rendered live overhead", 36) +
       featureRow(112, 836, "W", "Weather Radar", "Storms, fronts and live radar", 36) +
@@ -403,7 +403,7 @@ export const SEED_TEMPLATES: SeedTemplate[] = [
       T(56, 330, 72, "#ffffff", "{{HEADLINE}}", { weight: 800 }) +
       T(56, 392, 29, "#94a3b8", "{{SUBHEAD}}", { weight: 400 }) +
       T(56, 560, 92, "{{ACCENT}}", "74,229", { weight: 800 }) +
-      T(56, 606, 24, "#cbd5e1", "LIVE CAMERAS · 105 COUNTRIES", { weight: 700, ls: 2 }) +
+      T(56, 606, 24, "#cbd5e1", "LIVE CAMERAS · 109 COUNTRIES", { weight: 700, ls: 2 }) +
       ctaPill(56, 700, 320, 70) +
       qrFrame(56, 836, 116) +
       urlText(56, 1046, "start", 18)),
@@ -519,7 +519,7 @@ export const SEED_TEMPLATES: SeedTemplate[] = [
       T(560, 592, 32, "#ffffff", "LIVE CAMERAS", { weight: 700, ls: 2 }) +
       T(560, 640, 26, "#94a3b8", "streaming right now", { weight: 400 }) +
       glassPanel(72, 770, 936, 250, 30) +
-      T(120, 930, 108, "{{ACCENT}}", "105", { weight: 800 }) +
+      T(120, 930, 108, "{{ACCENT}}", "109", { weight: 800 }) +
       T(560, 882, 32, "#ffffff", "COUNTRIES", { weight: 700, ls: 2 }) +
       T(560, 930, 26, "#94a3b8", "covered on one globe", { weight: 400 }) +
       glassPanel(72, 1060, 936, 250, 30) +
@@ -760,7 +760,7 @@ export const SEED_TEMPLATES: SeedTemplate[] = [
       T(72, 1330, 80, "#ffffff", "{{HEADLINE}}", { weight: 800 }) +
       T(72, 1394, 31, "#cbd5e1", "{{SUBHEAD}}", { weight: 400 }) +
       T(72, 1560, 150, "{{ACCENT}}", "74,229", { weight: 800 }) +
-      T(72, 1624, 26, "#ffffff", "CAMERAS · 105 COUNTRIES · LIVE", { weight: 700, ls: 2 }) +
+      T(72, 1624, 26, "#ffffff", "CAMERAS · 109 COUNTRIES · LIVE", { weight: 700, ls: 2 }) +
       qrFrame(856, 1690, 140) +
       urlText(72, 1846, "start", 20)),
     editableFields: std("74,229 CAMERAS. ONE MAP.", "Every feed is live. Pick one and look.", "OPEN THE MAP"),
@@ -955,7 +955,7 @@ export const SEED_TEMPLATES: SeedTemplate[] = [
       bgRect(1080, 1080) + brand(64, 84) +
       T(64, 268, 66, "#ffffff", "{{HEADLINE}}", { weight: 800 }) +
       T(64, 324, 29, "#94a3b8", "{{SUBHEAD}}", { weight: 400 }) +
-      featureRow(64, 470, "C", "74,229 live cameras", "105 countries, streaming now") +
+      featureRow(64, 470, "C", "74,229 live cameras", "109 countries, streaming now") +
       featureRow(64, 610, "F", "Flights and satellites", "Tracked in real time overhead") +
       featureRow(64, 750, "W", "Weather, quakes, fires", "Live hazard layers worldwide") +
       featureRow(64, 890, "R", "Record any moment", "Capture cameras as clips") +
@@ -1173,7 +1173,7 @@ export const SEED_TEMPLATES: SeedTemplate[] = [
     svgBody: S(1080, 1080,
       bgRect(1080, 1080) + brand(64, 84) +
       T(64, 330, 150, "{{ACCENT}}", "74,229", { weight: 800 }) +
-      T(64, 396, 32, "#ffffff", "LIVE CAMERAS · 105 COUNTRIES", { weight: 700, ls: 2 }) +
+      T(64, 396, 32, "#ffffff", "LIVE CAMERAS · 109 COUNTRIES", { weight: 700, ls: 2 }) +
       T(64, 540, 62, "#ffffff", "{{HEADLINE}}", { weight: 800 }) +
       T(64, 596, 29, "#94a3b8", "{{SUBHEAD}}", { weight: 400 }) +
       featureRow(64, 740, "C", "Cities, coasts, volcanoes, wildlife") +
@@ -1363,7 +1363,7 @@ export const SEED_TEMPLATES: SeedTemplate[] = [
       ctaPill(24, 182, 128, 40, 15) +
       T(24, 240, 13, "#64748b", "WORLDEYE.APP", { family: MONO, weight: 400 }) +
       qrFrame(196, 146, 84, false)),
-    editableFields: std("THE WORLD, LIVE", "74,229 cameras in 105 countries.", "WATCH NOW", false),
+    editableFields: std("THE WORLD, LIVE", "74,229 cameras in 109 countries.", "WATCH NOW", false),
     layers: [qr(196, 146, 84)],
     carouselGroup: null,
     slideIndex: null,
@@ -1389,7 +1389,7 @@ export const SEED_TEMPLATES: SeedTemplate[] = [
       T(80, 352, 14, "#cbd5e1", "{{SUBHEAD}}", { anchor: "middle", weight: 700, ls: 1 }) +
       ctaPill(20, 396, 120, 40, 15) +
       qrFrame(25, 462, 110, false)),
-    editableFields: [headline("SEE IT LIVE"), subhead("105 COUNTRIES"), cta("WATCH"), accent()],
+    editableFields: [headline("SEE IT LIVE"), subhead("109 COUNTRIES"), cta("WATCH"), accent()],
     layers: [qr(25, 462, 110)],
     carouselGroup: null,
     slideIndex: null,
@@ -1414,7 +1414,7 @@ export const SEED_TEMPLATES: SeedTemplate[] = [
       ctaPill(196, 182, 190, 46, 17) +
       urlText(410, 214, "start", 16) +
       qrFrame(806, 59, 120, false)),
-    editableFields: std("THE WORLD IS LIVE", "74,229 live cameras in 105 countries.", "EXPLORE LIVE"),
+    editableFields: std("THE WORLD IS LIVE", "74,229 live cameras in 109 countries.", "EXPLORE LIVE"),
     layers: [qr(806, 59, 120)],
     carouselGroup: null,
     slideIndex: null,
@@ -1464,7 +1464,7 @@ export const SEED_TEMPLATES: SeedTemplate[] = [
       T(72, 300, 70, "#ffffff", "{{HEADLINE}}", { weight: 800 }) +
       T(72, 356, 29, "#94a3b8", "{{SUBHEAD}}", { weight: 400 }) +
       T(540, 620, 170, "{{ACCENT}}", "74,229", { anchor: "middle", weight: 800 }) +
-      T(540, 684, 30, "#ffffff", "LIVE CAMERAS · 105 COUNTRIES", { anchor: "middle", weight: 700, ls: 3 }) +
+      T(540, 684, 30, "#ffffff", "LIVE CAMERAS · 109 COUNTRIES", { anchor: "middle", weight: 700, ls: 3 }) +
       ctaPill(72, 790, 340, 72) +
       qrFrame(872, 842, 130, false) +
       urlText(72, 950, "start", 19) +
@@ -1617,7 +1617,7 @@ export const SEED_TEMPLATES: SeedTemplate[] = [
       T(600, 316, 56, "#ffffff", "{{HEADLINE}}", { anchor: "middle", weight: 800 }) +
       T(600, 364, 25, "#94a3b8", "{{SUBHEAD}}", { anchor: "middle", weight: 400 }) +
       ctaPill(450, 404, 300, 62, 21) +
-      T(600, 540, 20, "#64748b", "74,229 LIVE CAMERAS · 105 COUNTRIES · FREE TO EXPLORE", { anchor: "middle", weight: 700, ls: 2 })),
+      T(600, 540, 20, "#64748b", "74,229 LIVE CAMERAS · 109 COUNTRIES · FREE TO EXPLORE", { anchor: "middle", weight: 700, ls: 2 })),
     editableFields: [headline("The world is live right now"), subhead("Open the globe and see what is happening, as it happens."), cta("OPEN WORLDEYE"), accent()],
     layers: [logo(490, 52, 220)],
     carouselGroup: null,
@@ -1641,7 +1641,7 @@ export const SEED_TEMPLATES: SeedTemplate[] = [
       T(48, 186, 42, "#ffffff", "{{HEADLINE}}", { weight: 800 }) +
       T(48, 226, 19, "#94a3b8", "{{SUBHEAD}}", { weight: 400 }) +
       T(48, 336, 66, "{{ACCENT}}", "74,229", { weight: 800 }) +
-      T(48, 372, 18, "#cbd5e1", "LIVE CAMERAS · 105 COUNTRIES", { weight: 700, ls: 1 }) +
+      T(48, 372, 18, "#cbd5e1", "LIVE CAMERAS · 109 COUNTRIES", { weight: 700, ls: 1 }) +
       featureRow(48, 452, "F", "Flights, live", "", 23) +
       featureRow(48, 522, "W", "Weather radar", "", 23) +
       featureRow(48, 592, "R", "Record moments", "", 23) +
@@ -1673,7 +1673,7 @@ export const SEED_TEMPLATES: SeedTemplate[] = [
       liveDot(88, 78, 9) + T(108, 88, 24, "#ffffff", "LIVE", { weight: 800, ls: 3 }) +
       T(56, 330, 92, "#ffffff", "{{HEADLINE}}", { weight: 800 }) +
       T(56, 392, 31, "#cbd5e1", "{{SUBHEAD}}", { weight: 400 }) +
-      T(56, 660, 26, "#ffffff", "74,229 CAMERAS · 105 COUNTRIES", { weight: 700, ls: 2 })),
+      T(56, 660, 26, "#ffffff", "74,229 CAMERAS · 109 COUNTRIES", { weight: 700, ls: 2 })),
     editableFields: [headline("THE WORLD IS LIVE"), subhead("Watch it happen, as it happens."), accent()],
     layers: [logo(1054, 40, 170)],
     carouselGroup: null,

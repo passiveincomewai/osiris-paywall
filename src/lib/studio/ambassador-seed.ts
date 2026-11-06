@@ -8,7 +8,7 @@
  * QR / logo layers listed in `layers`.
  *
  * Copy rules (same as templates-seed — verified product facts only):
- *  - "74,229 live cameras in 105 countries" — never the stale figure.
+ *  - "74,229 live cameras in 109 countries" — never the stale figure.
  *  - No income promises; ambassador framing is about early access and
  *    representing WorldEye, not earnings.
  *
@@ -262,7 +262,7 @@ export const AMBASSADOR_TEMPLATES: SeedTemplate[] = [
       ctaPill(430, 478, 340, 68, 24) +
       qrFrame(1180, 420, 120, false) +
       urlText(1180, 600, "start", 19)),
-    editableFields: std("WATCH THE WORLD WITH ME", "74,229 live cameras in 105 countries — through my link.", "EXPLORE LIVE", false),
+    editableFields: std("WATCH THE WORLD WITH ME", "74,229 live cameras in 109 countries — through my link.", "EXPLORE LIVE", false),
     layers: [qr(1180, 420, 120)],
     carouselGroup: null,
     slideIndex: null,
