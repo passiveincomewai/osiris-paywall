@@ -5,7 +5,6 @@ import { readFileSync } from "fs";
 import { join } from "path";
 import cityPages from "@/data/city-pages.json";
 import countriesIndex from "@/data/camera-countries.json";
-import directory from "@/data/camera-directory.json";
 import { cityChunkStats } from "@/lib/explore-data";
 import {
   hasFullNeighbourSet,
@@ -240,7 +239,7 @@ describe("C9 related-searches anchors — discipline over real place data", () =
             direction: compassDirection(self, n),
           }))
         : [];
-      const countryEntry = directory.countries.find(
+      const countryEntry = countriesIndex.countries.find(
         (d) => d.slug === g.countrySlug,
       );
       const stateHub = stateHubForCity(

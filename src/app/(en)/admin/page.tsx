@@ -4,7 +4,7 @@ import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { adminEmails } from "@/lib/affiliate/admin";
 import { stripe } from "@/lib/stripe";
-import directory from "@/data/camera-directory.json";
+import cameraIndex from "@/data/camera-countries.json";
 import NewsletterBroadcast from "./NewsletterBroadcast";
 import CompetitorManager from "./CompetitorManager";
 import CreatorApplications from "./CreatorApplications";
@@ -963,8 +963,8 @@ export default async function AdminDashboardPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Card
               label="Camera catalog"
-              value={fmt(directory.totalCameras)}
-              sub={`Updated ${new Date(directory.generatedAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })} · ${directory.countries.length} countries`}
+              value={fmt((cameraIndex as { catalogueTotal: number }).catalogueTotal)}
+              sub={`Updated ${new Date((cameraIndex as { generatedAt: string }).generatedAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })} · ${(cameraIndex as { countries: unknown[] }).countries.length} countries`}
               accent="#37e08b"
             />
             <Card
