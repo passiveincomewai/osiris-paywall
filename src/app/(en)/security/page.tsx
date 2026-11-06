@@ -56,7 +56,7 @@ const faqJsonLd = {
       name: "How does the AI assistant handle my data and keys?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "OI, the AI assistant, is built in: signed-in users run it as WorldEye AI, where our servers send prompts to OpenAI for processing on WorldEye's own API key — there is no key to configure, and use is capped per user per hour for fair use. If you choose the optional bring-your-own-key mode instead, your key is stored only in your browser, travels with a request so our server can pass it to your chosen provider, and is never stored or logged on our servers. Keys for WorldEye's developer API are a separate system — you create those in your account to authenticate API calls; they do not power the assistant.",
+        text: "OI, the AI assistant, is built in: signed-in users run it as WorldEye AI, where our servers send prompts to OpenAI for processing on WorldEye's own API key — no key of your own is needed, and use is capped per user per hour for fair use. If you choose the optional bring-your-own-key mode instead, your key is stored only in your browser, travels with a request so our server can pass it to your chosen provider, and is never stored or logged on our servers. Keys for WorldEye's developer API are a separate system — you create those in your account to authenticate API calls; they do not power the assistant.",
       },
     },
     {
@@ -101,7 +101,7 @@ const SECURITY_FAQS = [
   },
   {
     q: "How does the AI assistant handle my data and keys?",
-    a: "OI is built in. Signed-in users run it as WorldEye AI: our servers send prompts to OpenAI on WorldEye's own key, inside per-user hourly fair-use caps — nothing to configure. A prompt can include your questions, the conversation so far and the map context you ask about (such as cameras or layers in view), so don't paste secrets into one. The optional own-key mode keeps a key only in your browser; it travels with a request so our server can pass it to your provider, and is never stored or logged. Keys for WorldEye's developer API are a separate system — you create those to authenticate API calls, and they don't power the assistant.",
+    a: "OI is built in. Signed-in users run it as WorldEye AI: our servers send prompts to OpenAI on WorldEye's own key, inside per-user hourly fair-use caps — nothing of your own to configure. A prompt can include your questions, the conversation so far and the map context you ask about (such as cameras or layers in view), so don't paste secrets into one. The optional own-key mode keeps a key only in your browser; it travels with a request so our server can pass it to your provider, and is never stored or logged. Keys for WorldEye's developer API are a separate system — you create those to authenticate API calls, and they don't power the assistant.",
   },
   {
     q: "Does WorldEye store my credit card?",
@@ -149,7 +149,7 @@ const SECTIONS: {
     icon: KeyRound,
     title: "The AI assistant is built in",
     body: [
-      "OI, WorldEye's AI assistant, is built in — there is no API key to configure. When you are signed in, OI runs as WorldEye AI: our servers send your prompts to OpenAI for processing on WorldEye's own API key, inside per-user hourly fair-use caps. A prompt can include your questions, the conversation so far, and the map context you ask about — the cameras, layers and places in view — so don't paste passwords or other secrets into one. WorldEye's own key stays on our servers and is never exposed to your browser.",
+      "OI, WorldEye's AI assistant, is built in — there is no API key you need to configure to use it. When you are signed in, OI runs as WorldEye AI: our servers send your prompts to OpenAI for processing on WorldEye's own API key, inside per-user hourly fair-use caps. A prompt can include your questions, the conversation so far, and the map context you ask about — the cameras, layers and places in view — so don't paste passwords or other secrets into one. WorldEye's own key stays on our servers and is never exposed to your browser.",
       "An optional bring-your-own-key mode is also available: paste a key from a supported provider (OpenAI, Anthropic, Google, OpenRouter and others) and it is stored only in your browser — this tab, or this device if you tick remember. When a request runs on your key, the key travels with that request so our server can pass it to your provider, and it is used for that request only: never stored, never logged. Keys you create for WorldEye's developer API are a different system — they authenticate programmatic access to camera data and don't power the assistant.",
     ],
   },
@@ -329,7 +329,7 @@ export default function SecurityPage() {
               certifications, and we won&apos;t pretend otherwise. What we do
               instead is keep the attack surface small by design — collection
               is kept narrow, payments live entirely inside Stripe, the AI
-              assistant runs on our own key rather than asking for yours, and
+              assistant runs on our own key by default rather than requiring one of yours, and
               subscription state is confirmed by Stripe&apos;s webhook.
               There is simply less here to steal than on a typical site.
             </p>
