@@ -129,7 +129,7 @@ export const esLiveWebcams: LiveWebcamsCopy = {
     },
     {
       q: "¿Dónde puedo ver webcams en vivo de todo el mundo?",
-      a: "WorldEye muestra 74.229 webcams públicas en vivo de 109 países en un solo globo interactivo gratuito que puedes girar, buscar y ampliar. Explora por país o ciudad en el directorio, o abre el mapa y toca cualquier marcador: tráfico, playas, estaciones de esquí, aeropuertos, lugares emblemáticos y naturaleza.",
+      a: "WorldEye muestra 74.229 webcams públicas en vivo de 109 países (74 con páginas de país en el directorio) en un solo globo interactivo gratuito que puedes girar, buscar y ampliar. Explora por país o ciudad en el directorio, o abre el mapa y toca cualquier marcador: tráfico, playas, estaciones de esquí, aeropuertos, lugares emblemáticos y naturaleza.",
     },
     {
       q: "¿Dónde puedo ver cámaras en vivo cerca de mí?",

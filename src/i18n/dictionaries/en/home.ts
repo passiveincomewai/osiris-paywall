@@ -157,7 +157,7 @@ export const enHome: HomeCopy = {
       },
       {
         q: "How many live cameras can I watch on WorldEye?",
-        a: "You can watch 74,229 live public cameras on WorldEye, plotted on one globe from 109 countries. The United States contributes the most — 41,355 cameras, largely state transportation-department networks — followed by Japan with 10,472. The mix covers highways, city streets, beaches, ski resorts, airports, harbors and nature reserves.",
+        a: "You can watch 74,229 live public cameras on WorldEye, plotted on one globe from 109 countries — 74 of them with their own country pages. The United States contributes the most — 41,355 cameras, largely state transportation-department networks — followed by Japan with 10,472. The mix covers highways, city streets, beaches, ski resorts, airports, harbors and nature reserves.",
       },
       {
         q: "Is WorldEye free?",
@@ -267,7 +267,7 @@ export const enHome: HomeCopy = {
       },
       {
         q: "What does WorldEye Pro include, and what does it cost?",
-        a: "Pro adds the OI AI analyst, the live traffic layer, advanced search filters and the camera recording studio. Ultra adds premium intel feeds such as cyber threats, maritime tracking and a live news feed, plus camera timelapse. Plans are weekly at $7.99, monthly at $13.99 and annual at $74.99. The weekly plan starts with a 3-day free trial, the monthly and annual plans start with a 10-day free trial, and you can cancel anytime in one click.",
+        a: "Any paid plan adds the OI AI analyst, the live traffic layer, advanced search filters and the camera recording studio; Pro adds the OSINT toolkit. Ultra adds premium intel feeds such as cyber threats, maritime tracking and a live news feed, plus camera timelapse. Paid plans run from Lite at $4.99/week to Ultra at $149.99/year; Pro is $7.99 weekly, $13.99 monthly and $74.99 annual. The weekly plan starts with a 3-day free trial, the monthly and annual plans start with a 10-day free trial, and you can cancel anytime in one click.",
       },
       {
         q: "Where do the live cameras come from?",

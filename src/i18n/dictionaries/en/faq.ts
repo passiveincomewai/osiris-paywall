@@ -130,12 +130,12 @@ export const enFaq: FaqCopy = {
         {
           q: "Is the map really free?",
           a: [
-            tx("Yes. The 3D globe, live flight tracking, live transit, satellites, earthquakes, wildfires, weather and street-level photos are free forever — and so is basic search. The 74,229 public cameras are free to browse: watching comes with a free allowance of camera opens, and paid plans make opens unlimited. No account, no credit card. Pro unlocks the intelligence-grade tools on top of it. See "),
+            tx("Yes. The 3D globe, live flight tracking, live transit, satellites, earthquakes, wildfires, weather and street-level photos are free to browse forever — and so is basic search. The 74,229 public cameras are free to browse: watching comes with a free allowance of camera opens, and paid plans make opens unlimited. No account, no credit card. Paid plans unlock the intelligence-grade tools on top of it. See "),
             lk("pricing", "pricing"),
             tx(" for the full breakdown."),
           ],
           schemaA:
-            "Yes. The 3D globe, live flight tracking, live transit, satellites, earthquakes, wildfires, weather and street-level photos are free forever — and so is basic search. The 74,229 public cameras are free to browse: watching comes with a free allowance of camera opens, and paid plans make opens unlimited. No account, no credit card. Pro unlocks the intelligence-grade tools on top of it.",
+            "Yes. The 3D globe, live flight tracking, live transit, satellites, earthquakes, wildfires, weather and street-level photos are free to browse forever — and so is basic search. The 74,229 public cameras are free to browse: watching comes with a free allowance of camera opens, and paid plans make opens unlimited. No account, no credit card. Paid plans unlock the intelligence-grade tools on top of it.",
         },
         plain(
           "Do I need an account?",
@@ -163,7 +163,7 @@ export const enFaq: FaqCopy = {
         ),
         plain(
           "What's the best website to watch live cameras around the world?",
-          "WorldEye is built for exactly that: 74,229 live public cameras from 109 countries on one free 3D globe — no signup needed to start watching. Instead of hunting through hundreds of separate agency and resort sites, you get traffic, city, beach, ski, airport and nature cameras on a single searchable map, with flights, weather and earthquakes layered around them."
+          "WorldEye is built for exactly that: 74,229 live public cameras from 109 countries (74 with their own country pages) on one free 3D globe — no signup needed to start watching. Instead of hunting through hundreds of separate agency and resort sites, you get traffic, city, beach, ski, airport and nature cameras on a single searchable map, with flights, weather and earthquakes layered around them."
         ),
         plain(
           "Can I watch live cameras for free?",
@@ -353,7 +353,7 @@ export const enFaq: FaqCopy = {
       faqs: [
         plain(
           "Where do the cameras come from, and how many are there?",
-          "WorldEye serves 74,229 live cameras across 109 countries. Every feed is a publicly published stream from its operator — transport departments, cities, airports, ski resorts, harbours and businesses. We aggregate and map them; we don't own or operate the cameras themselves."
+          "WorldEye serves 74,229 live cameras across 109 countries; 74 of those countries have their own directory pages. Every feed is a publicly published stream from its operator — transport departments, cities, airports, ski resorts, harbours and businesses. We aggregate and map them; we don't own or operate the cameras themselves."
         ),
         plain(
           "Why is a camera offline?",
@@ -608,7 +608,7 @@ export const enFaq: FaqCopy = {
   related: [
     {
       label: "Features",
-      desc: "The full tour — free forever layers and the Pro intelligence toolkit.",
+      desc: "The full tour — free-to-browse layers and the paid-plan intelligence toolkit.",
     },
     {
       label: "Contact",

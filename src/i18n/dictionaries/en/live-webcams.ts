@@ -201,7 +201,7 @@ export const enLiveWebcams: LiveWebcamsCopy = {
     },
     {
       q: "Where can I watch live webcams from around the world?",
-      a: "WorldEye shows 74,229 live public webcams from 109 countries on one free interactive globe you can spin, search and zoom. Browse by country or city in the directory, or open the map and tap any camera marker — traffic, beaches, ski resorts, airports, landmarks and nature.",
+      a: "WorldEye shows 74,229 live public webcams from 109 countries (74 with country pages in the directory) on one free interactive globe you can spin, search and zoom. Browse by country or city in the directory, or open the map and tap any camera marker — traffic, beaches, ski resorts, airports, landmarks and nature.",
     },
     {
       q: "Where can I watch live cams near me?",

@@ -50,7 +50,7 @@ export const esHome: HomeCopy = {
       },
       {
         q: "¿Cuántas cámaras en vivo puedo ver en WorldEye?",
-        a: "Puedes ver 74.229 cámaras públicas en vivo en WorldEye, situadas en un solo globo desde 109 países. Estados Unidos aporta la mayor parte: 41.355 cámaras, en gran medida de las redes de los departamentos estatales de transporte, seguido de Japón con 10.472. La mezcla cubre carreteras, calles de ciudades, playas, estaciones de esquí, aeropuertos, puertos y reservas naturales.",
+        a: "Puedes ver 74.229 cámaras públicas en vivo en WorldEye, situadas en un solo globo desde 109 países, 74 de ellos con sus propias páginas de país. Estados Unidos aporta la mayor parte: 41.355 cámaras, en gran medida de las redes de los departamentos estatales de transporte, seguido de Japón con 10.472. La mezcla cubre carreteras, calles de ciudades, playas, estaciones de esquí, aeropuertos, puertos y reservas naturales.",
       },
       {
         q: "¿WorldEye es gratis?",
