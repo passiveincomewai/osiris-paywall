@@ -181,14 +181,26 @@ function VisitStrip({ visits, startMs }: { visits: { t: number; path: string }[]
   );
 }
 
-function Card({ label, value, sub, accent = "#38bdf8" }: { label: string; value: string; sub?: string; accent?: string }) {
-  return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+function Card({ label, value, sub, accent = "#38bdf8", href }: { label: string; value: string; sub?: string; accent?: string; href?: string }) {
+  const inner = (
+    <>
       <div className="text-[11px] font-bold tracking-[0.18em] text-white/40 uppercase">{label}</div>
       <div className="mt-2 text-3xl font-extrabold text-white" style={{ textShadow: `0 0 24px ${accent}44` }}>
         {value}
       </div>
       {sub && <div className="mt-1 text-xs text-white/45">{sub}</div>}
+    </>
+  );
+  if (href) {
+    return (
+      <Link href={href} className="block rounded-2xl border border-white/10 bg-white/[0.03] p-5 transition hover:border-cyan-400/40 hover:bg-white/[0.05]">
+        {inner}
+      </Link>
+    );
+  }
+  return (
+    <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+      {inner}
     </div>
   );
 }
@@ -602,7 +614,7 @@ export default async function AdminDashboardPage() {
 
         {/* Key metrics */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Card label="Total users" value={fmt(totalUsers)} sub={`+${fmt(usersToday)} today · +${fmt(users7d)} / 7d · +${fmt(users30d)} / 30d${unverifiedPwUsers ? ` · ${fmt(unverifiedPwUsers)} unverified` : ""}`} />
+          <Card label="Total users" value={fmt(totalUsers)} href="/admin/accounts" sub={`+${fmt(usersToday)} today · +${fmt(users7d)} / 7d · +${fmt(users30d)} / 30d${unverifiedPwUsers ? ` · ${fmt(unverifiedPwUsers)} unverified` : ""} · tap to view all →`} />
           <Card label="Paying subscribers" value={fmt(payingSubs.length)} sub={Object.entries(planCounts).map(([p, c]) => `${p}: ${c}`).join(" · ") || "No paying subs yet"} accent="#f7b80c" />
           <Card label="MRR (est.)" value={money(mrr)} sub={`Paying subs only · ${trialingSubs.length ? money(trialMrrPotential) + " in trials" : "no trials"}`} accent="#f7b80c" />
           <Card label="Trials active" value={fmt(trialingSubs.length)} sub={`${fmt(trialsEndingSoon)} end within 3 days · ${fmt(statusMap.get("past_due") ?? 0)} past due`} />
@@ -910,6 +922,9 @@ export default async function AdminDashboardPage() {
                   {recentUsers.length === 0 && <tr><td className="py-4 text-white/35 text-sm">No users yet.</td></tr>}
                 </tbody>
               </table>
+              </div>
+              <div className="mt-3 text-right">
+                <Link href="/admin/accounts" className="text-sm text-cyan-300 hover:underline">View all {fmt(totalUsers)} accounts →</Link>
               </div>
             </div>
             <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
