@@ -103,7 +103,7 @@ describe("sitemap URL set", () => {
           !u.startsWith(`${BASE}/wildfires/`),
       )
       .sort();
-    expect(nonTransit.length).toBe(1124);
+    expect(nonTransit.length).toBe(1125);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     // Hash history: 6d75d0de… until the SEO audit fix #3 (2026-10-27)
     // normalised the es homepage entry from /es/ to its final /es
@@ -331,8 +331,17 @@ describe("sitemap URL set", () => {
     // reproduces 1,123 / 93b987a6… exactly): the staged set
     // minus the pristine set is exactly the 1 new /collections
     // URL, giving 1,124 / 5332f0a1….
+    // The launch board (Wave 2 item 9, 2026-11-06) then added
+    // /launches — the standing upcoming-launches page over the
+    // Launch Library 2 feed → 1,125. Delta verified by
+    // executing sitemap() on both trees (probe-stubbed live
+    // transit/wildfire doors, whose URLs this pinned set filters
+    // out; the pristine generator under the same probe
+    // reproduces 1,124 / 5332f0a1… exactly): the staged set
+    // minus the pristine set is exactly the 1 new /launches
+    // URL, giving 1,125 / fdc6dee3….
     expect(hash).toBe(
-      "5332f0a1ac6ff4785f5b235bbf4cec8c9eff709930903b59ed1c12c8517b0ae5",
+      "fdc6dee31e984b414f210193aa0fc660c4e8a4845fafa77cf7c9c77b8e48a4c3",
     );
   });
 

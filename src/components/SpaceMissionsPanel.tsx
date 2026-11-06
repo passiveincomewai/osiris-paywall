@@ -536,6 +536,10 @@ export default function SpaceMissionsPanel({
           <div className="mt-3 pt-2 border-t border-white/10 text-[8px] font-mono text-white/30 leading-relaxed">
             DATA — {LAUNCH_SOURCE_LABEL.toUpperCase()} · THESPACEDVS.COM
             {stale && <span className="text-amber-200/70"> · SHOWING LAST-GOOD DATA (UPSTREAM REFRESH FAILED)</span>}
+            {' · '}
+            <a href="/launches" className="text-white/50 underline hover:text-white">
+              FULL LAUNCH BOARD ↗
+            </a>
           </div>
         </div>
       )}
