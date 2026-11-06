@@ -52,7 +52,7 @@ const TYPE_OPTIONS = PARTNERSHIP_TYPES.map((t) => ({ value: t.value as string, l
 const BENEFITS: { title: string; body: string }[] = [
   {
     title: "A live global camera network",
-    body: "Partners build on a working product: a live globe of 74,229 cameras across 109 countries, plus flight, ship, satellite and weather tracking layers — real infrastructure, not a concept deck.",
+    body: "Partners build on a working product: a live globe of 74,229 cameras across 109 countries (74 with country pages), plus flight, ship, satellite and weather tracking layers — real infrastructure, not a concept deck.",
   },
   {
     title: "An audience that explores the world",
@@ -316,7 +316,7 @@ const FAQS: Faq[] = [
   },
   {
     q: "What does WorldEye bring to a partnership?",
-    a: "A live product: a globe of 74,229 cameras across 109 countries, flight/ship/satellite/weather tracking, a public API and embed system, and an audience that comes to watch the world live. Also a rights-first approach — partner-facing surfaces only ever serve cameras whose terms clear them — and a small team that reads its own partnership inbox.",
+    a: "A live product: a globe of 74,229 cameras across 109 countries (74 with country pages), flight/ship/satellite/weather tracking, a public API and embed system, and an audience that comes to watch the world live. Also a rights-first approach — partner-facing surfaces only ever serve cameras whose terms clear them — and a small team that reads its own partnership inbox.",
   },
   {
     q: "Will you announce our partnership?",

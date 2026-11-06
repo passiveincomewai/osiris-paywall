@@ -700,8 +700,8 @@ export default function PairComparePage({ slug }: { slug: string }) {
               kept deliberately neutral: each product’s strengths are stated in
               its own terms, and WorldEye appears only in the labelled “another
               option” section. WorldEye’s own figures there are counted, not
-              estimated — 74,229 public cameras in its live directory across 109
-              countries, and a free map (flights, satellites, ships, weather,
+              estimated — 74,229 public cameras in its catalogue across 109
+              countries, with 74 country pages in the directory, and a free map (flights, satellites, ships, weather,
               earthquakes, wildfires, cameras and satellite imagery) with
               optional paid tiers from Lite at $4.99/week (Pro $7.99/week,
               $13.99/month or $74.99/year; Ultra from $12.99/week).

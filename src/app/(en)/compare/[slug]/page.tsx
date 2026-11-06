@@ -386,7 +386,7 @@ export default async function ComparePage({ params }: { params: Promise<{ slug: 
             </p>
             <p>
               WorldEye&rsquo;s own figures are counted, not estimated: the camera network is
-              the 74,229 public feeds in our live directory across 109 countries, and the
+              the 74,229 public feeds in our catalogue across 109 countries, browsable through 74 country pages, and the
               free/paid split is the live product — the map, flights, satellites, weather,
               earthquakes, wildfires, cameras and the satellite imagery view are free with no
               signup, while the paid tiers add the OSINT toolkit and the traffic layer and

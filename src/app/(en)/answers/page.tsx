@@ -82,7 +82,7 @@ const collectionJsonLd = {
 };
 
 const INTRO = [
-  "WorldEye puts 74,229 live public cameras from 109 countries on one free interactive globe — and these are the questions people ask about it, answered in plain language. Every answer leads with the fact itself, then the detail, then a link to the page that proves it.",
+  "WorldEye puts 74,229 live public cameras from 109 countries (74 with their own country pages) on one free interactive globe — and these are the questions people ask about it, answered in plain language. Every answer leads with the fact itself, then the detail, then a link to the page that proves it.",
   "Ask a voice assistant how many live cameras there are in Japan, whether you can watch a hurricane live, or what WorldEye costs, and the answer it reads back should be one of these. If your question is not here, the FAQ and the camera directory cover the rest.",
 ];
 

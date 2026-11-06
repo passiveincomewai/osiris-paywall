@@ -78,7 +78,7 @@ const FAQS = [
   },
   {
     q: "Which has more live cameras?",
-    a: "WorldEye: 74,229 live public feeds across 109 countries, with a browsable directory. OSIRIS's README lists 17,000+ cameras from transport agencies and public webcam networks.",
+    a: "WorldEye: 74,229 live public feeds across 109 countries, with a browsable directory of 74 country pages. OSIRIS's README lists 17,000+ cameras from transport agencies and public webcam networks.",
   },
 ];
 
@@ -237,7 +237,7 @@ export default function WorldEyeVsOsirisPage() {
           <div className="grid sm:grid-cols-2 gap-4">
             {[
               "Nothing to install or maintain: the globe is hosted, updated and live the moment you open it — on a phone, not just a workstation.",
-              "More than four times the camera network: 74,229 live public feeds across 109 countries, with a directory you can browse by country and city.",
+              "More than four times the camera network: 74,229 live public feeds across 109 countries, with a directory of 74 country pages you can browse by country and city.",
               "Live feeds where OSIRIS carries reference data: real vessel positions and live GDELT-powered conflict/intel feeds instead of static ports and zones.",
               "The AI analyst runs on the site's key — no OpenAI account, no key management, no metered surprises on your own bill.",
             ].map((w, i) => (

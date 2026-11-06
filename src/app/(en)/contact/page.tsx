@@ -108,7 +108,7 @@ const TOPICS = [
   },
   {
     title: "Press",
-    body: "Writing about live data, open intelligence or WorldEye itself? The About page has the background and the numbers (74,229 cameras, 109 countries, a free globe with no signup). For anything else, email us.",
+    body: "Writing about live data, open intelligence or WorldEye itself? The About page has the background and the numbers (74,229 cameras in 109 countries, 74 country pages, a free globe with no signup). For anything else, email us.",
   },
   {
     title: "Security reports",
@@ -262,7 +262,7 @@ export default function ContactPage() {
             </p>
             <p>
               For press: WorldEye is a free live 3D globe — 74,229 public
-              cameras across 109 countries, plus live flights, satellites,
+              cameras across 109 countries (74 with country pages), plus live flights, satellites,
               weather, earthquakes and transit, with no signup to look around.
               The <Link href="/about" className="text-[#D4AF37] hover:underline">About page</Link>{" "}
               covers the story and the principles; email us for anything
