@@ -15,9 +15,10 @@ import {
   countForDef,
 } from "@/lib/explore-data";
 
-// Counts: camera-directory.json snapshot (138 KR cameras, 2026-10-11) plus the
-// October 2026 harvest (+1,499 probe-verified Korean expressway and city
-// cameras). Union, deduplicated: 1,637.
+// Counts: the current camera catalogue (src/data/camera-countries.json,
+// generated 2026-10-20) puts South Korea at 1,610 cameras; the live
+// traffic totals on this page come from explore-data over the same
+// catalogue. The headline below is a rounded floor.
 const KR_COUNT = "1,600+";
 
 export const metadata: Metadata = {

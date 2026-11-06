@@ -15,9 +15,10 @@ import {
   countForDef,
 } from "@/lib/explore-data";
 
-// Counts: camera-directory.json snapshot (1,509 CA cameras, 2026-10-11) plus
-// the October 2026 harvest (+1,497 probe-verified: Ontario 511, DriveBC and
-// other provincial networks). Union, deduplicated: 3,006.
+// Counts: the current camera catalogue (src/data/camera-countries.json,
+// generated 2026-10-20) puts Canada at 4,685 cameras in total; the live
+// traffic totals on this page come from explore-data over the same
+// catalogue. The headline below is a rounded floor for the traffic subset.
 const CA_COUNT = "3,000+";
 
 export const metadata: Metadata = {

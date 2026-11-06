@@ -15,9 +15,10 @@ import {
   countForDef,
 } from "@/lib/explore-data";
 
-// Counts: camera-directory.json snapshot (48 NO cameras, 2026-10-11) plus the
-// October 2026 harvest (+698 probe-verified Statens vegvesen road cameras).
-// Union, deduplicated: 746.
+// Counts: the current camera catalogue (src/data/camera-countries.json,
+// generated 2026-10-20) puts Norway at 746 cameras; the live traffic
+// totals on this page come from explore-data over the same catalogue.
+// The headline below is a rounded floor.
 const NO_COUNT = "740+";
 
 export const metadata: Metadata = {

@@ -15,10 +15,11 @@ import {
   countForDef,
 } from "@/lib/explore-data";
 
-// Counts: camera-directory.json snapshot (928 JP cameras, 2026-10-11) plus the
-// October 2026 OpenCCTV harvest, which added 9,829 probe-verified Japanese
-// cameras — the large majority from the national river-and-road camera network
-// (river.go.jp). Union, deduplicated against the served catalogue: 10,757.
+// Counts: the current camera catalogue (src/data/camera-countries.json,
+// generated 2026-10-20) puts Japan at 10,472 cameras in total, and the
+// served catalogue union runs higher (10,757 at last reconciliation); the
+// live traffic totals on this page come from explore-data over the same
+// catalogue. The headline below is a rounded floor.
 const JP_COUNT = "10,700+";
 
 export const metadata: Metadata = {

@@ -15,9 +15,11 @@ import {
   countForDef,
 } from "@/lib/explore-data";
 
-// Counts: camera-directory.json snapshot (886 SE cameras, 2026-10-11) plus
-// the October 2026 harvest (+734 probe-verified, mostly Trafikverket road
-// cameras). Union, deduplicated: 1,620.
+// Counts: the current camera catalogue (src/data/camera-countries.json,
+// generated 2026-10-20) puts Sweden at 1,569 cameras, and the served
+// catalogue union runs higher (1,620 at last reconciliation); the live
+// traffic totals on this page come from explore-data over the same
+// catalogue. The headline below is a rounded floor.
 const SE_COUNT = "1,600+";
 
 export const metadata: Metadata = {

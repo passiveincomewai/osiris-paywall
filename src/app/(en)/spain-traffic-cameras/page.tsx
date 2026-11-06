@@ -15,9 +15,10 @@ import {
   countForDef,
 } from "@/lib/explore-data";
 
-// Counts: camera-directory.json snapshot (1,997 ES cameras, 2026-10-11 — the
-// DGT national network is the backbone) plus the October 2026 harvest (+128
-// probe-verified). Union, deduplicated: 2,125.
+// Counts: the current camera catalogue (src/data/camera-countries.json,
+// generated 2026-10-20) puts Spain at 2,120 cameras — the DGT national
+// network is the backbone; the live traffic totals on this page come
+// from explore-data over the same catalogue. Headline is a rounded floor.
 const ES_COUNT = "2,100+";
 
 export const metadata: Metadata = {
