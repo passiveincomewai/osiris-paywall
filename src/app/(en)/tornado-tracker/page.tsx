@@ -215,7 +215,7 @@ export default function TornadoTrackerPage() {
             Severe weather on <span className="text-[#D4AF37]">the globe</span>
           </h2>
           <p className="text-white/55 mt-3 mb-8">
-            Warnings, storms, fires and quakes on one live map — free forever.
+            Warnings, storms, fires and quakes on one live map — free to browse.
           </p>
           <Link
             href="/?layers=weather"

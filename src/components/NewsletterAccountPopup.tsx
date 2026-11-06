@@ -203,7 +203,7 @@ export default function NewsletterAccountPopup({
           Continue with Google
         </button>
         <p className="mt-3 text-xs text-white/35">
-          Free forever. No credit card required.
+          Free to browse. No credit card required.
         </p>
         <button
           onClick={dismiss}

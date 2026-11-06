@@ -316,7 +316,7 @@ export default function SpaceStationTrackerPage() {
             See where it is <span className="text-[#D4AF37]">right now</span>
           </h2>
           <p className="text-white/55 mt-3 mb-8">
-            Free forever. No account. Just the planet, live.
+            Free to browse. No account. Just the planet, live.
           </p>
           <Link
             href="/"
@@ -350,7 +350,7 @@ export default function SpaceStationTrackerPage() {
             },
             {
               label: "Features",
-              desc: "Everything the globe can do — free forever layers and Pro intelligence tools.",
+              desc: "Everything the globe can do — free-to-browse layers and paid-plan intelligence tools.",
               href: "/features",
             },
             {

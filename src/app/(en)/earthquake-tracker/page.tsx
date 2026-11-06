@@ -396,7 +396,7 @@ export default function EarthquakeTrackerPage() {
             See what&apos;s shaking <span className="text-[#D4AF37]">right now</span>
           </h2>
           <p className="text-white/55 mt-3 mb-8">
-            Free forever. No account. Just the planet, live.
+            Free to browse. No account. Just the planet, live.
           </p>
           <Link
             href="/"

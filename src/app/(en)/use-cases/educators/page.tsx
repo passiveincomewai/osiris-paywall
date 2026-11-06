@@ -302,7 +302,7 @@ export default function EducatorsPage() {
             },
             {
               label: "About",
-              desc: "Why the map is free forever, and what Pro funds.",
+              desc: "Why the map is free to browse forever, and what paid plans fund.",
               href: "/about",
             },
           ]}

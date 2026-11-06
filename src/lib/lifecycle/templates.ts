@@ -115,7 +115,7 @@ export function retargetPricingEmail(input: {
       "What Pro adds",
       "The free globe stays free. Pro adds the intel toolkit.",
       `${P(`Hi ${first},`)}
-       ${P("You spent some time on our pricing page, so here's the honest summary: the free globe, cameras, flights and weather stay free forever. <strong style=\"color:#fff;\">Pro</strong> adds the OSINT toolkit and AI assistant, satellite map view, the live traffic layer and camera recording; <strong style=\"color:#fff;\">VIP Pro</strong> adds the intel feeds, camera alerts and timelapses.")}
+       ${P("You spent some time on our pricing page, so here's the honest summary: the free globe, cameras, flights and weather stay free to browse — paid plans make camera opens unlimited. Any <strong style=\"color:#fff;\">paid plan</strong> adds the AI assistant, the live traffic layer and camera recording; <strong style=\"color:#fff;\">Pro</strong> adds the OSINT toolkit and camera alerts; <strong style=\"color:#fff;\">Ultra</strong> adds the intel feeds and timelapses.")}
        ${offerPart}
        ${unsubscribeLine(input.unsubscribeUrl)}`,
       { label: "Compare plans", href: appUrl("/pricing") },

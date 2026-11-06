@@ -58,7 +58,7 @@ export default async function SignupPage({
   const sp = await searchParams;
   const cb = sp.callbackUrl;
   return (
-    <AuthShell title="Create your account" subtitle="Free forever. No credit card required.">
+    <AuthShell title="Create your account" subtitle="Free to browse. No credit card required.">
       <div className="mb-6 rounded-2xl border border-white/10 bg-white/[0.02] p-4">
         <p className="text-sm font-semibold text-white/85">What a free account unlocks</p>
         <ul className="mt-3 space-y-2.5">

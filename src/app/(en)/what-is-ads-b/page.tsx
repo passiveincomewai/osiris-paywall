@@ -351,7 +351,7 @@ export default function WhatIsAdsBPage() {
             Now go <span className="text-[#D4AF37]">watch it work</span>
           </h2>
           <p className="text-white/55 mt-3 mb-8">
-            Thousands of ADS-B broadcasts, live on one globe. Free forever, no account.
+            Thousands of ADS-B broadcasts, live on one globe. Free to browse, no account.
           </p>
           <Link
             href="/live-flight-tracker"
@@ -386,7 +386,7 @@ export default function WhatIsAdsBPage() {
             },
             {
               label: "Features",
-              desc: "Everything the globe can do — free forever layers and Pro intelligence tools.",
+              desc: "Everything the globe can do — free-to-browse layers and paid-plan intelligence tools.",
               href: "/features",
             },
           ]}

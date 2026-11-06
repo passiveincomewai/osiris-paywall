@@ -232,7 +232,7 @@ export default function SatelliteTrackerPage() {
             >
               Open satellite map <ArrowRight className="w-5 h-5" />
             </Link>
-            <span className="text-sm text-white/40">Free forever · No signup</span>
+            <span className="text-sm text-white/40">Free to browse · No signup</span>
           </div>
         </div>
 
@@ -511,15 +511,15 @@ export default function SatelliteTrackerPage() {
         <div className="mt-20 rounded-3xl border border-[#D4AF37]/30 bg-gradient-to-b from-[#D4AF37]/[0.08] to-transparent p-8 md:p-10 text-center">
           <p className="text-xs font-bold tracking-[0.25em] text-[#D4AF37] mb-3">WANT DEEPER INTELLIGENCE?</p>
           <h2 className="text-2xl md:text-3xl font-bold">
-            Pro adds an AI analyst that works the map for you
+            Paid plans add an AI analyst that works the map for you
           </h2>
           <p className="text-white/55 mt-3 max-w-2xl mx-auto">
-            Satellite tracking is free forever.{" "}
+            Satellite tracking is free to browse.{" "}
             <Link href="/pricing" className="text-[#D4AF37] hover:underline">
-              WorldEye Pro
+              WorldEye paid plans
             </Link>{" "}
-            adds the OI AI assistant, the live traffic layer, advanced search
-            filters and premium intel feeds — from $7.99/week.
+            add the OI AI assistant, the live traffic layer and advanced search
+            filters — from $4.99/week — and Ultra adds the premium intel feeds.
           </p>
           <Link
             href="/pricing"
@@ -590,7 +590,7 @@ export default function SatelliteTrackerPage() {
         {/* Trust */}
         <div className="mt-12 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-xs text-white/35">
           <span className="flex items-center gap-1.5">
-            <ShieldCheck className="w-4 h-4 text-[#D4AF37]/70" /> Free forever
+            <ShieldCheck className="w-4 h-4 text-[#D4AF37]/70" /> Free to browse
           </span>
           <span className="flex items-center gap-1.5">
             <ShieldCheck className="w-4 h-4 text-[#D4AF37]/70" /> No signup required

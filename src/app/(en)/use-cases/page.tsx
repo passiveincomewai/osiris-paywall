@@ -257,7 +257,7 @@ export default function UseCasesPage() {
           links={[
             {
               label: "Features",
-              desc: "The full tour — free forever layers and the Pro intelligence toolkit.",
+              desc: "The full tour — free-to-browse layers and the paid-plan intelligence toolkit.",
               href: "/features",
             },
             {
