@@ -27,6 +27,7 @@ export const KNOWN_LAYERS: Record<string, string> = {
   earthquakes: "Earthquakes",
   fires: "Wildfires",
   fire_perimeters: "Fire perimeters",
+  natural_events: "Natural events",
   weather: "Weather",
   hurricanes: "Hurricanes",
   river_gauges: "River gauges",

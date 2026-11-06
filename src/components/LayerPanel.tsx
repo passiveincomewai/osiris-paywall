@@ -155,6 +155,7 @@ export const LAYER_GROUPS: LayerGroupDef[] = [
       { key: 'hurricanes', label: 'Hurricanes', description: 'NOAA NHC · tracks & forecast cones', dataKey: 'hurricanes' },
       { key: 'river_gauges', label: 'Rivers & Floods', description: 'USGS · real-time stream gauges', dataKey: '' },
       { key: 'radiation', label: 'Radiation Sensors', dataKey: 'radiation' },
+      { key: 'natural_events', label: 'Natural Events', description: 'NASA EONET · volcanoes · ice · storms · floods · reported dates', dataKey: 'natural_events' },
     ],
   },
   {
@@ -385,7 +386,7 @@ const PANEL_CATEGORIES: PanelCategory[] = [
     blurb: 'Earthquakes · Active Fires · Hurricanes\nSevere Weather · Floods',
     thumb: '/images/layers/hazards.webp',
     thumbGradient: 'linear-gradient(120deg, #2B0B0B, #6E1414 55%, #334155)',
-    keys: ['earthquakes', 'fires', 'fire_perimeters', 'weather', 'hurricanes', 'river_gauges', 'radiation'],
+    keys: ['earthquakes', 'fires', 'fire_perimeters', 'weather', 'hurricanes', 'river_gauges', 'radiation', 'natural_events'],
     kind: 'layers',
   },
   {

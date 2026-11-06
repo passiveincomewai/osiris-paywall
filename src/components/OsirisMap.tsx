@@ -1588,7 +1588,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
         map.addImage('cctv-cone', { width: S, height: S, data: new Uint8Array(img.data.buffer) }, { sdf: false });
       })();
 
-      const sources = ['flights','military','jets','private-fl','satellites','earthquakes','gdelt','day-night','cctv','cctv-cones','fires','weather','infrastructure','maritime','maritime-choke','maritime-ships','live-news','conflict-zones', 'war-alerts-targets', 'war-alerts-lines', 'balloons', 'radiation', 'ip-sweep-devices', 'ip-sweep-pulse', 'ip-sweep-connections', 'scan-targets', 'sdk-entities', 'sdk-links', 'malware-nodes', 'malware-new', 'network-mesh', 'cyber-heads', 'gdelt-events', 'cf-outages', 'cf-attacks', 'alert-pins', 'fire-perimeters', 'hurricanes', 'plows', 'river-gauges', 'alert-cams', 'gbfs', 'transit', 'transit-routes', 'transit-stops', 'traffic-roads', 'traffic-vehicles', 'launches', 'launch-replay', 'street-level'];
+      const sources = ['flights','military','jets','private-fl','satellites','earthquakes','gdelt','day-night','cctv','cctv-cones','fires','weather','infrastructure','maritime','maritime-choke','maritime-ships','live-news','conflict-zones', 'war-alerts-targets', 'war-alerts-lines', 'balloons', 'radiation', 'natural-events', 'ip-sweep-devices', 'ip-sweep-pulse', 'ip-sweep-connections', 'scan-targets', 'sdk-entities', 'sdk-links', 'malware-nodes', 'malware-new', 'network-mesh', 'cyber-heads', 'gdelt-events', 'cf-outages', 'cf-attacks', 'alert-pins', 'fire-perimeters', 'hurricanes', 'plows', 'river-gauges', 'alert-cams', 'gbfs', 'transit', 'transit-routes', 'transit-stops', 'traffic-roads', 'traffic-vehicles', 'launches', 'launch-replay', 'street-level'];
       sources.forEach(s => map.addSource(s, { type: 'geojson', data: EMPTY_FC }));
       // Clustered twin of the transit vehicle source: at globe /
       // regional zoom the vehicles collapse into count bubbles instead
@@ -2422,6 +2422,37 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
         'text-offset': [0, 1.5], 'text-allow-overlap': false,
       }, paint: { 'text-color': ['match', ['get','status'], 'DANGER','#D32F2F', 'WARNING','#E65100', '#7E57C2'], 'text-halo-color': '#000', 'text-halo-width': 1 }});
 
+      // Natural Events (NASA EONET) — one colour per category. Each pin is
+      // a dated observation (the event's latest EONET geometry), never a
+      // live marker; the popup says so and dates the pin.
+      const NATURAL_EVENT_COLORS: any = ['match', ['get','category'],
+        'volcanoes', '#FF5722',
+        'severeStorms', '#AB47BC',
+        'floods', '#29B6F6',
+        'landslides', '#A1887F',
+        'snow', '#ECEFF1',
+        'seaLakeIce', '#4DD0E1',
+        'dustHaze', '#D4A017',
+        'tempExtremes', '#FF7043',
+        'waterColor', '#26A69A',
+        'manmade', '#BDBDBD',
+        '#FFCA28'];
+      map.addLayer({ id: 'natural-glow', type: 'circle', source: 'natural-events', paint: {
+        'circle-radius': ['interpolate',['linear'],['zoom'], 1,10, 5,20, 10,40],
+        'circle-color': NATURAL_EVENT_COLORS,
+        'circle-opacity': 0.12, 'circle-blur': 1,
+      }});
+      map.addLayer({ id: 'natural-dots', type: 'circle', source: 'natural-events', paint: {
+        'circle-radius': ['interpolate',['linear'],['zoom'], 1,4, 5,6, 10,8],
+        'circle-color': NATURAL_EVENT_COLORS,
+        'circle-opacity': 0.9,
+        'circle-stroke-width': 1.5, 'circle-stroke-color': NATURAL_EVENT_COLORS, 'circle-stroke-opacity': 0.35,
+      }});
+      map.addLayer({ id: 'natural-label', type: 'symbol', source: 'natural-events', minzoom: 5, layout: {
+        'text-field': ['get','categoryLabel'], 'text-size': 9, 'text-font': ['Open Sans Bold'],
+        'text-offset': [0, 1.5], 'text-allow-overlap': false,
+      }, paint: { 'text-color': NATURAL_EVENT_COLORS, 'text-halo-color': '#000', 'text-halo-width': 1 }});
+
       // ══ OSIRIS SDK — Lattice Intelligence Mesh ══
       // Polybolos Style: Delicate, translucent, steel-blue splined mesh
 
@@ -2747,7 +2778,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     // these, and to nothing else — the basemap is not a click target.
     const CLICKABLE_LAYERS = new Set(['conflict-icons','cctv-dots','eq-circles','eq-icons','fires-heat','fires-icons','plow-icons',
       'fire-perim-fill','hurricane-current','hurricane-icons','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gbfs-systems','gbfs-stations','gbfs-vehicles','transit-dots','transit-icons-bus','transit-icons-rail','transit-stops-dots','transit-cluster-circles','traffic-flow','tomtom-flow-lines','gdelt-dots','weather-dots','weather-tsunami-icons','weather-storm-icons','weather-tornado-icons','infra-dots','maritime-dots','maritime-icons','choke-dots','news-dots',
-      'balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots',
+      'balloon-dots','rad-dots','natural-dots','ship-dots','sweep-device-dots','scan-targets-dots',
       'sdk-sea','malware-dots','cyber-heads','gdelt-events-dots',
       'cf-outage-dots','cf-attack-dots','fl-commercial','fl-private','fl-jets','fl-military','launch-pads','alert-pin-dots','street-level-dots','street-level-hit']);
 
@@ -3514,7 +3545,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     });
 
     // ── Generic hover for clickables ──
-    ['conflict-icons','cctv-dots','eq-circles','eq-icons','fires-heat','fires-icons','gdelt-dots','weather-dots','weather-tsunami-icons','weather-storm-icons','weather-tornado-icons','infra-dots','maritime-dots','maritime-icons','choke-dots','news-dots','balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots','fire-perim-fill','hurricane-current','hurricane-icons','plow-icons','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gbfs-systems','gbfs-stations','gbfs-vehicles','transit-dots','transit-icons-bus','transit-icons-rail','transit-stops-dots','transit-cluster-circles','sdk-sea','sdk-sea-glow','sdk-sea-atmo','malware-dots','cyber-heads','gdelt-events-dots','cf-outage-dots','cf-attack-dots','alert-pin-dots'].forEach(layer => {
+    ['conflict-icons','cctv-dots','eq-circles','eq-icons','fires-heat','fires-icons','gdelt-dots','weather-dots','weather-tsunami-icons','weather-storm-icons','weather-tornado-icons','infra-dots','maritime-dots','maritime-icons','choke-dots','news-dots','balloon-dots','rad-dots','natural-dots','ship-dots','sweep-device-dots','scan-targets-dots','fire-perim-fill','hurricane-current','hurricane-icons','plow-icons','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gbfs-systems','gbfs-stations','gbfs-vehicles','transit-dots','transit-icons-bus','transit-icons-rail','transit-stops-dots','transit-cluster-circles','sdk-sea','sdk-sea-glow','sdk-sea-atmo','malware-dots','cyber-heads','gdelt-events-dots','cf-outage-dots','cf-attack-dots','alert-pin-dots'].forEach(layer => {
       map.on('mouseenter', layer, () => { map.getCanvas().style.cursor = 'pointer'; });
       map.on('mouseleave', layer, () => { map.getCanvas().style.cursor = ''; });
     });
@@ -3612,6 +3643,31 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
           <div><span style="color:#5C5A54;font-size:9px;">STATUS</span><br/><span style="color:${color};">${p.status}</span></div>
           <div><span style="color:#5C5A54;font-size:9px;">NETWORK</span><br/><span style="color:#E8E6E0;">${p.network}</span></div>
         </div>
+      </div>`);
+    });
+
+    // ── Natural Events (NASA EONET) ──
+    map.on('click', 'natural-dots', e => {
+      if (!e.features?.length) return;
+      const p = e.features[0].properties as any;
+      const coords = (e.features[0].geometry as any).coordinates;
+      const CAT_COLORS: Record<string, string> = {
+        volcanoes: '#FF5722', severeStorms: '#AB47BC', floods: '#29B6F6',
+        landslides: '#A1887F', snow: '#ECEFF1', seaLakeIce: '#4DD0E1',
+        dustHaze: '#D4A017', tempExtremes: '#FF7043', waterColor: '#26A69A',
+        manmade: '#BDBDBD',
+      };
+      const color = CAT_COLORS[p.category] || '#FFCA28';
+      const reported = p.date ? String(p.date).slice(0, 10) : '';
+      popup(coords, `<div style="${pStyle}border:1px solid ${color}59;">
+        <div style="color:${color};font-size:12px;font-weight:700;margin-bottom:4px;">🌍 ${htmlEsc(p.title)}</div>
+        <div style="font-size:9px;color:#aaa;margin-bottom:8px;">${htmlEsc(p.categoryLabel)} · NASA EONET</div>
+        <div style="display:grid;grid-template-columns:1fr;gap:4px;font-size:11px;">
+          <div><span style="color:#5C5A54;font-size:9px;">LATEST REPORTED</span><br/><span style="color:#E8E6E0;">${htmlEsc(reported)}</span></div>
+          <div style="font-size:9px;color:#888;">Curated event observation — the date is this event's latest EONET report, not a live feed.</div>
+        </div>
+        ${p.url ? `<a href="${urlSafe(p.url)}" target="_blank" rel="noopener noreferrer" style="${linkStyle}color:${color};border:1px solid ${color}66;background:${color}1a;">🛰️ EONET EVENT PAGE</a>` : ''}
+        <div style="font-size:8px;color:#666;margin-top:6px;">Source: NASA EONET (Earth Observatory Natural Event Tracker)</div>
       </div>`);
     });
 
@@ -5695,6 +5751,11 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     setGeo('radiation', activeLayers.radiation && data.radiation ? data.radiation.map((r: any) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [r.lng, r.lat] }, properties: { name: r.name, city: r.city, country: r.country, reading: r.reading, status: r.status, network: r.network } })) : []);
   }, [mapReady, data.radiation, activeLayers.radiation, setGeo]);
 
+  useEffect(() => {
+    if (!mapReady) return;
+    setGeo('natural-events', activeLayers.natural_events && data.natural_events ? data.natural_events.map((ev: any) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [ev.lng, ev.lat] }, properties: { title: ev.title, category: ev.category, categoryLabel: ev.categoryLabel, date: ev.date, url: ev.url } })) : []);
+  }, [mapReady, data.natural_events, activeLayers.natural_events, setGeo]);
+
   // ══ OSIRIS SDK — Lattice Sensor Mesh ══
   // Uses real submarine cable data for the SEA domain (the only SDK domain left)
   useEffect(() => {
@@ -5927,6 +5988,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
 
     setVis(['balloon-dots','balloon-label'], activeLayers.balloons);
     setVis(['rad-glow','rad-dots','rad-label'], activeLayers.radiation);
+    setVis(['natural-glow','natural-dots','natural-label'], activeLayers.natural_events);
     setVis(['sdk-sea','sdk-sea-glow','sdk-sea-atmo'], activeLayers.sdk_sea !== false);
     // Sweep layers always visible when data is present (controlled by useEffect)
     setVis(['sweep-connections','sweep-pulse-ring','sweep-device-glow','sweep-device-dots','sweep-device-labels'], true);

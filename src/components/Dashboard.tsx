@@ -795,6 +795,10 @@ export default function Dashboard() {
     traffic_vehicles: true,
     traffic_congestion: true,
     radiation: false,
+    /* Natural Events (NASA EONET): volcanoes, icebergs, storms and the
+       other curated events the dedicated layers don't carry — off by
+       default; pins are dated observations, never a live feed. */
+    natural_events: false,
     infrastructure: false,
     global_incidents: true,
     /* Live Alerts reports pinned to the place they name — see alert-places.
@@ -2274,6 +2278,11 @@ export default function Dashboard() {
       fetchEndpoint('/api/radiation', d => ({ radiation: d.stations }));
       layerFetchedRef.current.add('radiation');
     }
+    // Natural Events (NASA EONET)
+    if (activeLayers.natural_events && !layerFetchedRef.current.has('natural_events')) {
+      fetchEndpoint('/api/eonet', d => ({ natural_events: d.events }));
+      layerFetchedRef.current.add('natural_events');
+    }
     // Live News
     if (activeLayers.live_news && !layerFetchedRef.current.has('live_news')) {
       fetchEndpoint('/api/live-news', d => ({ live_feeds: d.feeds }));
@@ -2379,6 +2388,9 @@ export default function Dashboard() {
     }
     if (activeLayers.radiation) {
       intervals.push(setInterval(() => fetchEndpoint('/api/radiation', d => ({ radiation: d.stations }), undefined, { skipWhenHidden: true }), 300000)); // 5m
+    }
+    if (activeLayers.natural_events) {
+      intervals.push(setInterval(() => fetchEndpoint('/api/eonet', d => ({ natural_events: d.events }), undefined, { skipWhenHidden: true }), 600000)); // 10m — matches the route cache TTL; EONET is curated, not streaming
     }
     if ((activeLayers as any).fire_perimeters) {
       intervals.push(setInterval(() => fetchEndpoint('/api/fire-perimeters', d => ({ fire_perimeters: d.features ?? [] }), undefined, { skipWhenHidden: true }), 300000)); // 5m
