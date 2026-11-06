@@ -16,6 +16,12 @@ import {
   trialDay5FeatureDue,
   trialPrechargeRecapDue,
 } from "./triggers";
+import {
+  trialDay1RecapEmail,
+  trialDay2CtaEmail,
+  trialDay5FeatureEmail,
+  trialPrechargeRecapEmail,
+} from "./templates";
 
 const NOW = new Date(Date.UTC(2026, 10, 6, 18, 0, 0)); // Nov 6 2026, 18:00 UTC
 const H = 3600_000;
@@ -148,5 +154,108 @@ describe("trialPrechargeRecapDue (short track — the only weekly touch)", () =>
         NOW,
       ).reason,
     ).toBe("ending_too_soon");
+  });
+});
+
+describe("trialist templates (P2 render pins)", () => {
+  it("day-1 recap renders only the user's own measured activity", () => {
+    const r = trialDay1RecapEmail({
+      name: "Sam Rivera",
+      planLabel: "Monthly plan",
+      opensCount: 7,
+      places: [{ name: "Japan", href: "https://worldeye.app/cameras/countries/japan" }],
+      savedCameraNames: ["Pier 39"],
+      popularPlaces: [],
+      unsubscribeUrl: null,
+    });
+    expect(r.subject).toContain("Day one");
+    expect(r.html).toContain("7 live cameras");
+    expect(r.html).toContain("Japan");
+    expect(r.html).toContain("Pier 39");
+    expect(r.html).toContain("Monthly plan");
+  });
+
+  it("day-1 zero-activity fallback names popular PLACES, never the user's opens", () => {
+    const r = trialDay1RecapEmail({
+      name: null,
+      planLabel: "Monthly plan",
+      opensCount: 0,
+      places: [],
+      savedCameraNames: [],
+      popularPlaces: [
+        { name: "United States", href: "https://worldeye.app/cameras/countries/united-states" },
+      ],
+      unsubscribeUrl: null,
+    });
+    expect(r.html).toContain("United States");
+    expect(r.html).toContain("haven't opened a camera yet");
+    expect(r.html).not.toContain("live cameras</strong>");
+  });
+
+  it("day-2 CTA ladder: alert variant carries the real cap + alerts path", () => {
+    const r = trialDay2CtaEmail({
+      name: "Sam",
+      planLabel: "Monthly plan",
+      cta: { kind: "alert", alertCap: 2 },
+      unsubscribeUrl: null,
+    });
+    expect(r.html).toContain("/settings/alerts");
+    expect(r.html).toContain("2 active alert rules");
+  });
+
+  it("day-2 CTA ladder: save variant points at the globe, record at /recording", () => {
+    const save = trialDay2CtaEmail({
+      name: "Sam",
+      planLabel: "Monthly plan",
+      cta: { kind: "save" },
+      unsubscribeUrl: null,
+    });
+    expect(save.html).toContain("save the camera");
+    const rec = trialDay2CtaEmail({
+      name: "Sam",
+      planLabel: "Monthly plan",
+      cta: { kind: "record" },
+      unsubscribeUrl: null,
+    });
+    expect(rec.html).toContain("/recording");
+  });
+
+  it("day-5 feature email names the feature and links its real path", () => {
+    const r = trialDay5FeatureEmail({
+      name: "Sam",
+      planLabel: "Monthly plan",
+      feature: {
+        name: "Earthquake Tracker",
+        blurb: "Every M2.5+ quake worldwide, on the globe.",
+        path: "/earthquake-tracker",
+      },
+      unsubscribeUrl: null,
+    });
+    expect(r.subject).toContain("Earthquake Tracker");
+    expect(r.html).toContain("/earthquake-tracker");
+    expect(r.html).not.toContain("ship");
+  });
+
+  it("pre-charge recap prints the exact charge + moment and the honest exit", () => {
+    const r = trialPrechargeRecapEmail({
+      name: "Sam",
+      planLabel: "Monthly plan",
+      chargeLabel: "$13.99/month",
+      perMonthLabel: null,
+      trialEndsLabel: "Nov 16, 2026, 6:00 PM UTC",
+      opensCount: 12,
+      activeDays: 4,
+      savedCameraCount: 3,
+      alertRuleCount: 1,
+      unsubscribeUrl: null,
+    });
+    expect(r.html).toContain("$13.99/month");
+    expect(r.html).toContain("Nov 16, 2026, 6:00 PM UTC");
+    expect(r.html).toContain("12 camera opens");
+    expect(r.html).toContain("3 saved cameras");
+    expect(r.html).toContain("Cancel before that moment");
+    // Trials are card-required — copy must never imply otherwise.
+    expect(r.html.toLowerCase()).not.toContain("no card");
+    expect(r.html.toLowerCase()).not.toContain("no-card");
   });
 });

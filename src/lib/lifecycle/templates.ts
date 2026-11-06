@@ -830,3 +830,236 @@ export function weatherAlertEmail(input: {
     ),
   };
 }
+
+// ── (t) Trialist engagement track (marketing) ────────────────────────
+// Touches DURING a live trial. Every figure arrives pre-derived by the
+// engine from the live Stripe price object (describeStripePrice /
+// formatTrialEnd) or from the user's own measured activity — nothing
+// is restated here, and no camera name is ever invented (the day-1
+// recap names only places the user actually viewed and cameras they
+// themselves saved). No copy implies the trial needs no card: trials
+// are card-required, and wherever a charge is mentioned the honest
+// exit — cancel before the charge moment — is stated with it.
+
+export interface TrialPlaceLine {
+  name: string;
+  href: string;
+}
+
+const placeLinks = (places: TrialPlaceLine[]): string =>
+  places
+    .map(
+      (p) =>
+        `<a href="${escapeHtml(p.href)}" style="color:#D4AF37;">${escapeHtml(p.name)}</a>`,
+    )
+    .join(", ");
+
+const joinHuman = (items: string[]): string =>
+  items.length <= 1
+    ? (items[0] ?? "")
+    : `${items.slice(0, -1).join(", ")} and ${items[items.length - 1]}`;
+
+// Day-1 recap: the first 24h of the trial as it actually happened —
+// camera opens counted, place pages viewed, cameras saved. Zero
+// activity falls back to the site's most-watched PLACES (labelled as
+// such), never to invented camera names.
+export function trialDay1RecapEmail(input: {
+  name: string | null;
+  /** describeStripePrice's planLabel, e.g. "Monthly plan". */
+  planLabel: string;
+  opensCount: number;
+  places: TrialPlaceLine[];
+  savedCameraNames: string[];
+  /** Fallback only: most-watched places on the site, trailing 7 days. */
+  popularPlaces: TrialPlaceLine[];
+  unsubscribeUrl: string | null;
+}): RenderedEmail {
+  const first = escapeHtml(firstNameOf(input.name));
+  const plan = escapeHtml(input.planLabel);
+  const activity: string[] = [];
+  if (input.opensCount > 0) {
+    activity.push(
+      `you opened <strong style="color:#fff;">${input.opensCount} live camera${input.opensCount === 1 ? "" : "s"}</strong>`,
+    );
+  }
+  if (input.places.length > 0) {
+    activity.push(`you explored ${placeLinks(input.places)}`);
+  }
+  if (input.savedCameraNames.length > 0) {
+    activity.push(
+      `you saved ${joinHuman(input.savedCameraNames.map((n) => escapeHtml(n)))}`,
+    );
+  }
+  const recap =
+    activity.length > 0
+      ? P(
+          `Here's your first day on the <strong style="color:#fff;">${plan}</strong> trial: ${joinHuman(activity)}. Everything on the plan stays unlocked for the rest of the trial — alerts, recording and the premium layers included where your plan carries them.`,
+        )
+      : input.popularPlaces.length > 0
+        ? P(
+            `Your <strong style="color:#fff;">${plan}</strong> trial is live and everything on the plan is unlocked. You haven't opened a camera yet — a good place to start is where other watchers have been spending time this week: ${placeLinks(input.popularPlaces)}.`,
+          )
+        : P(
+            `Your <strong style="color:#fff;">${plan}</strong> trial is live and everything on the plan is unlocked — the globe is the best place to start.`,
+          );
+  return {
+    subject: "Day one of your trial — a quick recap",
+    html: shell(
+      "Your first day, recapped",
+      "Your trial is live and everything on your plan is unlocked.",
+      `${P(`Hi ${first},`)}
+       ${recap}
+       ${unsubscribeLine(input.unsubscribeUrl)}`,
+      { label: "Back to the globe", href: appUrl("/") },
+      { why: "You're receiving this because your WorldEye trial is running." },
+    ),
+  };
+}
+
+// Day-2 CTA: ONE next step, chosen by the engine's ladder (alerts the
+// plan carries but the user hasn't set → save a camera → record a
+// clip). The alert variant prints the tier's REAL alert cap from
+// entitlementsFor — it arrives as a number, never a typed constant.
+export type TrialDay2Cta =
+  | { kind: "alert"; alertCap: number }
+  | { kind: "save" }
+  | { kind: "record" };
+
+export function trialDay2CtaEmail(input: {
+  name: string | null;
+  planLabel: string;
+  cta: TrialDay2Cta;
+  unsubscribeUrl: string | null;
+}): RenderedEmail {
+  const first = escapeHtml(firstNameOf(input.name));
+  const plan = escapeHtml(input.planLabel);
+  if (input.cta.kind === "alert") {
+    return {
+      subject: "Put a camera on watch — your plan includes alerts",
+      html: shell(
+        "Put a camera on watch",
+        "Set one alert rule and WorldEye emails you when your condition shows up.",
+        `${P(`Hi ${first},`)}
+         ${P(`Your <strong style="color:#fff;">${plan}</strong> trial includes camera alerts, and you haven't set one yet. Pick a camera you follow, describe what you want to know about — fresh snow, a busy dock, an empty beach — and WorldEye checks the feed and emails you when it shows up. Your plan carries up to <strong style="color:#fff;">${input.cta.alertCap} active alert rules</strong>.`)}
+         ${unsubscribeLine(input.unsubscribeUrl)}`,
+        { label: "Set a camera alert", href: appUrl("/settings/alerts") },
+        { why: "You're receiving this because your WorldEye trial is running." },
+      ),
+    };
+  }
+  if (input.cta.kind === "save") {
+    return {
+      subject: "Save the cameras you keep coming back to",
+      html: shell(
+        "Save your cameras",
+        "One tap, and your favourite views are waiting on every device.",
+        `${P(`Hi ${first},`)}
+         ${P(`A small thing that changes how the trial feels: when a view stops you, <strong style="color:#fff;">save the camera</strong>. Your saved list follows your account to every device, so the places you're following are one tap away instead of another hunt across the globe — and it's the list your plan's alerts and recordings build on.`)}
+         ${unsubscribeLine(input.unsubscribeUrl)}`,
+        { label: "Open the globe", href: appUrl("/") },
+        { why: "You're receiving this because your WorldEye trial is running." },
+      ),
+    };
+  }
+  return {
+    subject: "Record a clip from any live camera",
+    html: shell(
+      "Keep the moment, not just the view",
+      "Your plan's Recording Studio turns any live camera into a clip you keep.",
+      `${P(`Hi ${first},`)}
+       ${P(`Your <strong style="color:#fff;">${plan}</strong> trial includes the Recording Studio: open any live camera, record the moment — a sunrise, a storm rolling in, rush hour in a city you love — and the clip is yours to keep and share. Most trialists never find it; it's the feature people mention most once they have.`)}
+       ${unsubscribeLine(input.unsubscribeUrl)}`,
+      { label: "Open the Recording Studio", href: appUrl("/recording") },
+      { why: "You're receiving this because your WorldEye trial is running." },
+    ),
+  };
+}
+
+// Day-5 feature: the first feature page (from the engine's fixed
+// shortlist) the trialist has not viewed once since the trial
+// started. Name, blurb and path all arrive from that shortlist — the
+// engine never pitches a page it can't prove exists.
+export interface TrialFeatureLine {
+  name: string;
+  blurb: string;
+  path: string;
+}
+
+export function trialDay5FeatureEmail(input: {
+  name: string | null;
+  planLabel: string;
+  feature: TrialFeatureLine;
+  unsubscribeUrl: string | null;
+}): RenderedEmail {
+  const first = escapeHtml(firstNameOf(input.name));
+  return {
+    subject: `One part of your plan you haven't tried: ${input.feature.name}`,
+    html: shell(
+      `Worth a look: ${escapeHtml(input.feature.name)}`,
+      input.feature.blurb,
+      `${P(`Hi ${first},`)}
+       ${P(`You're five days into your <strong style="color:#fff;">${escapeHtml(input.planLabel)}</strong> trial, and there's one included page you haven't opened yet: <strong style="color:#fff;">${escapeHtml(input.feature.name)}</strong>. ${escapeHtml(input.feature.blurb)}`)}
+       ${unsubscribeLine(input.unsubscribeUrl)}`,
+      { label: `Open the ${input.feature.name}`, href: appUrl(input.feature.path) },
+      { why: "You're receiving this because your WorldEye trial is running." },
+    ),
+  };
+}
+
+// Pre-charge recap (both tracks; the short track's only touch): what
+// the trial actually got used for, then the exact first charge —
+// amount and moment from the live Stripe price, never restated — and
+// the honest exit. This email deliberately stops at 24h before the
+// end; the final-24h heads-up is the transactional trial-reminders
+// email, so the two never stack.
+export function trialPrechargeRecapEmail(input: {
+  name: string | null;
+  planLabel: string;
+  /** describeStripePrice's chargeLabel, e.g. "$13.99/month". */
+  chargeLabel: string;
+  /** Annual only: "$6.25/month"; null otherwise. */
+  perMonthLabel: string | null;
+  /** Pre-rendered first-charge moment (formatTrialEnd), UTC-labelled. */
+  trialEndsLabel: string;
+  opensCount: number;
+  activeDays: number;
+  savedCameraCount: number;
+  alertRuleCount: number;
+  unsubscribeUrl: string | null;
+}): RenderedEmail {
+  const first = escapeHtml(firstNameOf(input.name));
+  const usage: string[] = [];
+  if (input.opensCount > 0) {
+    usage.push(`${input.opensCount} camera open${input.opensCount === 1 ? "" : "s"}`);
+  }
+  if (input.activeDays > 0) {
+    usage.push(`active on ${input.activeDays} day${input.activeDays === 1 ? "" : "s"}`);
+  }
+  if (input.savedCameraCount > 0) {
+    usage.push(`${input.savedCameraCount} saved camera${input.savedCameraCount === 1 ? "" : "s"}`);
+  }
+  if (input.alertRuleCount > 0) {
+    usage.push(`${input.alertRuleCount} alert rule${input.alertRuleCount === 1 ? "" : "s"}`);
+  }
+  const usageLine =
+    usage.length > 0
+      ? P(`Your trial so far, in your own numbers: ${joinHuman(usage)}. All of it stays exactly as it is if you continue — nothing to set up again.`)
+      : P(`You haven't had much time with the trial yet — everything on the plan stays unlocked until it ends, and your free account keeps working either way.`);
+  const perMonth = input.perMonthLabel
+    ? ` (that's ${escapeHtml(input.perMonthLabel)}, billed once a year)`
+    : "";
+  return {
+    subject: "Before your trial converts — your recap and the exact charge",
+    html: shell(
+      "Your trial is ending soon",
+      `Your first charge — ${input.chargeLabel} on ${input.trialEndsLabel} — unless you cancel first.`,
+      `${P(`Hi ${first},`)}
+       ${usageLine}
+       ${P(`Here's the charge, exactly: on <strong style="color:#fff;">${escapeHtml(input.trialEndsLabel)}</strong> your trial of the <strong style="color:#fff;">${escapeHtml(input.planLabel)}</strong> ends and your card will be charged <strong style="color:#fff;">${escapeHtml(input.chargeLabel)}</strong>${perMonth} for the first paid period. No other amount, no earlier date.`)}
+       ${P(`Want to continue? Do nothing — it converts on its own. Don't want the charge? Cancel before that moment in <strong style="color:#fff;">Settings → Manage billing</strong> and you're never charged; your free account (the globe, cameras, flights and weather) keeps working regardless.`)}
+       ${unsubscribeLine(input.unsubscribeUrl)}`,
+      { label: "Manage my subscription", href: appUrl("/settings") },
+      { why: "You're receiving this because your WorldEye trial is ending soon." },
+    ),
+  };
+}
