@@ -235,6 +235,38 @@ export default function DevelopersPage() {
           <li><code className="text-white/85">get_usage</code> — the calling key&apos;s tier and remaining quota</li>
         </ul>
 
+        <h3 className="mt-8 text-base font-black">Mistral Le Chat — connectable today</h3>
+        <p className="mt-2 text-sm text-white/60 leading-relaxed">
+          Le Chat takes custom MCP connectors, so WorldEye connects today:
+        </p>
+        <ol className="mt-3 list-decimal pl-5 text-sm text-white/60 space-y-1">
+          <li>Open <code className="text-white/85">Intelligence → Connectors</code>, choose <code className="text-white/85">Add Connector</code>, then <code className="text-white/85">Custom MCP Connector</code>.</li>
+          <li>Name it <code className="text-white/85">WorldEye</code> and set the server URL to <code className="text-white/85">{BASE}/api/v1/mcp</code>.</li>
+          <li>Under Authentication choose <code className="text-white/85">API Token</code>: header name <code className="text-white/85">Authorization</code>, value <code className="text-white/85">Bearer wek_YOUR_KEY</code>, using a key from <Link href="/settings/api-keys" className="text-[#D4AF37] font-semibold hover:underline">API keys</Link>.</li>
+          <li>Create the connector, then use <code className="text-white/85">Enable Tools</code> to switch on the tools you want Le Chat to call.</li>
+        </ol>
+
+        <h3 className="mt-8 text-base font-black">Claude Code, Claude Desktop and other config-file clients</h3>
+        <p className="mt-2 text-sm text-white/60 leading-relaxed">
+          Any MCP client that reads a JSON config connects with the snippet
+          above — Claude Code and Claude Desktop included. The key always
+          travels in the <code className="text-white/85">Authorization</code> header, never as a
+          tool argument. The server is also published on the official MCP
+          Registry as <code className="text-white/85">app.worldeye/worldeye</code> v1.0.0.
+        </p>
+
+        <h3 className="mt-8 text-base font-black">ChatGPT and the Claude Directory — not listed yet</h3>
+        <p className="mt-2 text-sm text-white/60 leading-relaxed">
+          WorldEye is not yet listed in the ChatGPT app directory or the
+          Claude Directory, so there is no in-app add button for it today. A
+          ChatGPT listing needs a verified OpenAI developer account and
+          OpenAI&apos;s review; a Claude Directory listing needs a paid Claude
+          plan and Anthropic&apos;s review — both are publisher-side steps
+          WorldEye has not completed. Developers building on the OpenAI API
+          can still attach the server directly as a remote MCP server, with
+          the same URL and <code className="text-white/85">Authorization</code> header.
+        </p>
+
         <h2 className="mt-12 text-xl font-black">Fair use</h2>
         <p className="mt-2 text-sm text-white/60 leading-relaxed">
           The catalogue only contains cameras whose operators clear them for
