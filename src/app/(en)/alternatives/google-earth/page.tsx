@@ -137,8 +137,9 @@ const data: AltData = {
       remains the masterpiece. If your joy is watching the actual day unfold
       on the actual planet — the fog on the Golden Gate right now, the
       eruption starting, the storm making landfall — that&apos;s the window
-      WorldEye opens. Pro adds satellite map view and flight-path following;
-      VIP Pro adds intel layers, recording and camera alerts.
+      WorldEye opens — the satellite map view is free for everyone, and
+      paid plans add the monitoring layer: recording, camera alerts and
+      (on Ultra) the intel layers.
     </>,
   ],
   worldEyePoints: [
@@ -156,7 +157,7 @@ const data: AltData = {
     },
     {
       title: "Alerts and recording",
-      body: "Watch a place over time: multi-camera recording and VIP Pro alerts that notify you, with a photo, when a feed changes.",
+      body: "Watch a place over time: multi-camera recording and camera alerts on Pro and Ultra that notify you, with a photo, when a feed changes.",
     },
   ],
   chips: [
@@ -173,10 +174,10 @@ const data: AltData = {
     { feature: "Live cameras", competitor: "None — no live video anywhere in the product", worldEye: "74,229 live public cameras" },
     { feature: "Live flights & satellites", competitor: "None — the sky is static", worldEye: "Yes — live flights and tracked satellites, free" },
     { feature: "Weather, quakes, fires", competitor: "Static backdrop; no live hazard layers", worldEye: "Live weather, radar, hurricanes, USGS quakes, FIRMS fires" },
-    { feature: "History", competitor: "Timelapse 1984–today plus historical imagery — best in class", worldEye: "Present-focused; camera timelapse on VIP Pro" },
+    { feature: "History", competitor: "Timelapse 1984–today plus historical imagery — best in class", worldEye: "Present-focused; camera timelapse on Ultra" },
     { feature: "Street-level", competitor: "Street View — the world's largest street photo library", worldEye: "Street-level imagery panel via public photo sources; live cameras are the real street view" },
     { feature: "Price", competitor: "Free, including Earth Pro", worldEye: "Free core; Pro $7.99/wk or $13.99/mo; VIP Pro $74.99/yr" },
-    { feature: "Recording & alerts", competitor: "No", worldEye: "Multi-cam recording; camera alerts on VIP Pro" },
+    { feature: "Recording & alerts", competitor: "No", worldEye: "Multi-cam recording; camera alerts on Pro and Ultra" },
   ],
   pricingHeading: "Pricing: free vs free — with an optional upgrade",
   pricing: [

@@ -128,12 +128,12 @@ const data: AltData = {
       place: the square, the highway, the port, as they are this minute.
     </>,
     <>
-      Its paid tiers add the monitoring layer. VIP Pro plots GDELT global
+      Its paid tiers add the monitoring layer. Ultra plots GDELT global
       events onto the globe beside the cameras — an events-on-a-map view in
       LiveUAMap&apos;s spirit, but fused with live imagery — and its{" "}
       <span className="text-white/85 font-semibold">camera alerts</span>{" "}
       watch specific feeds for conditions you describe and notify you with a
-      photo when things change. Pro and VIP Pro record up to 20 or 40 cameras
+      photo when things change. Pro and Ultra record up to 20 or 40 cameras
       at once, so the place you&apos;re following becomes evidence, not just
       impressions. Honest limit, as ever: WorldEye does not do
       LiveUAMap&apos;s editorial curation — no newsroom stands behind each
@@ -144,11 +144,11 @@ const data: AltData = {
   worldEyePoints: [
     {
       title: "Cameras where the reports point",
-      body: "74,229 feeds across 109 countries — verify a report or just witness the place, live, in seconds.",
+      body: "74,229 feeds across 109 countries (74 with directory pages) — verify a report or just witness the place, live, in seconds.",
     },
     {
       title: "Events and imagery in one view",
-      body: "GDELT events (VIP Pro) plotted on the same globe as the cameras, flights, fires and storms around them.",
+      body: "GDELT events (Ultra) plotted on the same globe as the cameras, flights, fires and storms around them.",
     },
     {
       title: "No ads, no signup wall",
@@ -156,7 +156,7 @@ const data: AltData = {
     },
     {
       title: "Alerts and recording for places you follow",
-      body: "Watch a crossing, square or facility feed; get a photo notification when it changes, and record up to 40 cameras on VIP Pro.",
+      body: "Watch a crossing, square or facility feed; get a photo notification when it changes, and record up to 40 cameras on Ultra.",
     },
   ],
   chips: [
@@ -171,7 +171,7 @@ const data: AltData = {
     { feature: "Core idea", competitor: "Editor-curated event reports pinned to a 2D map", worldEye: "Live public signals — cameras, flights, satellites — on a 3D globe" },
     { feature: "Price", competitor: "Free with ads; subscription removes ads and adds map features", worldEye: "Free, no ads, no signup; Pro $7.99/wk or $13.99/mo; VIP Pro $74.99/yr" },
     { feature: "Live cameras", competitor: "No", worldEye: "74,229 live public cameras" },
-    { feature: "Editorial curation & archives", competitor: "Yes — a decade of sourced, timestamped reports", worldEye: "Event layers are data feeds (GDELT on VIP Pro), not an editorial archive" },
+    { feature: "Editorial curation & archives", competitor: "Yes — a decade of sourced, timestamped reports", worldEye: "Event layers are data feeds (GDELT on Ultra), not an editorial archive" },
     { feature: "Flights & satellites", competitor: "Not layers on the map", worldEye: "Yes — live, free" },
     { feature: "Fires, quakes, weather", competitor: "Covered as reported incidents", worldEye: "Live sensor layers — FIRMS fires, USGS quakes, radar and storms" },
     { feature: "Recording & alerts", competitor: "Notifications for news; no camera recording or place alerts", worldEye: "Multi-cam recording; plain-language camera alerts with photos" },
@@ -226,7 +226,7 @@ const data: AltData = {
     },
     {
       title: "Set an alert if it matters",
-      body: "Following one location over days? VIP Pro camera alerts watch the feed and notify you when it changes.",
+      body: "Following one location over days? Camera alerts on Pro and Ultra watch the feed and notify you when it changes.",
     },
   ],
   verdictHeading: "Which one should you use?",
@@ -268,7 +268,7 @@ const data: AltData = {
     },
     {
       q: "Can I get alerts when something happens in a place I follow?",
-      a: "LiveUAMap notifies you about news. WorldEye's VIP Pro camera alerts work differently: pick a live feed, describe the change you care about in plain language, and get notified with a photo when the feed shows it. The two alert styles complement each other — headlines vs eyes.",
+      a: "LiveUAMap notifies you about news. WorldEye's camera alerts (Pro and Ultra) work differently: pick a live feed, describe the change you care about in plain language, and get notified with a photo when the feed shows it. The two alert styles complement each other — headlines vs eyes.",
     },
   ],
   midCta: {

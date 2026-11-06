@@ -130,7 +130,7 @@ const data: AltData = {
       city, the airport, the border crossing — as they look this minute.
     </>,
     <>
-      Its paid tiers lean further into monitoring: VIP Pro plots GDELT global
+      Its paid tiers lean further into monitoring: Ultra plots GDELT global
       events and cyber/maritime intel layers onto the globe beside the
       cameras, and its{" "}
       <span className="text-white/85 font-semibold">camera alerts</span> let
@@ -156,7 +156,7 @@ const data: AltData = {
     },
     {
       title: "Alerts for the places you fear for",
-      body: "VIP Pro camera alerts watch specific feeds for your plain-language condition and notify you on change — built for worried humans, not just analysts.",
+      body: "Camera alerts on Pro and Ultra watch specific feeds for your plain-language condition and notify you on change — built for worried humans, not just analysts.",
     },
   ],
   chips: [
@@ -171,11 +171,11 @@ const data: AltData = {
     { feature: "Focus", competitor: "Conflict-first intelligence", worldEye: "The whole live planet, conflicts included" },
     { feature: "Price", competitor: "Free tier with account; Operator tier price not published", worldEye: "Free tier, no signup; Pro $7.99/wk or $13.99/mo; VIP Pro $74.99/yr" },
     { feature: "Live cameras", competitor: "No camera network", worldEye: "74,229 live public cameras" },
-    { feature: "Conflict data", competitor: "ACLED + GDELT feeds, drawn frontlines, GPS-jamming layer", worldEye: "GDELT event layer on VIP Pro; no frontline drawing" },
+    { feature: "Conflict data", competitor: "ACLED + GDELT feeds, drawn frontlines, GPS-jamming layer", worldEye: "GDELT event layer on Ultra; no frontline drawing" },
     { feature: "Analyst toolkit", competitor: "Timeline replay, link analysis, geofence alerts, AI briefs", worldEye: "No replay or link analysis; camera alerts and recording instead" },
     { feature: "Flights, satellites, vessels", competitor: "Yes — layers on its console", worldEye: "Yes — live on the 3D globe, free" },
     { feature: "Fires, quakes, weather", competitor: "Fire and quake layers included", worldEye: "Yes — plus radar, storms and hurricanes" },
-    { feature: "Recording & timelapse", competitor: "Not its product shape", worldEye: "Multi-cam recording (20/40), timelapse on VIP Pro" },
+    { feature: "Recording & timelapse", competitor: "Not its product shape", worldEye: "Multi-cam recording (20/40), timelapse on Ultra" },
     { feature: "Audience", competitor: "Analysts and committed theatre-watchers", worldEye: "Anyone — including family and travellers checking a place" },
   ],
   pricingHeading: "Pricing: one published, one not",
@@ -194,9 +194,9 @@ const data: AltData = {
       </span>
       . <span className="text-white/85 font-semibold">Pro</span> is $7.99/week
       or $13.99/month (3-day trial on Weekly, 10 days on Monthly);{" "}
-      <span className="text-white/85 font-semibold">VIP Pro</span> is
-      $74.99/year (10-day trial) adding GDELT events, intel layers, camera
-      alerts and 40-camera recording, with a 7-day money-back guarantee on
+      <span className="text-white/85 font-semibold">Ultra</span> — from
+      $12.99/week, $149.99/year — adds GDELT events, the intel layers and
+      40-camera recording, with camera alerts up to 10 feeds and a 7-day money-back guarantee on
       first charges. Full detail at{" "}
       <Link href="/pricing" className="text-[#0096FF] hover:underline">
         /pricing
@@ -220,7 +220,7 @@ const data: AltData = {
     },
     {
       title: "Set a camera alert",
-      body: "Watching a specific crossing or square? VIP Pro alerts notify you with a photo when the feed changes.",
+      body: "Watching a specific crossing or square? Alerts on Pro and Ultra notify you with a photo when the feed changes.",
     },
   ],
   verdictHeading: "Which one should you use?",
@@ -258,7 +258,7 @@ const data: AltData = {
     },
     {
       q: "Does WorldEye show frontlines or conflict zones?",
-      a: "WorldEye plots GDELT global events on its VIP Pro intel layers and shows fires, quakes and live traffic of every kind, but it does not draw military frontlines or offer timeline replay and link analysis. If those are central to your work, War Monitor is the right primary tool.",
+      a: "WorldEye plots GDELT global events on its Ultra intel layers and shows fires, quakes and live traffic of every kind, but it does not draw military frontlines or offer timeline replay and link analysis. If those are central to your work, War Monitor is the right primary tool.",
     },
     {
       q: "Can I watch a specific city in a conflict zone live?",
@@ -293,7 +293,7 @@ const data: AltData = {
     },
     {
       label: "GDELT on the globe",
-      desc: "One of WorldEye's VIP Pro intel layers, explained via the comparison hub.",
+      desc: "One of WorldEye's Ultra intel layers, explained via the comparison hub.",
       href: "/compare/gdelt",
     },
   ],

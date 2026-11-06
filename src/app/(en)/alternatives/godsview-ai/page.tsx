@@ -117,8 +117,8 @@ const data: AltData = {
     <>
       Finally, depth of tooling. GodsView AI&apos;s Premium adds more of the
       same map — watchlists, kiosk, heavier layers. WorldEye&apos;s paid
-      tiers add different instruments: an OSINT toolkit and AI analyst on
-      Pro, cyber and maritime intel feeds and live news on VIP Pro,
+      tiers add different instruments: an OSINT toolkit on
+      Pro and an AI analyst on any paid plan, cyber and maritime intel feeds and live news on Ultra,
       multi-camera recording, camera alerts. Neither is &ldquo;more
       advanced&rdquo; in the abstract — but they are different bets about
       what a live map is for, and only one of them tells you the price of
@@ -139,7 +139,7 @@ const data: AltData = {
       <span className="text-white/85 font-semibold">
         74,229-camera network
       </span>
-      : public feeds from 109 countries, browsable in a{" "}
+      : public feeds from 109 countries (74 with directory pages), browsable in a{" "}
       <Link href="/cameras" className="text-[#0096FF] hover:underline">
         country and city directory
       </Link>{" "}
@@ -164,7 +164,7 @@ const data: AltData = {
     },
     {
       title: "Pro tooling beyond the map",
-      body: "Pro adds an OSINT toolkit, satellite map view, traffic and multi-camera recording (20 cams); VIP Pro adds intel layers, timelapse and camera alerts (40 cams).",
+      body: "Any paid plan adds traffic and multi-camera recording (5 cams on Lite, 20 on Pro), Pro adds an OSINT toolkit, and the satellite map view is free for everyone; Ultra adds intel layers and timelapse, recording 40 cams, with camera alerts up to 10 feeds.",
     },
     {
       title: "Everything on one globe, free",
@@ -184,7 +184,7 @@ const data: AltData = {
     { feature: "Map style", competitor: "2D operations map + 3D globe view", worldEye: "3D globe-first, with satellite map view on Pro" },
     { feature: "Public cameras", competitor: "Camera search layer; count not published", worldEye: "74,229 feeds, browsable country/city directory" },
     { feature: "Flights, ships, quakes, fires", competitor: "Live, free", worldEye: "Live, free — plus satellites, weather, transit" },
-    { feature: "Premium focus", competitor: "Watchlists, kiosk mode, heavier ops layers", worldEye: "OSINT toolkit + AI analyst (Pro); intel layers, timelapse, camera alerts (VIP Pro)" },
+    { feature: "Premium focus", competitor: "Watchlists, kiosk mode, heavier ops layers", worldEye: "OSINT toolkit (Pro) + AI analyst (any paid plan); intel layers and timelapse (Ultra), camera alerts (Pro/Ultra)" },
     { feature: "Kiosk / wall-display mode", competitor: "Yes, on Premium", worldEye: "No" },
     { feature: "Pricing", competitor: "Free map; Premium prices not published", worldEye: "Free; $7.99/wk, $13.99/mo, $74.99/yr — published" },
     { feature: "Free trials", competitor: "Not stated (no published pricing)", worldEye: "3-day Weekly, 10-day Monthly, 10-day VIP Pro" },

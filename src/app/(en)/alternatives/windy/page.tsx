@@ -167,7 +167,7 @@ const data: AltData = {
     },
     {
       title: "Camera alerts for conditions",
-      body: "VIP Pro watches feeds for plain-language conditions — 'snow on the road', 'fog in the bay' — and emails you the photo when they occur.",
+      body: "Camera alerts on Pro and Ultra watch feeds for plain-language conditions — 'snow on the road', 'fog in the bay' — and email you the photo when they occur.",
     },
     {
       title: "Trials before money",

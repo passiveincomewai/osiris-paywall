@@ -157,7 +157,7 @@ const data: AltData = {
     },
     {
       title: "Storms followed to the ground",
-      body: "Hurricane tracking plus cameras in the path, diverted flights above and alerts on the feeds you care about (VIP Pro).",
+      body: "Hurricane tracking plus cameras in the path, diverted flights above and alerts on the feeds you care about (Pro and Ultra).",
     },
     {
       title: "Weather in company",

@@ -130,7 +130,7 @@ const data: AltData = {
       — traffic and highways, city streets, landmarks, beaches, ski areas,
       airports, nature — browsable in a{" "}
       <Link href="/cameras" className="text-[#0096FF] hover:underline">
-        directory of 109 country pages and city pages
+        directory of 74 country pages and city pages
       </Link>{" "}
       and pinned to a 3D globe alongside live flights, satellites, weather
       and radar, earthquakes, wildfires, ships and transit. The categories
@@ -149,9 +149,10 @@ const data: AltData = {
       by region.
     </>,
     <>
-      And the cameras can work for you. Pro records up to 20 cameras at once
-      and adds live traffic (the satellite map view is free for everyone);
-      VIP Pro records 40, adds timelapse, and adds camera alerts —
+      And the cameras can work for you. Paid plans record cameras — 5 at
+      once on Lite, 20 on Pro — and add live traffic (the satellite map view
+      is free for everyone); Ultra records 40, adds timelapse, and camera
+      alerts run on Pro and Ultra —
       plain-language conditions like
       &ldquo;snow on the road,&rdquo; checked against the feed by AI, emailed
       when they change. The honesty note: WorldEye&apos;s catalogue is
@@ -164,15 +165,15 @@ const data: AltData = {
   worldEyePoints: [
     {
       title: "74,229 cameras, geography-first",
-      body: "Spin the globe to a coastline and open the feed — or browse 109 country pages and city directories if lists are your style.",
+      body: "Spin the globe to a coastline and open the feed — or browse 74 country pages and city directories if lists are your style.",
     },
     {
       title: "Record and rewind the view",
-      body: "Multi-camera recording (20 on Pro, 40 on VIP Pro) and timelapse mean a camera can show you last night, not just this second.",
+      body: "Multi-camera recording (20 on Pro, 40 on Ultra) and timelapse on Ultra mean a camera can show you last night, not just this second.",
     },
     {
       title: "Alerts when the view changes",
-      body: "VIP Pro camera alerts check feeds against conditions you describe in plain language — snow, flooding, a full car park — and email you the photo.",
+      body: "Camera alerts on Pro and Ultra check feeds against conditions you describe in plain language — snow, flooding, a full car park — and email you the photo.",
     },
     {
       title: "No ads, no signup, context included",
@@ -192,9 +193,9 @@ const data: AltData = {
     { feature: "Browsing style", competitor: "Category & country lists; interactive map on Premium", worldEye: "3D globe + country/city directory, free" },
     { feature: "Ads", competitor: "Yes, on the free tier", worldEye: "No ads" },
     { feature: "Fullscreen viewing", competitor: "Premium feature (with favourites & snapshots)", worldEye: "Included free" },
-    { feature: "Timelapse", competitor: "Same-day only; no image archive kept", worldEye: "Timelapse on VIP Pro, built from your own captures" },
-    { feature: "Recording", competitor: "No (snapshots to share, on Premium)", worldEye: "Multi-camera recording: 20 (Pro) / 40 (VIP Pro)" },
-    { feature: "Camera alerts", competitor: "No", worldEye: "Yes — VIP Pro, plain-language conditions, AI-checked" },
+    { feature: "Timelapse", competitor: "Same-day only; no image archive kept", worldEye: "Timelapse on Ultra, built from your own captures" },
+    { feature: "Recording", competitor: "No (snapshots to share, on Premium)", worldEye: "Multi-camera recording: 20 (Pro) / 40 (Ultra)" },
+    { feature: "Camera alerts", competitor: "No", worldEye: "Yes — Pro and Ultra, plain-language conditions, AI-checked" },
     { feature: "Beyond cameras", competitor: "No — webcams are the whole product", worldEye: "Flights, satellites, weather, quakes, fires, ships, transit" },
     { feature: "Signature strength", competitor: "Scenic curation; Mount Etna cameras", worldEye: "Scale, map context and camera tooling" },
     { feature: "Apps", competitor: "Web (mobile-friendly)", worldEye: "Browser-based, phone and desktop" },
@@ -276,7 +277,7 @@ const data: AltData = {
     },
     {
       q: "How many cameras does SkylineWebcams have?",
-      a: "SkylineWebcams doesn't publish a total — its catalogue is curated rather than counted, and any page quoting you an exact figure is guessing. WorldEye publishes its number: 74,229 live public feeds across 109 countries.",
+      a: "SkylineWebcams doesn't publish a total — its catalogue is curated rather than counted, and any page quoting you an exact figure is guessing. WorldEye publishes its number: 74,229 live public feeds across 109 countries (74 with their own pages).",
     },
     {
       q: "What is the best SkylineWebcams alternative?",
@@ -284,7 +285,7 @@ const data: AltData = {
     },
     {
       q: "Does SkylineWebcams keep an archive or timelapses?",
-      a: "No archive — its FAQ states it doesn't store images, and its timelapses are built from the current day only. WorldEye takes the opposite approach: recording and timelapse are headline features (timelapse on VIP Pro), so a camera's past is something you can actually watch.",
+      a: "No archive — its FAQ states it doesn't store images, and its timelapses are built from the current day only. WorldEye takes the opposite approach: recording and timelapse are headline features (timelapse on Ultra), so a camera's past is something you can actually watch.",
     },
     {
       q: "SkylineWebcams vs WorldEye for volcano cameras?",
@@ -296,7 +297,7 @@ const data: AltData = {
     },
     {
       q: "Can I get alerts when a webcam's view changes?",
-      a: "Not on SkylineWebcams. On WorldEye's VIP Pro tier, camera alerts let you describe a condition in plain language — 'snow on the road', 'the bay is fogged in' — and an AI check of the feed emails you a photo when it changes. It's the feature that turns casual viewing into monitoring.",
+      a: "Not on SkylineWebcams. On WorldEye's Pro and Ultra tiers, camera alerts let you describe a condition in plain language — 'snow on the road', 'the bay is fogged in' — and an AI check of the feed emails you a photo when it changes. It's the feature that turns casual viewing into monitoring.",
     },
   ],
   midCta: {

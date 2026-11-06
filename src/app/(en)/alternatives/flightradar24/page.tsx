@@ -176,7 +176,7 @@ const data: AltData = {
     { feature: "Live flight tracking", competitor: "Yes — its core craft, ~50,000 receivers", worldEye: "Yes — worldwide live traffic on a 3D globe" },
     { feature: "Flight history", competitor: "7 days free (limited); 90 days Silver; 365 days Gold", worldEye: "Live-focused; no long historical archive" },
     { feature: "Aircraft detail depth", competitor: "Deep — registration, age, serial, Mode S telemetry on paid tiers", worldEye: "Core flight details; not a Mode S archive" },
-    { feature: "Flight alerts & filters", competitor: "Yes, on Silver and Gold", worldEye: "Basic search and follow; camera alerts on VIP Pro" },
+    { feature: "Flight alerts & filters", competitor: "Yes, on Silver and Gold", worldEye: "Basic search and follow; camera alerts on Pro and Ultra" },
     { feature: "Live cameras", competitor: "No", worldEye: "74,229 live public cameras" },
     { feature: "Satellites as objects", competitor: "No (satellite ADS-B is a data source, not a layer)", worldEye: "Yes — live satellite tracker, free" },
     { feature: "Weather", competitor: "Airport weather free-ish; full live layers on Gold", worldEye: "Weather, radar and storm layers, free" },
