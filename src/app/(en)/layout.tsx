@@ -51,7 +51,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "WorldEye — Live 3D Globe | Live Cams, Flights, Satellites & OSINT Tools",
-    description: "Watch 74,229 live cams, track live aircraft and satellites on a free 3D globe. Go Pro for the AI analyst, live traffic and premium intel feeds.",
+    description: "Watch 74,229 live cams, track live aircraft and satellites on a free 3D globe. Paid plans add the AI analyst and live traffic; Ultra adds the premium intel feeds.",
     type: "website",
     siteName: SITE_NAME,
     locale: "en_US",
@@ -69,7 +69,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "WorldEye — Live 3D Globe | Live Cams, Flights, Satellites & OSINT Tools",
-    description: "Watch 74,229 live cams and track live flights and satellites on a free 3D globe. Pro adds the AI analyst, live traffic and premium intel feeds.",
+    description: "Watch 74,229 live cams and track live flights and satellites on a free 3D globe. Paid plans add the AI analyst and live traffic; Ultra adds the premium intel feeds.",
     images: [`${SITE_URL}/og-image.png`],
   },
   category: "technology",

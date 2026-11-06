@@ -83,7 +83,7 @@ const fontWordmark = Audiowide({
 export const SITE_URL = "https://worldeye.app";
 export const SITE_NAME = "WorldEye";
 export const SITE_TITLE = "WorldEye — Live Cams, Flights & Satellites on a 3D Globe";
-export const SITE_DESCRIPTION = "Watch 74,229 live cams, track flights live and follow satellites on WorldEye's free 3D globe — no signup. Go Pro for the AI analyst, live traffic and premium intel feeds.";
+export const SITE_DESCRIPTION = "Watch 74,229 live cams, track flights live and follow satellites on WorldEye's free 3D globe — no signup. Paid plans add the AI analyst and live traffic; Ultra adds the premium intel feeds.";
 
 export const siteViewport: Viewport = {
   themeColor: "#D4AF37",
