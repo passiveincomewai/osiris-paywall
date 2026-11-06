@@ -6,6 +6,7 @@ import JsonLd from "@/components/JsonLd";
 import { localizedMetadata } from "@/lib/i18n-seo";
 import { enPricing } from "@/i18n/dictionaries/en/pricing";
 import { buildPricingSoftwareJsonLd } from "@/components/pages/pricing-schema";
+import { giftSubscriptionsEnabled } from "@/lib/billing/gift-flag";
 
 // Metadata via the shared localized helper: the canonical and OG
 // values are byte-identical to the pre-i18n hardcoded ones; the
@@ -44,7 +45,7 @@ export default function PricingPage() {
       <Suspense fallback={null}>
         <CheckoutReturnStrip />
       </Suspense>
-      <PricingClient />
+      <PricingClient giftEnabled={giftSubscriptionsEnabled(process.env)} />
     </>
   );
 }

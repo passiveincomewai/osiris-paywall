@@ -494,9 +494,14 @@ function TierCard({
 export default function PricingPage({
   copy = enPricing,
   locale = "en",
+  giftEnabled = false,
 }: {
   copy?: PricingCopy;
   locale?: LocaleCode;
+  /** True when gift subscriptions are enabled (GIFT_SUBSCRIPTIONS_ENABLED,
+   *  read server-side by the page wrappers and passed in — the flag is
+   *  not a NEXT_PUBLIC var, so the client cannot read it itself). */
+  giftEnabled?: boolean;
 } = {}) {
   const [period, setPeriod] = useState<Period>("annual");
   const faqJsonLd = buildFaqJsonLd(copy, locale);
@@ -903,6 +908,23 @@ export default function PricingPage({
             );
           })}
         </div>
+
+        {/* Gift entry point — rendered only while gift subscriptions
+            are enabled (the /gift page 404s while dark, so the link
+            must follow the same switch). The gift flow is English-only
+            today, so the strip shows on the English pricing page. */}
+        {giftEnabled && locale === "en" && (
+          <p className="mt-8 text-center text-sm text-white/55">
+            Buying for someone else?{" "}
+            <Link
+              href="/gift"
+              className="font-semibold text-[#D4AF37] underline-offset-4 hover:underline"
+            >
+              Gift a WorldEye plan
+            </Link>{" "}
+            — one prepaid term of Lite, Pro or Ultra. Gifts never auto-renew.
+          </p>
+        )}
       </div>
       <StickyMobileCta copy={copy} period={period} onCheckout={setSheetPlan} />
       <CheckoutSheet plan={sheetPlan} onClose={closeSheet} analyticsSurface="pricing" />

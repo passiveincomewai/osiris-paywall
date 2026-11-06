@@ -8,6 +8,7 @@ import { localizedMetadata } from "@/lib/i18n-seo";
 import { isLocaleCode, type LocaleCode } from "@/i18n/config";
 import { getPricingCopy } from "@/i18n/dictionaries";
 import { buildPricingSoftwareJsonLd } from "@/components/pages/pricing-schema";
+import { giftSubscriptionsEnabled } from "@/lib/billing/gift-flag";
 
 /**
  * Localized pricing (/es/pricing). Same client, same checkout
@@ -49,7 +50,11 @@ export default async function Page({
       <Suspense fallback={null}>
         <CheckoutReturnStrip />
       </Suspense>
-      <PricingClient copy={copy} locale={locale} />
+      <PricingClient
+        copy={copy}
+        locale={locale}
+        giftEnabled={giftSubscriptionsEnabled(process.env)}
+      />
     </>
   );
 }
