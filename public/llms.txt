@@ -1,6 +1,6 @@
 # WorldEye
 
-> WorldEye is a live 3D intelligence globe on the web. It puts 74,229 live public cameras from 109 countries, real-time flight and satellite tracking, weather, earthquakes and wildfires on one interactive globe. The globe and its core layers are free with no account: flights, satellites, weather, earthquakes and the satellite imagery view are free for everyone, and camera opens follow a free ladder — 5 opens anonymously, 10 after dropping an email, 15 with a free account. Paid plans add an AI analyst, live traffic, camera recording and camera alerts; Ultra adds the premium intelligence layers. Full version of this file: https://worldeye.app/llms-full.txt
+> WorldEye is a live 3D intelligence globe on the web. It puts 74,229 live public cameras from 109 countries, real-time flight and satellite tracking, weather, earthquakes and wildfires on one interactive globe. The globe and its core layers are free with no account: flights, satellites, weather, earthquakes and the satellite imagery view are free for everyone, and camera opens follow a free ladder — 5 opens anonymously, then 10 in total after dropping an email or with a verified free account. Paid plans add an AI analyst, live traffic, camera recording and camera alerts; Ultra adds the premium intelligence layers. Full version of this file: https://worldeye.app/llms-full.txt
 
 ## Platform
 
@@ -13,15 +13,15 @@
 ## Free on WorldEye
 
 - [Live flight tracker](https://worldeye.app/live-flight-tracker): WorldEye's flight tracker is free — real-time aircraft positions from ADS-B broadcasts on the 3D globe, with altitude, speed and routes, no signup.
-- [Satellite tracker](https://worldeye.app/satellite-tracker): WorldEye's satellite tracker is free — the ISS, Starlink and thousands of satellites computed live from public orbital data (TLEs), with orbit paths.
+- [Satellite tracker](https://worldeye.app/satellite-tracker): WorldEye's satellite tracker page is free — the ISS, Starlink and thousands of satellites computed live from public orbital data (TLEs), with orbit paths; the live satellite tracking layers on the globe are on paid plans, and the satellite imagery view is free for everyone.
 - [Weather tracker](https://worldeye.app/weather-tracker): WorldEye's weather tracker is free — live storm systems, wind flow and precipitation on a 3D globe, no account needed.
 - [Earthquake tracker](https://worldeye.app/earthquake-tracker): WorldEye's earthquake tracker is free — every quake plotted with magnitude, depth and location as seismic networks report it.
-- [Live cameras](https://worldeye.app/cameras): The camera hub — browse 74,229 live public cameras worldwide: traffic, cities, landmarks, beaches, airports and nature. Opens follow the free ladder: 5 anonymous, 10 with an email, 15 with a free account.
+- [Live cameras](https://worldeye.app/cameras): The camera hub — browse 74,229 live public cameras worldwide: traffic, cities, landmarks, beaches, airports and nature. Opens follow the free ladder: 5 anonymous, then 10 in total with an email or a verified free account.
 
 ## Live Cameras
 
 - [Live webcams directory](https://worldeye.app/live-webcams): The directory hub with per-country counts, how feeds are verified, and the busiest camera networks.
-- [Cameras by country](https://worldeye.app/cameras/countries): Live camera pages for 109 countries, each with that country's real camera count, areas and playable feeds. Largest networks: United States (41,355), Japan (10,472), Canada (4,685), Taiwan (3,243), Spain (2,120).
+- [Cameras by country](https://worldeye.app/cameras/countries): Live camera pages for 74 countries, each with that country's real camera count, areas and playable feeds; the full catalogue covers cameras from 109 countries. Largest networks: United States (41,355), Japan (10,472), Canada (4,685), Taiwan (3,243), Spain (2,120).
 - [Japan webcams](https://worldeye.app/japan-webcams): Japan's 10,472 live cameras — Tokyo, Osaka, Sapporo, Mount Fuji views and traffic cameras across the country.
 - [New York City webcams](https://worldeye.app/city-webcams/new-york-city): 279 live cameras within 25 km of Midtown Manhattan, across all five boroughs.
 - [City webcams](https://worldeye.app/world-city-webcams): The busiest camera regions and cities in the world, with per-region counts and featured feeds.
