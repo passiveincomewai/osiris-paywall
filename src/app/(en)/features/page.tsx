@@ -39,12 +39,12 @@ import RelatedLinks from "@/components/RelatedLinks";
 export const metadata: Metadata = {
   title: "Features: Live 3D Globe, 74,229 Cameras, Flight Tracking & OSINT Tools",
   description:
-    "Every WorldEye feature, compared: the free live 3D globe — flights, ships, satellites, transit, hazards and 74,229 public cameras — against what Pro adds: the OI AI assistant, live traffic and the OSINT toolkit. Feature by feature, free vs Pro.",
+    "Every WorldEye feature, compared: the free live 3D globe — flights, ships, satellites, transit, hazards and 74,229 public cameras — against what paid plans add: the OI AI assistant and live traffic on any paid plan, the OSINT toolkit on Pro, and the premium intel feeds on Ultra. Feature by feature, free vs paid.",
   alternates: { canonical: "/features" },
   openGraph: {
     title: "Features: Live 3D Globe, 74,229 Cameras, Flight Tracking & OSINT Tools | WorldEye",
     description:
-      "Every WorldEye feature, compared: the free live 3D globe — flights, ships, satellites, transit, hazards and 74,229 public cameras — against what Pro adds: the OI AI assistant, live traffic and the OSINT toolkit.",
+      "Every WorldEye feature, compared: the free live 3D globe — flights, ships, satellites, transit, hazards and 74,229 public cameras — against what paid plans add: the OI AI assistant and live traffic on any paid plan, the OSINT toolkit on Pro, and the premium intel feeds on Ultra.",
     url: "/features",
     type: "website",
   },
@@ -55,7 +55,7 @@ const jsonLd = {
   "@type": "WebPage",
   name: "WorldEye Features",
   description:
-    "Everything WorldEye can do: a free forever live 3D globe with flight tracking, 74,229 public cameras, satellites and natural hazards — plus Pro intelligence tools.",
+    "Everything WorldEye can do: a live 3D globe that is free to browse forever, with flight tracking, 74,229 public cameras, satellites and natural hazards — plus intelligence tools on paid plans.",
   url: "https://worldeye.app/features",
   isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
 };
@@ -77,7 +77,7 @@ const faqJsonLd = {
       name: "What does WorldEye Pro add?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Pro adds the OI AI assistant (built into WorldEye — no key to bring), the live traffic layer, advanced search filters, an in-browser OSINT toolkit (Nmap-style scans, DNS/WHOIS, SSL analysis) and the camera recording studio. Weekly is $7.99, monthly $13.99, annual $74.99. Ultra — the top tier — adds the premium intel feeds covering cyber threats, GDELT events, maritime tracking, conflict zones and live news, camera timelapse, and the VIP hub's event alerts, personal brief and saved views (up to 25).",
+        text: "Every paid plan — starting with Lite — adds the OI AI assistant (built into WorldEye — no key to bring), the live traffic layer, advanced search filters and the camera recording studio. Pro adds an in-browser OSINT toolkit (Nmap-style scans, DNS/WHOIS, SSL analysis). Ultra — the top tier — adds the premium intel feeds covering cyber threats, GDELT events, maritime tracking, conflict zones and live news, camera timelapse, and the VIP hub's event alerts, personal brief and saved views (up to 25).",
       },
     },
     {
@@ -127,7 +127,7 @@ const FREE_FEATURES = [
     title: "74,229 public cameras",
     desc: "Worldwide public street cameras — browsing is free for everyone. See streets as they are right now.",
     detail:
-      "WorldEye serves 74,229 public cameras across 105 countries — highway DOT feeds, city intersections, beaches, ski resorts and landmarks. Browsing is free and every device gets a free allowance of camera opens; share any feed with a direct link that lands the next person on the exact same camera. Paid members get unlimited camera access for deep research sessions.",
+      "WorldEye serves 74,229 public cameras across 109 countries — highway DOT feeds, city intersections, beaches, ski resorts and landmarks, browsable through 74 country pages. Browsing is free and every device gets a free allowance of camera opens; share any feed with a direct link that lands the next person on the exact same camera. Paid members get unlimited camera access for deep research sessions.",
   },
   {
     icon: Satellite,
@@ -191,9 +191,9 @@ const PRO_FEATURES = [
   {
     icon: Search,
     title: "Advanced search filters",
-    desc: "Basic search is free for everyone — Pro adds the deep filters on top.",
+    desc: "Basic search is free for everyone — paid plans add the deep filters on top.",
     detail:
-      "Anyone can search the planet — places and cameras alike — and fly to a result in one keystroke. Pro filters go further: narrow the camera results by country and type, keep only cameras carrying a live feed, and cut straight to the exact feed you need.",
+      "Anyone can search the planet — places and cameras alike — and fly to a result in one keystroke. Paid-plan filters go further: narrow the camera results by country and type, keep only cameras carrying a live feed, and cut straight to the exact feed you need.",
   },
   {
     icon: Car,
@@ -250,7 +250,7 @@ const FAQS = [
   },
   {
     q: "What does WorldEye Pro add?",
-    a: "Pro adds the OI AI assistant (built-in AI — no key to bring), the live traffic layer, advanced search filters, an in-browser OSINT toolkit, and the camera recording studio. Ultra — the top tier — adds camera timelapse and the premium intel feeds covering cyber threats, GDELT events, maritime tracking, conflict zones and live news, plus the VIP hub's event alerts, personal brief and saved views (up to 25). Weekly $7.99 · Monthly $13.99 · VIP Pro $74.99.",
+    a: "Any paid plan adds the OI AI assistant (built-in AI — no key to bring), the live traffic layer, advanced search filters, and the camera recording studio. Pro adds an in-browser OSINT toolkit. Ultra — the top tier — adds camera timelapse and the premium intel feeds covering cyber threats, GDELT events, maritime tracking, conflict zones and live news, plus the VIP hub's event alerts, personal brief and saved views (up to 25). Lite from $4.99/wk · Pro $7.99/wk · Ultra from $12.99/wk.",
   },
   {
     q: "Do I need an account to use the map?",
@@ -452,9 +452,9 @@ export default async function FeaturesPage() {
               marginTop: "var(--we-space-5)",
             }}
           >
-            A free forever live globe with flights, cameras, satellites, transit and hazards —
-            and Pro tools for anyone who needs intelligence-grade depth. Every feature, free
-            and Pro, is listed below — so you can check exactly what WorldEye can do before
+            A live globe that is free to browse forever, with flights, cameras, satellites, transit and hazards —
+            and paid-plan tools for anyone who needs intelligence-grade depth. Every feature, free
+            and paid, is listed below — so you can check exactly what WorldEye can do before
             you ever open the map.
           </p>
         </div>
@@ -490,7 +490,7 @@ export default async function FeaturesPage() {
                 margin: 0,
               }}
             >
-              Free, <span style={{ color: "var(--we-cyan)" }}>forever</span>
+              Free to browse, <span style={{ color: "var(--we-cyan)" }}>forever</span>
             </h2>
             <MicroLabel>No signup</MicroLabel>
           </div>
@@ -730,9 +730,9 @@ export default async function FeaturesPage() {
                 margin: 0,
               }}
             >
-              Pro <span style={{ color: "var(--we-blue-strong)" }}>intelligence tools</span>
+              Paid-plan <span style={{ color: "var(--we-blue-strong)" }}>intelligence tools</span>
             </h2>
-            <MicroLabel>From $7.99/wk</MicroLabel>
+            <MicroLabel>From $4.99/wk</MicroLabel>
           </div>
           <p
             style={{
@@ -744,9 +744,10 @@ export default async function FeaturesPage() {
           >
             For researchers, analysts and the deeply curious: an AI analyst that works
             the globe for you, the live traffic layer and advanced search
-            filters. Ultra — the top tier — adds the premium intel feeds and unlocks
+            filters on every paid plan, and the OSINT toolkit on Pro. Ultra — the
+            top tier — adds the premium intel feeds and unlocks
             the VIP hub: event alerts, the personal brief and saved views (up to 25).
-            Weekly $7.99 · Monthly $13.99 · VIP Pro $74.99 — cancel anytime.
+            Lite from $4.99/wk · Pro $7.99/wk · Ultra from $12.99/wk — cancel anytime.
           </p>
 
           <FeatureGroup
