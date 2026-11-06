@@ -342,7 +342,7 @@ export default function WhatIsAisPage() {
               maritime VHF from vessels moving at tens of knots, updating by
               the seconds-to-minutes rhythm above. On WorldEye they sit on
               the same globe — the sky picture on the free map, the maritime
-              picture inside Pro — two halves of one idea: vehicles telling
+              picture inside Ultra — two halves of one idea: vehicles telling
               the world where they are.
             </p>
           </div>
@@ -395,7 +395,7 @@ export default function WhatIsAisPage() {
           </h2>
           <p className="text-white/55 mt-3 mb-8">
             Vessel traffic, ports and chokepoints on one globe — the maritime
-            feed is part of WorldEye Pro.
+            feed is part of WorldEye Ultra.
           </p>
           <Link
             href="/ship-tracker"
@@ -430,7 +430,7 @@ export default function WhatIsAisPage() {
             },
             {
               label: "Pricing",
-              desc: "Weekly, monthly and annual Pro plans — the maritime feed is included.",
+              desc: "Weekly, monthly and annual Ultra plans — the maritime feed is included.",
               href: "/pricing",
             },
           ]}

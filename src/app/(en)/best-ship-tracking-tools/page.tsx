@@ -55,7 +55,7 @@ const TOOLS: Tool[] = [
     tag: "Best all-in-one with maritime intel",
     href: "/ship-tracker",
     cta: "Open the ship tracker",
-    body: "Ship tracking as one layer of a live world picture: WorldEye's Pro maritime intel feed places vessels alongside the free globe's flights, satellites, weather, earthquakes, wildfires and 74,229 public cameras. Stated plainly — maritime is a Pro feature on WorldEye, not part of the free map. The pick when a ship's context matters as much as its position.",
+    body: "Ship tracking as one layer of a live world picture: WorldEye's Ultra maritime intel feed places vessels alongside the free globe's flights, satellites, weather, earthquakes, wildfires and 74,229 public cameras. Stated plainly — maritime is an Ultra feature on WorldEye, not part of the free map. The pick when a ship's context matters as much as its position.",
   },
   {
     icon: Ship,
@@ -104,7 +104,7 @@ const FAQS: { q: string; a: string }[] = [
   },
   {
     q: "Is ship tracking free on WorldEye?",
-    a: "No — maritime vessel tracking is a WorldEye Pro feature, and we say so rather than burying it. The free map covers the globe, flights, satellites, weather, earthquakes, wildfires and 74,229 cameras with no signup; Pro adds maritime intel with the rest of the intelligence toolkit.",
+    a: "No — maritime vessel tracking is a WorldEye Ultra feature, and we say so rather than burying it. The free map covers the globe, flights, satellites, weather, earthquakes, wildfires and 74,229 cameras with no signup; Ultra adds maritime intel with the rest of the premium intel feeds.",
   },
   {
     q: "Why do some ships disappear mid-ocean on free trackers?",
@@ -189,7 +189,7 @@ export default function BestShipTrackingToolsPage() {
           <strong className="text-white/85">WorldEye</strong> (best when you
           want vessels inside a wider live picture — weather, flights,
           satellites and port-area cameras on the same globe; its maritime
-          intel is a Pro feature, stated plainly). Every tracker here is
+          intel is an Ultra feature, stated plainly). Every tracker here is
           built on the same AIS broadcasts, explained in our{" "}
           <Link href="/what-is-ais" className="text-[#0096FF] hover:underline">
             guide to AIS
@@ -264,7 +264,7 @@ export default function BestShipTrackingToolsPage() {
 
       <MidCta
         heading="Ships, in the context of the whole planet"
-        body="WorldEye Pro's maritime intel sits on the same globe as live weather, ports on camera, flights and satellites. See the vessel and the world around it."
+        body="WorldEye Ultra's maritime intel sits on the same globe as live weather, ports on camera, flights and satellites. See the vessel and the world around it."
       />
 
       {/* AIS explainer */}
@@ -300,7 +300,7 @@ export default function BestShipTrackingToolsPage() {
           {[
             {
               q: "Watching ships in a wider live picture",
-              a: "WorldEye Pro — maritime intel on a globe with weather systems, port-area cameras, flights and satellites in the same frame. Best when context is the point.",
+              a: "WorldEye Ultra — maritime intel on a globe with weather systems, port-area cameras, flights and satellites in the same frame. Best when context is the point.",
             },
             {
               q: "Following one vessel or a fleet",
@@ -339,11 +339,13 @@ export default function BestShipTrackingToolsPage() {
             WorldEye is priced differently, so here is the honest version:
             the free map — globe, flights, satellites, weather, earthquakes,
             wildfires and 74,229 cameras, no signup — does not include ship
-            tracking. Maritime intel is part of Pro (weekly $7.99, monthly
-            $13.99, annual $74.99), alongside the OSINT toolkit, cyber/GDELT
-            intel, advanced search filters and the AI analyst.
+            tracking. Maritime intel is part of Ultra (weekly $12.99, monthly
+            $24.99, annual $149.99), alongside the rest of the premium intel
+            feeds — cyber and GDELT included. The OSINT toolkit sits on Pro,
+            and advanced search filters and the AI analyst come with any paid
+            plan.
             If ships are all you want, a dedicated AIS free tier may serve
-            you first; if ships plus the whole live planet is the point, Pro
+            you first; if ships plus the whole live planet is the point, Ultra
             is the bundle built for it.
           </p>
         </div>
@@ -383,7 +385,7 @@ export default function BestShipTrackingToolsPage() {
             One disclosure, stated the same way on every WorldEye roundup:
             this is our list, and WorldEye is in it. Its placement rests on
             the breadth argument made in its entry — and on the honest limit
-            stated there too, that maritime intel is a Pro feature here
+            stated there too, that maritime intel is an Ultra feature here
             while the dedicated platforms below offer free AIS tiers. If a
             placement ever stops being true, the fix is to re-rank, not to
             quietly reword.
@@ -410,7 +412,7 @@ export default function BestShipTrackingToolsPage() {
           The sea is moving. <span className="text-[#0096FF]">Watch it live.</span>
         </h2>
         <p className="text-white/55 mt-3 mb-8">
-          Maritime intel on a live 3D globe — start with the free map, unlock Pro for the ships.
+          Maritime intel on a live 3D globe — start with the free map, unlock Ultra for the ships.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link
@@ -458,12 +460,12 @@ export default function BestShipTrackingToolsPage() {
           },
           {
             label: "Features",
-            desc: "Everything the globe can do — free layers and Pro intelligence tools.",
+            desc: "Everything the globe can do — free layers and paid-plan intelligence tools.",
             href: "/features",
           },
           {
             label: "Pricing",
-            desc: "Weekly $7.99, monthly $13.99, annual $74.99 — maritime intel is in Pro.",
+            desc: "Ultra weekly $12.99, monthly $24.99, annual $149.99 — maritime intel is in Ultra.",
             href: "/pricing",
           },
         ]}
