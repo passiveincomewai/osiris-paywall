@@ -9,6 +9,7 @@ import SwgBasic from "@/components/SwgBasic";
 import BreadcrumbLd from "@/components/BreadcrumbLd";
 import { POSTS, getPost } from "../posts";
 import WatchLiveModule from "@/components/blog/WatchLiveModule";
+import BlogBridgePanel from "@/components/blog/BlogBridgePanel";
 import { compareLinksForPost } from "@/lib/blog-compare-links";
 import { buildNewsArticleLd, NEWS_AUTHOR } from "@/lib/news";
 
@@ -305,28 +306,11 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           </section>
         )}
 
-        {/* CTA card */}
-        <div className="mt-16 rounded-3xl border border-[#D4AF37]/30 bg-gradient-to-b from-[#D4AF37]/[0.08] to-transparent p-8 md:p-10 text-center">
-          <h2 className="text-2xl font-bold">Try it live on the map.</h2>
-          <p className="text-white/55 mt-3 max-w-md mx-auto">
-            Everything in this guide runs on WorldEye — the free 3D globe with
-            flights, cameras, satellites, and natural hazards. No signup.
-          </p>
-          <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
-            <Link
-              href="/"
-              className="px-7 py-3.5 rounded-2xl bg-[#D4AF37] text-black font-bold hover:brightness-110 transition text-center"
-            >
-              Open the free map
-            </Link>
-            <Link
-              href="/pricing"
-              className="px-7 py-3.5 rounded-2xl border border-white/15 text-sm font-semibold text-white/80 hover:bg-white/5 transition text-center"
-            >
-              Explore Pro
-            </Link>
-          </div>
-        </div>
+        {/* Blog → product bridge — every post's end-of-post exit
+            into the live product (real map screenshot + globe /
+            cameras CTAs; replaces the old text-only CTA card whose
+            /pricing button was the measured dead end). */}
+        <BlogBridgePanel />
 
         {/* Newsletter — end-of-post capture (the one list; same card
             as the other reading pages) */}
