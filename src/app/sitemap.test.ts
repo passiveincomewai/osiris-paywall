@@ -103,7 +103,7 @@ describe("sitemap URL set", () => {
           !u.startsWith(`${BASE}/wildfires/`),
       )
       .sort();
-    expect(nonTransit.length).toBe(1125);
+    expect(nonTransit.length).toBe(1126);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     // Hash history: 6d75d0de… until the SEO audit fix #3 (2026-10-27)
     // normalised the es homepage entry from /es/ to its final /es
@@ -340,8 +340,16 @@ describe("sitemap URL set", () => {
     // reproduces 1,124 / 5332f0a1… exactly): the staged set
     // minus the pristine set is exactly the 1 new /launches
     // URL, giving 1,125 / fdc6dee3….
+    // The Pulse page (2026-11-06) then added the /pulse
+    // status page → 1,126. Delta verified by executing
+    // sitemap() on the pristine tip — reproduces 1,125 /
+    // fdc6dee3… exactly — and adding the single static
+    // /pulse entry that the staged generator's one-line
+    // delta introduces (the identical one-line delta,
+    // executed on both trees on the previous base, gave
+    // exactly {/pulse}): 1,126 / 489899b5….
     expect(hash).toBe(
-      "fdc6dee31e984b414f210193aa0fc660c4e8a4845fafa77cf7c9c77b8e48a4c3",
+      "489899b53bd406adc47bfbdd25cf4268416ec811c5f342423055ef6604edc9c2",
     );
   });
 

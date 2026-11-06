@@ -932,6 +932,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE}/news/editorial-standards`, changeFrequency: "monthly", priority: 0.4 },
     { url: `${BASE}/news/authors/jameson-lythgoe`, changeFrequency: "monthly", priority: 0.4 },
     { url: `${BASE}/about`, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${BASE}/pulse`, changeFrequency: "daily", priority: 0.6 },
     { url: `${BASE}/affiliates`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${BASE}/affiliates/leaderboard`, changeFrequency: "daily", priority: 0.6 },
     { url: `${BASE}/affiliates/terms`, changeFrequency: "monthly", priority: 0.4 },
