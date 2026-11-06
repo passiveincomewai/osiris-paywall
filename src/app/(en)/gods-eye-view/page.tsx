@@ -44,7 +44,7 @@ const LAYERS = [
   {
     icon: Camera,
     title: "74,229 live cameras",
-    desc: "Public cameras from 105 countries — highways, city plazas, beaches, harbors, airports and mountain resorts — plotted where they actually stand. Click one and watch that exact spot, live.",
+    desc: "Public cameras from 109 countries — highways, city plazas, beaches, harbors, airports and mountain resorts — plotted where they actually stand. Click one and watch that exact spot, live.",
   },
   {
     icon: Plane,
@@ -103,7 +103,7 @@ const FAQS = [
   },
   {
     q: "Is WorldEye's god's eye view free?",
-    a: "Yes. The globe, live cameras, flights, satellites, transit, weather, earthquakes and wildfires are free with no account and no signup — basic search included. Paid plans add the rest: Pro unlocks the OSINT toolkit, satellite map view, the live traffic layer, advanced search filters, the AI analyst and the recording studio; VIP Pro adds the maritime and cyber intel layers, camera timelapse and camera alerts on top. Subscriptions fund the infrastructure.",
+    a: "Yes. The globe, live cameras, flights, satellites, transit, weather, earthquakes and wildfires are free with no account and no signup — basic search included. Paid plans add the rest: any paid plan unlocks the live traffic layer, advanced search filters, the AI analyst and the recording studio — and the satellite map view is free for everyone; Pro unlocks the OSINT toolkit; Ultra adds the maritime and cyber intel layers and camera timelapse on top, with camera alerts on Pro and Ultra. Subscriptions fund the infrastructure.",
   },
   {
     q: "Do I need to install anything?",
@@ -267,7 +267,7 @@ export default function GodsEyeViewPage() {
                   },
                   {
                     label: "Price",
-                    we: "Free tier; paid plans from $7.99/week — VIP Pro is $74.99/year",
+                    we: "Free tier; paid plans from $4.99/week (Lite) — Pro $7.99/week, Ultra from $12.99/week",
                     gev: "Free — open source (MIT)",
                   },
                 ].map((row) => (
@@ -625,7 +625,7 @@ export default function GodsEyeViewPage() {
             },
             {
               label: "Live cameras",
-              desc: "The full camera directory — 74,229 live public cameras in 105 countries.",
+              desc: "The full camera directory — 74,229 live public cameras across 109 countries, browsable through 74 country pages.",
               href: "/cameras",
             },
             {
@@ -635,7 +635,7 @@ export default function GodsEyeViewPage() {
             },
             {
               label: "Features",
-              desc: "Everything the globe can do — free forever layers and Pro intelligence tools.",
+              desc: "Everything the globe can do — free-to-browse layers and paid-plan intelligence tools.",
               href: "/features",
             },
           ]}

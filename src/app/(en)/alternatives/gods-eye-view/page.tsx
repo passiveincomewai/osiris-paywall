@@ -140,9 +140,9 @@ const data: AltData = {
         country and city
       </Link>
       , with categories from ski slopes to volcanoes — and around it sit the
-      tools of a monitoring product: multi-camera recording, timelapse and
-      (on VIP Pro) camera alerts that watch a feed for a condition you
-      describe and tell you when it changes. If God&apos;s Eye View is a
+      tools of a monitoring product: multi-camera recording, camera alerts
+      that watch a feed for a condition you describe and tell you when it
+      changes, and (on Ultra) timelapse. If God&apos;s Eye View is a
       workbench, WorldEye is a window.
     </>,
   ],
@@ -153,15 +153,15 @@ const data: AltData = {
     },
     {
       title: "A camera network ~18× larger",
-      body: "74,229 live public feeds served against roughly 4,000 in the open-source mesh — including 118 cameras in Thailand alone and country directories across 109 countries.",
+      body: "74,229 live public feeds served against roughly 4,000 in the open-source mesh — including 118 cameras in Thailand alone — a catalogue spanning 109 countries, with country directories for 74 of them.",
     },
     {
       title: "Recording, timelapse and alerts",
-      body: "Pro records up to 20 cameras at once; VIP Pro raises that to 40 and adds timelapse plus camera alerts that check feeds on an interval and notify you on change.",
+      body: "Pro records up to 20 cameras at once; Ultra raises that to 40 and adds timelapse. Camera alerts check feeds on an interval and notify you on change — 2 feeds on Pro, 10 on Ultra.",
     },
     {
       title: "Intel layers for the analyst streak",
-      body: "Pro unlocks the OSINT toolkit and satellite view; VIP Pro adds cyber, maritime and GDELT event layers with live news — the dashboard side of the god's-eye idea.",
+      body: "Pro unlocks the OSINT toolkit; Ultra adds cyber, maritime and GDELT event layers with live news — and the satellite view is free for everyone. The dashboard side of the god's-eye idea.",
     },
   ],
   chips: [
@@ -174,13 +174,13 @@ const data: AltData = {
     "Both products deserve a fair table. Figures are each project's own published numbers, checked October 2026.",
   rows: [
     { feature: "How you get it", competitor: "Download and install it yourself (Pinokio, Docker or clone)", worldEye: "Open worldeye.app in any browser — nothing to install" },
-    { feature: "Price of the core", competitor: "Free and open source (MIT); premium layers bill your own API keys", worldEye: "Free with no signup; optional Pro from $7.99/week" },
+    { feature: "Price of the core", competitor: "Free and open source (MIT); premium layers bill your own API keys", worldEye: "Free with no signup; optional paid plans from $4.99/week" },
     { feature: "Live cameras", competitor: "~4,000 public cameras (project's own figure)", worldEye: "74,229 live public cameras served" },
     { feature: "Flights & satellites", competitor: "Yes — live layers, keyless", worldEye: "Yes — live layers, free" },
     { feature: "Weather, quakes, fires", competitor: "Yes — GFS/ECMWF, radar, cyclone tracks, keyless", worldEye: "Yes — weather, radar, quakes and fires, free" },
-    { feature: "Photorealistic 3D tiles", competitor: "Yes, with a Cesium ion token or your Google Maps key", worldEye: "3D globe with satellite view on Pro; no key needed" },
-    { feature: "Voice AI agent", competitor: "Yes — 30 tools, on your OpenAI key", worldEye: "No voice agent; an on-screen AI assistant is part of the Pro toolkit" },
-    { feature: "Recording & alerts", competitor: "Scene director for cinematic captures; no camera recording or alerts", worldEye: "Multi-camera recording (20 Pro / 40 VIP), timelapse and camera alerts on VIP Pro" },
+    { feature: "Photorealistic 3D tiles", competitor: "Yes, with a Cesium ion token or your Google Maps key", worldEye: "3D globe with satellite view free for everyone; no key needed" },
+    { feature: "Voice AI agent", competitor: "Yes — 30 tools, on your OpenAI key", worldEye: "No voice agent; an on-screen AI assistant is included on every paid plan" },
+    { feature: "Recording & alerts", competitor: "Scene director for cinematic captures; no camera recording or alerts", worldEye: "Multi-camera recording (20 Pro / 40 Ultra), timelapse and camera alerts on Ultra" },
     { feature: "Modify the code", competitor: "Yes — that's the point of it", worldEye: "No — hosted product" },
     { feature: "Works on your phone", competitor: "Not practically — it's a desktop install", worldEye: "Yes — the full globe in a mobile browser" },
   ],
@@ -203,9 +203,9 @@ const data: AltData = {
       </span>{" "}
       for Pro (3-day free trial on Weekly, 10 days on Monthly), and{" "}
       <span className="text-white/85 font-semibold">
-        VIP Pro at $74.99/year
+        Ultra from $12.99/week
       </span>{" "}
-      (10-day trial) for timelapse, intel layers, camera alerts and 40-camera
+      for timelapse, intel layers and 40-camera
       recording. Every first charge carries a 7-day money-back guarantee. Full
       detail lives on the{" "}
       <Link href="/pricing" className="text-[#0096FF] hover:underline">
@@ -268,11 +268,11 @@ const data: AltData = {
     },
     {
       q: "Which has more cameras, God's Eye View or WorldEye?",
-      a: "WorldEye, by a wide margin: 74,229 live public cameras served, versus roughly 4,000 in God's Eye View's CCTV mesh (the figure in its own README). Both draw on public feeds — WorldEye's directory is simply much larger, spanning 109 countries.",
+      a: "WorldEye, by a wide margin: 74,229 live public cameras served, versus roughly 4,000 in God's Eye View's CCTV mesh (the figure in its own README). Both draw on public feeds — WorldEye's catalogue is simply much larger, spanning 109 countries, with directory pages for 74 of them.",
     },
     {
       q: "Does WorldEye have the voice agent?",
-      a: "No. God's Eye View's 30-tool voice agent — flying the globe and querying layers by speech, on your OpenAI key — is genuinely unique to it. WorldEye's Pro tier includes an on-screen AI assistant within its OSINT toolkit, but it doesn't pretend to be the same thing.",
+      a: "No. God's Eye View's 30-tool voice agent — flying the globe and querying layers by speech, on your OpenAI key — is genuinely unique to it. WorldEye's paid tiers include an on-screen AI assistant (the OSINT toolkit itself sits on Pro), but it doesn't pretend to be the same thing.",
     },
     {
       q: "Is WorldEye affiliated with God's Eye View?",
