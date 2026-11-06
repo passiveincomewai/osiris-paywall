@@ -18,6 +18,7 @@ import TimelapseControl from './TimelapseControl';
 import AccountGatePrompt from './AccountGatePrompt';
 import LiveRecordControl from './recording/LiveRecordControl';
 import CameraAlertButton from './CameraAlertButton';
+import SnapshotCaptureButton from './SnapshotCaptureButton';
 import SaveLocationButton from './SaveLocationButton';
 import { cameraSavedHref } from '@/lib/saved-locations';
 
@@ -387,6 +388,16 @@ export default function CameraViewer({ camera, onClose, onLocate, besideOi = fal
                     <Bookmark className={`w-3 h-3 ${saveState === "saved" ? "text-cyan-300" : "text-[var(--text-secondary)]"}`} />
                   </button>
                   <CameraAlertButton camera={camera} />
+                  {/* Capture this moment: a branded share card of the
+                      frame on screen (or the camera's real details when
+                      the feed's picture can't be read) — download, copy
+                      link, or share. Inline views only: an external or
+                      offline camera shows no picture to capture. */}
+                  <SnapshotCaptureButton
+                    camera={camera}
+                    getVideo={() => videoRef.current}
+                    inline={!externalOnly && !error && view === 'inline'}
+                  />
                   <button onClick={onClose} aria-label="Close camera viewer" title="Close camera viewer" className="p-1.5 rounded-sm bg-red-900/30 border border-red-500/30 hover:bg-red-500/30 hover:border-red-500 transition-all ml-2">
                     <X className="w-4 h-4 md:w-3 md:h-3 text-red-400 hover:text-red-200" />
                   </button>
