@@ -51,6 +51,7 @@ model User {
   eventAlertRules EventAlertRule[]
   eventAlertEvents EventAlertEvent[]
   auroraAlertSubscriptions AuroraAlertSubscription[]
+  pushSubscriptions PushSubscription[]
   savedViews SavedView[]
   vipBriefPref VipBriefPref?
   organizationsOwned Organization[] @relation("OrgOwner")
@@ -1602,6 +1603,7 @@ model AlertEvent {
   // show its own photo instead of whatever the camera shows later.
   imageJpeg   String?   @db.Text
   emailSent   Boolean   @default(false)
+  pushSent    Boolean   @default(false)
   readAt      DateTime?
 
   createdAt   DateTime  @default(now())
@@ -1942,6 +1944,7 @@ model EventAlertEvent {
   // ruleId is what makes re-checks idempotent.
   dedupeKey   String
   emailSent   Boolean   @default(false)
+  pushSent    Boolean   @default(false)
   readAt      DateTime?
 
   createdAt   DateTime  @default(now())
@@ -2585,6 +2588,38 @@ model AuroraAlertSubscription {
 
   @@unique([userId, placeSlug])
   @@index([active])
+  @@index([userId])
+}
+
+// Browser push (wave-2 item 4, approved 2026-11-06): one row per
+// browser/device push subscription a signed-in user has granted on
+// this device. Delivery is a CHANNEL on the existing alert machinery
+// (camera AlertRule transitions + EventAlertRule detections), decided
+// by src/lib/account/delivery.ts (channel email | push | both | none);
+// the send path lives in src/lib/push/. A user can hold several rows
+// (phone + desktop); the endpoint is the subscription's identity —
+// dead endpoints (404/410 from the push service) are pruned on send.
+//
+// NOTE: this table already EXISTS in production (created 2026-10-25
+// by an earlier payload whose code never landed in the tree — it sat
+// orphaned and empty). This model is shaped to the production table
+// exactly (id/userId/endpoint/p256dh/auth/userAgent/createdAt/
+// lastSeenAt, endpoint unique, user FK cascade) so the client reuses
+// it as-is; lastSeenAt bumps on (re)subscribe and on each accepted
+// send. The migration is idempotent for the same reason.
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  userAgent String?
+
+  createdAt  DateTime @default(now())
+  lastSeenAt DateTime @default(now())
+
   @@index([userId])
 }
 

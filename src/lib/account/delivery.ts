@@ -1,10 +1,12 @@
 // ── Alert delivery decisions (items 13 + 14) ────────────────────────
-// One pure decision used by the camera-alert checker (and available to
-// the event-alert sender): should this alert go out, and by email?
-// Rules: channel "none" suppresses; quiet hours suppress in the USER's
-// timezone; "push" never pretends to deliver — with no push
-// subscription infrastructure in master it suppresses email and says
-// why, rather than silently rerouting or faking a push.
+// One pure decision used by both alert checkers (camera + event):
+// should this alert go out, and by which channels? Rules: channel
+// "none" suppresses everything; quiet hours suppress in the USER's
+// timezone; "push" and "both" include the browser-push channel
+// (src/lib/push) alongside or instead of email. The decision only
+// says the user WANTS push — the send itself is inert until VAPID
+// keys are configured, and the checkers fail closed on push (never
+// reroute a push-only alert to email silently).
 
 import type { Preferences } from "./preferences";
 
@@ -44,7 +46,9 @@ export function isInQuietHours(
 export interface DeliveryDecision {
   /** Send the email now. */
   email: boolean;
-  /** Why not, when email is false: "channel_none" | "quiet_hours" | "push_only_unavailable". */
+  /** Send a browser push now (inert until VAPID keys are configured). */
+  push: boolean;
+  /** Why not, when a channel is off: "channel_none" | "quiet_hours" | "push_only". */
   reason: string | null;
 }
 
@@ -54,10 +58,11 @@ export function alertDeliveryDecision(
   now: Date,
 ): DeliveryDecision {
   const channel = kind === "camera" ? prefs.cameraAlertChannel : prefs.eventAlertChannel;
-  if (channel === "none") return { email: false, reason: "channel_none" };
-  if (isInQuietHours(now, prefs)) return { email: false, reason: "quiet_hours" };
-  if (channel === "email" || channel === "both") return { email: true, reason: null };
-  // channel === "push": no push delivery exists in master yet (the PWA
-  // branch owns it). Suppress rather than fake it.
-  return { email: false, reason: "push_only_unavailable" };
+  if (channel === "none") return { email: false, push: false, reason: "channel_none" };
+  if (isInQuietHours(now, prefs)) return { email: false, push: false, reason: "quiet_hours" };
+  if (channel === "email") return { email: true, push: false, reason: null };
+  if (channel === "both") return { email: true, push: true, reason: null };
+  // channel === "push": push only — email stays off, exactly as the
+  // settings copy promises ("we never silently reroute them").
+  return { email: false, push: true, reason: "push_only" };
 }

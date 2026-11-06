@@ -23,7 +23,7 @@
  * controllerchange — a deploy can never strand visitors on stale code.
  */
 
-const SW_VERSION = "v1";
+const SW_VERSION = "v2";
 const STATIC_CACHE = `worldeye-static-${SW_VERSION}`;
 
 const PRECACHE_URLS = [
@@ -61,6 +61,50 @@ self.addEventListener("message", (event) => {
   if (event.data && event.data.type === "SKIP_WAITING") {
     self.skipWaiting();
   }
+});
+
+/* Browser push (wave-2 item 4). Payloads are JSON shaped by
+ * src/lib/push/logic.ts: { title, body, url, tag? }. A malformed
+ * payload still shows a plain notification — a push that arrives
+ * must never be silently dropped. */
+self.addEventListener("push", (event) => {
+  let data = {};
+  try {
+    data = event.data ? event.data.json() : {};
+  } catch {
+    data = { body: event.data ? event.data.text() : "" };
+  }
+  const title = typeof data.title === "string" && data.title ? data.title : "WorldEye";
+  const options = {
+    body: typeof data.body === "string" ? data.body : "",
+    icon: "/icon-192.png",
+    badge: "/icon-192.png",
+    tag: typeof data.tag === "string" ? data.tag : undefined,
+    data: { url: typeof data.url === "string" && data.url.startsWith("/") ? data.url : "/" },
+  };
+  event.waitUntil(self.registration.showNotification(title, options));
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const url =
+    event.notification.data && typeof event.notification.data.url === "string"
+      ? event.notification.data.url
+      : "/";
+  event.waitUntil(
+    self.clients
+      .matchAll({ type: "window", includeUncontrolled: true })
+      .then((windows) => {
+        for (const win of windows) {
+          if (new URL(win.url).origin === self.location.origin && "focus" in win) {
+            return win.focus().then((focused) =>
+              "navigate" in focused ? focused.navigate(url) : undefined,
+            );
+          }
+        }
+        return self.clients.openWindow(url);
+      }),
+  );
 });
 
 self.addEventListener("activate", (event) => {

@@ -27,8 +27,16 @@ describe("isInQuietHours", () => {
 });
 
 describe("alertDeliveryDecision", () => {
-  it("email channel sends", () => {
-    expect(alertDeliveryDecision(prefs(), "camera", evening)).toEqual({ email: true, reason: null });
+  it("email channel sends email only", () => {
+    expect(alertDeliveryDecision(prefs(), "camera", evening)).toEqual({ email: true, push: false, reason: null });
+  });
+
+  it("both channel sends email and push", () => {
+    expect(alertDeliveryDecision(prefs({ cameraAlertChannel: "both" }), "camera", evening)).toEqual({
+      email: true,
+      push: true,
+      reason: null,
+    });
   });
 
   it("none suppresses", () => {
@@ -41,8 +49,23 @@ describe("alertDeliveryDecision", () => {
     expect(alertDeliveryDecision(q, "event", evening).email).toBe(true);
   });
 
-  it("push-only never fakes delivery", () => {
+  it("push-only chooses push and keeps email off", () => {
     const d = alertDeliveryDecision(prefs({ cameraAlertChannel: "push" }), "camera", evening);
-    expect(d).toEqual({ email: false, reason: "push_only_unavailable" });
+    expect(d).toEqual({ email: false, push: true, reason: "push_only" });
+  });
+
+  it("quiet hours suppress push too", () => {
+    const q = prefs({
+      cameraAlertChannel: "both",
+      quietHoursEnabled: true,
+      quietHoursStart: "22:00",
+      quietHoursEnd: "07:00",
+      timezone: "America/Denver",
+    });
+    expect(alertDeliveryDecision(q, "camera", lateNight)).toEqual({
+      email: false,
+      push: false,
+      reason: "quiet_hours",
+    });
   });
 });
