@@ -41,6 +41,8 @@ import {
   wallSpokeBelowLine,
 } from "@/lib/indexation-gates";
 import { EXPLORE_SCOPES, countForDef, loadCountryChunk } from "@/lib/explore-data";
+import { loadCityBreakdown } from "@/lib/place-breakdown";
+import cityPages from "@/data/city-pages.json";
 import { BEACH_SPOTS, SURF_SPOTS } from "@/lib/surf-spots";
 import { RAIL_PLACES } from "@/lib/railfan-places";
 import { VOLCANOES } from "@/lib/volcanoes";
@@ -183,6 +185,38 @@ describe("C10 cities — noindex gates", () => {
     expect(countCityElements({ sources: 3, corridors: -1, mixKinds: -1 })).toBe(1);
     expect(countCityElements({ sources: 1, corridors: -1, mixKinds: -1 })).toBe(0);
   });
+
+  it("language-aware amendment (2026-11-06): measured band outcomes", async () => {
+    // The amendment (place-breakdown corridor patterns + THEME_DEFS
+    // route tokens) changed the MEASUREMENT, not the thresholds.
+    // Pinned measured outcomes over the real served chunks:
+    //  - iida-city: Routes 151/152/153 now parse (corridors 0→3) and
+    //    its 4-kind mix already counted → 1→2 elements, passes.
+    //  - kakogawa-city: Routes 175/372 parse (corridors 0→2) and the
+    //    route names register the traffic kind (mix 2→3 kinds)
+    //    → 0→2 elements, passes.
+    //  - leon: AP-66/A-6/A-66/N-120… now parse (corridors 0→5+) but
+    //    every camera is a DGT road camera — one honest kind, one
+    //    source → 0→1 element, still below the line. The amendment
+    //    does not manufacture substance that is not there.
+    const cities = (
+      cityPages as unknown as {
+        cities: Array<{ slug: string; name: string; countrySlug: string; sourceCount: number }>;
+      }
+    ).cities;
+    const elementsFor = async (slug: string): Promise<number> => {
+      const g = cities.find((c) => c.slug === slug)!;
+      const bd = await loadCityBreakdown(g.countrySlug, g.name);
+      return countCityElements({
+        sources: g.sourceCount,
+        corridors: bd ? bd.corridors.length : -1,
+        mixKinds: bd ? bd.mix.length : -1,
+      });
+    };
+    await expect(elementsFor("iida-city")).resolves.toBe(2);
+    await expect(elementsFor("kakogawa-city")).resolves.toBe(2);
+    await expect(elementsFor("leon")).resolves.toBe(1);
+  }, 120_000);
 });
 
 describe("C10 states — below-line block rule", () => {

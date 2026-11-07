@@ -73,7 +73,26 @@ interface CorridorPattern {
  * not the first pattern that hits. Compact TxDOT forms (IH35W, SH183,
  * LP20EB) are as common as spaced ones (I-35W, SH 183). UK A/M roads
  * require a capitalised word after the number so postcodes and unit
- * numbers ("Unit A3", "Bay M4") don't parse as roads. */
+ * numbers ("Unit A3", "Bay M4") don't parse as roads.
+ *
+ * LANGUAGE-AWARE AMENDMENT (C10 gate fix, owner-approved 2026-11-06,
+ * site audit A3): the original pattern set only recognised US/UK
+ * written forms, so the C10 element band systematically scored
+ * non-English feeds' corridors as zero — Spanish DGT names are bare
+ * hyphenated designations ("AP-66 km 100.2", "A-6 km 290.9",
+ * "N-634 km 598.3"), Japanese MLIT names carry the designation as a
+ * word ("Route 175", "National Route 153" — the bare "Route N" match
+ * covers both), and Canadian feeds write "Highway 9". The three
+ * patterns appended AFTER the originals below recognise exactly
+ * those written forms; the originals stay first so a name they
+ * already parse keeps its established formatting (the earliest-match
+ * rule only replaces a match at a strictly earlier position). The
+ * hyphenated-prefix pattern requires an all-caps 1–2 letter prefix
+ * at a word boundary directly hyphenated to the number, so camera
+ * codes embedded in longer letter runs ("CCTV-913") and bare numeric
+ * ranges ("913-0494") never parse as roads. Thresholds are unchanged
+ * — this is fairer measurement of the same substance, and matches
+ * are monotonic: a name that parsed before parses identically now. */
 const CORRIDOR_PATTERNS: CorridorPattern[] = [
   { re: /\bIH[ -]?(\d{1,3})([A-Z])?(?![0-9])/, format: (m) => `I-${m[1]}${m[2] ?? ""}` },
   { re: /\bI-(\d{1,3})([A-Z])?(?![0-9])/, format: (m) => `I-${m[1]}${m[2] ?? ""}` },
@@ -82,6 +101,10 @@ const CORRIDOR_PATTERNS: CorridorPattern[] = [
   { re: /\bLP[ -]?(\d{1,4})(?![0-9])/, format: (m) => `Loop ${m[1]}` },
   { re: /\bA(\d{1,4})(?=\s+[A-Z])/, format: (m) => `A${m[1]}` },
   { re: /\bM(\d{1,2})(?=\s+[A-Z])/, format: (m) => `M${m[1]}` },
+  /* Language-aware additions (2026-11-06, see the note above). */
+  { re: /\bHighway (\d{1,3})(?![0-9])/, format: (m) => `Highway ${m[1]}` },
+  { re: /\bRoute (\d{1,4})(?![0-9])/, format: (m) => `Route ${m[1]}` },
+  { re: /\b([A-Z]{1,2})-(\d{1,4})(?![0-9])/, format: (m) => `${m[1]}-${m[2]}` },
 ];
 
 /* Designations some feeds carry only in the camera id (Laredo's TxDOT

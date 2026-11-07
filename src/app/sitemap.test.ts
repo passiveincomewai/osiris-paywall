@@ -103,7 +103,7 @@ describe("sitemap URL set", () => {
           !u.startsWith(`${BASE}/wildfires/`),
       )
       .sort();
-    expect(nonTransit.length).toBe(1126);
+    expect(nonTransit.length).toBe(1128);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     // Hash history: 6d75d0de… until the SEO audit fix #3 (2026-10-27)
     // normalised the es homepage entry from /es/ to its final /es
@@ -348,8 +348,18 @@ describe("sitemap URL set", () => {
     // delta introduces (the identical one-line delta,
     // executed on both trees on the previous base, gave
     // exactly {/pulse}): 1,126 / 489899b5….
+    // The C10 language-aware gate amendment (2026-11-06,
+    // site audit A3) then re-measured the 34 element-band
+    // cities with fairer corridor/kind patterns: exactly
+    // two cities (iida-city, kakogawa-city) now reach ≥2
+    // elements and enter the sitemap → 1,128. Delta proof
+    // by executed sitemap(): the pristine-patterns run
+    // reproduces 1,126 / 489899b5… exactly, the amended
+    // run's set differs by exactly those two URLs, added
+    // and none removed (full record in the site-audit
+    // work-d NOTES.md).
     expect(hash).toBe(
-      "489899b53bd406adc47bfbdd25cf4268416ec811c5f342423055ef6604edc9c2",
+      "9603c34e3851a55dbefa23eeafbab8d43c3ccf103d6b718ac191450b2d2db051",
     );
   });
 
@@ -434,13 +444,20 @@ describe("sitemap URL set", () => {
       expect(has(p), p).toBe(false);
     }
     // Still listed: big cities, band cities with ≥2 elements, and DC
-    // (below the state line but both §4.2 blocks build).
+    // (below the state line but both §4.2 blocks build). iida-city
+    // and kakogawa-city joined the listed set under the 2026-11-06
+    // language-aware amendment (their Route designations now parse);
+    // leon above stays tiered out — its corridors now parse too, but
+    // a single DGT source and a single (traffic) kind are honestly
+    // only one element.
     for (const p of [
       "/city-webcams/austin",
       "/city-webcams/newcastle",
       "/city-webcams/milwaukee",
       "/city-webcams/los-angeles",
       "/city-webcams/seoul",
+      "/city-webcams/iida-city",
+      "/city-webcams/kakogawa-city",
       "/us-traffic-cameras/district-of-columbia",
       "/us-traffic-cameras/utah",
     ]) {

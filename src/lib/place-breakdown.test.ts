@@ -50,6 +50,34 @@ describe("parseCorridor", () => {
     expect(parseCorridor("Camera 12 at 5th Ave")).toBeNull();
   });
 
+  it("parses the written forms non-English feeds use (2026-11-06 amendment)", () => {
+    // Spanish DGT: bare hyphenated designations followed by a km post.
+    expect(parseCorridor("AP-66 km 100.207 (Ascending)")).toBe("AP-66");
+    expect(parseCorridor("A-6 km 290.9 (Ascending)")).toBe("A-6");
+    expect(parseCorridor("N-634 km 598.33 (Ascending)")).toBe("N-634");
+    expect(parseCorridor("AG-64 km 12.0")).toBe("AG-64");
+    // Japanese MLIT: the designation as a word (incl. "National Route").
+    expect(parseCorridor("Iehara, Route 175, Kato City")).toBe("Route 175");
+    expect(parseCorridor("Komaba, National Route 153, Achi Village")).toBe("Route 153");
+    // Canadian word form, and hyphenated US state forms the generic
+    // pattern now covers (Colorado C-470, Virginia VA-143).
+    expect(parseCorridor("Highway 9 at Bathurst Street")).toBe("Highway 9");
+    expect(parseCorridor("C-470 MP 001.20 EB : W Alameda Pkwy")).toBe("C-470");
+    expect(parseCorridor("VA-143 at VA-132")).toBe("VA-143");
+  });
+
+  it("the language-aware pattern never invents roads from camera codes", () => {
+    // A code inside a longer letter run is not a designation, and a
+    // bare numeric range is not either (Pharr's TxDOT CCTV ids).
+    expect(parseCorridor("CRP-TRF-CCTV-913-0494")).toBeNull();
+    expect(parseCorridor("CCTV-913 overlook")).toBeNull();
+    // Established parses keep their established formatting: the
+    // original patterns win over the generic hyphenated one.
+    expect(parseCorridor("I-64 / MM 247.2 / EB")).toBe("I-64");
+    expect(parseCorridor("FM-2989 South of Madisonville")).toBe("FM 2989");
+    expect(parseCorridor("IH27 @ 19TH")).toBe("I-27");
+  });
+
   it("falls back to designations embedded in the camera id", () => {
     expect(parseCorridor("HIGHWAY CAMERA", "LRD-LRD-US83 @ SL517")).toBe("US 83");
     expect(parseCorridor("HIGHWAY CAMERA", "LRD-LRD-BI35 @ Commerce")).toBe("Business I-35");
@@ -314,6 +342,17 @@ describe("computeCameraKindMix (C6)", () => {
     // A partition: matched rows sum to the matched records, never beyond.
     expect(mix.reduce((s, r) => s + r.count, 0)).toBe(13);
     expect(mix[0].count).toBe(4);
+  });
+
+  it("counts word-form and compact route tokens as traffic (2026-11-06 amendment)", () => {
+    const mix = computeCameraKindMix([
+      rec("Iehara, Route 175, Kato City"),
+      rec("Sakashita, Route 372, Kato City"),
+      rec("IH27 @ 19TH"),
+      rec("AP-66 km 100.207 (Ascending)"),
+    ]);
+    const byLabel = new Map(mix.map((r) => [r.name, r.count]));
+    expect(byLabel.get("Roads & traffic")).toBe(4);
   });
 
   it("is part of the place breakdown, from the same records", () => {

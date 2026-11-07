@@ -232,6 +232,16 @@ export function citySourceCount(slug: string): number | null {
  * fires (≥2 corridors) and a kind-mix strip that fires (≥3 kinds).
  * A null breakdown (chunk/name mismatch) scores corridors and mix as
  * absent — pass -1 for either to mark it unavailable.
+ *
+ * AMENDMENT (2026-11-06, site audit A3, owner-approved): the corridor
+ * and kind measurements behind this counter are language-aware as of
+ * the place-breakdown / THEME_DEFS amendment — hyphenated European
+ * designations (AP-66, A-6, N-634), word-form designations ("Route
+ * 175", "Highway 9") and compact IH route tokens now count, where
+ * the original US/UK-only patterns scored them zero. The thresholds
+ * here (≥2 sources / ≥2 corridors / ≥3 kinds, ≥2 of 3 in the band)
+ * are unchanged; only the measurement is fairer. Full before/after
+ * per-city record: site-audit-2026-11-06 work-d NOTES.md.
  */
 export function countCityElements(input: {
   sources: number;

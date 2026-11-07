@@ -166,8 +166,16 @@ export const THEME_DEFS: Array<{ key: string; label: string; pattern: RegExp }> 
   {
     key: "traffic",
     label: "roads and traffic",
+    // Language-aware route tokens (C10 gate amendment, 2026-11-06,
+    // site audit A3): alongside the original single-letter tokens,
+    // the hyphenated two-letter prefixes non-English feeds use
+    // (Spanish AP-66 / AG-64), the compact IH form Texas feeds use
+    // (IH27 — the bare "I" token cannot match it), a parenthesised
+    // token ("(E41 …)"), and the word form Japanese MLIT feeds use
+    // ("Route 175"). Same kind, fairer measurement — see
+    // parseCorridor's amendment note in lib/place-breakdown.ts.
     pattern:
-      /\b(traffic|motorway|highway|freeway|autobahn|expressway|interchange|junction|toll|roundabout|border)\b|(^|[\s\-–—/])(A|M|E|N|I)-?\d{1,3}\b/i,
+      /\b(traffic|motorway|highway|freeway|autobahn|expressway|interchange|junction|toll|roundabout|border)\b|(^|[\s\-–—/(])(AP|AG|IH|A|M|E|N|I)-?\d{1,3}\b|\broute\s+\d{1,4}\b/i,
   },
   {
     key: "coast",
