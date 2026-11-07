@@ -81,7 +81,7 @@ export const VOICE_CATEGORIES: VoiceCategory[] = [
   {
     id: "plans-and-pricing",
     title: "Plans and pricing",
-    blurb: "What is free, what Pro and VIP Pro add, and what Enterprise costs.",
+    blurb: "What is free, what Pro and Ultra add, and what Enterprise costs.",
   },
 ];
 
@@ -494,7 +494,7 @@ export const VOICE_QUESTIONS: VoiceQuestion[] = [
     category: "track-anything",
     question: "How can I follow a ship at sea?",
     shortAnswer:
-      "WorldEye's ship tracker plots AIS vessel positions on the globe — ports, shipping lanes and ships. Maritime is a Pro feed; cameras, flights and satellites stay free without an account.",
+      "WorldEye's ship tracker plots AIS vessel positions on the globe — ports, shipping lanes and ships. Maritime is an Ultra feed; cameras, flights and satellites stay free without an account.",
     longAnswer:
       "AIS is the transponder system ships use to broadcast position, course and speed. WorldEye shows a live position whenever a ship is reporting; when it isn't reporting, the page says so instead of guessing. Harbor cameras near a port let you match the plotted ship to the real one.",
     href: "/ship-tracker",
@@ -566,7 +566,7 @@ export const VOICE_QUESTIONS: VoiceQuestion[] = [
     category: "plans-and-pricing",
     question: "What do I get with WorldEye Pro?",
     shortAnswer:
-      "Pro removes the free camera limit and unlocks the OSINT toolkit, satellite map view, live traffic, the AI assistant and recording for up to 20 cameras.",
+      "Pro removes the free camera limit and unlocks the OSINT toolkit, live traffic, the AI assistant and recording for up to 20 cameras.",
     longAnswer:
       "Pro also unlocks following a flight's route on the map. The AI assistant runs on WorldEye's own key, so there is nothing to set up.",
     href: "/pricing",
@@ -576,9 +576,9 @@ export const VOICE_QUESTIONS: VoiceQuestion[] = [
     category: "plans-and-pricing",
     question: "What do I get with VIP Pro?",
     shortAnswer:
-      "VIP Pro adds camera alerts on up to 10 cameras, timelapse, the cyber, maritime and live-news intel layers, and recording for up to 40 cameras.",
+      "VIP Pro is the annual Pro plan — same features as Pro, billed yearly. The top tier is Ultra, with 10-camera alerts, timelapse, intel layers and 40-camera recording.",
     longAnswer:
-      "VIP Pro includes everything in Pro. Camera alerts check your chosen cameras on a schedule and notify you when your stated condition appears in the image.",
+      "VIP Pro includes everything in Pro, billed annually at $74.99, and annual members who joined before the current tiers launched keep the extras their plan started with. Camera alerts start on Pro (up to 2 cameras); Ultra raises the cap to 10 and adds timelapse, the intel layers and 40-camera recording.",
     href: "/pricing",
   },
   {
@@ -769,7 +769,7 @@ export const VOICE_QUESTIONS: VoiceQuestion[] = [
     shortAnswer:
       "Yes. WorldEye's ship tracker plots vessels at their reported AIS positions with speed, heading and vessel type — cruise ships, tankers and cargo ships included.",
     longAnswer:
-      "Watch traffic gather at straits, canals and port approaches as AIS reports arrive. The maritime feed is included with Pro; the free globe still shows cameras, flights and satellites without an account.",
+      "Watch traffic gather at straits, canals and port approaches as AIS reports arrive. The maritime feed is included with Ultra; the free globe still shows cameras, flights and satellites without an account.",
     href: "/ship-tracker",
   },
   {
@@ -880,7 +880,7 @@ export const VOICE_QUESTIONS: VoiceQuestion[] = [
     category: "plans-and-pricing",
     question: "Can I record a live camera on WorldEye?",
     shortAnswer:
-      "Yes, on a paid plan: Pro records up to 20 cameras and VIP Pro up to 40, and your recordings collect in your dashboard's recordings section.",
+      "Yes, on a paid plan: Pro records up to 20 cameras and Ultra up to 40, and your recordings collect in your dashboard's recordings section.",
     longAnswer:
       "Free accounts can watch every camera live; recording is part of what the paid plans fund. Start from the plans page to compare the limits.",
     href: "/pricing",
@@ -890,9 +890,9 @@ export const VOICE_QUESTIONS: VoiceQuestion[] = [
     category: "plans-and-pricing",
     question: "Can I get an alert when something changes on a camera?",
     shortAnswer:
-      "Yes — VIP Pro camera alerts check up to 10 chosen cameras on a schedule and notify you when your stated condition appears in the image.",
+      "Yes — Ultra camera alerts check up to 10 chosen cameras on a schedule and notify you when your stated condition appears in the image (Pro covers up to 2).",
     longAnswer:
-      "You manage alert rules from your dashboard, alongside your saved cameras and recordings. Alerts are a VIP Pro feature; watching stays free for everyone.",
+      "You manage alert rules from your dashboard, alongside your saved cameras and recordings. Alerts are a paid-plan feature — up to 2 cameras on Pro, 10 on Ultra; watching stays free for everyone.",
     href: "/pricing",
   },
 ];
