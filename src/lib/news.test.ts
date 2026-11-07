@@ -87,6 +87,9 @@ describe("the launch story (real data, real dates)", () => {
   it("is one of the flagged posts, and every flagged post has sources", () => {
     const flagged = POSTS.filter(isNewsPost);
     expect(flagged.map((p) => p.slug)).toEqual([
+      "kilauea-episode-56-erupts-660-foot-fountains",
+      "magnitude-6-1-earthquake-offshore-hasaki-japan",
+      "mt-rose-opening-day-november-6-2026-tahoe-first",
       "iss-spacewalk-101-final-solar-array-november-5",
       "mccaysville-copperhill-record-flood-emergency-november-5",
       "noaa-g1-storm-watch-november-6-7-aurora",
@@ -123,6 +126,15 @@ describe("the launch story (real data, real dates)", () => {
     expect(fresh).toContain("mammoth-mountain-opens-early-november-5-2026");
     expect(fresh).toContain("mayon-ash-plume-november-4-strombolian-activity");
     expect(fresh).toContain("spacex-ussf-432-launch-moves-november-6");
+    expect(fresh).not.toContain(LAUNCH_SLUG);
+  });
+
+  it("the Nov 6 event stories are inside the 48-hour window on their publication day", () => {
+    const pubDay = new Date("2026-11-06T15:00:00Z");
+    const fresh = getFreshNewsPosts(POSTS, pubDay).map((p) => p.slug);
+    expect(fresh).toContain("kilauea-episode-56-erupts-660-foot-fountains");
+    expect(fresh).toContain("magnitude-6-1-earthquake-offshore-hasaki-japan");
+    expect(fresh).toContain("mt-rose-opening-day-november-6-2026-tahoe-first");
     expect(fresh).not.toContain(LAUNCH_SLUG);
   });
 

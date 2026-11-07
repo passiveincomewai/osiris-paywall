@@ -41,6 +41,272 @@ export type BlogPost = {
 
 export const POSTS: BlogPost[] = [
   {
+    slug: "kilauea-episode-56-erupts-660-foot-fountains",
+    title: "Kilauea Episode 56 Erupts: 660-Foot Lava Fountains End Abruptly After Six Hours",
+    seoTitle: "Kilauea Episode 56 Erupts | WorldEye Blog",
+    date: "2026-11-06",
+    excerpt:
+      "Episode 56 of Kilauea's Halemaʻumaʻu eruption began at 12:10 p.m. HST on Thursday, November 5 and ended abruptly at 6:01 p.m. after nearly six hours of continuous lava fountaining, the USGS Hawaiian Volcano Observatory said — fountains reached about 660 feet and roughly 6 million cubic metres of lava poured onto the crater floor.",
+    seoDescription:
+      "Kilauea episode 56 erupted Nov 5 with 660-foot lava fountains for nearly six hours before ending abruptly, USGS HVO said. Alert stays Watch.",
+    tags: ["kilauea", "volcano", "hawaii", "usgs", "eruption"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "The fountains forecast all week arrived on Thursday — and finished the same evening. Episode 56 of Kilauea's ongoing Halemaʻumaʻu eruption began at 12:10 p.m. HST on November 5, 2026, and ended abruptly at 6:01 p.m. HST after nearly six hours of continuous lava fountaining, the U.S. Geological Survey's Hawaiian Volcano Observatory (HVO) said in its end-of-episode Volcanic Activity Notice 2026/H521, issued at 6:21 p.m. HST.",
+          "It is the dated development WorldEye's coverage has been building toward: on [November 3, precursory lava returned to Halemaʻumaʻu and USGS raised the alert to Watch](/blog/kilauea-episode-56-precursory-lava-alert-watch), and on Thursday the full fountaining episode the observatory had forecast finally fired — then stopped as suddenly as these episodes usually do.",
+        ],
+      },
+      {
+        heading: "What happened during episode 56?",
+        body: [
+          "Fountains reached about 200 metres (660 feet), and the eruption plume rose to 5,500 metres (18,000 feet) above sea level, HVO said — a plume height based on National Weather Service radar data and also reported by the National Weather Service and the Washington Volcanic Ash Advisory Center. FOX Weather, reporting USGS observations, said the episode opened with fountains of about 100 feet from the north vent and smaller fountains from the southwest vent, then built through the afternoon.",
+          "By 4:43 p.m. HST the fountain height had decreased to about 100 metres (330 feet), and at 6:01 p.m. the fountaining ended abruptly. All eruptive vents and lava flows remained confined to Halemaʻumaʻu crater within Hawaii Volcanoes National Park, as they have throughout the eruption sequence that began on December 23, 2024.",
+        ],
+      },
+      {
+        heading: "How much lava came out?",
+        body: [
+          "HVO estimated that approximately 6 million cubic metres (8 million cubic yards) of lava erupted during episode 56, at an average effusion rate of about 200 cubic metres per second. Peak effusion reached about 530 cubic metres per second at around 2 p.m. HST on November 5.",
+          "The mountain's tilt told the same story. The Uēkahuna tiltmeter recorded 17 microradians of deflationary tilt during the episode — the summit deflating as magma drained into the eruption — and inflationary tilt resumed immediately after fountaining ended, the pattern that has preceded each episode in this sequence. Most lava-fountaining episodes since December 2024 have lasted a day or less, HVO noted.",
+        ],
+      },
+      {
+        heading: "Where did the ash and tephra go?",
+        body: [
+          "Surface-level winds carried tephra and the lower plume south-southwest toward the closed area of Hawaii Volcanoes National Park, while higher-level winds carried the upper plume west-northwest toward Mauna Loa, HVO reported during the episode. Most tephra fell within the closed area of the park, with light tephra also reported at the Footprints area and Pahala.",
+          "The end-of-episode notice put the hazard plainly: tephra fall from volcanic ash clouds is greatest within about 3 miles (5 km) of the vents, while lighter ash and Pele's hair can stay suspended and travel much farther. The National Weather Service's special weather statement during the eruption said ash fallout would likely occur over the Kau District and Highway 11 west of the town of Volcano and possibly as far southwest as Pahala, and advised people to avoid excessive exposure to ash — an eye and respiratory irritant.",
+        ],
+      },
+      {
+        heading: "What happens next at Kilauea?",
+        body: [
+          "The end-of-episode notice kept Kilauea at Volcano Alert Level WATCH and Aviation Color Code ORANGE. In its accompanying aviation notice, HVO said fountain activity in the summit area was unlikely for the next several weeks following the end of episode 56 — even though summit inflation resumed immediately, which is how the clock toward episode 57 starts.",
+          "The crater itself stays dangerous between episodes. HVO's notice warns that lava flows on the floor of Halemaʻumaʻu and the southwest side of the caldera remain hot and may move slowly in the days after an episode, and the caldera rim around Halemaʻumaʻu — closed to the public since late 2007 — remains prone to cracking, slumping and rockfalls.",
+        ],
+      },
+      {
+        heading: "Where can I watch Kilauea live?",
+        body: [
+          "HVO itself runs three summit livestreams of the eruption, and WorldEye's dedicated [Kilauea volcano webcam page](/volcano-webcams/kilauea) gathers the summit views in one place, alongside the wider [volcano webcams](/volcano-webcams) collection of the site's 74,229 cameras and the [earthquake tracker](/earthquake-tracker) that shows the seismic side of the same unrest.",
+          "Episode 56 is over, but the pattern of this eruption — pause, inflate, fountain — has repeated 56 times since December 2024. The cameras are where the start of episode 57 will show up first.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When did Kilauea episode 56 start and end?",
+        a: "It began at 12:10 p.m. HST on Thursday, November 5, 2026, and ended abruptly at 6:01 p.m. HST the same day, after nearly six hours of continuous lava fountaining, according to USGS HVO notice 2026/H521.",
+      },
+      {
+        q: "How high did the lava fountains reach in episode 56?",
+        a: "About 200 metres (660 feet) at their maximum. The eruption plume rose to about 5,500 metres (18,000 feet) above sea level, based on National Weather Service radar data.",
+      },
+      {
+        q: "How much lava erupted during episode 56?",
+        a: "HVO estimated approximately 6 million cubic metres (8 million cubic yards), at an average effusion rate of about 200 cubic metres per second and a peak of about 530 cubic metres per second.",
+      },
+      {
+        q: "What is Kilauea's alert level after episode 56?",
+        a: "Volcano Alert Level WATCH with Aviation Color Code ORANGE — unchanged by the end-of-episode notice. HVO said further summit fountaining was unlikely for the next several weeks.",
+      },
+      {
+        q: "Did episode 56 lava leave Halemaʻumaʻu crater?",
+        a: "No. All eruptive vents and lava flows remained confined to Halemaʻumaʻu crater within Hawaii Volcanoes National Park, and tephra fall was greatest within about 3 miles (5 km) of the vents.",
+      },
+    ],
+    sources: [
+      {
+        name: "USGS Hawaiian Volcano Observatory — Volcanic Activity Notice 2026/H521: episode 56 ended abruptly at 6:01 p.m. HST (November 5)",
+        url: "https://www.usgs.gov/volcanoes/kilauea/volcano-updates",
+      },
+      {
+        name: "The Watchers — Kilauea episode 56 ends abruptly after nearly 6 hours of lava fountaining, Hawaii (November 6)",
+        url: "https://watchers.news/2026/11/06/kilauea-episode-56-ends-abruptly-after-nearly-6-hours-of-lava-fountaining-hawaii/",
+      },
+      {
+        name: "FOX Weather — Hawaii's Kilauea experiences its 56th eruption episode (November 6)",
+        url: "https://www.foxweather.com/weather-news/hawaii-kilauea-volcano-erupt-56th-episode.amp",
+      },
+    ],
+  },
+  {
+    slug: "magnitude-6-1-earthquake-offshore-hasaki-japan",
+    title: "Magnitude 6.1 Earthquake Strikes Offshore Japan, 144 km Southeast of Hasaki",
+    seoTitle: "M6.1 Earthquake Off Japan | WorldEye Blog",
+    date: "2026-11-06",
+    excerpt:
+      "A magnitude 6.1 earthquake struck offshore Japan at 10:39 UTC on Friday, November 6, centred 144 km southeast of Hasaki in Chiba Prefecture at a depth of 29 km, the USGS said. No tsunami alert was issued, the USGS PAGER alert is green, and no damage had been reported.",
+    seoDescription:
+      "A magnitude 6.1 earthquake struck 144 km southeast of Hasaki, Japan at 10:39 UTC Nov 6, USGS said. No tsunami alert; PAGER green, no damage reported.",
+    tags: ["earthquake", "japan", "usgs", "pacific"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "A strong earthquake struck off Japan's Pacific coast on Friday evening local time. The U.S. Geological Survey put the quake at magnitude 6.1, striking at 10:39 UTC on November 6, 2026 — 7:39 p.m. in Japan — with its epicentre 144 km (89 miles) southeast of Hasaki, in Chiba Prefecture, at a depth of 29 km (18 miles). The USGS has reviewed the event, catalogued as us7000twg9.",
+          "It was the second magnitude 6.1 earthquake of the day worldwide, and the first magnitude 6 or larger quake in three days — a reminder that a quiet stretch on the global catalog can end without warning.",
+        ],
+      },
+      {
+        heading: "Where exactly did the earthquake strike?",
+        body: [
+          "The USGS located the epicentre at 34.968 degrees north, 142.118 degrees east — well offshore in the Pacific, east of Chiba Prefecture and roughly 237 km from Tokyo. The agency recorded the magnitude as 6.1 on the moment magnitude scale (Mww), from 134 stations.",
+          "Depth figures differ slightly between agencies, as they often do in the first hours: the USGS puts the depth at 29 km, while the Japan Meteorological Agency's figure, as reported, is about 10 km. Either way it was a shallow offshore event, far enough from the coast that shaking on land was moderate rather than severe.",
+        ],
+      },
+      {
+        heading: "Was there a tsunami warning?",
+        body: [
+          "No. The Japan Meteorological Agency issued no tsunami alert for the quake, and the USGS record for the event carries no tsunami flag. The quake was centred far offshore, and neither agency treated it as a tsunami source.",
+          "That distinction matters for offshore Japan quakes: magnitude alone does not make a tsunami — the quake has to move the seafloor vertically, and forecasters check that within minutes. In this case, both the national agency and the USGS stood down the tsunami question almost immediately.",
+        ],
+      },
+      {
+        heading: "Was anyone hurt or anything damaged?",
+        body: [
+          "No damage had been reported in the coverage reviewed on Friday. The USGS PAGER system issued a green alert for the event, meaning little or no damage is expected — the system's lowest alert level.",
+          "People did feel it. The USGS received 27 felt reports for the event, with a maximum community-reported intensity (CDI) of 4.2 — shaking strong enough to rattle dishes and wake sleepers near the coast, well short of damaging levels. Instrumental estimates put moderate shaking (MMI V) around Hasaki and light shaking (MMI IV) in Tokyo.",
+        ],
+      },
+      {
+        heading: "Was it the only big earthquake today?",
+        body: [
+          "No — it was one of two magnitude 6.1 events inside 24 hours. The other struck the Fiji region at 17:21 UTC on November 5, but at 535 km (332 miles) deep it was far too deep to cause strong shaking at the surface, and it too drew a green rating. In total, the USGS catalog recorded 11 earthquakes of magnitude 4.5 or more and 184 of all sizes worldwide in the 24 hours to 12:22 UTC on November 6 — and no magnitude 6 or larger quake had struck in the three days before that window.",
+          "Two same-magnitude quakes in one day, one shallow and one extremely deep, are a neat illustration of why depth matters as much as magnitude: Friday's Japan event, at 29 km, was felt in a capital city; Thursday's Fiji event, at 535 km, passed almost unnoticed at the surface.",
+        ],
+      },
+      {
+        heading: "Follow earthquakes as they happen",
+        body: [
+          "WorldEye's [earthquake tracker](/earthquake-tracker) plots the USGS feed as events are reviewed and posted, so a quake like Friday's appears on the globe alongside the day's smaller seismicity — and the aftershocks, if any follow, will show up in the same view.",
+          "USGS magnitudes and depths can be revised as more station data arrives; the figures in this story are the reviewed values as of Friday morning, U.S. time. For official information in Japan, the Japan Meteorological Agency remains the authority.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "How strong was the earthquake off Japan on November 6?",
+        a: "Magnitude 6.1 (Mww), according to the USGS. It struck at 10:39 UTC (7:39 p.m. local time) on Friday, November 6, 2026, 144 km southeast of Hasaki, Chiba Prefecture.",
+      },
+      {
+        q: "How deep was the Hasaki earthquake?",
+        a: "The USGS puts the depth at 29 km (18 miles). The Japan Meteorological Agency's figure, as reported, is about 10 km — early depth estimates often differ slightly between agencies.",
+      },
+      {
+        q: "Was there a tsunami after the Japan earthquake?",
+        a: "No. The Japan Meteorological Agency issued no tsunami alert, and the USGS event record carries no tsunami flag.",
+      },
+      {
+        q: "Did the earthquake cause any damage?",
+        a: "No damage had been reported as of Friday's coverage. The USGS PAGER alert is green, meaning little or no damage is expected, and 27 people filed felt reports with a maximum reported intensity of 4.2.",
+      },
+      {
+        q: "Were there other big earthquakes today?",
+        a: "Yes — a second magnitude 6.1 struck the Fiji region at 17:21 UTC on November 5, but at 535 km deep it caused no strong surface shaking. The USGS recorded 11 quakes of magnitude 4.5+ worldwide in the 24 hours to 12:22 UTC on November 6.",
+      },
+    ],
+    sources: [
+      {
+        name: "USGS Earthquake Hazards Program — M 6.1, 144 km SE of Hasaki, Japan, event us7000twg9 (reviewed, November 6)",
+        url: "https://earthquake.usgs.gov/earthquakes/eventpage/us7000twg9",
+      },
+      {
+        name: "Orbis Weather — Daily Earthquakes, Storms, Fires & Floods Report, November 6 (USGS catalog roundup)",
+        url: "https://www.orbisweather.com/daily-earthquakes-storms-fires-floods-report-november-6-2026/",
+      },
+      {
+        name: "Earthquake Today — M6.1 earthquake near Hasaki, Japan: USGS telemetry and felt reports (November 6)",
+        url: "https://earthquaketoday.org/japan/hasaki-japan-M6.1-us7000twg9",
+      },
+    ],
+  },
+  {
+    slug: "mt-rose-opening-day-november-6-2026-tahoe-first",
+    title: "Mt. Rose Opens Today: Tahoe's First Resort Starts Its Season at 9 A.M.",
+    seoTitle: "Mt. Rose Opening Day 2026 | WorldEye Blog",
+    date: "2026-11-06",
+    excerpt:
+      "Mt. Rose Ski Tahoe opens for the 2026-27 season today, Friday, November 6 — the first resort in the Lake Tahoe region to welcome skiers this winter. Its own snow report reads 'OPENING DAY TODAY – Nov 6', with the Lakeview Express spinning at 9 a.m. to Kit Carson Traverse, Kit Carson Bowl and Ponderosa.",
+    seoDescription:
+      "Mt. Rose Ski Tahoe opens today, Nov 6, first in the Tahoe region: Lakeview Express 9 a.m.-4 p.m., Kit Carson Bowl and Ponderosa, the resort said.",
+    tags: ["skiing", "mt-rose", "lake-tahoe", "opening-day", "nevada"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "Lake Tahoe's ski season starts this morning. Mt. Rose Ski Tahoe opens for the 2026-27 season today, Friday, November 6, making the Nevada resort the first in the Tahoe region to welcome skiers and snowboarders this winter. The resort's own snow report is unambiguous: 'OPENING DAY TODAY – Nov 6', with the Lakeview Express lifting at 9:00 a.m.",
+          "The opening lands one day after [Mammoth Mountain opened California's season eight days early](/blog/mammoth-mountain-opens-early-november-5-2026) — Mammoth took the West Coast's first chair on Thursday, but Mt. Rose keeps the Tahoe-first title it announced on Monday, 25 minutes from Reno.",
+        ],
+      },
+      {
+        heading: "What is open at Mt. Rose on opening day?",
+        body: [
+          "The Lakeview Express runs from 9 a.m. to 4 p.m., serving Kit Carson Traverse, Kit Carson Bowl and Ponderosa on the Main Lodge side of the mountain — intermediate terrain, including the signature blue-run vertical the resort aimed for. There is no beginner terrain from the Lakeview Express; beginner skiing is limited to the Show-Off area near the Main Lodge, served by the Magic Conveyor lift.",
+          "All parking is at the Main Lodge, and lodge facilities open at 8 a.m. The Lodgepole Cafe, Higher Grounds Coffee Bar and Timbers are open, along with equipment rentals, the tuning center and ski and snowboard lessons. The resort cautions that early-season conditions apply: expect limited terrain, marked and unmarked obstacles, and active snowmaking. The Wildslide Tahoe tubing park stays closed — its planned opening is Thanksgiving Day, November 26.",
+        ],
+      },
+      {
+        heading: "Why can Mt. Rose open so early?",
+        body: [
+          "Altitude. At 8,260 feet, Mt. Rose has the highest base elevation of any resort in the Lake Tahoe region, with north- and east-facing slopes — an advantage the resort credits for its early starts. It began snowmaking in mid-October, and recent natural snowfall supplemented the man-made cover on opening-day terrain.",
+          "The resort says its snowmaking system can provide coverage on up to 28 percent of the mountain, and that it makes snow at every opportunity conditions permit. 'We're excited to get winter started, and to again offer skiers and snowboarders another six-month season,' marketing director Mike Pierce said — Mt. Rose typically operates from early November until almost May, one of the longest seasons in Tahoe, across 1,200 acres of skiable terrain.",
+        ],
+      },
+      {
+        heading: "When do the other Tahoe resorts open?",
+        body: [
+          "Later this month. Most other major Tahoe resorts are targeting openings later in November, including Heavenly and Northstar on November 20 and Palisades Tahoe around Thanksgiving, according to Unofficial Networks' roundup of the region's plans.",
+          "That makes this weekend a two-resort West: Mammoth to the south and Mt. Rose above Reno, with the rest of Tahoe still making snow. Additional Mt. Rose terrain is expected to open as snowmaking continues and conditions permit.",
+        ],
+      },
+      {
+        heading: "Watch the slopes before you go",
+        body: [
+          "Opening-day announcements say a resort is open; the cameras say what it looks like. WorldEye's [ski webcams](/ski-webcams) collection carries resort cameras from the Tahoe region and beyond, and the [2026-27 ski season opening dates guide](/blog/ski-season-opening-dates-2026-27) tracks the resorts still counting down to their own first chairs.",
+          "If you are heading up this morning: lifts spin 9 a.m. to 4 p.m., parking is all at the Main Lodge, and the resort asks season pass holders to confirm their pass status at the Main Lodge scanner before heading to the lift — with the liability waiver completed, or the pass stays blocked.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Is Mt. Rose open today?",
+        a: "Yes. Mt. Rose Ski Tahoe opened for the 2026-27 season on Friday, November 6, 2026. Its snow report reads 'OPENING DAY TODAY – Nov 6', with the Lakeview Express running 9 a.m. to 4 p.m.",
+      },
+      {
+        q: "What trails are open at Mt. Rose on opening day?",
+        a: "Kit Carson Traverse, Kit Carson Bowl and Ponderosa, served by the Lakeview Express, plus the Show-Off beginner area near the Main Lodge served by the Magic Conveyor lift.",
+      },
+      {
+        q: "Is Mt. Rose the first Tahoe resort to open this season?",
+        a: "Yes — it is the first resort in the Lake Tahoe region to open for 2026-27. Mammoth Mountain opened a day earlier, on November 5, but that is south of Tahoe in California's Eastern Sierra.",
+      },
+      {
+        q: "Why does Mt. Rose open earlier than other Tahoe resorts?",
+        a: "Its base elevation of 8,260 feet is the highest in the Tahoe region, and its north- and east-facing slopes hold snowmaking cover well. The resort began snowmaking in mid-October and added recent natural snowfall.",
+      },
+      {
+        q: "Is the Mt. Rose tubing park open?",
+        a: "No. Wildslide Tahoe snow tubing is not opening on November 6; its planned opening date is Thanksgiving Day, November 26.",
+      },
+    ],
+    sources: [
+      {
+        name: "Mt. Rose Ski Tahoe — official snow report and mountain conditions: 'OPENING DAY TODAY – Nov 6' (November 6)",
+        url: "https://skirose.com/snow-report",
+      },
+      {
+        name: "SnowBrains — Mt. Rose, NV, aims to be the first Tahoe resort to open, revealing November 6 opening date (November 3)",
+        url: "https://snowbrains.com/mt-rose-nv-opening-2026/",
+      },
+      {
+        name: "Unofficial Networks — Lake Tahoe ski resort confirms Friday opening (November 3, updated November 4)",
+        url: "https://unofficialnetworks.com/2026/11/03/mt-rose-confirms-first-west-coast-ski-opening-2026/",
+      },
+    ],
+  },
+  {
     slug: "iss-spacewalk-101-final-solar-array-november-5",
     title: "Spacewalk 101 Is Under Way: Astronauts Install the ISS's Eighth and Final Solar Array",
     seoTitle: "ISS Spacewalk 101 Final Array | WorldEye Blog",
