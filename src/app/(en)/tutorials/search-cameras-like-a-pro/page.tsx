@@ -16,7 +16,7 @@ import { Search } from "lucide-react";
 export const metadata: Metadata = {
   title: "How to Search Cameras Like a Pro — WorldEye Tutorial",
   description:
-    "Search WorldEye's 74,229 cameras by place, address or coordinates: how the free camera-open ladder works (5 anonymous, 10 with email, 15 with a free account), what the result type labels mean, and how the Pro filters narrow the catalogue. Plus the free directory pages most people miss.",
+    "Search WorldEye's 74,229 cameras by place, address or coordinates: how the free camera-open ladder works (5 anonymous, 10 in total with a free account), what the result type labels mean, and how the Pro filters narrow the catalogue. Plus the free directory pages most people miss.",
   alternates: { canonical: `${BASE}/tutorials/search-cameras-like-a-pro` },
   openGraph: {
     title: "How to Search Cameras Like a Pro — WorldEye Tutorial",
@@ -59,7 +59,7 @@ const howToJsonLd = {
   "@type": "HowTo",
   name: "How to search WorldEye cameras like a pro",
   description:
-    "Search places, cameras, addresses and coordinates from one box, stretch the free camera-open ladder (5 anonymous, 10 with email, 15 with a free account), read the result type labels, and narrow results with the Pro filters.",
+    "Search places, cameras, addresses and coordinates from one box, stretch the free camera-open ladder (5 anonymous, 10 in total with a free account), read the result type labels, and narrow results with the Pro filters.",
   step: STEPS.map((s, i) => ({
     "@type": "HowToStep",
     position: i + 1,
@@ -70,7 +70,7 @@ const howToJsonLd = {
 
 const INTRO = [
   "WorldEye's catalogue runs to 74,229 cameras, which makes search the skill that decides whether the site feels like a toy or a tool. The good news: one box searches places, cameras, addresses and raw coordinates together, and the free allowance for opening cameras is a three-rung ladder that goes much further than most visitors realise.",
-  "This guide covers the ladder honestly (5 opens anonymously, 10 with an email, 15 with a free account — then, and only then, a Pro suggestion), the result labels that tell you what kind of feed you are about to open, and the filters row — a Pro feature, locked rather than hidden for everyone else. It finishes with the directory pages, the free browsing route most people never find.",
+  "This guide covers the ladder honestly (5 opens anonymously, 10 in total with a free account — then, and only then, a Pro suggestion), the result labels that tell you what kind of feed you are about to open, and the filters row — a Pro feature, locked rather than hidden for everyone else. It finishes with the directory pages, the free browsing route most people never find.",
 ];
 
 const FAQS = [

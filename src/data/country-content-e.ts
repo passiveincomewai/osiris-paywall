@@ -9,14 +9,14 @@ export type CountryContent = {
 export const countryContentE: Record<string, CountryContent> = {
   indonesia: {
     intro: [
-      "Indonesia's 256 cameras cluster on Java, the country's most populous island. Bandung leads with 43 feeds, followed by Yogyakarta (30) and Sleman (22), with smaller clusters in Gunungkidul, Bantul, and Gresik.",
+      "Indonesia's 256 cameras cluster on Java, the country's most populous island. Bandung leads with 89 feeds, followed by Yogyakarta (30) and Sleman (22), with smaller clusters in Gunungkidul, Bantul, and Gresik.",
       "These are working road cameras: toll-road exits like Serang Timur, busy junctions such as Riau Junction in Bandung and Simpang Empat Munggur in Yogyakarta, and the Serpong-Balaraja toll corridor near Jakarta.",
       "If you're driving in West or Central Java, the feeds show live traffic flow at the exact chokepoints that clog at rush hour. Every Indonesian camera streams free on WorldEye.",
-      "Bandung's 43 feeds make it the city to learn first: Riau Junction and the surrounding corridors show the chokepoints that clog at rush hour. Yogyakarta's 30 and Sleman's 22 cover the Central Java side, including Simpang Empat Munggur.",
+      "Bandung's 89 feeds make it the city to learn first: Riau Junction and the surrounding corridors show the chokepoints that clog at rush hour. Yogyakarta's 30 and Sleman's 22 cover the Central Java side, including Simpang Empat Munggur.",
       "The toll roads are the practical core — Serang Timur's exit, the Serpong-Balaraja corridor near Jakarta. Toll traffic moves fast until it doesn't; a camera check before merging on is the whole point of the network.",
     ],
     blurb:
-      "Watch 197 live cameras across Indonesia on WorldEye - Java toll roads and junctions from Bandung to Yogyakarta, streaming free, day and night.",
+      "Watch 256 live cameras across Indonesia on WorldEye - Java toll roads and junctions from Bandung to Yogyakarta, streaming free, day and night.",
     faqs: [
       {
         q: "How many live cameras are there in Indonesia?",
@@ -24,7 +24,7 @@ export const countryContentE: Record<string, CountryContent> = {
       },
       {
         q: "Which Indonesian areas have the most cameras?",
-        a: "Bandung has the most with 43 cameras, followed by Yogyakarta (30) and Sleman (22). Gunungkidul, Bantul, and Gresik add further coverage.",
+        a: "Bandung has the most with 89 cameras, followed by Yogyakarta (30) and Sleman (22). Gunungkidul, Bantul, and Gresik add further coverage.",
       },
       {
         q: "What do Indonesian cameras usually show?",
@@ -32,7 +32,7 @@ export const countryContentE: Record<string, CountryContent> = {
       },
       {
         q: "Can I check Bandung traffic before leaving?",
-        a: "Yes — Bandung's 43 feeds cover junctions like Riau Junction and the surrounding corridors, showing live traffic at the city's chokepoints.",
+        a: "Yes — Bandung's 89 feeds cover junctions like Riau Junction and the surrounding corridors, showing live traffic at the city's chokepoints.",
       },
       {
         q: "Are Jakarta toll roads covered?",
@@ -46,14 +46,14 @@ export const countryContentE: Record<string, CountryContent> = {
   },
   vietnam: {
     intro: [
-      "Vietnam's camera map is dominated by one city: Ho Chi Minh City holds 85 of the country's 324 feeds. Da Nang and several HCMC wards - Ben Nghe, An Phu, Tay Thanh - carry the rest.",
+      "Vietnam's camera map is dominated by one city: Ho Chi Minh City holds 177 of the country's 324 feeds. Da Nang and several HCMC wards - Ben Nghe, An Phu, Tay Thanh - carry the rest.",
       "The feeds are street-level views named for the roads they watch: Hanoi Highway at An Phu, Le Duan and Pham Ngoc Thach in Ben Nghe ward, Tran Hung Dao in Co Giang. They capture the non-stop flow of Vietnam's busiest streets.",
       "For anyone navigating Ho Chi Minh City, these cameras show live conditions on the exact avenues you'll be riding. All Vietnamese feeds stream free on WorldEye.",
-      "Ho Chi Minh City's 85 feeds are the network: learn the ward names and you can navigate by camera. Ben Nghe's Le Duan and Pham Ngoc Thach, An Phu's Hanoi Highway stretch, Co Giang's Tran Hung Dao — each feed is named for the road it watches.",
+      "Ho Chi Minh City's 177 feeds are the network: learn the ward names and you can navigate by camera. Ben Nghe's Le Duan and Pham Ngoc Thach, An Phu's Hanoi Highway stretch, Co Giang's Tran Hung Dao — each feed is named for the road it watches.",
       "Da Nang and the Tay Thanh ward add variety beyond the southern capital, but HCMC is where the action is. The feeds are street-level and always on — check your avenue before braving the motorbike flow.",
     ],
     blurb:
-      "Stream 160 live cameras across Vietnam on WorldEye - Ho Chi Minh City streets and intersections, from Hanoi Highway to Ben Nghe ward, free live.",
+      "Stream 324 live cameras across Vietnam on WorldEye - Ho Chi Minh City streets and intersections, from Hanoi Highway to Ben Nghe ward, free live.",
     faqs: [
       {
         q: "How many live cameras are there in Vietnam?",
@@ -83,14 +83,14 @@ export const countryContentE: Record<string, CountryContent> = {
   },
   russia: {
     intro: [
-      "Russia's 162 cameras lean south and east. Sochi carries the biggest cluster with 46 feeds, while Mezhdurechensk (19) and Astrakhan (18) follow; Moscow has just 7.",
+      "Russia's 162 cameras lean south and east. Sochi carries the biggest cluster with 49 feeds, while Mezhdurechensk (19) and Astrakhan (20) follow; Moscow has just 7.",
       "Many feeds are directional mountain cameras - ski trails near Elbrus, the Gornolyzhnaya runs, and passes around rural settlements - each fixed on a compass view like south-west or north-west.",
       "It's a network for watching weather and snow in the high country as much as city life. Every Russian feed streams free on WorldEye.",
-      "Sochi's 46 feeds are the urban anchor — the Black Sea resort city carries nearly a third of the network. Mezhdurechensk's 19 and Astrakhan's 18 add Siberian and Caspian coverage, while Moscow's 7 are a reminder that this network looks outward, not at the capital.",
+      "Sochi's 49 feeds are the urban anchor — the Black Sea resort city carries nearly a third of the network. Mezhdurechensk's 19 and Astrakhan's 20 add Siberian and Caspian coverage, while Moscow's 7 are a reminder that this network looks outward, not at the capital.",
       "The mountain cameras are the distinctive part: ski trails near Elbrus, the Gornolyzhnaya runs, each locked to a fixed compass view. They are weather instruments as much as cameras — check snow and conditions in the high country live.",
     ],
     blurb:
-      "Watch 152 live cameras across Russia on WorldEye - Sochi views plus mountain and ski-trail feeds with live snow conditions, streaming free, day and night.",
+      "Watch 162 live cameras across Russia on WorldEye - Sochi views plus mountain and ski-trail feeds with live snow conditions, streaming free, day and night.",
     faqs: [
       {
         q: "How many live cameras are there in Russia?",
@@ -98,7 +98,7 @@ export const countryContentE: Record<string, CountryContent> = {
       },
       {
         q: "Are most Russian cameras in Moscow?",
-        a: "No - Sochi leads with 46 feeds, ahead of Mezhdurechensk (19) and Astrakhan (18). Moscow has only 7 cameras in our directory.",
+        a: "No - Sochi leads with 49 feeds, ahead of Mezhdurechensk (19) and Astrakhan (18). Moscow has only 7 cameras in our directory.",
       },
       {
         q: "What do Russian cameras usually show?",
@@ -157,14 +157,14 @@ export const countryContentE: Record<string, CountryContent> = {
   },
   thailand: {
     intro: [
-      "Thailand splits its 118 cameras between island escapes and capital traffic. Ko Samui leads with 18 feeds, Bangkok follows with 10, and Chachoengsao (4) plus Pattaya and Phuket add variety.",
+      "Thailand splits its 118 cameras between island escapes and capital traffic. Ko Samui leads with 17 feeds, Bangkok follows with 10, and Chachoengsao (4) plus Pattaya and Phuket add variety.",
       "In Bangkok the feeds watch toll ways like Don Muang-Vibhavadi and road junctions in Chachoengsao, while elsewhere cameras sit on bridges - Khlong Wang Kian and Wat Yang Khom in Nakhon Si Thammarat.",
       "Check the capital's traffic or preview an island day from the same directory. Every Thai feed streams free on WorldEye.",
-      "Ko Samui's 18 feeds are the island half: check the day before you go, not from the beach. Bangkok's 10 are the working half — the Don Muang-Vibhavadi toll way and Chachoengsao junctions show the capital's traffic as it happens.",
+      "Ko Samui's 17 feeds are the island half: check the day before you go, not from the beach. Bangkok's 10 are the working half — the Don Muang-Vibhavadi toll way and Chachoengsao junctions show the capital's traffic as it happens.",
       "The bridge cameras are the quiet surprise: Khlong Wang Kian and Wat Yang Khom in Nakhon Si Thammarat watch the waterways. Pattaya and Phuket add coastal variety to round out the six areas.",
     ],
     blurb:
-      "Watch 60 live cameras across Thailand on WorldEye - Ko Samui island views and Bangkok toll-way traffic, streaming free, day and night, on any device.",
+      "Watch 118 live cameras across Thailand on WorldEye - Ko Samui island views and Bangkok toll-way traffic, streaming free, day and night, on any device.",
     faqs: [
       {
         q: "How many live cameras are there in Thailand?",
@@ -172,7 +172,7 @@ export const countryContentE: Record<string, CountryContent> = {
       },
       {
         q: "Which Thai areas have the most cameras?",
-        a: "Ko Samui leads with 18 cameras, followed by Bangkok (10) and Chachoengsao (4). Pattaya, Phuket, and Nakhon Si Thammarat add further feeds.",
+        a: "Ko Samui leads with 17 cameras, followed by Bangkok (10) and Chachoengsao (4). Pattaya, Phuket, and Nakhon Si Thammarat add further feeds.",
       },
       {
         q: "Can I see Thai islands live on WorldEye?",
@@ -180,7 +180,7 @@ export const countryContentE: Record<string, CountryContent> = {
       },
       {
         q: "Can I preview Ko Samui before traveling?",
-        a: "Yes — 18 feeds cover the island, the most in Thailand's network. Check conditions before you book or fly.",
+        a: "Yes — 17 feeds cover the island, the most in Thailand's network. Check conditions before you book or fly.",
       },
       {
         q: "Can I check Bangkok toll traffic live?",
@@ -201,7 +201,7 @@ export const countryContentE: Record<string, CountryContent> = {
       "This is a network for watching light and weather, not traffic. The Saltstraumen strait, Kråkenes lighthouse, Beitostølen's ski slopes — check Arctic conditions live, or just watch the far north do what it does.",
     ],
     blurb:
-      "Explore 48 live cameras across Norway on WorldEye - Geirangerfjord, Lofoten, and Nordkapp scenic feeds with live Arctic weather, free to watch.",
+      "Explore 746 live cameras across Norway on WorldEye - Geirangerfjord, Lofoten, and Nordkapp scenic feeds with live Arctic weather, free to watch.",
     faqs: [
       {
         q: "How many live cameras are there in Norway?",
@@ -275,7 +275,7 @@ export const countryContentE: Record<string, CountryContent> = {
       "The rest is a highlights reel — the Promenade des Anglais in Nice, Lac du Bourget, a Porto-Vecchio beach in Corsica, single feeds in Marseille, Fréjus, La Rochelle, and Royan. Small network, high scenery per camera.",
     ],
     blurb:
-      "Explore 40 live cameras across France on WorldEye - Alpine passes, the Nice promenade, and a Corsican beach, all streaming free, day and night.",
+      "Explore 51 live cameras across France on WorldEye - Alpine passes, the Nice promenade, and a Corsican beach, all streaming free, day and night.",
     faqs: [
       {
         q: "How many live cameras are there in France?",
@@ -312,7 +312,7 @@ export const countryContentE: Record<string, CountryContent> = {
       "The Nemira ski slope feed at Slanic-Moldova is the dedicated snow camera; Bucharest's pair (including the University of Economic Studies area), Sacele's 2, and the singles at Târgoviște and Tei round out the 29.",
     ],
     blurb:
-      "Watch 37 live cameras across Romania on WorldEye - Carpathian resort towns like Brasov and Predeal plus Bucharest streets, free to watch, day and night.",
+      "Watch 29 live cameras across Romania on WorldEye - Carpathian resort towns like Brasov and Predeal plus Bucharest streets, free to watch, day and night.",
     faqs: [
       {
         q: "How many live cameras are there in Romania?",
@@ -349,7 +349,7 @@ export const countryContentE: Record<string, CountryContent> = {
       "The Santa Catarina beaches are the practical half: Central Beach, Estaleiro, and Praia Brava, plus Balneario Camboriu's 4, Guaruja, and Porto Seguro. Check surf and sand before heading out; Manaus's 3 add an Amazon counterpoint.",
     ],
     blurb:
-      "Explore 36 live cameras across Brazil on WorldEye - Rio's Christ the Redeemer, Santa Catarina beaches, and Manaus views, free to watch, day and night.",
+      "Explore 38 live cameras across Brazil on WorldEye - Rio's Christ the Redeemer, Santa Catarina beaches, and Manaus views, free to watch, day and night.",
     faqs: [
       {
         q: "How many live cameras are there in Brazil?",
@@ -386,7 +386,7 @@ export const countryContentE: Record<string, CountryContent> = {
       "Inland, Dimitrovgrad's 3 and the Karnobat agriculture institute feed are the non-beach exceptions; Sofia and Kiten add 2 each. But this is a summer-holiday network first — the Black Sea is the point.",
     ],
     blurb:
-      "Watch 35 live cameras across Bulgaria on WorldEye - Black Sea beach resorts from Sunny Beach to Primorsko, streaming free live, day and night.",
+      "Watch 33 live cameras across Bulgaria on WorldEye - Black Sea beach resorts from Sunny Beach to Primorsko, streaming free live, day and night.",
     faqs: [
       {
         q: "How many live cameras are there in Bulgaria?",
@@ -460,7 +460,7 @@ export const countryContentE: Record<string, CountryContent> = {
       "There is no Manila coverage in this index - all 27 feeds sit in Davao or at Bulusan. What the network lacks in spread it makes up for in focus: one city, watched closely, plus a volcano. Every Philippine feed streams free on WorldEye.",
     ],
     blurb:
-      "Watch 25 live cameras across the Philippines on WorldEye - Davao City streets in Agdao and Leon Garcia plus a Bulusan Volcano watch, free live.",
+      "Watch 27 live cameras across the Philippines on WorldEye - Davao City streets in Agdao and Leon Garcia plus a Bulusan Volcano watch, free live.",
     faqs: [
       {
         q: "How many live cameras are there in the Philippines?",
@@ -497,7 +497,7 @@ export const countryContentE: Record<string, CountryContent> = {
       "Write Greece down as scenery, not surveillance: 27 feeds built for checking sea, sky, and beach conditions before a trip - or for five minutes of Aegean from your desk. All Greek feeds stream free on WorldEye.",
     ],
     blurb:
-      "Explore 22 live cameras across Greece on WorldEye - scenic island feeds from Oia Santorini to Rhodes beaches and Ios, free to watch, day and night.",
+      "Explore 27 live cameras across Greece on WorldEye - scenic island feeds from Oia Santorini to Rhodes beaches and Ios, free to watch, day and night.",
     faqs: [
       {
         q: "How many live cameras are there in Greece?",
@@ -534,7 +534,7 @@ export const countryContentE: Record<string, CountryContent> = {
       "Coverage is thin by design of the source feeds, not by choice - 22 cameras spread over a mountainous country means each feed stands alone. Treat the network as a set of windows: a capital square, a lake shore, a ski slope, a gorge. All Kyrgyz feeds stream free on WorldEye.",
     ],
     blurb:
-      "Watch 21 live cameras across Kyrgyzstan on WorldEye - Bishkek Ala-Too Square, Issyk-Kul lake shores and mountain feeds, streaming free live.",
+      "Watch 22 live cameras across Kyrgyzstan on WorldEye - Bishkek Ala-Too Square, Issyk-Kul lake shores and mountain feeds, streaming free live.",
     faqs: [
       {
         q: "How many live cameras are there in Kyrgyzstan?",

@@ -9,14 +9,14 @@ export type CountryContent = {
 export const countryContentD: Record<string, CountryContent> = {
   taiwan: {
     intro: [
-      "Taiwan packs 3,243 live cameras into a compact island, and Taichung is the standout with 189 feeds - more than Taipei's 169 or Taoyuan's 122. A further 1,529 sit under a general Taiwan listing, with Yunlin and Tainan adding regional depth.",
+      "Taiwan packs 3,243 live cameras into a compact island, and Taichung is the standout with 219 feeds - more than Taipei's 194 or Taoyuan's 142. A further 1,518 sit under a general Taiwan listing, with Yunlin and Tainan adding regional depth.",
       "These are working street cameras, not tourist views. Feeds labeled like Taichung city roads sit at intersections - Taiyuan Road, Zhongqing Road, Minquan Road - showing live vehicle flow in both directions.",
       "For anyone navigating a Taiwanese city, that is genuinely useful: check congestion before you leave, free on WorldEye, any time of day.",
-      "The 1,529 feeds under the general Taiwan listing are worth knowing about: they are the long tail of the network beyond the big three cities. If you are in Yunlin or Tainan, start there rather than assuming your area is uncovered.",
+      "The 1,518 feeds under the general Taiwan listing are worth knowing about: they are the long tail of the network beyond the big three cities. If you are in Yunlin or Tainan, start there rather than assuming your area is uncovered.",
       "The bilingual labels are genuinely helpful — a feed reading Taiyuan Road and East Huanzhong Road tells you the exact junction in both Chinese and English. Match the label to your route and you are watching the right intersection, not guessing.",
     ],
     blurb:
-      "Watch 2,779 live cameras across Taiwan on WorldEye - intersection and road feeds from Taichung, Taipei, and Taoyuan, streaming free around the clock.",
+      "Watch 3,243 live cameras across Taiwan on WorldEye - intersection and road feeds from Taichung, Taipei, and Taoyuan, streaming free around the clock.",
     faqs: [
       {
         q: "How many live cameras are there in Taiwan?",
@@ -24,7 +24,7 @@ export const countryContentD: Record<string, CountryContent> = {
       },
       {
         q: "Which Taiwanese cities have the most cameras?",
-        a: "Taichung leads with 189 feeds, ahead of Taipei (169) and Taoyuan (122). Another 1,529 feeds sit under a general Taiwan listing, with Yunlin and Tainan adding coverage.",
+        a: "Taichung leads with 219 feeds, ahead of Taipei (194) and Taoyuan (142). Another 1,518 feeds sit under a general Taiwan listing, with Yunlin and Tainan adding coverage.",
       },
       {
         q: "What do the Taiwanese camera names mean?",
@@ -32,7 +32,7 @@ export const countryContentD: Record<string, CountryContent> = {
       },
       {
         q: "I am not in Taipei — will I find cameras near me?",
-        a: "Probably. Beyond Taichung (189), Taipei (169) and Taoyuan (122), another 1,529 feeds sit under a general Taiwan listing, with Yunlin and Tainan adding regional depth.",
+        a: "Probably. Beyond Taichung (219), Taipei (194) and Taoyuan (142), another 1,518 feeds sit under a general Taiwan listing, with Yunlin and Tainan adding regional depth.",
       },
       {
         q: "Are the cameras live around the clock?",
@@ -53,7 +53,7 @@ export const countryContentD: Record<string, CountryContent> = {
       "For the beach cameras, mornings are the honest hour: Playa de Levante and Playa de Poniente show how busy Benidorm really is, Playa Los Pocillos shows Lanzarote's conditions, and San Telmo shows Tenerife's surf. Check before you pack the beach bag — the camera does not flatter.",
     ],
     blurb:
-      "Watch 1,997 live cameras across Spain on WorldEye - Madrid traffic, Valencia streets, and live beach views from Benidorm to Tenerife, free day and night.",
+      "Watch 2,120 live cameras across Spain on WorldEye - Madrid traffic, Valencia streets, and live beach views from Benidorm to Tenerife, free day and night.",
     faqs: [
       {
         q: "How many live cameras are there in Spain?",
@@ -90,7 +90,7 @@ export const countryContentD: Record<string, CountryContent> = {
       "For Alpine driving, these are a pre-trip tool: check the corridor before a cross-border run, especially in winter when passes slow down. They show traffic flow through the mountains as it is happening, free on WorldEye.",
     ],
     blurb:
-      "Watch 1,828 live cameras listed for Austria on WorldEye - motorway and Alpine corridor feeds, including the A1/E57 route, streaming free and live.",
+      "Watch 1,725 live cameras listed for Austria on WorldEye - motorway and Alpine corridor feeds, including the A1/E57 route, streaming free and live.",
     faqs: [
       {
         q: "How many live cameras are there in Austria?",
@@ -120,14 +120,14 @@ export const countryContentD: Record<string, CountryContent> = {
   },
   canada: {
     intro: [
-      "Canada's 4,685 cameras are a winter driver's best friend. Ottawa leads with 428 feeds, Toronto follows with 339, and Quebec (180) plus Montreal (148) anchor the east.",
+      "Canada's 4,685 cameras are a winter driver's best friend. Ottawa leads with 444 feeds, Toronto follows with 413, and Quebec (179) plus Montreal (146) anchor the east.",
       "The network speaks French on the autoroutes: Aut. 73 around Levis, Aut. 55 through Mauricie, Route 132 along the Gaspe coast. Each feed shows live road and weather conditions.",
       "Six areas in all, from Edmonton to the Maritimes, and every one streams free on WorldEye - check before you drive, especially from November to April.",
-      "Ottawa's 428 feeds make it the densest cluster — the capital's winter is the reason. Toronto's 339 cover the country's busiest urban highways, while Quebec's 180 and Montreal's 148 watch the French-language autoroute network: Aut. 73 around Levis, Aut. 55 through Mauricie, Route 132 along the Gaspe coast.",
+      "Ottawa's 444 feeds make it the densest cluster — the capital's winter is the reason. Toronto's 413 cover the country's busiest urban highways, while Quebec's 179 and Montreal's 146 watch the French-language autoroute network: Aut. 73 around Levis, Aut. 55 through Mauricie, Route 132 along the Gaspe coast.",
       "From November to April these cameras are essential equipment, not a novelty. Check your autoroute before a winter drive — the feeds show snow, ice, and plow progress live — and remember Edmonton and the Maritimes round out the six areas if you are out west or east.",
     ],
     blurb:
-      "Watch 1,509 live cameras across Canada on WorldEye - Ottawa and Toronto feeds plus Quebec autoroute cameras with live winter road conditions, free.",
+      "Watch 4,685 live cameras across Canada on WorldEye - Ottawa and Toronto feeds plus Quebec autoroute cameras with live winter road conditions, free.",
     faqs: [
       {
         q: "How many live cameras are there in Canada?",
@@ -135,7 +135,7 @@ export const countryContentD: Record<string, CountryContent> = {
       },
       {
         q: "Which Canadian areas have the most cameras?",
-        a: "Ottawa leads with 428 cameras, followed by Toronto (339), Quebec (180), and Montreal (148).",
+        a: "Ottawa leads with 444 cameras, followed by Toronto (413), Quebec (179), and Montreal (146).",
       },
       {
         q: "Can I check Canadian winter road conditions live?",
@@ -143,7 +143,7 @@ export const countryContentD: Record<string, CountryContent> = {
       },
       {
         q: "Which city has the most cameras in Canada?",
-        a: "Ottawa, with 428 feeds — the densest cluster in the country — followed by Toronto (339), Quebec (180), and Montreal (148).",
+        a: "Ottawa, with 444 feeds — the densest cluster in the country — followed by Toronto (413), Quebec (179), and Montreal (146).",
       },
       {
         q: "Can I check Quebec autoroutes in French?",
@@ -157,14 +157,14 @@ export const countryContentD: Record<string, CountryContent> = {
   },
   italy: {
     intro: [
-      "Italy is organized the way Italians drive: by autostrada. Of 1,030 cameras, the A1 Milano-Napoli carries 268 feeds, the A14 Bologna-Taranto 219, and the A56 Naples ring road another 57.",
+      "Italy is organized the way Italians drive: by autostrada. Of 1,030 cameras, the A1 Milano-Napoli carries 271 feeds, the A14 Bologna-Taranto 219, and the A56 Naples ring road another 57.",
       "Zoom out and the whole spine appears - the A4 toward Brescia, the A12 from Genoa to Rome, the A26 through the northwest - each feed pinned to a kilometer marker or interchange.",
       "Planning the drive from Milan to Naples? Watch the road live first. All feeds stream free on WorldEye.",
-      "The A1 and A14 together carry nearly half the network — 268 and 219 feeds respectively — which means the Milan-Naples spine and the Adriatic corridor are the best-covered drives in the country. The A56 Naples ring road's 57 feeds handle the chaos around Naples itself.",
+      "The A1 and A14 together carry nearly half the network — 271 and 220 feeds respectively — which means the Milan-Naples spine and the Adriatic corridor are the best-covered drives in the country. The A56 Naples ring road's 60 feeds handle the chaos around Naples itself.",
       "Use the kilometer markers: each feed is pinned to a marker or interchange, so match the camera to your route before a long drive. The A4 toward Brescia, the A12 from Genoa to Rome, and the A26 through the northwest fill out the rest of the map.",
     ],
     blurb:
-      "Watch 993 live cameras across Italy on WorldEye - autostrada feeds from the A1 Milano-Napoli and A14 Bologna-Taranto, streaming free and live.",
+      "Watch 1,030 live cameras across Italy on WorldEye - autostrada feeds from the A1 Milano-Napoli and A14 Bologna-Taranto, streaming free and live.",
     faqs: [
       {
         q: "How many live cameras are there in Italy?",
@@ -172,7 +172,7 @@ export const countryContentD: Record<string, CountryContent> = {
       },
       {
         q: "Which Italian routes have the most cameras?",
-        a: "The A1 Milano-Napoli leads with 268 cameras, followed by the A14 Bologna-Taranto (219). The A56 Naples ring road, A4, A26, and A12 add further coverage.",
+        a: "The A1 Milano-Napoli leads with 271 cameras, followed by the A14 Bologna-Taranto (220). The A56 Naples ring road, A4, A26, and A12 add further coverage.",
       },
       {
         q: "Can I check autostrada traffic before driving in Italy?",
@@ -180,11 +180,11 @@ export const countryContentD: Record<string, CountryContent> = {
       },
       {
         q: "I'm driving Milan to Naples — can I check the road?",
-        a: "Yes — the A1 Milano-Napoli carries 268 feeds pinned to kilometer markers and interchanges, so you can watch your route live before leaving.",
+        a: "Yes — the A1 Milano-Napoli carries 271 feeds pinned to kilometer markers and interchanges, so you can watch your route live before leaving.",
       },
       {
         q: "What about the Adriatic coast route?",
-        a: "The A14 Bologna-Taranto has 219 feeds covering the Adriatic corridor, plus the A56 Naples ring road (57) if you are heading around Naples.",
+        a: "The A14 Bologna-Taranto has 220 feeds covering the Adriatic corridor, plus the A56 Naples ring road (57) if you are heading around Naples.",
       },
       {
         q: "Do the cameras show exact locations?",
@@ -234,11 +234,11 @@ export const countryContentD: Record<string, CountryContent> = {
       "Sweden splits its 1,569 cameras between asphalt and altitude. Vastra Gotaland has 361, Stockholm 335, Skane 74, and Halland 43.",
       "Road feeds cover tunnels like Marieholmstunneln and motorway ramps - but then the network climbs: Salen's Gustavbacken slope, the Bjorkliden hotel in Lapland, even a thermal camera streaming in Skane.",
       "Check winter roads or just watch the snow fall in the north. All 1,569 are free on WorldEye.",
-      "Vastra Gotaland's 361 feeds just edge out Stockholm's 335 — between them they cover the country's two big urban regions, including tunnels like Marieholmstunneln and the motorway ramps around Gothenburg and the capital. Skane's 74 and Halland's 43 handle the south.",
+      "Vastra Gotaland's 317 feeds just edge out Stockholm's 335 — between them they cover the country's two big urban regions, including tunnels like Marieholmstunneln and the motorway ramps around Gothenburg and the capital. Skane's 74 and Halland's 43 handle the south.",
       "Then the network does something unexpected: it climbs. Salen's Gustavbacken slope, the Bjorkliden hotel in Lapland, even a thermal camera in Skane — check ski conditions or northern snow live, or just watch a Lapland winter from somewhere warm.",
     ],
     blurb:
-      "Stream 886 live cameras across Sweden on WorldEye - Stockholm traffic, Gotaland highways, Salen ski slopes and Lapland views, free day and night.",
+      "Stream 1,569 live cameras across Sweden on WorldEye - Stockholm traffic, Gotaland highways, Salen ski slopes and Lapland views, free day and night.",
     faqs: [
       {
         q: "How many live cameras are there in Sweden?",
@@ -246,7 +246,7 @@ export const countryContentD: Record<string, CountryContent> = {
       },
       {
         q: "Which Swedish areas have the most cameras?",
-        a: "Vastra Gotaland leads with 361 cameras, just ahead of Stockholm (335). Skane (74) and Halland (43) follow.",
+        a: "Stockholm leads with 350 cameras, just ahead of Vastra Gotaland (317). Skane (74) and Halland (39) follow.",
       },
       {
         q: "Are Swedish cameras useful for skiers?",
@@ -254,7 +254,7 @@ export const countryContentD: Record<string, CountryContent> = {
       },
       {
         q: "Can I check Stockholm traffic live?",
-        a: "Yes — Stockholm's 335 feeds cover the capital's motorways and tunnels, including Marieholmstunneln.",
+        a: "Yes — Stockholm's 350 feeds cover the capital's motorways and tunnels, including Marieholmstunneln.",
       },
       {
         q: "What is the thermal camera in Skane?",
@@ -268,14 +268,14 @@ export const countryContentD: Record<string, CountryContent> = {
   },
   finland: {
     intro: [
-      "Finland does things simply: 813 of its 825 cameras sit under one national listing. The feed names read like codes - vt12 near Lahti, vt7 at Vaalimaa, vt14 at Savonlinna - because these are highway cameras, full stop.",
+      "Finland does things simply: 816 of its 825 cameras sit under one national listing. The feed names read like codes - vt12 near Lahti, vt7 at Vaalimaa, vt14 at Savonlinna - because these are highway cameras, full stop.",
       "They watch the roads Finns actually drive: past Lahti, through the Vaalimaa tunnel at the Russian border, over the Laitaatsalmi bridge.",
       "In a country with a five-month winter, live road conditions are not a novelty - they are essential. Free on WorldEye.",
       "The feed names are codes because the audience is drivers: vt12 near Lahti, vt7 at Vaalimaa, vt14 at Savonlinna. Learn the handful on your regular routes — past Lahti, through the Vaalimaa tunnel at the Russian border, over the Laitaatsalmi bridge — and you have a live road report.",
       "Five months of winter is the whole point of this network. Ice, snow, darkness, and plows: the cameras show all of it on the highways Finns actually drive. The few city feeds in Helsinki, Kuopio, Levi, and Rovaniemi are a bonus — the highways are the main event.",
     ],
     blurb:
-      "Watch 818 live cameras across Finland on WorldEye - national highway feeds with live winter road conditions from Lahti to Vaalimaa, streaming free.",
+      "Watch 825 live cameras across Finland on WorldEye - national highway feeds with live winter road conditions from Lahti to Vaalimaa, streaming free.",
     faqs: [
       {
         q: "How many live cameras are there in Finland?",
@@ -312,7 +312,7 @@ export const countryContentD: Record<string, CountryContent> = {
       "For Ring Road trips, work outward from the clusters: Strandarheidi, Skeidavegamot, Arnarneshed and the rest trace the routes visitors actually drive. Weather moves fast here — a camera check the morning of your drive beats any forecast.",
     ],
     blurb:
-      "Explore 496 live cameras across Iceland on WorldEye - Ring Road weather, mountain passes, and tunnel feeds, streaming live and free day and night.",
+      "Explore 482 live cameras across Iceland on WorldEye - Ring Road weather, mountain passes, and tunnel feeds, streaming live and free day and night.",
     faqs: [
       {
         q: "How many live cameras are there in Iceland?",
@@ -349,7 +349,7 @@ export const countryContentD: Record<string, CountryContent> = {
       "This is a network with one job: the Vilnius-Kaunas corridor, the border crossings, the key interchanges. Check before you drive, especially in winter when Baltic roads ice over. Small, focused, and free.",
     ],
     blurb:
-      "Watch 316 live cameras across Lithuania on WorldEye - highway junction feeds on the A1, A5, and A7 corridors, streaming free live road views.",
+      "Watch 326 live cameras across Lithuania on WorldEye - highway junction feeds on the A1, A5, and A7 corridors, streaming free live road views.",
     faqs: [
       {
         q: "How many live cameras are there in Lithuania?",
@@ -386,7 +386,7 @@ export const countryContentD: Record<string, CountryContent> = {
       "Rotterdam's 6 feeds are the urban counterweight, but the soul of this network is water: Scheveningen's surf pavilions, the sailing clubs at Loosdrecht and Almere, Volendam's harbor, the Scheldt at Vlissingen. Check sea state before sailing, or just watch the weather come in off the North Sea.",
     ],
     blurb:
-      "Stream 268 live cameras across the Netherlands on WorldEye - Texel beaches, Frisian island harbors, and Amsterdam-area views, free to watch live.",
+      "Stream 246 live cameras across the Netherlands on WorldEye - Texel beaches, Frisian island harbors, and Amsterdam-area views, free to watch live.",
     faqs: [
       {
         q: "How many live cameras are there in the Netherlands?",
@@ -423,7 +423,7 @@ export const countryContentD: Record<string, CountryContent> = {
       "Timing matters with motorway cameras. They earn their keep during Sydney’s weekday peak hours, when the M4 and Hume Highway slow down, and after heavy rain when low-lying sections can flood. Outside those windows they are a quiet way to watch the harbor city move.",
     ],
     blurb:
-      "Watch 250 live cameras across Australia on WorldEye - Sydney motorway feeds on the M4, Hume Highway, and Pacific Highway, streaming free live.",
+      "Watch 421 live cameras across Australia on WorldEye - Sydney motorway feeds on the M4, Hume Highway, and Pacific Highway, streaming free live.",
     faqs: [
       {
         q: "How many live cameras are there in Australia?",
