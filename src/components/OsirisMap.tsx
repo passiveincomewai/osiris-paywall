@@ -34,6 +34,7 @@ import {
   type FlightFollowState, type FollowHudData, type FollowMode, type SavedCameraState,
 } from '@/lib/flights/follow';
 import { basemapView, syncDayOverlay, terminatorVisible, type BasemapMode } from '@/lib/basemap-mode';
+import { BASEMAP_STYLE } from '@/lib/basemap-style';
 import {
   createSatelliteOverlayState, syncSatelliteOverlay, LATEST_SELECTION,
   handleSatelliteSourceData, isSatelliteOverlayLoadPending, preconnectWaybackOrigin,
@@ -1445,9 +1446,15 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
     
-    // Select basemap style
-    const styleUrl = 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json';
-
+    // Basemap style: our own dark style on the keyless OpenFreeMap
+    // vector source (lib/basemap-style). CARTO's hosted Dark Matter
+    // style was removed 2026-11-07: its keyless tile access closed
+    // (the tile proxy began receiving HTTP 403 from CARTO), the style
+    // never finished loading and the globe rendered black in every
+    // mode. The new style is an inline object — no style-URL fetch —
+    // and its tiles/glyphs load direct from tiles.openfreemap.org
+    // (CORS *), the same direct path the Esri overlays have always
+    // used, so no transformRequest proxying remains here.
     const container = containerRef.current;
     maplibregl.setWorkerUrl(`/vendor/maplibre/${maplibregl.getVersion()}/maplibre-gl-worker.mjs`);
     /* Open on the whole globe, turned to the viewer's side of it. The UTC
@@ -1457,28 +1464,23 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     const facingLng = Math.max(-180, Math.min(180, -new Date().getTimezoneOffset() / 4));
     const baseOptions = {
       container,
-      style: styleUrl,
+      style: BASEMAP_STYLE,
       center: [facingLng, 20] as [number, number], zoom: 1.8, minZoom: 1.5, maxZoom: 18,
-      /* The basemap is CARTO's, drawn from OpenStreetMap, and the places on it
-         are searched and named through OpenStreetMap too. Both have to be
-         credited on the map itself; this was switched off, which is half of
-         what Nominatim's operators asked us to put right (issue #16). It is
+      /* The basemap is drawn from OpenStreetMap (OpenMapTiles schema,
+         served by OpenFreeMap), and the places on it are searched and
+         named through OpenStreetMap too. Both have to be credited on
+         the map itself; this was switched off, which is half of what
+         Nominatim's operators asked us to put right (issue #16). It is
          collapsed by default so it costs a corner icon, not the view. */
       attributionControl: {
         compact: true,
-        // The style credits CARTO and OSM for the map; this credits OSM for the
-        // search results, place names and pins that come from Nominatim.
+        // The basemap source credits OSM, OpenMapTiles and OpenFreeMap
+        // for the map (via its TileJSON attribution); this credits OSM
+        // for the search results, place names and pins that come from
+        // Nominatim.
         customAttribution: 'Geocoding © OpenStreetMap contributors',
       } as const,
       maxPitch: 85,
-      transformRequest: (url: string) => {
-        // Route all CARTO CDN requests through the internal Next.js proxy API
-        if (url.includes('cartocdn.com')) {
-          const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
-          return { url: `${baseUrl}/api/proxy-tiles?url=${encodeURIComponent(url)}` };
-        }
-        return { url };
-      },
     };
 
     // MapLibre asks for a high-performance WebGL2 context and throws outright if it
@@ -5093,7 +5095,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
   }, [mapReady, (activeLayers as any).street_level, setGeo]);
 
   // Traffic — SIMULATED vehicles on the basemap's own OSM road geometry.
-  // Roads are extracted from the CARTO `transportation` source-layer of
+  // Roads are extracted from the basemap's `transportation` source-layer of
   // the tiles the basemap already loaded (querySourceFeatures — no second
   // tile source, zero extra network, no Overpass). The engine is pure
   // (lib/traffic); this effect owns the clock, rebuild triggers, the
@@ -5132,15 +5134,15 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
       && (window.innerWidth < 768 || (window.innerHeight < 500 && window.innerWidth < 1024));
     const ratioFor = (road: any) => effectiveRatio(road, new Date(), trafficFlowRef.current?.ratios);
 
-    // Where the basemap keeps its roads. CARTO's current dark-matter
-    // style is Protomaps-based: source `protomaps`, source-layer
-    // `roads` (properties translated by adaptBasemapRoadFeatures). The
-    // legacy OpenMapTiles pairing (`carto` / `transportation`) is kept
-    // as a fallback so an upstream style change in either direction
-    // degrades to "whichever source actually exists" instead of the
-    // silent empty extraction that killed this layer: querying a
-    // missing source throws into rebuild's catch and reads as "no
-    // roads in view" forever.
+    // Where the basemap keeps its roads. The loaded style is our own
+    // (lib/basemap-style, OpenFreeMap tiles): the OpenMapTiles pairing
+    // — source `carto`, source-layer `transportation`, whose features
+    // carry the `class` property adaptBasemapRoadFeatures passes
+    // straight through. The Protomaps pairing is kept as a fallback so
+    // a future style change in either direction degrades to "whichever
+    // source actually exists" instead of the silent empty extraction
+    // that killed this layer: querying a missing source throws into
+    // rebuild's catch and reads as "no roads in view" forever.
     const roadSourceCandidates = [
       { source: 'protomaps', sourceLayer: 'roads' },
       { source: 'carto', sourceLayer: 'transportation' },
@@ -6189,26 +6191,26 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
 
     try {
       if (enabled) {
-        // The loaded basemap style is CARTO's Protomaps-based build: its
-        // only vector source is `protomaps` (carto.streets v2 tiles) and
-        // the buildings live in its `buildings` source-layer, carrying
-        // Protomaps-schema `height` / `min_height` properties (verified
-        // against a live z15 tile, 2026-10-31). The old OpenMapTiles
-        // pairing (source `carto`, layer `building`, render_height)
-        // names a source the style no longer contains. No second
-        // worldwide vector source is needed.
+        // The loaded basemap style is our own (lib/basemap-style,
+        // OpenFreeMap tiles): its only vector source is `carto` and the
+        // buildings live in the OpenMapTiles `building` source-layer,
+        // carrying `render_height` / `render_min_height` properties
+        // (verified against a live OpenFreeMap z14 tile, 2026-11-07).
+        // The Protomaps-era `height` / `min_height` names stay as
+        // coalesce fallbacks. No second worldwide vector source is
+        // needed.
 
         // ── 3D BUILDING EXTRUSION LAYER ──
         if (!map.getLayer('osiris-3d-buildings')) {
           map.addLayer({
             id: 'osiris-3d-buildings',
-            source: 'protomaps',
-            'source-layer': 'buildings',
+            source: 'carto',
+            'source-layer': 'building',
             type: 'fill-extrusion',
             minzoom: 14.5,
             paint: {
               'fill-extrusion-color': [
-                'interpolate', ['linear'], ['coalesce', ['get', 'height'], 12],
+                'interpolate', ['linear'], ['coalesce', ['get', 'render_height'], ['get', 'height'], 12],
                 0, '#1a1a2e',
                 20, '#16213e',
                 50, '#0f3460',
@@ -6218,12 +6220,12 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
               'fill-extrusion-height': [
                 'interpolate', ['linear'], ['zoom'],
                 14.5, 0,
-                15.5, ['coalesce', ['get', 'height'], 12]
+                15.5, ['coalesce', ['get', 'render_height'], ['get', 'height'], 12]
               ],
               'fill-extrusion-base': [
                 'interpolate', ['linear'], ['zoom'],
                 14.5, 0,
-                15.5, ['coalesce', ['get', 'min_height'], 0]
+                15.5, ['coalesce', ['get', 'render_min_height'], ['get', 'min_height'], 0]
               ],
               'fill-extrusion-opacity': [
                 'interpolate', ['linear'], ['zoom'],
@@ -6250,7 +6252,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
 
   // Satellite / Dark switching + the Wayback time slider.
   // lib/wayback-imagery owns the overlay: the satellite raster
-  // rides as a source on the CARTO style (never a style swap), the
+  // rides as a source on the base style (never a style swap), the
   // layer's visibility follows the switch, and a slider step loads
   // the target vintage on a standby source and crossfades it in
   // once loaded — the displayed imagery is never reloaded in place
@@ -6334,7 +6336,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     return () => { map.off('sourcedata', handler); };
   }, [mapReady]);
 
-  // Day / Night basemap — the light CARTO raster rides as an overlay on
+  // Day / Night basemap — the light Esri raster rides as an overlay on
   // the exact pattern the satellite view above established (this map
   // never setStyle-swaps; a swap would wipe the custom sources built at
   // load). Satellite view overrides it while active; turning satellite

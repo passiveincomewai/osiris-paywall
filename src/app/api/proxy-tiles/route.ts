@@ -8,10 +8,20 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // Only allow cartocdn.com domains to prevent open proxy abuse
+    // Only allow known basemap tile hosts to prevent open proxy abuse:
+    // tiles.openfreemap.org serves the globe's basemap (lib/basemap-style
+    // — its assets are fetched direct by the browser today, but the
+    // proxy path stays available for them); cartocdn.com remains for
+    // the mini maps that still point at CARTO's style while they are
+    // migrated. This route must stay UNGATED — gating it is what caused
+    // the 2026-10-10 black globe.
     const targetUrl = new URL(url);
     const host = targetUrl.hostname.toLowerCase();
-    if (host !== 'cartocdn.com' && !host.endsWith('.cartocdn.com')) {
+    const allowed =
+      host === 'tiles.openfreemap.org' ||
+      host === 'cartocdn.com' ||
+      host.endsWith('.cartocdn.com');
+    if (!allowed) {
       return NextResponse.json({ error: 'Forbidden domain' }, { status: 403 });
     }
 

@@ -1,8 +1,11 @@
 /**
  * OSIRIS — Day / Auto / Night basemap mode (the globe's sun–moon switch).
  *
- * The globe's standard basemap is CARTO Dark Matter ("night") — a GL
- * *vector* style, still served keyless. "Day" mode lays a light raster
+ * The globe's standard basemap is the dark GL *vector* style in
+ * lib/basemap-style ("night") — our own style over OpenFreeMap's
+ * keyless OpenMapTiles tiles since 2026-11-07 (it was CARTO Dark
+ * Matter until CARTO's keyless access closed and the globe went
+ * black; see that file's header). "Day" mode lays a light raster
  * street basemap over it as a raster overlay. That is deliberately the
  * SAME mechanism the satellite view uses (an ArcGIS raster overlay
  * toggled by an effect in OsirisMap): this codebase has no
@@ -38,9 +41,13 @@
  * satellite view (which had been covering the day layer) was toggled
  * off in day mode, and it is why the day toggle appeared to do nothing:
  * the overlay switched, but the tiles it fetched were the placeholder.
- * CARTO's vector GL styles were not keyed, so the night basemap never
- * broke. Do not point the day overlay back at a CARTO raster endpoint
- * without a key plan.
+ * CARTO's vector GL styles were not keyed at first, so the night
+ * basemap survived that change — until 2026-11-07, when CARTO began
+ * answering the app's tile-proxy fetches with HTTP 403 and the whole
+ * style pipeline died (black globe in every mode; the fix moved the
+ * base style to lib/basemap-style on OpenFreeMap). Do not point the
+ * day overlay — or the base style — back at a CARTO endpoint without
+ * a key plan.
  *
  * Interaction rule: the day overlay and the satellite overlay stack —
  * satellite sits above day. While satellite view is on, the day layer
