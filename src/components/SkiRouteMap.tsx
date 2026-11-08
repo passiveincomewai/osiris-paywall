@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import { BASEMAP_STYLE } from '@/lib/basemap-style';
 
 /**
  * The route tool's result map: the planned drive drawn on the site's
@@ -22,8 +23,6 @@ export interface RouteMapCamera {
   lng: number;
   alongKm: number;
 }
-
-const BASEMAP_STYLE = 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json';
 
 export default function SkiRouteMap({
   route,

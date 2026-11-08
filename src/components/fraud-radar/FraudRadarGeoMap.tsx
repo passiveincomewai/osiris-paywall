@@ -2,12 +2,13 @@
 
 import { useEffect, useRef, useState } from 'react';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import { BASEMAP_STYLE } from '@/lib/basemap-style';
 
 /**
  * Fraud Radar geo choropleth (§5.5) — the lightweight sibling
  * pattern (CameraMiniMap / SkiRouteMap), NOT OsirisMap: lazy
- * maplibre import inside the effect, the house CARTO Dark Matter
- * basemap, NavigationControl, and an honest failure state (a map
+ * maplibre import inside the effect, the house shared basemap
+ * (lib/basemap-style), NavigationControl, and an honest failure state (a map
  * that cannot start says so — never a black rectangle).
  *
  * Geometry is the house-vendored /geo/us-boundaries.geojson
@@ -60,9 +61,6 @@ export function buildGeoJson(
     }),
   };
 }
-
-const BASEMAP_STYLE =
-  'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json';
 
 export default function FraudRadarGeoMap({
   cells,

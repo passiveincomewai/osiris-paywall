@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { MapOptions } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import { BASEMAP_STYLE } from '@/lib/basemap-style';
 
 /**
  * The camera viewer's built-in location map: where this camera sits,
@@ -16,27 +17,16 @@ import 'maplibre-gl/dist/maplibre-gl.css';
  * maps (SkiRouteMap) rather than trusting MapLibre's defaults: the
  * worker is the site's self-hosted copy (the bundled default does not
  * resolve reliably in this app's chunk layout, and a lazy map cannot
- * count on the globe having configured the shared module first), CARTO
- * traffic goes through the tile proxy like the globe's, a refused
- * WebGL context walks down the same fallback ladder, and the canvas is
+ * count on the globe having configured the shared module first), the
+ * basemap is the globe's shared inline style (lib/basemap-style),
+ * a refused WebGL context walks down the same fallback ladder, and
+ * the canvas is
  * kept sized to its box by a ResizeObserver — the panel animates open
  * around the map, so a map sized once at construction can be left
  * rendering dark. Any failure before the style loads says so on the
  * panel instead of leaving a silent black rectangle; the map-app
  * links under the map remain the way out.
  */
-
-const BASEMAP_STYLE = 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json';
-
-/* Route CARTO CDN requests through the internal tile proxy, exactly
-   as the globe's transformRequest does. */
-function proxiedTiles(url: string) {
-  if (url.includes('cartocdn.com')) {
-    const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
-    return { url: `${baseUrl}/api/proxy-tiles?url=${encodeURIComponent(url)}` };
-  }
-  return { url };
-}
 
 export default function CameraMiniMap({ lat, lng, name }: { lat: number; lng: number; name?: string }) {
   const holderRef = useRef<HTMLDivElement>(null);
@@ -73,7 +63,6 @@ export default function CameraMiniMap({ lat, lng, name }: { lat: number; lng: nu
               center: [lng, lat],
               zoom: 14,
               attributionControl: { compact: true },
-              transformRequest: proxiedTiles,
               ...(canvasContextAttributes ? { canvasContextAttributes } : {}),
             });
             break;
