@@ -103,7 +103,7 @@ describe("sitemap URL set", () => {
           !u.startsWith(`${BASE}/wildfires/`),
       )
       .sort();
-    expect(nonTransit.length).toBe(1131);
+    expect(nonTransit.length).toBe(1134);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     // Hash history: 6d75d0de… until the SEO audit fix #3 (2026-10-27)
     // normalised the es homepage entry from /es/ to its final /es
@@ -365,8 +365,14 @@ describe("sitemap URL set", () => {
     // pristine tip reproduces 1,128 / 9603c34e… exactly;
     // the merged run's count is exactly +3 and all 3 new
     // /blog/ URLs are present in the executed set.
+    // The blog daily batch of 2026-11-07 (USSF-432
+    // launch, Semeru eruption, Loveland opening day) then
+    // added its 3 post URLs → 1,134. Delta verified by
+    // executing sitemap() on the merged tree (probe):
+    // count exactly +3 over the 1,131 pin and all 3 new
+    // /blog/ URLs present in the executed set.
     expect(hash).toBe(
-      "821e9feee933777255403ad895db2e70ef9f5eeb5ac6446e339db21ed970e966",
+      "b46fb99ff5a4fe22c8a7cfba9434f93ee61f5217d02f8ab390d6c661f049c02d",
     );
   });
 

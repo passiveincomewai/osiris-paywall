@@ -41,6 +41,283 @@ export type BlogPost = {
 
 export const POSTS: BlogPost[] = [
   {
+    slug: "spacex-ussf-432-launches-vandenberg-november-6",
+    title: "SpaceX Launches Classified USSF-432: Sunset Liftoff From Vandenberg Ends the Delays",
+    seoTitle: "USSF-432 Launches From Vandenberg | WorldEye Blog",
+    date: "2026-11-07",
+    excerpt:
+      "After slipping from November 1 through a week of delays, SpaceX's classified USSF-432 mission for the U.S. Space Force lifted off from Vandenberg at 4:48 p.m. PT on Friday, November 6. Booster B1095 flew for the eighth time and landed on the droneship Of Course I Still Love You.",
+    seoDescription:
+      "SpaceX launched the classified USSF-432 mission at 4:48 p.m. PT on Nov 6 from Vandenberg. Booster B1095 flew its 8th flight and landed at sea.",
+    tags: ["spacex", "falcon-9", "vandenberg", "space-force", "launch"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "The wait is over. A SpaceX Falcon 9 lifted off from Space Launch Complex 4E (SLC-4E) at Vandenberg Space Force Base in California at 4:48 p.m. PT on Friday, November 6 — 7:48 p.m. ET, and 00:48 UTC on November 7 — carrying the classified USSF-432 mission for the U.S. Space Force, SpaceX confirmed on its mission page.",
+          "It closes the story WorldEye has followed all week: the mission was first previewed for a [November 3 window](/blog/spacex-ussf-432-launch-november-3-vandenberg), then [slipped again to Friday evening](/blog/spacex-ussf-432-launch-moves-november-6). Spaceflight Now reported the flight was originally scheduled for November 1 and was delayed repeatedly — first by the knock-on effects of the Starlink 15-18 launch, and then for reasons that were not disclosed. On Friday, at the opening of its window, it finally flew.",
+        ],
+      },
+      {
+        heading: "When did USSF-432 launch?",
+        body: [
+          "Liftoff came at 4:48 p.m. PT on Friday, November 6, 2026 — two minutes into the four-hour window that had opened at 4:46 p.m. PT. The launch happened as the sun sank toward the Pacific, and SpaceX cut its webcast about ten minutes into the flight, shortly after the first stage came back to Earth, Space.com reported.",
+          "The backup opportunity SpaceX had listed for Saturday, November 7 at 4:32 p.m. PT was not needed.",
+        ],
+      },
+      {
+        heading: "Did the booster land?",
+        body: [
+          "Yes. The first stage, booster B1095, landed on the droneship Of Course I Still Love You, stationed downrange in the Pacific Ocean — completing its eighth flight. SpaceX said the booster previously launched the GPS III-8 mission and six Starlink missions.",
+          "USSF-432 was the 119th Falcon 9 launch of 2026 and the 14th national-security flight of the rocket so far this year, according to Space.com's count. The upper stage continued carrying the payload skyward after the webcast ended.",
+        ],
+      },
+      {
+        heading: "What is the USSF-432 payload?",
+        body: [
+          "Officially, that remains undisclosed. Neither SpaceX nor the Space Force has described the spacecraft, its count, or its mission, and Spaceflight Now noted that neither has confirmed a successful satellite deployment on the previous flights in this series either.",
+          "What is known comes from public documents and outside tracking. The mission is also identified as R-4, and Spaceflight Now reported that each R launch in the series has placed 23 satellites in orbit, according to orbital catalog entries. Jonathan McDowell, the widely followed tracker of space launches, assesses the R satellites as part of the Space Force's Space Based Sensing and Targeting program. NextSpaceflight's mission description, quoted by Space.com, says the payload is possibly a batch of classified low-Earth-orbit satellites based on SpaceX's Starshield satellite bus — an assessment based on the rocket stage drop zones matching previous Starlink Group 15 launches, not an official confirmation.",
+        ],
+      },
+      {
+        heading: "Why did this launch keep slipping?",
+        body: [
+          "The mission's path to Friday was a study in how crowded Vandenberg has become. Originally scheduled for November 1, USSF-432 was delayed repeatedly — first due to delays of the Starlink 15-18 launch, which itself flew on October 30 as the 700th Falcon 9 mission, and then for reasons that were not disclosed, Spaceflight Now reported.",
+          "Each slip moved the target by days, not weeks: November 1 became a November 3 evening window, which became Friday, November 6. The Friday attempt needed no further patience — the rocket left the pad two minutes after the window opened.",
+        ],
+      },
+      {
+        heading: "Where can I track what USSF-432 put in orbit?",
+        body: [
+          "Classified payloads do not come with a public manifest, but everything in orbit is tracked. WorldEye's [satellite tracker](/satellite-tracker) follows the catalogued objects circling Earth, and the [space station tracker](/space-station-tracker) keeps the International Space Station's position live on the same globe — two of the tracking layers drawn from the site's 74,229 cameras and data feeds.",
+          "Whatever USSF-432 carried will join the orbital catalog in the coming days under tracking numbers rather than a name. The launch itself, though, is now a matter of record: Friday, 4:48 p.m. PT, SLC-4E.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When did the USSF-432 launch happen?",
+        a: "Falcon 9 lifted off at 4:48 p.m. PT on Friday, November 6, 2026 (00:48 UTC on November 7) from SLC-4E at Vandenberg Space Force Base, two minutes into its four-hour window, SpaceX said.",
+      },
+      {
+        q: "Did the Falcon 9 booster land successfully?",
+        a: "Yes. Booster B1095 landed on the droneship Of Course I Still Love You in the Pacific Ocean, completing its eighth flight after GPS III-8 and six Starlink missions.",
+      },
+      {
+        q: "What is the USSF-432 payload?",
+        a: "It is classified. SpaceX and the U.S. Space Force have not disclosed it. Outside trackers assess the mission, also called R-4, as a batch of satellites for the Space Based Sensing and Targeting program, but that is not officially confirmed.",
+      },
+      {
+        q: "Why was USSF-432 delayed from November 1?",
+        a: "Spaceflight Now reported the flight was first delayed by knock-on effects from the Starlink 15-18 launch and then for reasons that were not disclosed, before launching on November 6.",
+      },
+      {
+        q: "How many Falcon 9 launches have there been in 2026?",
+        a: "USSF-432 was the 119th Falcon 9 launch of 2026 and the rocket's 14th national-security flight of the year, according to Space.com.",
+      },
+    ],
+    sources: [
+      {
+        name: "SpaceX — USSF-432 mission page: liftoff Friday, November 6 at 4:48 p.m. PT, booster eighth flight, droneship landing",
+        url: "https://www.spacex.com/launches/ussf432",
+      },
+      {
+        name: "Spaceflight Now — Falcon 9 launches from California on classified mission for U.S. Space Force (November 6)",
+        url: "https://spaceflightnow.com/2026/11/06/falcon-9-to-launch-from-california-on-classified-mission-for-u-s-space-force/",
+      },
+      {
+        name: "Space.com via Europe Says — SpaceX launches mystery mission for US Space Force in gorgeous sunset liftoff from California (November 7)",
+        url: "https://www.europesays.com/3357904/",
+      },
+    ],
+  },
+  {
+    slug: "semeru-eruption-pyroclastic-flow-november-7-2026",
+    title: "Semeru Erupts Again: Pyroclastic Flow Runs 5.5 Kilometres Toward Besuk Kobokan",
+    seoTitle: "Semeru Eruption November 7 | WorldEye Blog",
+    date: "2026-11-07",
+    excerpt:
+      "Indonesia's Mount Semeru erupted at 12:11 a.m. local time on Saturday, November 7, sending a pyroclastic flow 5.5 kilometres toward Besuk Kobokan and an ash column about 1 kilometre above the summit, the Semeru Volcano Observation Post said. It was the second flow in two days, with the volcano held at Alert Level III.",
+    seoDescription:
+      "Mount Semeru erupted at 12:11 a.m. on Nov 7, sending a pyroclastic flow 5.5 km toward Besuk Kobokan, officials said. The volcano stays at Alert Level III.",
+    tags: ["semeru", "volcano", "indonesia", "eruption", "java"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "Mount Semeru, East Java's highest volcano, erupted again in the first minutes of Saturday, November 7. The eruption began at 12:11 a.m. local time (WIB), according to Sigit Rian Alfian, an official at the Semeru Volcano Observation Post, and sent a pyroclastic flow — a fast, hot avalanche of gas and rock — 5.5 kilometres (3.4 miles) toward Besuk Kobokan, the drainage channel on the volcano's southeastern flank.",
+          "The ash column rose about 1 kilometre (0.6 miles) above the summit. The eruption lasted about six minutes, with a maximum seismic amplitude of 33 millimetres, monitoring data showed.",
+        ],
+      },
+      {
+        heading: "What happened at Semeru overnight?",
+        body: [
+          "The overnight flow was the longest reported in a week of escalating activity. It came a day after a Friday afternoon eruption — at 3:48 p.m. local time on November 6, Indonesia's Geological Agency said — sent a pyroclastic flow 5 kilometres toward Besuk Kobokan, with an ash column also observed at about 1,000 metres above the summit and a seismograph record of 23 millimetres maximum amplitude over 744 seconds.",
+          "Before that, Semeru erupted six times on Thursday, November 5, with flows travelling between 3 and 4.5 kilometres from the summit, according to the East Java Disaster Management Agency's Operations Control Center. The volcano, on the border of Lumajang and Malang regencies, stands 3,676 metres above sea level and remains at Alert Level III (Siaga).",
+        ],
+      },
+      {
+        heading: "Is anyone in danger from the Semeru eruption?",
+        body: [
+          "Local authorities reported no direct impact on daily activities from the overnight eruption. Isnugroho, head of the Lumajang district disaster management agency, said residents' activities were proceeding normally and no direct effects had been reported.",
+          "That does not mean the mountain is being treated casually. The Lumajang agency urged people near the volcano to remain alert for further eruptions, and rapid-response personnel, along with Indonesian military and police officers, were stationed at the Curah Kobokan and Oro-Oro Ombo observation posts to monitor conditions.",
+        ],
+      },
+      {
+        heading: "Where are people told to stay away from?",
+        body: [
+          "The Geological Agency's guidance, carried on the Magma Indonesia monitoring site, is specific. People should not undertake any activities in the southeastern sector along Besuk Kobokan up to 13 kilometres from the summit, and beyond that distance should stay at least 500 metres from the riverbanks along Besuk Kobokan, because pyroclastic flows and lahars could spread as far as 17 kilometres from the summit.",
+          "Nobody should enter a 5-kilometre radius of the crater because of the risk of ejected rocks. Officials also warn of pyroclastic flows, lava avalanches and lahars along the rivers and valleys that originate at the summit — Besuk Kobokan, Besuk Bang, Besuk Kembar and Besuk Sat — and in smaller rivers that feed into Besuk Kobokan, a risk that grows in rainy weather, days after heavy rain triggered lahar flooding around the volcano on November 2.",
+        ],
+      },
+      {
+        heading: "Why does Semeru keep erupting?",
+        body: [
+          "Semeru is one of Indonesia's most persistently active volcanoes, and this week's sequence — six eruptions on November 5, a 5-kilometre flow on November 6, a 5.5-kilometre flow in the first minutes of November 7 — shows an edifice that is repeatedly clearing its throat rather than settling.",
+          "Pyroclastic flows of this kind are the volcano's signature hazard: they follow the southeastern drainage because that is the flank the current dome and crater geometry feed, which is exactly why the exclusion guidance is drawn so tightly around Besuk Kobokan and its tributaries.",
+        ],
+      },
+      {
+        heading: "Where can I watch Semeru and other erupting volcanoes?",
+        body: [
+          "WorldEye's [volcano webcams](/volcano-webcams) collection gathers live views of the world's restless mountains in one place — the same network of 74,229 cameras that carries summit views of volcanoes from Hawaii to Iceland — and the [earthquake tracker](/earthquake-tracker) shows the seismic activity that so often accompanies an eruption sequence like this one.",
+          "For Semeru itself, the authoritative word remains Indonesia's Geological Agency and its Magma Indonesia monitoring service: alert levels and exclusion zones there override any single dramatic video from the flank.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When did Mount Semeru erupt on November 7?",
+        a: "At 12:11 a.m. local time (WIB) on Saturday, November 7, 2026, according to the Semeru Volcano Observation Post. The eruption lasted about six minutes with a maximum seismic amplitude of 33 mm.",
+      },
+      {
+        q: "How far did the pyroclastic flow travel?",
+        a: "5.5 kilometres (3.4 miles) toward Besuk Kobokan, on the volcano's southeastern flank — a day after a similar flow travelled 5 kilometres in the same direction.",
+      },
+      {
+        q: "What is Mount Semeru's alert level?",
+        a: "Alert Level III (Siaga). Authorities advise no activities in the southeastern sector along Besuk Kobokan up to 13 km from the summit and no entry within 5 km of the crater.",
+      },
+      {
+        q: "Was anyone hurt in the November 7 Semeru eruption?",
+        a: "No direct impact on daily activities was reported. The head of the Lumajang district disaster agency said residents' activities were proceeding normally, with response teams stationed at observation posts.",
+      },
+      {
+        q: "How high did Semeru's ash column rise?",
+        a: "About 1 kilometre (0.6 miles) above the summit, the observation post reported — the same approximate height as the November 6 afternoon eruption.",
+      },
+    ],
+    sources: [
+      {
+        name: "JournalArta — Semeru eruption sends hot clouds 5.5 km toward Kobokan (November 7, citing the Semeru Volcano Observation Post and Lumajang disaster agency)",
+        url: "https://journalarta.com/en/2026/11/07/semeru-eruption-hot-clouds-kobokan-nov-7-2026/",
+      },
+      {
+        name: "JawaWa / Geological Agency of Indonesia — Mount Semeru erupts, ash column reaches 1,000 metres (November 6 eruption and Magma Indonesia guidance)",
+        url: "https://jawawa.id/newsitem/mount-semeru-erupts-ash-column-reaches-1-000-metres-1793969422",
+      },
+      {
+        name: "The Daily — Mount Semeru erupts six times, sending sand miners fleeing (November 5 sequence, East Java disaster agency)",
+        url: "https://thedaily.id/mount-semeru-erupts-six-times-sending-sand-miners-fleeing/",
+      },
+    ],
+  },
+  {
+    slug: "loveland-opening-day-november-7-2026",
+    title: "Loveland Opens Today: Chet's Dream Starts Colorado's Third I-70 Ski Season",
+    seoTitle: "Loveland Opening Day November 7 | WorldEye Blog",
+    date: "2026-11-07",
+    excerpt:
+      "Loveland Ski Area opens for the 2026-27 season today, Saturday, November 7, with Chet's Dream turning from 10 a.m. to 4 p.m. over Catwalk, Mambo and Home Run — nearly 1,000 vertical feet — and $60 adult tickets honouring 60 years of snowmaking at the area.",
+    seoDescription:
+      "Loveland Ski Area opens today, Nov 7, with Chet's Dream, nearly 1,000 vertical feet and $60 tickets for 60 years of snowmaking, the resort said.",
+    tags: ["loveland", "colorado", "skiing", "opening-day", "snow"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "Colorado's ski season gets its third I-70 resort today. Loveland Ski Area opens for the 2026-27 season on Saturday, November 7, the resort announced, with the Chet's Dream lift running from 10:00 a.m. to 4:00 p.m. and top-to-bottom skiing on its opening-day route.",
+          "Loveland joins [Arapahoe Basin, which took first chair on October 28, and Keystone, which followed on October 30](/blog/colorado-ski-season-opens-keystone-arapahoe-basin) — while two neighbours that had targeted this weekend, Breckenridge and Copper Mountain, have delayed their openings with no new date set.",
+        ],
+      },
+      {
+        heading: "What time does Loveland open today?",
+        body: [
+          "Chet's Dream begins turning around 10 a.m. on opening day and runs to 4 p.m., the resort said. Opening day promises fresh snow, live music, and what Loveland calls unforgettable first turns of the season.",
+          "After opening day, Loveland's 2026-27 hours settle in at 9 a.m. to 4 p.m. Monday through Friday and 8:30 a.m. to 4 p.m. on weekends and designated holidays.",
+        ],
+      },
+      {
+        heading: "What terrain is open on Loveland's opening day?",
+        body: [
+          "Skiers and riders get Catwalk, Mambo and Home Run — a linked route from the top of Chet's Dream covering nearly 1,000 vertical feet, SnowBrains and POWDER both reported from the resort's announcement.",
+          "There is an honest caveat in the resort's own guidance: no beginner terrain is available on opening day, and the area notes that opening-day conditions are not recommended for first-timers or beginner skiers and snowboarders. Loveland Valley and the Loveland Ski & Ride School open later, on November 20.",
+        ],
+      },
+      {
+        heading: "How much are Loveland opening-day lift tickets?",
+        body: [
+          "Opening-day tickets are $60 for adults (ages 15 and up) and $40 for children (ages 6-14), available at the window and in advance at skiloveland.com. The price is deliberate: 2026-27 marks 60 years of snowmaking at Loveland, and the $60 ticket honours that anniversary.",
+          "Snowmaking is the reason this opening exists at all. Loveland officially began snowmaking operations for the 2026-27 season at 7:04 p.m. on Wednesday, October 14, building the base that carries Catwalk, Mambo and Home Run while natural snow accumulates.",
+        ],
+      },
+      {
+        heading: "How does Loveland's opening fit the Colorado season so far?",
+        body: [
+          "The early season along the Continental Divide has split into haves and have-nots. Arapahoe Basin opened first on October 28, Keystone followed October 30, Wolf Creek opened October 31 in the San Juans, and Mammoth Mountain opened California's season on November 5, eight days early.",
+          "Loveland's November 7 start is, by its own standards, roughly on schedule — the area tends to open in late October or early November and is usually among the first in North America to offer lift-served skiing, POWDER noted. Breckenridge and Copper Mountain, meanwhile, announced this week they would delay past their November 6 target because temperatures have not been cold enough for efficient snowmaking.",
+        ],
+      },
+      {
+        heading: "Where can I check Loveland's snow before driving up?",
+        body: [
+          "WorldEye's [ski webcams](/ski-webcams) gather live mountain views so you can see the snow rather than read about it, and the season's full picture is in our running [ski season opening dates coverage](/blog/ski-season-opening-dates-2026-27) and the [best ski webcams](/blog/best-ski-webcams) roundup.",
+          "Loveland sits at I-70's Exit 216, on the east side of the Eisenhower Tunnel — the closest major ski area to Denver. On an opening Saturday with live music on the Basin Patio, the webcams are the fastest way to judge both the snow and the scene before you commit to the drive.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When does Loveland Ski Area open for the 2026-27 season?",
+        a: "Today — Saturday, November 7, 2026. The Chet's Dream lift runs from 10:00 a.m. to 4:00 p.m. on opening day, the resort said.",
+      },
+      {
+        q: "What runs are open at Loveland on opening day?",
+        a: "Catwalk, Mambo and Home Run, served by Chet's Dream — nearly 1,000 vertical feet of top-to-bottom skiing. No beginner terrain is available on opening day.",
+      },
+      {
+        q: "How much are Loveland opening-day tickets?",
+        a: "$60 for adults (ages 15+) and $40 for children (ages 6-14). The $60 price celebrates 60 years of snowmaking at Loveland.",
+      },
+      {
+        q: "When did Loveland start making snow this season?",
+        a: "Snowmaking operations for 2026-27 began at 7:04 p.m. on Wednesday, October 14, 2026, the resort said.",
+      },
+      {
+        q: "Which Colorado resorts are already open?",
+        a: "Arapahoe Basin (opened October 28), Keystone (October 30) and Wolf Creek (October 31) opened before Loveland. Breckenridge and Copper Mountain have delayed their planned November 6 openings.",
+      },
+    ],
+    sources: [
+      {
+        name: "Loveland Ski Area — Opening Day: Saturday, Nov. 7 2026, Chet's Dream 10:00 a.m.–4:00 p.m., $60 tickets (official resort site)",
+        url: "https://skiloveland.com/2026/",
+      },
+      {
+        name: "SnowBrains — Loveland, CO, to open for 2026-27 season on Saturday with $60 lift tickets (November 6)",
+        url: "https://snowbrains.com/loveland-open-saturday/",
+      },
+      {
+        name: "POWDER — Loveland Ski Area opens this weekend, tickets just $60 (November 6)",
+        url: "https://www.powder.com/news/loveland-ski-area-opening-60-dollar-tickets",
+      },
+      {
+        name: "Colorado Ski Country USA — November in Ski Country: November 7 Loveland opening day listing",
+        url: "https://media.coloradoski.com/november-in-ski-country",
+      },
+    ],
+  },
+  {
     slug: "kilauea-episode-56-erupts-660-foot-fountains",
     title: "Kilauea Episode 56 Erupts: 660-Foot Lava Fountains End Abruptly After Six Hours",
     seoTitle: "Kilauea Episode 56 Erupts | WorldEye Blog",
