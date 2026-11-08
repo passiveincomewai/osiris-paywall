@@ -52,6 +52,12 @@ export default function SkiRouteMap({
     import('maplibre-gl')
       .then(maplibregl => {
         if (cancelled || !holderRef.current) return;
+        /* Use the site's self-hosted worker copy: the bundled default
+           does not resolve reliably in this app's chunk layout, and a
+           lazy map cannot count on the globe having configured the
+           shared module first. Without a worker the map never paints
+           (black box, controls only). Same pattern as CameraMiniMap. */
+        maplibregl.setWorkerUrl(`/vendor/maplibre/${maplibregl.getVersion()}/maplibre-gl-worker.mjs`);
         /* A sane initial viewport centred on the drive, so the map is
            never a blank world view waiting on the style load. */
         const mid = route[Math.floor(route.length / 2)];
