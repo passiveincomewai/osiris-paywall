@@ -46,12 +46,12 @@ export const esFaq: FaqCopy = {
         {
           q: "¿El mapa es realmente gratis?",
           a: [
-            tx("Sí. El globo 3D, el seguimiento de vuelos en vivo, el transporte en vivo, 74.229 cámaras públicas, los satélites, los terremotos, los incendios, el clima y las fotos a nivel de calle son gratis para siempre, y también la búsqueda básica. Sin cuenta, sin tarjeta. Pro desbloquea las herramientas de nivel inteligencia sobre todo eso. Mira "),
+            tx("Sí. El globo 3D, el seguimiento de vuelos en vivo, el transporte en vivo, los satélites, los terremotos, los incendios, el clima y las fotos a nivel de calle son gratis para explorar para siempre, y también la búsqueda básica. Las 74.229 cámaras públicas se pueden explorar gratis: verlas incluye una cantidad gratuita de aperturas de cámara, y los planes de pago hacen las aperturas ilimitadas. Sin cuenta, sin tarjeta. Los planes de pago desbloquean las herramientas de nivel inteligencia sobre todo eso. Mira "),
             lk("pricing", "los precios"),
             tx(" para el desglose completo."),
           ],
           schemaA:
-            "Sí. El globo 3D, el seguimiento de vuelos en vivo, el transporte en vivo, 74.229 cámaras públicas, los satélites, los terremotos, los incendios, el clima y las fotos a nivel de calle son gratis para siempre, y también la búsqueda básica. Sin cuenta, sin tarjeta. Pro desbloquea las herramientas de nivel inteligencia sobre todo eso.",
+            "Sí. El globo 3D, el seguimiento de vuelos en vivo, el transporte en vivo, los satélites, los terremotos, los incendios, el clima y las fotos a nivel de calle son gratis para explorar para siempre, y también la búsqueda básica. Las 74.229 cámaras públicas se pueden explorar gratis: verlas incluye una cantidad gratuita de aperturas de cámara, y los planes de pago hacen las aperturas ilimitadas. Sin cuenta, sin tarjeta. Los planes de pago desbloquean las herramientas de nivel inteligencia sobre todo eso.",
         },
         plain(
           "¿Necesito una cuenta?",
@@ -79,7 +79,7 @@ export const esFaq: FaqCopy = {
         ),
         plain(
           "¿Cuál es el mejor sitio para ver cámaras en vivo de todo el mundo?",
-          "WorldEye está hecho exactamente para eso: 74.229 cámaras públicas en vivo de 109 países en un solo globo 3D gratuito, sin registro para empezar a mirar. En lugar de buscar en cientos de sitios de agencias y estaciones, tienes cámaras de tráfico, ciudades, playas, esquí, aeropuertos y naturaleza en un solo mapa con buscador, con vuelos, clima y terremotos en capas a su alrededor."
+          "WorldEye está hecho exactamente para eso: 74.229 cámaras públicas en vivo de 109 países (74 con sus propias páginas de país) en un solo globo 3D gratuito, sin registro para empezar a mirar. En lugar de buscar en cientos de sitios de agencias y estaciones, tienes cámaras de tráfico, ciudades, playas, esquí, aeropuertos y naturaleza en un solo mapa con buscador, con vuelos, clima y terremotos en capas a su alrededor."
         ),
         plain(
           "¿Puedo ver cámaras en vivo gratis?",
@@ -91,11 +91,11 @@ export const esFaq: FaqCopy = {
         ),
         plain(
           "¿Dónde puedo ver webcams en vivo de Nueva York?",
-          "La página de webcams de Nueva York reúne las cámaras públicas de la ciudad —279 feeds en un radio de 25 km de Midtown, la mayoría de la red 511NY del NYSDOT— en un muro para toda la ciudad y otro para cada distrito: Manhattan, Brooklyn, Queens, el Bronx y Staten Island. Todas son gratis."
+          "La página de webcams de Nueva York reúne las cámaras públicas de la ciudad —279 feeds en un radio de 25 km de Midtown, la mayoría de la red 511NY del NYSDOT— en un muro para toda la ciudad y otro para cada distrito: Manhattan, Brooklyn, Queens, el Bronx y Staten Island. Todas se pueden explorar gratis: las aperturas de cámara incluyen una cantidad gratuita, y los planes de pago las hacen ilimitadas."
         ),
         plain(
           "¿Puedo ver las auroras boreales en una webcam gratis?",
-          "Sí. La página de webcams de auroras reúne las cámaras públicas del cinturón auroral —825 en Finlandia, 482 en Islandia, 746 en Noruega, más Fairbanks, Alaska— junto al índice Kp en vivo, para que veas tanto la actividad del cielo como las cámaras bajo él. Son feeds de carreteras, clima y poblaciones en latitudes aurorales, no cámaras dedicadas a las auroras, y todas son gratis."
+          "Sí. La página de webcams de auroras reúne las cámaras públicas del cinturón auroral —825 en Finlandia, 482 en Islandia, 746 en Noruega, más Fairbanks, Alaska— junto al índice Kp en vivo, para que veas tanto la actividad del cielo como las cámaras bajo él. Son feeds de carreteras, clima y poblaciones en latitudes aurorales, no cámaras dedicadas a las auroras, y todas se pueden explorar gratis."
         ),
         plain(
           "¿Dónde puedo ver cruceros y puertos en vivo?",
@@ -186,6 +186,22 @@ export const esFaq: FaqCopy = {
             "WorldEye agrega feeds de cámaras disponibles públicamente de todo el mundo —tráfico, calles de ciudades, lugares emblemáticos, naturaleza— en una sola capa explorable sobre el mapa. Son fuentes públicas de terceros, así que algunos feeds pueden desconectarse; la cobertura varía por región. Gratis para todos.",
         },
         plain(
+          "¿Puede cualquiera ver las cámaras públicas de calles y tráfico?",
+          "Sí. Las cámaras de WorldEye son feeds que departamentos de transporte, ciudades y otros operadores ya publican abiertamente en la web para que cualquiera los vea: los mismos feeds que encontrarías en el sitio 511 de un estado. WorldEye los reúne en un solo mapa; no desbloquea, intercepta ni accede a ninguna cámara privada, y en el directorio no hay cámaras de timbres, hogares ni sistemas de seguridad de negocios."
+        ),
+        plain(
+          "¿Es legal ver cámaras públicas en línea?",
+          "Verlas es exactamente para lo que se publican: las agencias ponen las cámaras de tráfico y de ciudades en línea para que el público pueda consultar el estado de las carreteras y ver lugares públicos, y son feeds publicados públicamente destinados a la visualización pública. Es visualización en un solo sentido de espacios públicos: WorldEye no puede controlar una cámara, los feeds no llevan audio y ninguna cámara muestra un lugar hacia donde su operador no la haya apuntado."
+        ),
+        plain(
+          "¿De dónde vienen las cámaras de WorldEye?",
+          "De los operadores que las publican: departamentos de transporte estatales y nacionales (las redes 511), agencias municipales, aeropuertos, estaciones de esquí, puertos, parques y negocios que transmiten sus ubicaciones abiertamente. WorldEye indexa 74.229 de estos feeds públicos y etiqueta cada uno con su fuente. Los operadores mantienen el control total de sus cámaras, y un feed desaparece de WorldEye cuando su operador deja de publicarlo."
+        ),
+        plain(
+          "¿Las cámaras son realmente en vivo?",
+          "Los feeds son fuentes en vivo, pero «en vivo» tiene dos formas: muchas cámaras transmiten video en tiempo real, mientras que otras —una gran parte de las redes de los departamentos de transporte— publican una imagen fija nueva cada uno o dos minutos. WorldEye muestra cada feed tal como lo proporciona su operador, con su marca de tiempo incluida, y una cámara cuya fuente ha dejado de actualizarse se muestra como no disponible en lugar de repetir una grabación antigua."
+        ),
+        plain(
           "¿Qué tan preciso es el seguimiento de vuelos?",
           "Las posiciones vienen de las emisiones ADS-B que los aviones transmiten continuamente, así que la cobertura en vivo es realmente en tiempo real donde las redes de receptores tienen cobertura. Sobre océanos y zonas remotas, las actualizaciones pueden ser más espaciadas."
         ),
@@ -253,7 +269,7 @@ export const esFaq: FaqCopy = {
       faqs: [
         plain(
           "¿De dónde vienen las cámaras y cuántas hay?",
-          "WorldEye sirve 74.229 cámaras en vivo en 109 países. Cada feed es una transmisión publicada públicamente por su operador: departamentos de transporte, ciudades, aeropuertos, estaciones de esquí, puertos y negocios. Nosotros las agregamos y las mapeamos; no somos dueños de las cámaras ni las operamos."
+          "WorldEye sirve 74.229 cámaras en vivo en 109 países; 74 de esos países tienen sus propias páginas en el directorio. Cada feed es una transmisión publicada públicamente por su operador: departamentos de transporte, ciudades, aeropuertos, estaciones de esquí, puertos y negocios. Nosotros las agregamos y las mapeamos; no somos dueños de las cámaras ni las operamos."
         ),
         plain(
           "¿Por qué una cámara está fuera de línea?",
@@ -508,7 +524,7 @@ export const esFaq: FaqCopy = {
   related: [
     {
       label: "Funciones",
-      desc: "El recorrido completo: capas gratis para siempre y el kit de inteligencia Pro.",
+      desc: "El recorrido completo: capas gratuitas para explorar y el kit de inteligencia de los planes de pago.",
     },
     {
       label: "Contacto",
