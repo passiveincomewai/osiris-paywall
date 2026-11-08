@@ -130,12 +130,12 @@ export const enFaq: FaqCopy = {
         {
           q: "Is the map really free?",
           a: [
-            tx("Yes. The 3D globe, live flight tracking, live transit, satellites, earthquakes, wildfires, weather and street-level photos are free to browse forever — and so is basic search. The 74,229 public cameras are free to browse: watching comes with a free allowance of camera opens, and paid plans make opens unlimited. No account, no credit card. Paid plans unlock the intelligence-grade tools on top of it. See "),
+            tx("Yes. The 3D globe, live flight tracking, live transit, 74,229 public cameras, satellites, earthquakes, wildfires, weather and street-level photos are free forever — and so is basic search. No account, no credit card. Pro unlocks the intelligence-grade tools on top of it. See "),
             lk("pricing", "pricing"),
             tx(" for the full breakdown."),
           ],
           schemaA:
-            "Yes. The 3D globe, live flight tracking, live transit, satellites, earthquakes, wildfires, weather and street-level photos are free to browse forever — and so is basic search. The 74,229 public cameras are free to browse: watching comes with a free allowance of camera opens, and paid plans make opens unlimited. No account, no credit card. Paid plans unlock the intelligence-grade tools on top of it.",
+            "Yes. The 3D globe, live flight tracking, live transit, 74,229 public cameras, satellites, earthquakes, wildfires, weather and street-level photos are free forever — and so is basic search. No account, no credit card. Pro unlocks the intelligence-grade tools on top of it.",
         },
         plain(
           "Do I need an account?",
@@ -163,7 +163,7 @@ export const enFaq: FaqCopy = {
         ),
         plain(
           "What's the best website to watch live cameras around the world?",
-          "WorldEye is built for exactly that: 74,229 live public cameras from 109 countries (74 with their own country pages) on one free 3D globe — no signup needed to start watching. Instead of hunting through hundreds of separate agency and resort sites, you get traffic, city, beach, ski, airport and nature cameras on a single searchable map, with flights, weather and earthquakes layered around them."
+          "WorldEye is built for exactly that: 74,229 live public cameras from 109 countries on one free 3D globe — no signup needed to start watching. Instead of hunting through hundreds of separate agency and resort sites, you get traffic, city, beach, ski, airport and nature cameras on a single searchable map, with flights, weather and earthquakes layered around them."
         ),
         plain(
           "Can I watch live cameras for free?",
@@ -175,11 +175,11 @@ export const enFaq: FaqCopy = {
         ),
         plain(
           "Where can I watch live webcams in New York City?",
-          "The New York City webcams page gathers the city's public cameras — 279 feeds within 25 km of Midtown, most of them NYSDOT's 511NY network — into a wall for the whole city plus one for each borough: Manhattan, Brooklyn, Queens, the Bronx and Staten Island. All of them are free to browse — camera opens come with a free allowance, and paid plans make them unlimited."
+          "The New York City webcams page gathers the city's public cameras — 279 feeds within 25 km of Midtown, most of them NYSDOT's 511NY network — into a wall for the whole city plus one for each borough: Manhattan, Brooklyn, Queens, the Bronx and Staten Island. All of them are free to watch."
         ),
         plain(
           "Can I watch the northern lights on a webcam for free?",
-          "Yes. The aurora webcams page collects the public cameras of the aurora belt — 825 in Finland, 482 in Iceland, 746 in Norway, plus Fairbanks, Alaska — next to the live Kp index, so you can see both the sky's activity and the cameras under it. They are road, weather and town feeds at aurora latitudes, not dedicated aurora cameras, and every one is free to browse."
+          "Yes. The aurora webcams page collects the public cameras of the aurora belt — 825 in Finland, 482 in Iceland, 746 in Norway, plus Fairbanks, Alaska — next to the live Kp index, so you can see both the sky's activity and the cameras under it. They are road, weather and town feeds at aurora latitudes, not dedicated aurora cameras, and every one is free."
         ),
         plain(
           "Where can I watch cruise ships and ports live?",
@@ -270,22 +270,6 @@ export const enFaq: FaqCopy = {
             "WorldEye aggregates publicly available camera feeds from around the world — traffic, city streets, landmarks, nature — into one browsable layer on the map. They're third-party public sources, so individual feeds can go offline; coverage varies by region. Free for everyone.",
         },
         plain(
-          "Can anyone watch public street and traffic cameras?",
-          "Yes. The cameras on WorldEye are feeds that transport departments, cities and other operators already publish openly on the web for anyone to view — the same feeds you would find on a state 511 site. WorldEye gathers them onto one map; it doesn't unlock, intercept or access any private camera, and there are no doorbell, home or business-security cameras in the directory."
-        ),
-        plain(
-          "Is it legal to watch public cameras online?",
-          "Watching them is what they are published for: agencies put traffic and city cameras online so the public can check road conditions and see public places, and these are publicly published feeds intended for public viewing. It is one-way viewing of public spaces — WorldEye can't control a camera, the feeds carry no audio, and no camera shows anywhere its operator didn't point it."
-        ),
-        plain(
-          "Where do the cameras on WorldEye come from?",
-          "From the operators who publish them: state and national transport departments (the 511 networks), city agencies, airports, ski resorts, harbours, parks and businesses that stream their locations openly. WorldEye indexes 74,229 of these public feeds and labels each one with its source. The operators keep full control of their cameras, and a feed disappears from WorldEye when its operator stops publishing it."
-        ),
-        plain(
-          "Are the cameras really live?",
-          "The feeds are live sources, but live comes in two forms: many cameras stream real-time video, while others — a large share of the DOT networks — publish a fresh still image every minute or two. WorldEye shows each feed as its operator provides it, timestamp included, and a camera whose source has stopped updating shows as unavailable rather than replaying an old recording."
-        ),
-        plain(
           "How accurate is the flight tracking?",
           "Positions come from ADS-B broadcasts that aircraft transmit continuously, so live coverage is genuinely real-time where receiver networks have coverage. Over oceans and remote areas, updates can be sparser."
         ),
@@ -332,7 +316,7 @@ export const enFaq: FaqCopy = {
         ),
         plain(
           "What data does WorldEye collect?",
-          "For anonymous visitors: essentially nothing tied to you — no account, no tracking profile. If you subscribe to Pro or join the affiliate program, we store your sign-in email, subscription status, and (for affiliates) referral and payout records. Full details are in the privacy policy."
+          "Our own analytics record every page visit — the page, a session ID and a random visitor ID kept in your browser, the referring site, any campaign tags on the link you arrived with, a coarse device type and how long the page was visible — whether or not you have an account. They never record passwords, payment details or the content of your lookups. If you subscribe or join the affiliate program, we also store your sign-in email, subscription status, and (for affiliates) referral and payout records. One advertising partner, Meta's pixel, measures page views and sign-ups for our ads. Full details are in the privacy policy."
         ),
         plain(
           "Do you sell my data or show ads?",
@@ -353,7 +337,7 @@ export const enFaq: FaqCopy = {
       faqs: [
         plain(
           "Where do the cameras come from, and how many are there?",
-          "WorldEye serves 74,229 live cameras across 109 countries; 74 of those countries have their own directory pages. Every feed is a publicly published stream from its operator — transport departments, cities, airports, ski resorts, harbours and businesses. We aggregate and map them; we don't own or operate the cameras themselves."
+          "WorldEye serves 74,229 live cameras across 109 countries. Every feed is a publicly published stream from its operator — transport departments, cities, airports, ski resorts, harbours and businesses. We aggregate and map them; we don't own or operate the cameras themselves."
         ),
         plain(
           "Why is a camera offline?",
@@ -608,7 +592,7 @@ export const enFaq: FaqCopy = {
   related: [
     {
       label: "Features",
-      desc: "The full tour — free-to-browse layers and the paid-plan intelligence toolkit.",
+      desc: "The full tour — free forever layers and the Pro intelligence toolkit.",
     },
     {
       label: "Contact",

@@ -89,12 +89,12 @@ const ES_TRANCHE_DATE = "2026-10-26";
 // SHA-256 over each slug's English dictionary (src/i18n/source-hash.ts),
 // computed at publish time; dictionaries.test.ts recomputes and pins them.
 const ES_SOURCE_HASHES: Record<string, string> = {
-  "": "4bd60efc2e764eddb691f4976ca021ee100244830049e30bad1ed7c6e96c2fc2",
-  pricing: "ee1ba86c3fb048afebbb82396689686ce7ff6d6ac3e40a894cec16a441f44622",
-  "live-webcams": "4d16ef5f2d7d573e832b1a7d5eed2fda1c29531edd2f0b054c3d07abafc5b959",
-  faq: "53cddf1d5352cf5d1b00c2ea7d3787c56c05daa518eaa9631a19632e44afb7e2",
-  "live-flight-tracker": "f62d7fceef5d66a56c9a5c87cc82d737c82ca29a039f7d8e8649c3f5f7d6f887",
-  "ship-tracker": "2fe37978a4ca2748e99acd79818ca606480d558d8f31f83f95f879fa26f8a51a",
+  "": "3987311a1f1f7b5fc3e983833746da740e871cd7f755a5cb46016d4ff6b6c801",
+  pricing: "baa2c2545a18d6cab0e2561cd8d13c89b09d4775492816a286680bdd3e2e07ac",
+  "live-webcams": "54a9ce1419a86b32947d625722b245bda2a93155af8c60f8fd5a8c6f2a51bd04",
+  faq: "75ec205f06d2a4d9cca4dd8aafa14e39dcac4e170d84be1974575dacc6f8422c",
+  "live-flight-tracker": "f6098a009698c4a81bbdf8d413acc89dbf3d5bce2b506ab3e4627f2c168c1cf8",
+  "ship-tracker": "a2ac2cec641df42357c801e233edab00d77f58fc3bb7bb7071b3b56298709e34",
 };
 
 // Rebase note (2026-10-27): the foundation was rebased onto production
@@ -200,40 +200,18 @@ const ES_SOURCE_HASHES: Record<string, string> = {
 // the top tier; legacy annual holders keep their VIP extras);
 // the Spanish dictionary was re-synced the same day, so the faq
 // hash moved; its updatedAt stays 2026-10-31.
-// Re-sync (2026-11-01, copy accuracy sweep D1 re-land): the home
-// dictionary's Ultra attributions + free-access answers, reverted
-// by a stale-base push, were restored, and the faq dictionary's
-// remaining free-access answers (the map-free question's camera
-// clause, the NYC and aurora answers) were aligned to the camera-
-// opens allowance on top of the master-repair FAQ pass; the
-// Spanish dictionaries were re-synced the same day, so the home
-// and faq hashes moved; their updatedAt stays 2026-10-31.
-// Re-sync (2026-11-01, copy accuracy sweep D2 re-land): the
-// live-webcams free-access wording (free to browse + the camera-
-// opens allowance) and the ship-tracker maritime-feed Ultra
-// attribution, lost when D2's original push was interrupted, were
-// restored; the Spanish dictionaries were re-synced the same day,
-// so the live-webcams and ship-tracker hashes moved (this also
-// clears the live-webcams hash drift the dictionary had
-// accumulated); their updatedAt stays 2026-10-29 / 2026-10-31.
-// Re-sync (2026-11-04, question-ranking plays): the home and faq
-// dictionaries gained the "can you / is it legal" camera FAQ family
-// (can anyone watch public street cameras; is it legal; where the
-// cameras come from; are they really live); the Spanish dictionaries
-// were re-synced the same day, so the home and faq hashes moved;
-// their updatedAt stays 2026-10-31.
-// Re-sync (2026-11-06, pricing improvements): the pricing
-// dictionary's camera-opens FAQ now states the real free-tier
-// ladder (5 opens per device signed out; 10 on a free verified
-// account) and the Lite copy no longer lists satellite views among
-// Lite's premium layers (the basemap is free for everyone); the
-// Spanish dictionary was re-synced the same day, so the pricing
-// hash moved; its updatedAt stays 2026-10-31.
+// Re-sync (2026-11-01, master repair, data-collection answer):
+// the faq "What data does WorldEye collect?" answer no longer
+// claims anonymous visitors have "no tracking profile" — it now
+// matches the shipped privacy policy (first-party analytics
+// record every page visit; Meta's pixel measures ads). The
+// Spanish dictionary was re-synced the same day, so the faq
+// hash moved and its updatedAt is now 2026-11-01.
 const ES_UPDATED_AT: Record<string, string> = {
   "": "2026-10-31",
   pricing: "2026-10-31",
   "live-webcams": "2026-10-29",
-  faq: "2026-10-31",
+  faq: "2026-11-01",
   "live-flight-tracker": "2026-10-29",
   "ship-tracker": "2026-10-31",
 };

@@ -159,13 +159,17 @@ describe("manifest ↔ dictionary completeness", () => {
         // for the site-audit Wave 2 R26 VIP-features addition;
         // Spanish re-synced the same day. Ship-tracker moved again
         // on 2026-10-31 for the site-audit R4/R5 ship-honesty
-        // re-sync (Spanish re-translated the same day).
+        // re-sync (Spanish re-translated the same day). Faq moved
+        // again on 2026-11-01 for the master-repair data-collection
+        // answer (Spanish re-synced the same day — see manifest.ts).
         expect(entry.updatedAt).toBe(
-          ["faq", "pricing", "", "ship-tracker"].includes(entry.slug)
-            ? "2026-10-31"
-            : ["live-flight-tracker", "live-webcams"].includes(entry.slug)
-                ? "2026-10-29"
-                : "2026-10-26"
+          entry.slug === "faq"
+            ? "2026-11-01"
+            : ["pricing", "", "ship-tracker"].includes(entry.slug)
+              ? "2026-10-31"
+              : ["live-flight-tracker", "live-webcams"].includes(entry.slug)
+                  ? "2026-10-29"
+                  : "2026-10-26"
         );
       });
 
