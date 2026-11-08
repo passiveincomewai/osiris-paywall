@@ -38,7 +38,7 @@ const STEPS = [
   },
   {
     name: "Spend your free opens wisely — the ladder",
-    text: "Opening a camera is metered on a ladder, and it is generous: 5 camera opens as an anonymous visitor, 5 more when you leave an email (10 in total), and 5 more with a free account (15 in total). Only after all fifteen does WorldEye suggest Pro. Searching itself never uses an open — only opening a camera does.",
+    text: "Opening a camera is metered on a ladder, and it is generous: 5 camera opens as an anonymous visitor, and 5 more when you leave an email or sign up for a free account (10 in total). Only after all ten does WorldEye suggest Pro. Searching itself never uses an open — only opening a camera does.",
   },
   {
     name: "Read the result labels before you open",
@@ -76,7 +76,7 @@ const INTRO = [
 const FAQS = [
   {
     q: "How many cameras can I open for free?",
-    a: "Fifteen, on the ladder: 5 opens as an anonymous visitor, 5 more after leaving an email, and 5 more with a free account. After the fifteenth open WorldEye suggests Pro; searching, browsing directories and flying the globe never consume opens.",
+    a: "Ten, on the ladder: 5 opens as an anonymous visitor, and 5 more after leaving an email or with a free account. After the tenth open WorldEye suggests Pro; searching, browsing directories and flying the globe never consume opens.",
   },
   {
     q: "Why do I only see 6 camera results?",
@@ -115,7 +115,7 @@ export default function SearchProTutorialPage() {
         </p>
         <h1 className="text-3xl md:text-5xl font-bold tracking-tight">Search cameras like a pro</h1>
         <p className="mt-4 text-white/55">
-          One box, 74,229 cameras — and a ladder of fifteen free opens hiding in plain sight.
+          One box, 74,229 cameras — and a ladder of ten free opens hiding in plain sight.
         </p>
       </div>
 
