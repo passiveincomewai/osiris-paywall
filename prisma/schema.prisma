@@ -3345,3 +3345,24 @@ model ContentEngineSnapshot {
 
   @@index([section, createdAt])
 }
+
+// Instagram OAuth handshake store for the Multilogin fleet's per-account
+// Instagram Login flow. The fleet registers a single-use state nonce
+// (SHA-256 hash only — the raw nonce never touches the database) via
+// /api/instagram/issue; Instagram redirects the authorization code to
+// /api/instagram/callback, which stores it against the nonce; the fleet
+// picks the code up exactly once via /api/instagram/pickup by presenting
+// the raw nonce, which burns it. Codes are credentials: held only until
+// pickup, then nulled. Rows expire 15 minutes after issue.
+
+model IgOAuthHandshake {
+  id         String    @id @default(cuid())
+  nonceHash  String    @unique
+  username   String
+  code       String?
+  createdAt  DateTime  @default(now())
+  expiresAt  DateTime
+  pickedUpAt DateTime?
+
+  @@index([expiresAt])
+}
