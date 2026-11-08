@@ -103,7 +103,7 @@ describe("sitemap URL set", () => {
           !u.startsWith(`${BASE}/wildfires/`),
       )
       .sort();
-    expect(nonTransit.length).toBe(1134);
+    expect(nonTransit.length).toBe(1137);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     // Hash history: 6d75d0de… until the SEO audit fix #3 (2026-10-27)
     // normalised the es homepage entry from /es/ to its final /es
@@ -371,8 +371,14 @@ describe("sitemap URL set", () => {
     // executing sitemap() on the merged tree (probe):
     // count exactly +3 over the 1,131 pin and all 3 new
     // /blog/ URLs present in the executed set.
+    // The blog daily batch of 2026-11-08 (Shizuoka
+    // earthquake, Starship Flight 15 plan, Typhoon
+    // Cempaka) then added its 3 post URLs → 1,137. Delta
+    // verified by executing sitemap() on the merged tree
+    // (probe): count exactly +3 over the 1,134 pin and
+    // all 3 new /blog/ URLs present in the executed set.
     expect(hash).toBe(
-      "b46fb99ff5a4fe22c8a7cfba9434f93ee61f5217d02f8ab390d6c661f049c02d",
+      "a4f2011f1fa61641bd05faa85789484de977d472a7b103fd1bc48eacf90a3e12",
     );
   });
 

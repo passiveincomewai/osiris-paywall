@@ -40,6 +40,289 @@ export type BlogPost = {
 };
 
 export const POSTS: BlogPost[] = [
+// Blog daily 2026-11-08 — three sourced event stories, news: true, date 2026-11-08.
+// Facts verified from browser.search excerpts of the cited sources (browser.open
+// was failing with browser-service errors all run, as on 2026-11-07; every event
+// cross-checked across at least two independent sources, incl. official products:
+// JMA/USGS reporting for the quake, SpaceX's own Nov 7 post for Flight 15, and the
+// JTWC warning / NWS Guam advisory / JMA bulletin texts for Cempaka).
+  {
+    slug: "magnitude-5-7-earthquake-shizuoka-japan-november-8",
+    title: "Magnitude 5.7 Earthquake Shakes Central Japan, Injuring at Least 22",
+    seoTitle: "Shizuoka Quake Injures 22 | WorldEye Blog",
+    date: "2026-11-08",
+    excerpt:
+      "A magnitude 5.7 earthquake struck western Shizuoka Prefecture at 1:04 a.m. on Sunday, November 8, delivering the strongest shaking western Shizuoka has recorded since 1919. At least 22 people were injured, and the Japan Meteorological Agency is warning of more strong shaking over the coming week.",
+    seoDescription:
+      "A magnitude 5.7 earthquake struck western Shizuoka at 1:04 a.m. on November 8, injuring at least 22 people. JMA warns of more strong shaking this week.",
+    tags: ["earthquake", "japan", "shizuoka", "usgs", "jma"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "Central Japan was shaken awake early on Sunday. A magnitude 5.7 earthquake struck western Shizuoka Prefecture at 1:04 a.m. local time on November 8 (16:04 UTC on November 7), at a depth of about 40 kilometres, the Japan Meteorological Agency (JMA) said. The U.S. Geological Survey measured the same event at magnitude 5.5 and placed it 18 kilometres north of Hamamatsu, Shizuoka, at a depth of 38 kilometres.",
+          "The quake shattered store windows, knocked items from shelves and sent people fleeing from buildings across a wide area around Aichi Prefecture, including Hamamatsu, the historic capitals of Kyoto and Nara, and Yamanashi Prefecture, home to Mount Fuji, according to local media reports compiled by the Associated Press. At least 22 people were injured. There was no threat of a tsunami.",
+          "It was Japan's second notable earthquake in three days, but a very different one from Friday's [magnitude 6.1 offshore quake southeast of Hasaki](/blog/magnitude-6-1-earthquake-offshore-hasaki-japan): that event struck far out in the Pacific and hurt no one, while Sunday's struck on land, under a densely populated region.",
+        ],
+      },
+      {
+        heading: "How strong was the shaking?",
+        body: [
+          "Strong enough to set records. The strongest shaking reached upper 5 on Japan's seven-level seismic intensity scale in Chita, in neighbouring Aichi Prefecture, with lower 5 recorded in Seto in Aichi, Urugi Village in Nagano, Ena in Gifu and Hamamatsu in Shizuoka, the JMA reported.",
+          "An upper-5 reading had not been observed in Aichi since March 1997 — 29 years ago. In western Shizuoka itself, it was the strongest shaking since record-keeping began in 1919, a span of 107 years, according to the JMA figures reported on Sunday. The USGS classified both the fatality risk and the economic impact of the earthquake as GREEN, its lowest alert category, in its automated PAGER assessment.",
+        ],
+      },
+      {
+        heading: "How many people were injured?",
+        body: [
+          "At least 22 people were injured, according to Japanese media reports, and officials were still gathering information on the damage through Sunday. Counts moved as the morning went on: an emergency official in Aichi Prefecture reported 16 cases of mostly minor injuries, while authorities in Shizuoka said at least three women sought emergency medical care, including a woman in her nineties who injured her shoulder falling from her bed during the shaking.",
+          "Individual cases reported by fire departments included a woman in her fifties in Tokoname who was taken to hospital with a fractured ankle, and a man in his forties and a woman in her eighties in Toyota who fell, struck their heads and reached hospital conscious. In Higashiura, parts of the town lost their water supply and water was seen gushing from manholes. Train services were disrupted as operators checked lines after the shaking.",
+          "No deaths were reported. The Japanese government set up an emergency liaison office to assess the situation and coordinate the response.",
+        ],
+      },
+      {
+        heading: "Is there a tsunami risk?",
+        body: [
+          "No. The JMA identified no tsunami threat from this earthquake and issued no tsunami warning. The quake was centred on land in western Shizuoka at roughly 40 kilometres deep, and smaller aftershocks were reported after the main tremor.",
+        ],
+      },
+      {
+        heading: "What is the aftershock warning?",
+        body: [
+          "At an early-morning news conference held shortly after 3 a.m., the JMA urged residents in the areas that shook strongly to stay alert for further earthquakes of up to upper-5 intensity for about a week, with the likelihood of a large earthquake particularly high over the next two to three days. Agency official Ebita Ayataka also warned that strong shaking combined with rain raises the risk of falling rocks and landslides.",
+          "The agency separately assessed the link between Sunday's quake and the long-feared Nankai Trough megaquake as low, saying the pattern of this earthquake differs from that scenario.",
+        ],
+      },
+      {
+        heading: "Where can I track earthquakes in Japan?",
+        body: [
+          "WorldEye's [earthquake tracker](/earthquake-tracker) plots the latest USGS-catalogued earthquakes on the same live globe as the site's 74,229 cameras, so a felt event like Sunday's can be checked against the sequence around it — including Friday's offshore magnitude 6.1 and the smaller aftershocks that follow a land event like this one.",
+          "For official word in Japan, the JMA's seismic intensity reports remain the reference: its magnitude, intensity readings and aftershock guidance are what the figures in this story are drawn from.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When did the Shizuoka earthquake happen?",
+        a: "At 1:04 a.m. local time on Sunday, November 8, 2026 (16:04 UTC on November 7), in western Shizuoka Prefecture, Japan, at a depth of about 40 kilometres, the Japan Meteorological Agency said.",
+      },
+      {
+        q: "How big was the earthquake in Japan on November 8?",
+        a: "The Japan Meteorological Agency measured magnitude 5.7; the U.S. Geological Survey measured magnitude 5.5 and placed the epicentre 18 kilometres north of Hamamatsu. Agencies routinely differ slightly because they use different methods.",
+      },
+      {
+        q: "How many people were injured in the Shizuoka earthquake?",
+        a: "At least 22 people were injured, according to Japanese media reports, most of them with minor injuries from falls. No deaths were reported, and officials were still assessing damage through Sunday.",
+      },
+      {
+        q: "Was there a tsunami warning after the Japan earthquake?",
+        a: "No. The Japan Meteorological Agency identified no tsunami threat from the earthquake and issued no tsunami warning.",
+      },
+      {
+        q: "Are more earthquakes expected in Shizuoka this week?",
+        a: "The JMA warned residents to stay alert for about a week for quakes of up to upper-5 intensity, with the risk highest in the next two to three days. It assessed the link to a Nankai Trough megaquake as low.",
+      },
+    ],
+    sources: [
+      {
+        name: "The Hindu BusinessLine (Associated Press report)",
+        url: "https://www.thehindubusinessline.com/news/world/strong-earthquake-shakes-central-japan-shattering-store-windows-injuring-at-least-22/article71680475.ece",
+      },
+      {
+        name: "Seoul Economic Daily (JMA reporting)",
+        url: "https://en.sedaily.com/international/2026/11/08/japan-quake-rattles-shizuoka-with-strongest-shaking-in-107",
+      },
+      {
+        name: "International Business Times Singapore",
+        url: "https://www.ibtimes.sg/where-did-japans-earthquake-hit-shizuoka-aichi-nearby-areas-feel-strong-magnitude-5-7-tremor-96034",
+      },
+      {
+        name: "EarthquakeList (USGS event data)",
+        url: "https://earthquakelist.org/news/2026/11/07/m5-5-earthquake-japan-1355569/",
+      },
+    ],
+  },
+  {
+    slug: "starship-flight-15-plan-november-13-double-catch",
+    title: "SpaceX Releases Starship Flight 15 Plan: First Double Catch Targeted for November 13",
+    seoTitle: "Starship Flight 15 Targets Nov 13 | WorldEye Blog",
+    date: "2026-11-08",
+    excerpt:
+      "SpaceX released the flight plan for Starship Flight 15 on Saturday, November 7: a launch as early as Friday, November 13 from Starbase, a 22-hour mission with 14 orbits and 26 Starlink satellites — and the first attempt to catch both the Super Heavy booster and the Starship itself on the same flight.",
+    seoDescription:
+      "SpaceX released the Starship Flight 15 flight plan on November 7: a November 13 launch, 14 orbits, 26 Starlink satellites and the first double catch.",
+    tags: ["spacex", "starship", "starbase", "launch", "starlink"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "SpaceX has published what Flight 15 will try to do, and it is the most ambitious Starship mission yet flown. In a post on Saturday, November 7, the company said Flight 15 is targeting launch as early as Friday, November 13, pending regulatory approval, and released the flight plan for the mission: the first ever attempt to return both Starship and Super Heavy to the launch site and catch both with the tower on a single flight.",
+          "The mission is scheduled to lift off from Orbital Launch Pad 2 at Starbase, Texas, in a 75-minute window opening at 4:45 p.m. CT (22:45 UTC), according to the released plan. It pairs Booster 22, a Block 3 Super Heavy, with Ship 42 — the fourth pair of Block 3 vehicles to fly.",
+          "Flight 15 will be Starship's second orbital mission, after Flight 14 launched on September 28, and at roughly 22 hours it is planned to be the longest Starship flight to date.",
+        ],
+      },
+      {
+        heading: "When is the Starship Flight 15 launch window?",
+        body: [
+          "SpaceX is targeting Friday, November 13, 2026, with a 75-minute window opening at 4:45 p.m. CT from Starbase, pending regulatory approval. The date itself is new: Federal Aviation Administration air-traffic planning material had earlier pointed to no earlier than November 8, then November 12, before SpaceX vice president of launch Kiko Dontchev gave the November 13 target at the UP.Summit on November 5.",
+          "Treat the date as a target, not a countdown. SpaceX's own wording is 'as early as' November 13, and the flight still needs its regulatory approval; Starship dates have moved repeatedly through the autumn, including this one.",
+        ],
+      },
+      {
+        heading: "What is the double catch SpaceX will attempt?",
+        body: [
+          "It is exactly what it sounds like. Super Heavy's job is to boost Starship onto its orbital trajectory, then return to Starbase to be caught by the launch tower's chopstick arms. Starship, after completing its mission in orbit, will deorbit, reenter and — if all goes to plan — also be caught by the tower at Orbital Launch Pad 2. No ship has ever been caught before; this would also be the first catch of Starship's V3 iteration.",
+          "On SpaceX's third-quarter earnings call on October 20, Elon Musk said Flight 15 would attempt to catch both vehicles and put the odds of a successful ship catch at 'more likely than not,' while stressing that success is not guaranteed. The released plan builds in abort options throughout the ship's flight: at numerous points, a problem that makes a return unsafe can instead end with the ship deorbited safely over the ocean.",
+        ],
+      },
+      {
+        heading: "What will Ship 42 do during the flight?",
+        body: [
+          "Ship 42 is planned to reach approximately 170 miles (275 kilometres) above Earth and complete about 14 orbits over a mission lasting roughly 22 hours. During the flight it will deploy 26 Starlink V3 satellites — real operational payload, not test mass — before performing its deorbit burn for the return to Starbase.",
+          "The hardware has been readied through the autumn: Booster 22 completed a full-duration static fire of all 33 Raptor engines at Pad 2 on October 25, and Ship 42 has completed its own static fire tests ahead of the campaign.",
+        ],
+      },
+      {
+        heading: "What still has to happen before launch?",
+        body: [
+          "Regulatory approval is the open item. SpaceX's November 7 post frames the November 13 target as 'pending regulatory approval,' and reporting through the week noted the FAA had not yet issued the Flight 15 licence — a mission that returns the ship to the launch site instead of splashing it down at sea is not covered by simply repeating the previous flight's paperwork.",
+          "Once approval and any airspace and maritime closures are posted, the window firms up. Until then, November 13 is the plan SpaceX is working to, with the flight plan itself — trajectory, deployment count, catch sequence — now public for the first time.",
+        ],
+      },
+      {
+        heading: "Where can I follow what Flight 15 puts in orbit?",
+        body: [
+          "The 26 Starlink V3 satellites Ship 42 deploys will join the tracked orbital catalog alongside everything else circling Earth. WorldEye's [satellite tracker](/satellite-tracker) follows those catalogued objects on the live globe, and the [space station tracker](/space-station-tracker) keeps the International Space Station's position on the same map — two of the data layers that sit alongside the site's 74,229 cameras.",
+          "If the double catch succeeds, Flight 15 will be remembered as the flight Starship became a fully reusable system in practice. If it does not, the abort options in the plan are designed so the attempt still ends safely over open ocean.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When will Starship Flight 15 launch?",
+        a: "SpaceX is targeting Friday, November 13, 2026, in a 75-minute window opening at 4:45 p.m. CT (22:45 UTC) from Starbase, Texas, pending regulatory approval, according to the flight plan released on November 7.",
+      },
+      {
+        q: "What is the double catch on Starship Flight 15?",
+        a: "Flight 15 is planned to be the first mission to return both stages to the launch site for tower catches on one flight: the Super Heavy booster (Booster 22) after ascent, and the Starship upper stage (Ship 42) after about 14 orbits.",
+      },
+      {
+        q: "How long will Starship Flight 15 last?",
+        a: "About 22 hours — the longest Starship mission planned to date. Ship 42 will orbit Earth roughly 14 times at about 275 kilometres altitude and deploy 26 Starlink V3 satellites before returning.",
+      },
+      {
+        q: "Which booster and ship are flying Flight 15?",
+        a: "Booster 22 and Ship 42, the fourth pair of Block 3 (V3) vehicles. Booster 22 completed a full-duration 33-engine static fire on October 25.",
+      },
+      {
+        q: "Has the FAA approved Starship Flight 15?",
+        a: "Not yet, based on the latest reporting. SpaceX describes the November 13 target as pending regulatory approval, and the formal licence, airspace and maritime closures are the remaining steps before the window is confirmed.",
+      },
+    ],
+    sources: [
+      {
+        name: "Starlust — decoding SpaceX's Flight 15 plan (SpaceX post, November 7)",
+        url: "https://starlust.org/decoding-spacexs-plan-to-launch-and-catch-both-starship-stages-on-flight-15-next-week/",
+      },
+      {
+        name: "Wikipedia — Starship flight 15 (SpaceX flight plan)",
+        url: "https://en.wikipedia.org/wiki/Starship_flight_15",
+      },
+      {
+        name: "Behind The Black — SpaceX releases Flight 15 flight plan",
+        url: "https://behindtheblack.com/tag/starship/",
+      },
+      {
+        name: "Basenor — SpaceX targets Nov 13 for Flight 15",
+        url: "https://www.basenor.com/blogs/news/spacex-targets-nov-13-for-starship-flight-15-and-first-ship-catch",
+      },
+    ],
+  },
+  {
+    slug: "typhoon-cempaka-intensifies-november-8-2026",
+    title: "Typhoon Cempaka Strengthens Southwest of Iwo To, Forecast to Peak Monday",
+    seoTitle: "Typhoon Cempaka Strengthens | WorldEye Blog",
+    date: "2026-11-08",
+    excerpt:
+      "Typhoon Cempaka (31W) strengthened over the Philippine Sea on Sunday, November 8, with maximum sustained winds of 65 knots southwest of Iwo To. The Joint Typhoon Warning Center forecasts a peak of 90 knots on Monday before the storm turns east-northeast and weakens over open ocean, with no landfall expected.",
+    seoDescription:
+      "Typhoon Cempaka (31W) strengthened southwest of Iwo To on November 8. JTWC forecasts a 90-knot peak on Monday, then a turn away over open ocean.",
+    tags: ["typhoon", "cempaka", "jtwc", "western-pacific", "storm"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "A typhoon is strengthening over open ocean south of Japan. Typhoon Cempaka — designated 31W by the U.S. Joint Typhoon Warning Center (JTWC) and Typhoon 2632 by the Japan Meteorological Agency (JMA) — was centred about 301 nautical miles west-southwest of Iwo To on Sunday, November 8, tracking west-northwest at 9 knots, according to JTWC Warning Nr 010, issued at 15:00 UTC.",
+          "At the warning's 12:00 UTC position fix, near 22.4°N 136.5°E, Cempaka's maximum sustained winds were 65 knots with gusts to 80 knots, its minimum central pressure was 989 millibars, and maximum significant wave heights around the storm reached 28 feet. The National Weather Service in Guam, relaying the same system in its Advisory Number 9 at 7:00 p.m. ChST on Sunday (09:00 UTC), put the centre near 22.2°N 136.9°E, about 330 miles west-southwest of Iwo To, with maximum sustained winds increased to 80 miles per hour.",
+          "Cempaka is one of three tropical cyclones active worldwide on Sunday, and the strongest of them — but every current forecast keeps it over water for its entire life.",
+        ],
+      },
+      {
+        heading: "How strong will Typhoon Cempaka get?",
+        body: [
+          "Stronger before it weakens. JTWC forecasts Cempaka to reach 80 knots with gusts to 100 knots by 00:00 UTC on Monday, November 9, and to peak at 90 knots with gusts to 110 knots by 12:00 UTC on Monday. The National Weather Service in Guam likewise forecasts the typhoon to intensify through Monday, potentially reaching Category 2 strength early on Monday morning, with typhoon-force winds extending up to 30 miles from the centre.",
+          "The JMA's Sunday bulletin, issued at 12:00 UTC with the storm at 970 hectopascals and maximum winds of 70 knots near the centre, independently forecasts a peak of 85 knots by 12:00 UTC on Monday. The agencies measure and round differently, but they agree on the shape of the next two days: a Monday peak, then a weakening trend.",
+        ],
+      },
+      {
+        heading: "Will Typhoon Cempaka make landfall?",
+        body: [
+          "No landfall is forecast. JTWC's warning names no landfall, and no coastal watches or warnings are in effect for the storm. Cempaka is expected to slow tonight, becoming quasi-stationary at times on Monday as a mid-latitude trough breaks down the ridge steering it, and then turn gradually toward the east-northeast — away from land in every direction.",
+          "The Philippines is the nearest large landmass to the west, and its weather bureau, PAGASA, is monitoring the storm from outside the Philippine Area of Responsibility. In its Tropical Cyclone Advisory No. 2 at 11:00 a.m. on Sunday, PAGASA placed Cempaka about 1,720 kilometres east of extreme northern Luzon with winds of 110 kilometres per hour and gusts to 135, forecast it to enter the Philippine Area of Responsibility between Sunday evening and early Monday morning — where it would take the local name Samuel — and stated it is expected to remain over the Philippine Sea and not directly affect the country.",
+        ],
+      },
+      {
+        heading: "When will Cempaka turn away and weaken?",
+        body: [
+          "The turn begins on Monday. After its Monday peak near 24.0°N 135.5°E, JTWC forecasts Cempaka moving east-northeast and weakening steadily: 85 knots early on Tuesday, 70 knots by Tuesday afternoon, 55 knots on Wednesday and 45 knots by Wednesday afternoon, dissipating as a significant tropical cyclone over water by about November 12.",
+          "The JMA's extended outlook tells the same story on a slower clock, carrying the system east-northeast across the sea south of Japan and down to 40 knots by November 13. Mariners are the storm's main audience in the meantime: seas near the centre were already running at up to 28 feet on Sunday, and the JMA's high-seas forecast warned of 9-metre seas with heavy swell in the sea south of Japan.",
+        ],
+      },
+      {
+        heading: "Where can I track Typhoon Cempaka?",
+        body: [
+          "WorldEye's [hurricane tracker](/hurricane-tracker) follows active tropical cyclones on the live globe, and the [weather radar](/weather-radar) layer shows the precipitation around a system like Cempaka as it moves — the two views that matter for an open-ocean storm with no coastline in its path.",
+          "For the official word, JTWC issues new warnings every six hours, the National Weather Service in Guam relays advisories for the western Pacific, and the JMA is the official warning authority for Japanese waters. The next JTWC warning was scheduled for 21:00 UTC on Sunday.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Where is Typhoon Cempaka now?",
+        a: "At 12:00 UTC on Sunday, November 8, 2026, Cempaka was near 22.4°N 136.5°E, about 301 nautical miles west-southwest of Iwo To, tracking west-northwest at 9 knots with maximum sustained winds of 65 knots, according to JTWC Warning Nr 010.",
+      },
+      {
+        q: "How strong will Typhoon Cempaka get?",
+        a: "JTWC forecasts a peak of 90 knots (gusts to 110 knots) by 12:00 UTC on Monday, November 9. The National Weather Service in Guam says the storm could reach Category 2 strength early on Monday morning.",
+      },
+      {
+        q: "Will Typhoon Cempaka hit the Philippines or Japan?",
+        a: "No landfall is forecast anywhere. PAGASA expects Cempaka to enter the Philippine Area of Responsibility late Sunday or early Monday, take the local name Samuel, and stay over the Philippine Sea without directly affecting the country; the storm then turns east-northeast over open ocean south of Japan.",
+      },
+      {
+        q: "When will Typhoon Cempaka weaken?",
+        a: "After its Monday peak, JTWC forecasts steady weakening — 70 knots by Tuesday afternoon and 45 knots by Wednesday afternoon — with the system dissipating as a significant tropical cyclone over water by about November 12.",
+      },
+    ],
+    sources: [
+      {
+        name: "Joint Typhoon Warning Center — Typhoon 31W (Cempaka) Warning Nr 010",
+        url: "https://www.metoc.navy.mil/jtwc/products/wp3126web.txt",
+      },
+      {
+        name: "National Weather Service Guam — Typhoon Cempaka Advisory Number 9",
+        url: "https://tgftp.nws.noaa.gov/data/raw/wt/wtpq31.pgum.tcp.pq1.txt",
+      },
+      {
+        name: "Japan Meteorological Agency typhoon bulletin (via WMO)",
+        url: "https://wwmiws.wmo.int/index.php/metareas/bulletinset_download/11/txt",
+      },
+      {
+        name: "DOST-PAGASA Tropical Cyclone Advisory No. 2 (via Breaking News Negor)",
+        url: "https://breakingnewsnegor.com/article/storm-cempaka-set-to-brush-par-before-turning-away-nov-8-6951",
+      },
+    ],
+  },
   {
     slug: "spacex-ussf-432-launches-vandenberg-november-6",
     title: "SpaceX Launches Classified USSF-432: Sunset Liftoff From Vandenberg Ends the Delays",
