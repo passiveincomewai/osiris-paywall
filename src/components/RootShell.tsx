@@ -29,7 +29,14 @@ import "@/app/design-tokens.css";
      --font-wordmark Audiowide — brand wordmark only (matches the logo)  */
 const fontBody = Public_Sans({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  // Variable file (100–900 wght range incl. the 300–700 the type scale
+  // uses): one font file per family. The previous five-static-weight
+  // request made Turbopack's next/font import map fail on Vercel
+  // ("next/font/google queries have exactly one entry" — build of
+  // 3a1ef082, 2026-11-08); the explicit fallback stack also keeps
+  // Turbopack on its deterministic fallback branch.
+  weight: "variable",
+  fallback: ["system-ui", "-apple-system", "Segoe UI", "Roboto", "Arial", "sans-serif"],
   display: "swap",
   variable: "--font-body",
 });
@@ -51,7 +58,12 @@ const fontDisplay = Fraunces({
 });
 const fontHud = JetBrains_Mono({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  // Variable file (100–800 wght range incl. 300–700): see fontBody —
+  // this font's generated module is the one named in the 2026-11-08
+  // Vercel Turbopack import-map failure, so it gets the same
+  // single-file request + explicit fallback treatment.
+  weight: "variable",
+  fallback: ["ui-monospace", "SFMono-Regular", "Menlo", "Consolas", "monospace"],
   display: "swap",
   variable: "--font-hud",
 });
