@@ -91,6 +91,200 @@ function Chart({ data, labels, color, height = 140 }: { data: number[]; labels: 
   );
 }
 
+// --- Traffic trend (page views / sessions / camera opens) -----------------
+// Measurement truth, identical to the verified daily report: a "view" is a
+// PageView row with event IS NULL; sessions are COUNT(DISTINCT sessionId)
+// over view rows; camera opens are rows with event='camera_open'; buckets
+// are America/Denver hours/days. createdAt is a naive-UTC timestamp, so the
+// Denver conversion must interpret it as UTC first, then convert — a bare
+// AT TIME ZONE 'America/Denver' on the column would treat stored UTC as
+// Denver wall time and shift every bucket +7h (verified against prod data;
+// the previous trend query also had no event filter, so it counted
+// interaction events as page views and bucketed by UTC day).
+type TrafficRange = "24h" | "7d" | "30d";
+type TrafficBucket = { key: string; label: string; views: number; sessions: number; opens: number };
+type TrafficData = { buckets: TrafficBucket[]; totals: { views: number; sessions: number; opens: number } };
+type TrafficAggRow = { k: string; views: bigint; sessions: bigint; opens: bigint };
+
+const TRAFFIC_RANGES: { key: TrafficRange; label: string }[] = [
+  { key: "24h", label: "24 hours" },
+  { key: "7d", label: "7 days" },
+  { key: "30d", label: "30 days" },
+];
+const TRAFFIC_CAPTION: Record<TrafficRange, string> = {
+  "24h": "Rolling 24 hours · hourly · Denver time",
+  "7d": "Last 7 days · daily · America/Denver",
+  "30d": "Last 30 days · daily · America/Denver",
+};
+const MONTHS_SHORT = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+function denverPartsOf(d: Date): { y: string; m: string; day: string; hour: string; min: string; sec: string } {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/Denver", hourCycle: "h23",
+    year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit",
+  }).formatToParts(d);
+  const get = (t: string) => parts.find((p) => p.type === t)?.value ?? "0";
+  return { y: get("year"), m: get("month"), day: get("day"), hour: get("hour"), min: get("minute"), sec: get("second") };
+}
+
+async function fetchTraffic(range: TrafficRange): Promise<TrafficData> {
+  const nowMs = Date.now();
+  const hourly = range === "24h";
+  const bucketCount = hourly ? 24 : range === "7d" ? 7 : 30;
+  const stepMs = hourly ? 3600_000 : DAY;
+  // Window: exactly bucketCount consecutive Denver buckets ending with the
+  // current one. Bounds are computed in JS so the bucket query and the
+  // sessions-total query share one identical window.
+  let start: Date, end: Date;
+  if (hourly) {
+    const p = denverPartsOf(new Date(nowMs));
+    const withinHourMs = (Number(p.min) * 60 + Number(p.sec)) * 1000 + (nowMs % 1000);
+    const hourStartMs = nowMs - withinHourMs;
+    start = new Date(hourStartMs - 23 * 3600_000);
+    end = new Date(hourStartMs + 3600_000);
+  } else {
+    start = denverDayStartUtc(new Date(nowMs - (bucketCount - 1) * DAY));
+    end = denverDayStartUtc(new Date(nowMs + DAY));
+  }
+  // Axis keys (Denver local), oldest → newest. Stepping back in fixed UTC
+  // increments crosses exactly one Denver bucket per step (DST shifts the
+  // time-of-day by ≤1h); a repeated fall-back hour key is kept once — the
+  // SQL groups both UTC hours under that same key, so they still merge.
+  const axis: { key: string; label: string }[] = [];
+  const seenKeys = new Set<string>();
+  for (let i = bucketCount - 1; i >= 0; i--) {
+    const p = denverPartsOf(new Date(nowMs - i * stepMs));
+    const key = hourly ? `${p.y}-${p.m}-${p.day} ${p.hour}` : `${p.y}-${p.m}-${p.day}`;
+    if (seenKeys.has(key)) continue;
+    seenKeys.add(key);
+    const h = Number(p.hour);
+    axis.push({
+      key,
+      label: hourly
+        ? `${h % 12 === 0 ? 12 : h % 12} ${h < 12 ? "AM" : "PM"}`
+        : `${MONTHS_SHORT[Number(p.m) - 1]} ${Number(p.day)}`,
+    });
+  }
+  const agg = hourly
+    ? await db.$queryRaw<TrafficAggRow[]>`SELECT TO_CHAR("createdAt" AT TIME ZONE 'UTC' AT TIME ZONE 'America/Denver', 'YYYY-MM-DD HH24') AS k,
+        COUNT(*) FILTER (WHERE event IS NULL) AS views,
+        COUNT(DISTINCT "sessionId") FILTER (WHERE event IS NULL) AS sessions,
+        COUNT(*) FILTER (WHERE event = 'camera_open') AS opens
+      FROM "PageView" WHERE "createdAt" >= ${start} AND "createdAt" < ${end}
+      GROUP BY k ORDER BY k`
+    : await db.$queryRaw<TrafficAggRow[]>`SELECT TO_CHAR("createdAt" AT TIME ZONE 'UTC' AT TIME ZONE 'America/Denver', 'YYYY-MM-DD') AS k,
+        COUNT(*) FILTER (WHERE event IS NULL) AS views,
+        COUNT(DISTINCT "sessionId") FILTER (WHERE event IS NULL) AS sessions,
+        COUNT(*) FILTER (WHERE event = 'camera_open') AS opens
+      FROM "PageView" WHERE "createdAt" >= ${start} AND "createdAt" < ${end}
+      GROUP BY k ORDER BY k`;
+  // Range sessions total is a true range-wide distinct count (never the
+  // sum of per-bucket values — a session spanning buckets counts once).
+  const sessTotal = await db.$queryRaw<{ c: bigint }[]>`SELECT COUNT(DISTINCT "sessionId") AS c FROM "PageView" WHERE event IS NULL AND "createdAt" >= ${start} AND "createdAt" < ${end}`;
+  const byKey = new Map(agg.map((r) => [r.k, r]));
+  const buckets: TrafficBucket[] = axis.map((a) => {
+    const r = byKey.get(a.key);
+    return { ...a, views: Number(r?.views ?? 0), sessions: Number(r?.sessions ?? 0), opens: Number(r?.opens ?? 0) };
+  });
+  return {
+    buckets,
+    totals: {
+      views: buckets.reduce((s, b) => s + b.views, 0),
+      sessions: Number(sessTotal[0]?.c ?? 0),
+      opens: buckets.reduce((s, b) => s + b.opens, 0),
+    },
+  };
+}
+
+// 60s per-range cache: the dashboard is force-dynamic and heavy already;
+// the trend aggregates must not run on every admin page load. Fail-soft —
+// a failed query renders an empty state, never a 500 for the whole page.
+const trafficCache = new Map<TrafficRange, { at: number; data: TrafficData }>();
+async function loadTraffic(range: TrafficRange): Promise<TrafficData | null> {
+  const hit = trafficCache.get(range);
+  if (hit && Date.now() - hit.at < 60_000) return hit.data;
+  try {
+    const data = await fetchTraffic(range);
+    trafficCache.set(range, { at: Date.now(), data });
+    return data;
+  } catch {
+    return null;
+  }
+}
+
+function fmtAxis(n: number): string {
+  if (n >= 1000) return `${(n / 1000).toFixed(n % 1000 === 0 ? 0 : 1)}k`;
+  return `${Math.round(n)}`;
+}
+function niceCeil(v: number): number {
+  if (v <= 4) return 4;
+  const pow = Math.pow(10, Math.floor(Math.log10(v)));
+  const m = v / pow;
+  const nice = m <= 1 ? 1 : m <= 2 ? 2 : m <= 2.5 ? 2.5 : m <= 5 ? 5 : 10;
+  return nice * pow;
+}
+
+/** Multi-series traffic chart: views (area), sessions, camera opens — one
+ *  shared count scale, y-axis gridlines, per-bucket <title> values. */
+function TrafficChart({ buckets }: { buckets: TrafficBucket[] }) {
+  const W = 560, H = 176;
+  const LEFT = 38, RIGHT = 8, TOP = 10, BOTTOM = 20;
+  const plotW = W - LEFT - RIGHT, plotH = H - TOP - BOTTOM;
+  const n = buckets.length;
+  const max = Math.max(1, ...buckets.flatMap((b) => [b.views, b.sessions, b.opens]));
+  const ceil = niceCeil(max);
+  const x = (i: number) => LEFT + (n <= 1 ? plotW / 2 : (i / (n - 1)) * plotW);
+  const y = (v: number) => TOP + plotH - (v / ceil) * plotH;
+  const series: { key: "views" | "sessions" | "opens"; color: string; area: boolean }[] = [
+    { key: "views", color: "#37e08b", area: true },
+    { key: "sessions", color: "#38bdf8", area: false },
+    { key: "opens", color: "#f7b80c", area: false },
+  ];
+  const line = (key: "views" | "sessions" | "opens") =>
+    buckets.map((b, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(b[key]).toFixed(1)}`).join(" ");
+  const labelStep = Math.max(1, Math.ceil(n / 6));
+  return (
+    // h-auto (aspect-ratio from viewBox), NOT a fixed pixel height — same
+    // letterboxing rule as the other admin graph SVGs.
+    <svg viewBox={`0 0 ${W} ${H}`} className="block h-auto w-full" role="img" aria-label="Traffic chart: page views, sessions and camera opens">
+      <defs>
+        <linearGradient id="gtraffic" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#37e08b" stopOpacity="0.40" />
+          <stop offset="100%" stopColor="#37e08b" stopOpacity="0.02" />
+        </linearGradient>
+      </defs>
+      {[0, 0.25, 0.5, 0.75, 1].map((f) => (
+        <g key={f}>
+          <line x1={LEFT} y1={y(ceil * f)} x2={W - RIGHT} y2={y(ceil * f)} stroke="#ffffff" strokeOpacity={f === 0 ? 0.14 : 0.05} />
+          <text x={LEFT - 6} y={y(ceil * f) + 3} fontSize="9" fill="#5b6b85" textAnchor="end">
+            {fmtAxis(ceil * f)}
+          </text>
+        </g>
+      ))}
+      <path d={`${line("views")} L${x(n - 1).toFixed(1)},${y(0)} L${x(0).toFixed(1)},${y(0)} Z`} fill="url(#gtraffic)" />
+      {series.map((s) => (
+        <path key={s.key} d={line(s.key)} fill="none" stroke={s.color} strokeWidth="2.5" strokeLinejoin="round" />
+      ))}
+      {buckets.map((b, i) => (
+        <g key={b.key}>
+          {n <= 24 &&
+            series.map((s) => (
+              <circle key={s.key} cx={x(i)} cy={y(b[s.key])} r="2" fill={s.color} />
+            ))}
+          <circle cx={x(i)} cy={y(b.views)} r="9" fill="transparent">
+            <title>{`${b.label} — Page views ${fmt(b.views)} · Sessions ${fmt(b.sessions)} · Camera opens ${fmt(b.opens)}`}</title>
+          </circle>
+          {(i % labelStep === 0 || i === n - 1) && (
+            <text x={x(i)} y={H - 4} fontSize="9" fill="#5b6b85" textAnchor="middle">
+              {b.label}
+            </text>
+          )}
+        </g>
+      ))}
+    </svg>
+  );
+}
+
 /**
  * Per-visit strip plot, server-rendered: ONE dot per page view across the
  * last 24 clock hours (UTC-aligned). Dots stack vertically inside 10-minute
@@ -279,7 +473,11 @@ async function stripeRevenue() {
 
 type SessionAgg = { sessions: bigint; bounces: bigint; avg_secs: number | null; avg_views: number | null };
 
-export default async function AdminDashboardPage() {
+export default async function AdminDashboardPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ range?: string }>;
+} = {}) {
   const session = await auth();
   const email = session?.user?.email?.toLowerCase() ?? null;
   if (!email) redirect("/admin/login");
@@ -301,6 +499,10 @@ export default async function AdminDashboardPage() {
   }
 
   const now = Date.now();
+  const sp = (await searchParams) ?? {};
+  const trafficRange: TrafficRange = TRAFFIC_RANGES.some((r) => r.key === sp.range)
+    ? (sp.range as TrafficRange)
+    : "30d";
   const d1 = new Date(now - 1 * DAY), d7 = new Date(now - 7 * DAY), d30 = new Date(now - 30 * DAY);
   const dayStartDenver = denverDayStartUtc(new Date(now));
   const d60 = new Date(now - 60 * DAY);
@@ -314,7 +516,7 @@ export default async function AdminDashboardPage() {
     pv24h, pv7d, pv30d, pvTotal,
     uniq24h, uniq30d, sessionAgg,
     topPages, topReferrersRaw, recentUsers, signupSourcesRaw, globeReachedRaw,
-    dailySignupsRaw, dailyPvRaw,
+    dailySignupsRaw,
     nlTotal, nlVerified, nl7d, nl30d,
     checkoutStatus, checkoutByPlan,
     competitorCount, affiliateCount, pendingCommissions,
@@ -398,7 +600,6 @@ export default async function AdminDashboardPage() {
       ) r ON true
       GROUP BY r.referrer ORDER BY c DESC LIMIT 20`,
     db.$queryRaw<{ d: string; c: bigint }[]>`SELECT TO_CHAR("createdAt", 'YYYY-MM-DD') AS d, COUNT(*) AS c FROM "User" WHERE "createdAt" >= ${d30} GROUP BY d ORDER BY d`,
-    db.$queryRaw<{ d: string; c: bigint }[]>`SELECT TO_CHAR("createdAt", 'YYYY-MM-DD') AS d, COUNT(*) AS c FROM "PageView" WHERE "createdAt" >= ${d30} GROUP BY d ORDER BY d`,
     db.newsletterSubscriber.count(),
     db.newsletterSubscriber.count({ where: { verified: true } }),
     db.newsletterSubscriber.count({ where: { createdAt: { gte: d7 } } }),
@@ -474,9 +675,10 @@ export default async function AdminDashboardPage() {
   const labels: string[] = [];
   for (let i = 29; i >= 0; i--) labels.push(dayKey(new Date(now - i * DAY)));
   const suMap = new Map(dailySignupsRaw.map((r) => [r.d, Number(r.c)]));
-  const pvMap = new Map(dailyPvRaw.map((r) => [r.d, Number(r.c)]));
   const signupsSeries = labels.map((l) => suMap.get(l) ?? 0);
-  const pvSeries = labels.map((l) => pvMap.get(l) ?? 0);
+  // Traffic trend (views / sessions / camera opens) for the selected range —
+  // cached 60s, fail-soft (null renders an empty state in the panel).
+  const traffic = await loadTraffic(trafficRange);
   const revSeries = labels.map((l) => Math.round((rev.byDay[l] ?? 0) / 100));
 
   // --- Subscriptions ---
@@ -705,18 +907,102 @@ export default async function AdminDashboardPage() {
         </Section>
 
         {/* Charts */}
-        <Section title="Trends · 30 days">
-          <div className="grid md:grid-cols-3 gap-4">
+        <Section title="Trends">
+          {/* Traffic: views / sessions / camera opens, Denver buckets.
+              Replaces the old single-series "Page views" chart, whose query
+              counted interaction events as views and bucketed by UTC day. */}
+          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 mb-4">
+            <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
+              <div>
+                <div className="text-[11px] font-bold tracking-[0.18em] text-white/40 uppercase">Traffic</div>
+                <div className="text-xs text-white/35 mt-1">{TRAFFIC_CAPTION[trafficRange]}</div>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                {TRAFFIC_RANGES.map((rg) => (
+                  <Link
+                    key={rg.key}
+                    href={`/admin?range=${rg.key}`}
+                    className={`inline-flex items-center px-3 py-2 rounded-lg text-sm border transition ${
+                      rg.key === trafficRange
+                        ? "border-cyan-400/50 text-cyan-200 bg-cyan-400/10"
+                        : "border-white/15 text-white/60 hover:text-white"
+                    }`}
+                  >
+                    {rg.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+            {traffic ? (
+              <>
+                <div className="grid grid-cols-3 gap-3 mb-4">
+                  {[
+                    { label: "Page views", value: traffic.totals.views, color: "#37e08b" },
+                    { label: "Sessions", value: traffic.totals.sessions, color: "#38bdf8" },
+                    { label: "Camera opens", value: traffic.totals.opens, color: "#f7b80c" },
+                  ].map((t) => (
+                    <div key={t.label} className="rounded-xl border border-white/10 bg-black/30 p-3">
+                      <div className="text-xl md:text-2xl font-extrabold text-white tabular-nums">{fmt(t.value)}</div>
+                      <div className="text-[11px] uppercase tracking-wider mt-0.5" style={{ color: t.color }}>
+                        {t.label}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex flex-wrap gap-x-5 gap-y-1 mb-2 text-xs text-white/55">
+                  <span className="inline-flex items-center gap-1.5">
+                    <span className="inline-block h-2 w-2 rounded-full" style={{ background: "#37e08b" }} /> Page views
+                  </span>
+                  <span className="inline-flex items-center gap-1.5">
+                    <span className="inline-block h-2 w-2 rounded-full" style={{ background: "#38bdf8" }} /> Sessions
+                  </span>
+                  <span className="inline-flex items-center gap-1.5">
+                    <span className="inline-block h-2 w-2 rounded-full" style={{ background: "#f7b80c" }} /> Camera opens
+                  </span>
+                </div>
+                <TrafficChart buckets={traffic.buckets} />
+                <details className="mt-3">
+                  <summary className="text-xs text-white/45 cursor-pointer">{`Exact values per ${trafficRange === "24h" ? "hour" : "day"}`}</summary>
+                  <div className="overflow-x-auto mt-2">
+                    <table className="w-full min-w-[340px] text-sm">
+                      <thead>
+                        <tr className="text-left text-[11px] uppercase tracking-wider text-white/35">
+                          <th className="pb-2 pr-3 font-semibold">{trafficRange === "24h" ? "Hour" : "Day"}</th>
+                          <th className="pb-2 pr-3 font-semibold text-right">Views</th>
+                          <th className="pb-2 pr-3 font-semibold text-right">Sessions</th>
+                          <th className="pb-2 font-semibold text-right">Camera opens</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {[...traffic.buckets].reverse().map((b) => (
+                          <tr key={b.key} className="border-t border-white/5">
+                            <td className="py-1.5 pr-3 text-white/70">{b.label}</td>
+                            <td className="py-1.5 pr-3 text-right text-white/85 tabular-nums">{fmt(b.views)}</td>
+                            <td className="py-1.5 pr-3 text-right text-white/70 tabular-nums">{fmt(b.sessions)}</td>
+                            <td className="py-1.5 text-right text-white/70 tabular-nums">{fmt(b.opens)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </details>
+                <p className="text-[11px] text-white/30 mt-3">
+                  Views are page loads only — interaction events (camera opens, globe reaches) are never counted as
+                  views. Session totals count each session once across the whole range; per-bucket sessions are
+                  distinct within that bucket. Buckets are Denver time.
+                </p>
+              </>
+            ) : (
+              <p className="text-sm text-white/40">Traffic data unavailable right now — reload in a moment.</p>
+            )}
+          </div>
+          <div className="grid md:grid-cols-2 gap-4">
             <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-              <div className="text-[11px] font-bold tracking-[0.18em] text-white/40 uppercase mb-3">Signups</div>
+              <div className="text-[11px] font-bold tracking-[0.18em] text-white/40 uppercase mb-3">Signups · 30 days</div>
               <Chart data={signupsSeries} labels={labels} color="#38bdf8" />
             </div>
             <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-              <div className="text-[11px] font-bold tracking-[0.18em] text-white/40 uppercase mb-3">Page views</div>
-              <Chart data={pvSeries} labels={labels} color="#37e08b" />
-            </div>
-            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-              <div className="text-[11px] font-bold tracking-[0.18em] text-white/40 uppercase mb-3">Revenue ($)</div>
+              <div className="text-[11px] font-bold tracking-[0.18em] text-white/40 uppercase mb-3">Revenue ($) · 30 days</div>
               <Chart data={revSeries} labels={labels} color="#f7b80c" />
             </div>
           </div>
