@@ -70,6 +70,12 @@ export default function StopJourneyMap({
     import('maplibre-gl')
       .then(maplibregl => {
         if (cancelled || !holderRef.current) return;
+        /* Use the site's self-hosted worker copy: the bundled default
+           does not resolve reliably in this app's chunk layout, and a
+           lazy map cannot count on the globe having configured the
+           shared module first. Without a worker the map never paints
+           (black box, controls only). Same pattern as CameraMiniMap. */
+        maplibregl.setWorkerUrl(`/vendor/maplibre/${maplibregl.getVersion()}/maplibre-gl-worker.mjs`);
         const m = new maplibregl.Map({
           container: holderRef.current,
           style: BASEMAP_STYLE,
