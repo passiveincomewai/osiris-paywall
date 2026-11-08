@@ -5,6 +5,7 @@ import SilentBoundary from '@/components/SilentBoundary';
 import AffiliateAttributionSync from '@/components/AffiliateAttributionSync';
 import AnalyticsTracker from '@/components/AnalyticsTracker';
 import MetaPixel from '@/components/MetaPixel';
+import MicrosoftClarity from '@/components/MicrosoftClarity';
 import TranslateGate from '@/components/translate/TranslateGate';
 import CaptureIndicator from '@/components/recording/CaptureIndicator';
 import InstallPrompt from '@/components/pwa/InstallPrompt';
@@ -199,6 +200,9 @@ export default function RootShell({
         </SilentBoundary>
         <SilentBoundary name="MetaPixel">
           <MetaPixel />
+        </SilentBoundary>
+        <SilentBoundary name="MicrosoftClarity">
+          <MicrosoftClarity />
         </SilentBoundary>
         <SilentBoundary name="TranslateGate">
           <TranslateGate />
