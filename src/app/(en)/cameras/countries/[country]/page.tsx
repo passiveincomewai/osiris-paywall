@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Camera, ChevronRight, MapPin } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
+import DonateInlineCard from "@/components/donate/DonateInlineCard";
 import EmailCaptureCard from "@/components/EmailCaptureCard";
 import TrialCtaSection from "@/components/TrialCtaSection";
 import CountryCameraExplorer from "@/components/CountryCameraExplorer";
@@ -1068,6 +1069,11 @@ export default async function CountryPage({
           >
             <Camera className="w-4 h-4" /> Open the live map
           </a>
+        </div>
+
+        {/* Support WorldEye — inline card. */}
+        <div className="mt-12">
+          <DonateInlineCard source="cameras_country" />
         </div>
 
         {/* Newsletter — end-of-page capture (the one list) */}

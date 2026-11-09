@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowRight, Camera, CheckCircle2, Compass, Globe, ShieldCheck } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
 import EmailCaptureCard from "@/components/EmailCaptureCard";
+import DonateInlineCard from "@/components/donate/DonateInlineCard";
 import TrialCtaSection from "@/components/TrialCtaSection";
 import DirectoryExplorer from "@/components/DirectoryExplorer";
 import DirectorySearch from "@/components/DirectorySearch";
@@ -334,6 +335,12 @@ export default async function LiveWebcamsPage({
               {copy.cta.secondaryCta}
             </Link>
           </div>
+        </div>
+
+        {/* Support WorldEye — inline card (the /live-cameras route
+            redirects here, so this is its placement). */}
+        <div className="mt-16">
+          <DonateInlineCard source="live_webcams" />
         </div>
 
         {/* Newsletter — end-of-page capture. EN only: the card's copy

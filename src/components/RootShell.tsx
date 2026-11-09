@@ -14,6 +14,7 @@ import TrialPrompt from '@/components/TrialPrompt';
 import NewsletterAccountPopup from '@/components/NewsletterAccountPopup';
 import PreferencesProvider from '@/components/PreferencesProvider';
 import DeviceHeartbeat from '@/components/DeviceHeartbeat';
+import DonateProvider from '@/components/donate/DonateProvider';
 import { buildEntityJsonLd } from "@/lib/seo/entity-schema";
 import { LOCALES, type LocaleCode } from "@/i18n/config";
 import { LocaleProvider } from "@/i18n/LocaleProvider";
@@ -242,6 +243,13 @@ export default function RootShell({
         </SilentBoundary>
         <SilentBoundary name="DeviceHeartbeat">
           <DeviceHeartbeat />
+        </SilentBoundary>
+        {/* Support WorldEye donations: the popup host + globe corner
+            toast + timed-prompt gate (src/components/donate). Renders
+            nothing until a prompt fires or a Support button is
+            clicked; copy follows <html lang>. */}
+        <SilentBoundary name="DonateProvider">
+          <DonateProvider />
         </SilentBoundary>
         <ErrorBoundary name="WorldEye">
           <PreferencesProvider>

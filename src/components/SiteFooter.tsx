@@ -1,5 +1,6 @@
 import Link from "next/link";
 import NewsletterForm from "./NewsletterForm";
+import DonateFooterStrip from "./donate/DonateFooterStrip";
 import FooterAuthButtons from "./FooterAuthButtons";
 import LanguageSelector from "./LanguageSelector";
 import { localizedPath, type LocaleCode } from "@/i18n/config";
@@ -44,6 +45,10 @@ export default function SiteFooter({
 
   return (
     <footer className="border-t border-white/10 mt-24">
+      {/* Support WorldEye strip — directly above the newsletter band,
+          free content pages only (the strip self-gates by path,
+          plan, and supporter state). */}
+      <DonateFooterStrip />
       {/* Newsletter band */}
       <div className="max-w-6xl mx-auto px-6 pt-12 pb-4">
         <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 md:p-8 flex flex-col md:flex-row md:items-center gap-5 justify-between">

@@ -10,6 +10,7 @@ import BreadcrumbLd from "@/components/BreadcrumbLd";
 import { POSTS, getPost } from "../posts";
 import WatchLiveModule from "@/components/blog/WatchLiveModule";
 import BlogBridgePanel from "@/components/blog/BlogBridgePanel";
+import DonateInlineCard from "@/components/donate/DonateInlineCard";
 import { compareLinksForPost } from "@/lib/blog-compare-links";
 import { buildNewsArticleLd, NEWS_AUTHOR } from "@/lib/news";
 
@@ -311,6 +312,11 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             cameras CTAs; replaces the old text-only CTA card whose
             /pricing button was the measured dead end). */}
         <BlogBridgePanel />
+
+        {/* Support WorldEye — end-of-post inline card. */}
+        <div className="mt-12">
+          <DonateInlineCard source="blog" />
+        </div>
 
         {/* Newsletter — end-of-post capture (the one list; same card
             as the other reading pages) */}

@@ -74,6 +74,7 @@ export const esChrome: ChromeCopy = {
         { label: "Acerca de", href: "/about" },
         { label: "Contacto", href: "/contact" },
         { label: "Socios", href: "/partners" },
+        { label: "Apoya a WorldEye", href: "/support" },
         { label: "Fuentes de cámaras", href: "/camera-sources" },
         { label: "Política de privacidad", href: "/privacy" },
         { label: "Términos del servicio", href: "/terms" },

@@ -3,6 +3,7 @@ import LanguageHeaderControl from "@/components/translate/LanguageHeaderControl"
 import Link from "next/link";
 import { ArrowLeft, Globe, Eye, ShieldCheck, Users, Code2 } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
+import DonateInlineCard from "@/components/donate/DonateInlineCard";
 import JsonLd from "@/components/JsonLd";
 import RelatedLinks from "@/components/RelatedLinks";
 import { ORGANIZATION_ID, WEBSITE_ID } from "@/lib/seo/entity-schema";
@@ -362,6 +363,11 @@ export default function AboutPage() {
         <p className="mt-10 text-center text-sm text-white/40">
           Want the details? Browse the <Link href="/blog" className="text-[#D4AF37] hover:underline">blog</Link>.
         </p>
+
+        {/* Support WorldEye — inline card. */}
+        <div className="mt-14">
+          <DonateInlineCard source="about" />
+        </div>
       </div>
 
       <SiteFooter />

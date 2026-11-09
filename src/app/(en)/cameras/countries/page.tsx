@@ -6,6 +6,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, Camera, Globe, MapPin } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
+import DonateInlineCard from "@/components/donate/DonateInlineCard";
 import TrialCtaSection from "@/components/TrialCtaSection";
 import CountriesDirectory from "@/components/CountriesDirectory";
 import type { CountryDirectoryEntry } from "@/lib/country-directory";
@@ -366,6 +367,10 @@ export default function CameraCountriesPage() {
               Camera overview
             </Link>
           </div>
+        </div>
+        {/* Support WorldEye — inline card. */}
+        <div className="mt-16 max-w-3xl">
+          <DonateInlineCard source="cameras_country" />
         </div>
       </div>
       <SiteFooter />

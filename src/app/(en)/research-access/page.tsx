@@ -14,6 +14,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
+import DonateInlineCard from "@/components/donate/DonateInlineCard";
 import JsonLd from "@/components/JsonLd";
 import RelatedLinks from "@/components/RelatedLinks";
 
@@ -379,6 +380,10 @@ export default function ResearchAccessPage() {
             },
           ]}
         />
+        {/* Support WorldEye — inline card. */}
+        <div className="mt-14">
+          <DonateInlineCard source="research_access" />
+        </div>
       </div>
       <SiteFooter />
     </main>

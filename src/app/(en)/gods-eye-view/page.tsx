@@ -14,6 +14,7 @@ import {
   ChevronDown,
   MousePointerClick,
   Layers,
+  Heart,
 } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
 import EmailCaptureCard from "@/components/EmailCaptureCard";
@@ -23,6 +24,9 @@ import RelatedLinks from "@/components/RelatedLinks";
 import GodsEyeLiveStrip from "@/components/GodsEyeLiveStrip";
 import MediaFrame from "@/components/design/MediaFrame";
 import GodsEyeStickyCta from "@/components/GodsEyeStickyCta";
+import DonateOpenButton from "@/components/donate/DonateOpenButton";
+import DonateInlineCard from "@/components/donate/DonateInlineCard";
+import DonateTrigger from "@/components/donate/DonateTrigger";
 import TrialCtaSection from "@/components/TrialCtaSection";
 import { TIER_PLAN_OPTIONS, type PlanTier } from "@/lib/billing/trial-checkout";
 
@@ -191,6 +195,13 @@ export default function GodsEyeViewPage() {
             >
               See plans
             </Link>
+            <DonateOpenButton
+              source="gods_eye_view_hero"
+              className="inline-flex w-full sm:w-auto items-center justify-center gap-2 px-6 py-4 rounded-2xl text-[#FB7185] font-semibold text-base tracking-wide hover:bg-rose-400/10 transition"
+            >
+              <Heart size={18} className="fill-[#FB7185]" />
+              Support WorldEye
+            </DonateOpenButton>
           </div>
           <p className="mt-4 text-xs tracking-wide text-white/40">
             Free in your browser · No signup · Nothing to install
@@ -558,6 +569,12 @@ export default function GodsEyeViewPage() {
           ]}
         />
 
+        {/* Support WorldEye — inline card (between the can't-do
+            section and the FAQ, per the donation spec). */}
+        <div className="mt-20 max-w-3xl mx-auto">
+          <DonateInlineCard source="gods_eye_view" />
+        </div>
+
         {/* FAQ */}
         <div className="mt-20 max-w-3xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
@@ -647,6 +664,9 @@ export default function GodsEyeViewPage() {
       </div>
 
       <GodsEyeStickyCta />
+      {/* Donation timed triggers (scroll 60% / 45s / exit intent) —
+          requests only; DonateProvider applies all suppression. */}
+      <DonateTrigger />
       <SiteFooter />
     </main>
   );

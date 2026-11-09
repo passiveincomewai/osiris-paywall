@@ -101,6 +101,7 @@ export const enChrome: ChromeCopy = {
         { label: "About", href: "/about" },
         { label: "Contact", href: "/contact" },
         { label: "Partners", href: "/partners" },
+        { label: "Support WorldEye", href: "/support" },
         { label: "Camera Sources", href: "/camera-sources" },
         { label: "Privacy Policy", href: "/privacy" },
         { label: "Terms of Service", href: "/terms" },
