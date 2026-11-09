@@ -97,7 +97,7 @@ const TodayInTheSky = dynamic(() => import('@/components/TodayInTheSky'), { ssr:
 const CameraViewer = dynamic(() => import('@/components/CameraViewer'));
 const CameraSignupNudge = dynamic(() => import('@/components/CameraSignupNudge'));
 const EmailCaptureCard = dynamic(() => import('@/components/EmailCaptureCard'));
-const TimedTrialPopup = dynamic(() => import('@/components/TimedTrialPopup'));
+const UpgradeCornerPromo = dynamic(() => import('@/components/UpgradeCornerPromo'));
 const ShareAwayPrompt = dynamic(() => import('@/components/ShareAwayPrompt'));
 const AccountHudControl = dynamic(() => import('@/components/AccountHudControl'));
 const LanguageHeaderControl = dynamic(() => import('@/components/translate/LanguageHeaderControl'));
@@ -1647,6 +1647,31 @@ export default function Dashboard() {
   const sharedCameraLookupPending = useRef(false);
   const sharedCameraLookupRetries = useRef(0);
   const sharedCameraRetryTimer = useRef<number | null>(null);
+  // Upgrade popup completion (2026-11-09): if the popup was opened
+  // from a camera context (e.g. the camera-alert gate), reopen that
+  // camera once the trial starts — the popup host broadcasts the
+  // pending id on worldeye:upgrade-completed.
+  useEffect(() => {
+    const onUpgraded = (e: Event) => {
+      const cameraId = (e as CustomEvent<{ cameraId?: string | null }>).detail?.cameraId;
+      if (!cameraId) return;
+      const open = (cam: any) => {
+        if (!cam) return;
+        setFlyToLocation({ lat: cam.lat, lng: cam.lng, zoom: 12, ts: Date.now() });
+        handleEntityClick({
+          type: 'cctv', id: cam.id, name: cam.name, city: cam.city, country: cam.country,
+          source: cam.source, feed_url: cam.feed_url, stream_url: cam.stream_url,
+          stream_type: cam.stream_type, external_url: cam.external_url, lat: cam.lat, lng: cam.lng,
+        });
+      };
+      const local: any = findCameraById(dataRef.current.cameras ?? [], cameraId);
+      if (local) open(local);
+      else void fetchCameraById(cameraId).then(open).catch(() => {});
+    };
+    window.addEventListener('worldeye:upgrade-completed', onUpgraded);
+    return () => window.removeEventListener('worldeye:upgrade-completed', onUpgraded);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   useEffect(() => {
     if (!sharedCameraId || sharedCameraSettled.current) return;
     const cam: any = findCameraById(dataRef.current.cameras ?? [], sharedCameraId);
@@ -3615,10 +3640,11 @@ export default function Dashboard() {
         />
       )}
       {showSharePrompt && <ShareAwayPrompt onClose={() => setShowSharePrompt(false)} />}
-      {/* F4 timed trial popup: self-gating on lib/camera-ladder's
-          discipline; suppressed while the wall, the loop-in card or
-          the camera viewer is up, so prompts never stack. */}
-      <TimedTrialPopup
+      {/* Upgrade corner promo (replaced the F4 timed trial popup
+          2026-11-09): self-gating on lib/camera-ladder's discipline;
+          suppressed while the wall, the loop-in card or the camera
+          viewer is up, so prompts never stack. */}
+      <UpgradeCornerPromo
         surface="globe"
         suppressed={showCameraSignup || showSharePrompt || activeCamera !== null || firstCameraPromptVisible}
         onVisibilityChange={setTimedPopupVisible}

@@ -20,7 +20,7 @@ import {
 import { readSessionIdentity, type SessionIdentity } from '@/lib/premium-entitlement';
 
 const CameraSignupNudge = dynamic(() => import('@/components/CameraSignupNudge'));
-const TimedTrialPopup = dynamic(() => import('@/components/TimedTrialPopup'));
+const UpgradeCornerPromo = dynamic(() => import('@/components/UpgradeCornerPromo'));
 
 /** Cameras per batch — the landing gallery's grid scale, and small enough
  *  that a batch response stays a few tens of KB even for long-named feeds. */
@@ -546,7 +546,7 @@ export default function CountryCameraExplorer({
       )}
       {/* F4 timed trial popup: self-gating on lib/camera-ladder's
           discipline; suppressed while the wall or the viewer is up. */}
-      <TimedTrialPopup surface="directory" suppressed={showGate || active !== null} />
+      <UpgradeCornerPromo surface="directory" suppressed={showGate || active !== null} />
     </div>
   );
 }
