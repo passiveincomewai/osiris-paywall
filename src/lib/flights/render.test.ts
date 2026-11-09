@@ -437,13 +437,18 @@ import { applyFlightsDelta, type FlightsPayloadLike } from './delta';
 function evaluateWithMapLibre(expr: any, spec: Record<string, unknown>, props: Record<string, unknown>, zoom: number): unknown {
   const res = (createExpression as any)(expr, spec);
   if (res.result === 'error') throw new Error(res.value.map((e: any) => e.message).join('; '));
-  return res.value.evaluate(
+  const value = res.value.evaluate(
     { zoom },
     { type: 'Feature', properties: props, geometry: { type: 'Point', coordinates: [0, 0] } },
     {},
     null,
     ['plane-cyan', 'heli-cyan', 'plane-green', 'heli-green', 'plane-pink', 'heli-pink', 'plane-red', 'heli-red'],
   );
+  // Style-spec v26's evaluator returns a resolvedImage as a bare string;
+  // v24 (MapLibre 5) returns a ResolvedImage object — unwrap to the icon
+  // name either way so assertions compare the resolution, not the shape.
+  if (value && typeof value === 'object' && typeof value.name === 'string') return value.name;
+  return value;
 }
 
 const ICON_SPEC = { type: 'resolvedImage', 'property-type': 'data-driven', expression: { interpolated: false, parameters: ['zoom', 'feature'] } };

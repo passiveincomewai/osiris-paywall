@@ -13,9 +13,11 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import {
   classifyWebGL,
+  glContextOverride,
   glPanelOverride,
   isWebGLInitError,
   resetWebGLProbeCache,
+  webgl2Available,
 } from './webgl-probe';
 
 function fakeCanvas(grants: Record<string, boolean>, throwing = false) {
@@ -65,6 +67,29 @@ describe('glPanelOverride', () => {
     expect(glPanelOverride('?glctx=webgl1')).toBe(false);
     expect(glPanelOverride('')).toBe(false);
     expect(glPanelOverride(undefined)).toBe(false);
+  });
+});
+
+describe('glContextOverride + webgl2Available', () => {
+  it('parses ?glctx=webgl1 and nothing else', () => {
+    expect(glContextOverride('?glctx=webgl1')).toBe('webgl1');
+    expect(glContextOverride('?glctx=webgl2')).toBe(null);
+    expect(glContextOverride('?glfallback=panel')).toBe(null);
+    expect(glContextOverride(undefined)).toBe(null);
+  });
+
+  it('webgl2Available follows the probe class', () => {
+    resetWebGLProbeCache();
+    classifyWebGL(fakeCanvas({ webgl2: true, webgl: true }));
+    expect(webgl2Available('?x=1')).toBe(true);
+    // The test override forces WebGL1 behaviour even on a WebGL2 browser.
+    expect(webgl2Available('?glctx=webgl1')).toBe(false);
+  });
+
+  it('webgl2Available is false for a WebGL1-only browser', () => {
+    resetWebGLProbeCache();
+    classifyWebGL(fakeCanvas({ webgl2: false, webgl: true }));
+    expect(webgl2Available('?x=1')).toBe(false);
   });
 });
 

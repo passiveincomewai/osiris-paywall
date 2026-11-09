@@ -82,6 +82,37 @@ export function resetWebGLProbeCache(): void {
 }
 
 /**
+ * Test-only override: ?glctx=webgl1 forces the map onto a WebGL1
+ * context even on a WebGL2-capable browser, so the WebGL1 behaviour
+ * (dual-mode engine rendering, WebGL2-only shader layers skipped) can
+ * be verified in a normal browser.
+ */
+export function glContextOverride(
+  search: string | undefined = typeof window !== 'undefined' ? window.location.search : undefined,
+): 'webgl1' | null {
+  if (!search) return null;
+  try {
+    return new URLSearchParams(search).get('glctx') === 'webgl1' ? 'webgl1' : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Whether WebGL2-only features can run — specifically the custom
+ * shader layers (GLSL 300 es + vertex arrays: satellites 3D, live
+ * clouds, OI globe). True only when the map will really receive a
+ * WebGL2 context: the probe found WebGL2 AND the ?glctx=webgl1 test
+ * override is not forcing WebGL1.
+ */
+export function webgl2Available(
+  search: string | undefined = typeof window !== 'undefined' ? window.location.search : undefined,
+): boolean {
+  if (glContextOverride(search) === 'webgl1') return false;
+  return classifyWebGL() === 'webgl2';
+}
+
+/**
  * Test/support override: ?glfallback=panel forces the fallback panel
  * regardless of capability, so the panel can be verified in a normal
  * WebGL2 browser (and a user can be talked through it on support).

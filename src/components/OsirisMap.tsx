@@ -3,7 +3,7 @@
 import { buildGeometry, closeRing, drawReducer, initialDrawState, measure, type DrawAction, type DrawMode, type DrawProgress, type DrawResult, type DrawState } from '@/lib/draw';
 import { useEffect, useRef, useState, useCallback, memo } from 'react';
 import * as maplibregl from 'maplibre-gl';
-import { classifyWebGL, glPanelOverride, isWebGLInitError } from '@/lib/webgl-probe';
+import { classifyWebGL, glContextOverride, glPanelOverride, isWebGLInitError, webgl2Available } from '@/lib/webgl-probe';
 import GlFallbackPanel from './GlFallbackPanel';
 import { installTerrainTileProtocol } from '@/lib/terrain-tiles';
 import { CLOUDS_ATTRIBUTION, CLOUDS_CREDIT, CLOUDS_LAYER, frameTime } from '@/lib/live-clouds';
@@ -420,6 +420,11 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
   // fallback panel renders in place of the map instead of the error
   // boundary's raw library message. See lib/webgl-probe.
   const [glUnavailable, setGlUnavailable] = useState(false);
+  // Set at map construction: whether the map's context is WebGL2, so
+  // the WebGL2-only custom shader layers (satellites 3D, live clouds,
+  // OI globe) can skip themselves on a WebGL1 context instead of
+  // crashing. See lib/webgl-probe (webgl2Available).
+  const webgl2Ref = useRef(true);
   const popupRef = useRef<maplibregl.Popup | null>(null);
   // GBFS + transit layers keep their data in-map (toggle-gated fetches).
   const gbfsSystemsRef = useRef<any[]>([]);
@@ -1453,16 +1458,17 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
 
-    // Pre-flight WebGL probe (lib/webgl-probe). MapLibre 6 is
-    // WebGL2-only: on a browser that cannot create a WebGL2 context the
-    // constructor below throws its raw library error, which the error
-    // boundary rendered verbatim (truncated) over a black globe.
-    // Classify first instead — a browser this engine cannot run gets
-    // the designed fallback panel, and no map construction is attempted.
-    if (glPanelOverride() || classifyWebGL() !== 'webgl2') {
+    // Pre-flight WebGL probe (lib/webgl-probe). The engine is dual-mode
+    // (MapLibre 5: WebGL2 where available, WebGL1 otherwise), so only a
+    // browser with NO WebGL at all cannot run the globe — it gets the
+    // designed fallback panel instead of the raw library error the
+    // constructor would throw into the error boundary (rendered
+    // verbatim, truncated, over a black globe in the WebGL2-only era).
+    if (glPanelOverride() || classifyWebGL() === 'none') {
       setGlUnavailable(true);
       return;
     }
+    webgl2Ref.current = webgl2Available();
 
     // Basemap style: our own dark style on the keyless OpenFreeMap
     // vector source (lib/basemap-style). CARTO's hosted Dark Matter
@@ -1501,17 +1507,24 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       maxPitch: 85,
     };
 
-    // MapLibre asks for a high-performance WebGL2 context and throws outright if it
-    // cannot get one. Some machines refuse that exact request while still granting a
-    // plainer one, so walk down to weaker requests before giving up. The WebGL1 rung
-    // this used to have cannot come back: MapLibre 6's ContextType is 'webgl2' alone,
-    // so machines that only ever managed WebGL1 are now out of reach either way.
-    // Dropping antialias is the last rung left for a struggling GPU.
-    const attributeFallbacks: maplibregl.MapOptions['canvasContextAttributes'][] = [
-      undefined,
-      { powerPreference: 'low-power', failIfMajorPerformanceCaveat: false },
-      { powerPreference: 'low-power', failIfMajorPerformanceCaveat: false, antialias: false },
-    ];
+    // With no contextType set, the engine asks for a WebGL2 context and
+    // falls back to WebGL1 on its own (dual-mode). Some machines refuse
+    // a demanding request while still granting a plainer one, so the
+    // ladder walks down to weaker attributes before giving up; dropping
+    // antialias is the last rung for a struggling GPU. The ?glctx=webgl1
+    // test override pins contextType:'webgl' on every rung — the plain
+    // first rung would try WebGL2 first and defeat the test.
+    const forceWebGL1 = glContextOverride() === 'webgl1';
+    const attributeFallbacks: maplibregl.MapOptions['canvasContextAttributes'][] = forceWebGL1
+      ? [
+          { contextType: 'webgl', powerPreference: 'low-power', failIfMajorPerformanceCaveat: false },
+          { contextType: 'webgl', powerPreference: 'low-power', failIfMajorPerformanceCaveat: false, antialias: false },
+        ]
+      : [
+          undefined,
+          { powerPreference: 'low-power', failIfMajorPerformanceCaveat: false },
+          { powerPreference: 'low-power', failIfMajorPerformanceCaveat: false, antialias: false },
+        ];
 
     let map: maplibregl.Map | undefined;
     for (const canvasContextAttributes of attributeFallbacks) {
@@ -2270,8 +2283,10 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       map.addLayer({ id: 'sat-dots', type: 'circle', source: 'satellites', layout: { visibility: 'none' }, paint: {
         'circle-radius': ['interpolate',['linear'],['zoom'], 1,1.5, 5,3], 'circle-color': ['get','color'], 'circle-opacity': 1.0,
       }});
-      // The spacecraft themselves, lifted to their orbit.
-      if (!map.getLayer('sat-3d')) {
+      // The spacecraft themselves, lifted to their orbit. The 3D layer's
+      // shaders are WebGL2-only (GLSL 300 es); on a WebGL1 context it
+      // stays unadded and the 2D satellite dots above carry the layer.
+      if (!map.getLayer('sat-3d') && webgl2Ref.current) {
         satLayerRef.current = createSatelliteLayer('sat-3d');
         map.addLayer(satLayerRef.current as any);
       }
@@ -6424,6 +6439,15 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
       cloudLayerRef.current = null;
       return;
     }
+    if (!webgl2Ref.current) {
+      // WebGL1 context: the clouds layer's shaders are WebGL2-only
+      // (GLSL 300 es + vertex arrays) and would fail to compile — leave
+      // the layer and its credit unadded rather than crash the map.
+      if (map.getLayer(CLOUDS_LAYER)) map.removeLayer(CLOUDS_LAYER);
+      if (map.getLayer(CLOUDS_CREDIT)) map.removeLayer(CLOUDS_CREDIT);
+      cloudLayerRef.current = null;
+      return;
+    }
     if (!cloudLayerRef.current || !map.getLayer(CLOUDS_LAYER)) {
       cloudLayerRef.current = createCloudLayer(CLOUDS_LAYER);
       map.addLayer(cloudLayerRef.current, 'day-night-fill');
@@ -6503,6 +6527,9 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
   // layer re-adds itself after a style change.
   useEffect(() => {
     if (!mapReady || !mapRef.current) return;
+    // The OI globe's shaders are WebGL2-only (GLSL 300 es + vertex
+    // arrays); on a WebGL1 context it stays unattached.
+    if (!webgl2Ref.current) return;
     const globe = attachOi(mapRef.current, {
       onSelect: key => onOiSelectRef.current?.(key),
       onHover: hover => onOiHoverRef.current?.(hover),

@@ -1,5 +1,5 @@
 import type { CustomLayerInterface, CustomRenderMethodInput, Map as MlMap } from 'maplibre-gl';
-import { createTileMesh, EXTENT } from 'maplibre-gl';
+import { createTileMesh, EXTENT, OverscaledTileID } from 'maplibre-gl';
 import {
   CLOUD_BASE_M, CLOUD_RELIEF_M, CLOUDS_MAX_ZOOM, PAD, PADDED, TILE,
   cloudLift, cloudOpacity, shadowOffset, type CloudImage, type Tile,
@@ -319,7 +319,18 @@ export function createCloudLayer(id: string): CustomLayerInterface & { setFrame(
         gl.uniform1i(u('u_shadow'), shadowPass ? 1 : 0);
         gl.uniform1f(u('u_lift'), shadowPass ? 0 : 1);
         for (const item of items) {
-          setProjection(program, args.getProjectionData({ tileID: item.tileID, applyGlobeMatrix: true }));
+          // Per-tile projection data. MapLibre 6 exposed this as a
+          // helper on the render args; MapLibre 5's render args carry
+          // only the world-tile default, so ask the map's transform
+          // directly — the same computation, keyed by the tile's real
+          // OverscaledTileID (rebuilt from the stored literal).
+          setProjection(program, map.transform.getProjectionData({
+            overscaledTileID: new OverscaledTileID(
+              item.tileID.canonical.z, item.tileID.wrap,
+              item.tileID.canonical.z, item.tileID.canonical.x, item.tileID.canonical.y,
+            ),
+            applyGlobeMatrix: true,
+          }));
           gl.uniform4f(u('u_uv'), ...item.uv);
           gl.uniform2f(u('u_shadow_offset'), item.shadow, item.shadow);
           gl.activeTexture(gl.TEXTURE0);

@@ -1,4 +1,7 @@
-import type { Map as MapLibreMap, MapMovementEvent } from 'maplibre-gl';
+import type { Map as MapLibreMap, MapLibreEvent } from 'maplibre-gl';
+
+/** The event MapLibre fires for 'movestart' (v6 named this MapMovementEvent; v5's event map types it directly). */
+type MapMovementEvent = MapLibreEvent<MouseEvent | TouchEvent | WheelEvent | undefined>;
 
 export type CameraMove = { kind: 'zoom'; dir: 1 | -1 } | { kind: 'pan'; dx: number; dy: number } | { kind: 'tilt'; dir: 1 | -1 | 0 };
 
