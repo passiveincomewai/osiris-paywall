@@ -3937,8 +3937,14 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
       sizeToContainer.disconnect();
       window.removeEventListener('we:open-entity', openSharedEntity);
       cancelAnimationFrame(hoverFrame);
-      map.remove();
-      mapRef.current = null;
+      // The map itself is destroyed by the LAST effect in this component
+      // (see the teardown effect just above the JSX return). React runs
+      // passive-effect cleanups in declaration order, so removing the map
+      // here — in the FIRST effect — left every later layer-sync cleanup
+      // running against a map whose style was already deleted; any of
+      // them touching a layer API the installed MapLibre build does not
+      // null-guard throws mid-unmount and the root error boundary paints
+      // over the destination page (the /pricing navigation bug).
     };
   }, []);
 
@@ -7137,6 +7143,23 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     map.on('zoomend', onZoom);
     return () => { map.off('zoomend', onZoom); };
   }, [mapReady, selectedSat, clearSat]);
+
+  // Map teardown — MUST stay the last effect declared in this component.
+  // React runs passive-effect cleanups in declaration order on unmount,
+  // so this cleanup runs after every layer-sync effect above has torn
+  // down against a still-live map. (Destroying the map in the first
+  // effect's cleanup, as before, deleted its style out from under all
+  // of them; a cleanup calling an unguarded MapLibre layer method then
+  // threw during route transitions and the root boundary replaced the
+  // destination page — the /pricing navigation error.)
+  useEffect(() => {
+    return () => {
+      const map = mapRef.current;
+      if (!map) return;
+      mapRef.current = null;
+      try { map.remove(); } catch { /* container already detached */ }
+    };
+  }, []);
 
   return (
     <>
