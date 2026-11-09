@@ -49,14 +49,23 @@ export type CheckoutFlowOutcome =
   | { kind: "navigated"; url: string };
 
 /**
- * The publishable key the embedded form needs, read from the environment.
- * Code reads it from env ONLY — it is never hardcoded. In the browser
- * bundle Next inlines this literal access at build time.
+ * The publishable key the embedded form needs. With no env argument,
+ * the key is read through the LITERAL member access below: Next.js
+ * inlines NEXT_PUBLIC_* values into the browser bundle only for the
+ * exact shape `process.env.NEXT_PUBLIC_X`. Reading it indirectly
+ * (the old `env = process.env` default, then `env.NEXT_PUBLIC_…`)
+ * compiles to a runtime lookup on the browser's empty process.env
+ * shim and always returned undefined in production — the upgrade
+ * popup's checkout (the one caller of the no-arg form) failed its
+ * key check before its first fetch and could only show its error
+ * state. Tests inject an env record explicitly; that path is
+ * unchanged. Code never hardcodes the key.
  */
 export function stripePublishableKey(
-  env: Record<string, string | undefined> = process.env,
+  env?: Record<string, string | undefined>,
 ): string | undefined {
-  return env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
+  if (env) return env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
+  return process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 }
 
 /** A publishable key is usable when it looks like one (pk_live_/pk_test_). */
