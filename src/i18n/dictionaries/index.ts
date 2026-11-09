@@ -23,6 +23,7 @@ import {
   type LiveFlightTrackerCopy,
 } from "./en/live-flight-tracker";
 import { enShipTracker, type ShipTrackerCopy } from "./en/ship-tracker";
+import { enDonate, type DonateCopy } from "./en/donate";
 import { esChrome } from "./es/chrome";
 import { esHome } from "./es/home";
 import { esPricing } from "./es/pricing";
@@ -30,6 +31,7 @@ import { esLiveWebcams } from "./es/live-webcams";
 import { esFaq } from "./es/faq";
 import { esLiveFlightTracker } from "./es/live-flight-tracker";
 import { esShipTracker } from "./es/ship-tracker";
+import { esDonate } from "./es/donate";
 
 export type { ChromeCopy } from "./en/chrome";
 export type { HomeCopy, HomeFaq } from "./en/home";
@@ -41,6 +43,7 @@ export type {
   TrackerVoiceCopy,
 } from "./en/live-flight-tracker";
 export type { ShipTrackerCopy } from "./en/ship-tracker";
+export type { DonateCopy } from "./en/donate";
 export type { RichSegment, RichText } from "./types";
 
 export const CHROME_DICTIONARIES: Partial<Record<LocaleCode, ChromeCopy>> = {
@@ -82,6 +85,15 @@ export const SHIP_TRACKER_DICTIONARIES: Partial<
 > = {
   en: enShipTracker,
   es: esShipTracker,
+};
+
+/** Donation copy (Support WorldEye) — a component dictionary, not a
+ * manifest-published page dictionary: the popup renders on many pages
+ * and /support is EN-routed, so it is not part of PAGE_DICTIONARIES
+ * and carries no source hash. */
+export const DONATE_DICTIONARIES: Partial<Record<LocaleCode, DonateCopy>> = {
+  en: enDonate,
+  es: esDonate,
 };
 
 /** Slug → dictionary map for the pages that have dictionaries. */
@@ -148,4 +160,12 @@ export function getLiveFlightTrackerCopy(
 
 export function getShipTrackerCopy(locale: LocaleCode): ShipTrackerCopy {
   return requireCopy(SHIP_TRACKER_DICTIONARIES, locale, "ship-tracker");
+}
+
+/** Donation copy with an English fallback: the popup can render under
+ * any locale context (including tests with no provider), and a missing
+ * locale must degrade to English rather than throw — donations are an
+ * overlay, never a routed page. */
+export function getDonateCopy(locale: LocaleCode): DonateCopy {
+  return DONATE_DICTIONARIES[locale] ?? enDonate;
 }

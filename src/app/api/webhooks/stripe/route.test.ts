@@ -12,10 +12,11 @@ import { NextRequest } from "next/server";
 type Row = Record<string, any>;
 
 const H = vi.hoisted(() => {
-  const store: { users: Row[]; subscriptions: Row[]; logs: Row[] } = {
+  const store: { users: Row[]; subscriptions: Row[]; logs: Row[]; donations: Row[] } = {
     users: [],
     subscriptions: [],
     logs: [],
+    donations: [],
   };
 
   const db = {
@@ -60,6 +61,20 @@ const H = vi.hoisted(() => {
       create: async ({ data }: any) => {
         const row = { id: `user_${store.users.length + 1}`, ...data };
         store.users.push(row);
+        return row;
+      },
+      update: async ({ where, data }: any) => {
+        const u = store.users.find((x) => x.id === where.id);
+        if (u) Object.assign(u, data);
+        return u ?? null;
+      },
+    },
+    donation: {
+      findUnique: async ({ where }: any) =>
+        store.donations.find((d) => d.stripeRef === where.stripeRef) ?? null,
+      create: async ({ data }: any) => {
+        const row = { id: `don_${store.donations.length + 1}`, ...data };
+        store.donations.push(row);
         return row;
       },
     },
@@ -211,6 +226,7 @@ beforeEach(() => {
   H.store.users = [];
   H.store.subscriptions = [];
   H.store.logs = [];
+  H.store.donations = [];
   H.stripeFake.event = null;
   H.stripeFake.sub = null;
   H.sendEmailMock.mockReset();
@@ -293,5 +309,141 @@ describe("invoice.payment_failed dunning", () => {
     const res = await postEvent();
     expect(res.status).toBe(200);
     expect(H.sendEmailMock).not.toHaveBeenCalled();
+  });
+});
+
+// ── Support WorldEye donations (2026-11-09) ─────────────────────
+// The critical guarantee: a donation NEVER grants plan access. These
+// tests pin that a donation checkout records ONLY a Donation row (+
+// the supporter flag), a donation subscription sync creates NO
+// subscription row, and monthly renewals record per-invoice without
+// double-counting the first payment.
+describe("donation events", () => {
+  function stageDonationSession(overrides: Row = {}) {
+    H.stripeFake.event = {
+      id: "evt_don_1",
+      type: "checkout.session.completed",
+      livemode: true,
+      data: {
+        object: {
+          id: "cs_don_1",
+          mode: "payment",
+          payment_status: "paid",
+          amount_total: 1000,
+          currency: "usd",
+          metadata: { type: "donation", frequency: "once", source: "gods_eye_view", userId: "user-1" },
+          client_reference_id: "user-1",
+          customer_details: { email: "member@example.com" },
+          ...overrides,
+        },
+      },
+    };
+  }
+
+  function stageDonationSub() {
+    H.stripeFake.sub = {
+      id: "sub_don",
+      customer: "cus_1",
+      status: "active",
+      cancel_at_period_end: false,
+      metadata: { type: "donation", frequency: "monthly", source: "blog", userId: "user-1" },
+      items: {
+        data: [
+          {
+            price: { id: "price_donate_monthly_10" },
+            current_period_start: 1760000000,
+            current_period_end: 1762592000,
+          },
+        ],
+      },
+    };
+  }
+
+  it("records a one-time donation and grants NO plan", async () => {
+    seedMember();
+    // seedMember leaves the member's own plan row; a donation must not
+    // touch it, only add a Donation row + supporter flag.
+    const subsBefore = H.store.subscriptions.length;
+    stageDonationSession();
+    const res = await postEvent();
+    expect(res.status).toBe(200);
+    expect(H.store.donations).toHaveLength(1);
+    expect(H.store.donations[0]).toMatchObject({
+      stripeRef: "cs_don_1",
+      amountCents: 1000,
+      frequency: "once",
+      source: "gods_eye_view",
+      userId: "user-1",
+    });
+    expect(H.store.subscriptions).toHaveLength(subsBefore);
+    expect(H.store.users[0].supporter).toBe(true);
+  });
+
+  it("is idempotent on replay", async () => {
+    seedMember();
+    stageDonationSession();
+    await postEvent();
+    await postEvent();
+    expect(H.store.donations).toHaveLength(1);
+  });
+
+  it("never syncs a donation subscription into a plan row", async () => {
+    H.store.users = [{ id: "user-1", email: "member@example.com", name: "Jamie Example" }];
+    stageDonationSub();
+    H.stripeFake.event = {
+      id: "evt_don_2",
+      type: "customer.subscription.updated",
+      livemode: true,
+      data: { object: H.stripeFake.sub },
+    };
+    const res = await postEvent();
+    expect(res.status).toBe(200);
+    expect(H.store.subscriptions).toHaveLength(0);
+  });
+
+  it("records a monthly renewal per invoice, not the first one twice", async () => {
+    H.store.users = [{ id: "user-1", email: "member@example.com", name: "Jamie Example" }];
+    stageDonationSub();
+    const invoiceFor = (id: string, reason: string) => ({
+      id,
+      customer: "cus_1",
+      amount_paid: 1000,
+      amount_due: 1000,
+      currency: "usd",
+      billing_reason: reason,
+      customer_email: "member@example.com",
+      parent: {
+        type: "subscription_details",
+        subscription_details: { subscription: "sub_don" },
+      },
+    });
+    // First invoice (subscription_create): the checkout-session branch
+    // owns this payment — the invoice branch must NOT double-record,
+    // but the supporter flag is still affirmed.
+    H.stripeFake.event = {
+      id: "evt_don_3",
+      type: "invoice.payment_succeeded",
+      livemode: true,
+      data: { object: invoiceFor("in_first", "subscription_create") },
+    };
+    expect((await postEvent()).status).toBe(200);
+    expect(H.store.donations).toHaveLength(0);
+    expect(H.store.users[0].supporter).toBe(true);
+    // Renewal: recorded from the invoice, still no plan row.
+    H.stripeFake.event = {
+      id: "evt_don_4",
+      type: "invoice.payment_succeeded",
+      livemode: true,
+      data: { object: invoiceFor("in_renewal", "subscription_cycle") },
+    };
+    expect((await postEvent()).status).toBe(200);
+    expect(H.store.donations).toHaveLength(1);
+    expect(H.store.donations[0]).toMatchObject({
+      stripeRef: "in_renewal",
+      amountCents: 1000,
+      frequency: "monthly",
+      source: "blog",
+    });
+    expect(H.store.subscriptions).toHaveLength(0);
   });
 });

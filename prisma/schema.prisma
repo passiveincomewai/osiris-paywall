@@ -24,6 +24,11 @@ model User {
   // unsubscribe link in marketing emails; transactional mail (trial
   // started / trial ending) is not gated on it.
   emailOptOut   Boolean        @default(false)
+  // Support WorldEye donations (src/lib/donate): set by the Stripe
+  // webhook when a donation completes for this account. Supporters
+  // stop seeing donation prompts. NOT a plan/entitlement flag.
+  supporter     Boolean        @default(false)
+  donations     Donation[]
   lifecycleEmails LifecycleEmailLog[]
   image         String?
   accounts      Account[]
@@ -77,6 +82,30 @@ model User {
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   sharedCollections SharedCollection[]
+}
+
+// ── Support WorldEye donations (2026-11-09) ─────────────────────
+// One row per completed donation, written ONLY by the Stripe webhook
+// (src/lib/donate/record). stripeRef is the checkout session id for
+// the first payment or the invoice id for a monthly renewal — unique,
+// so Stripe replays can never double-record. A donation NEVER grants
+// plan access; the webhook's donation branch is disjoint from the
+// subscription sync (see src/app/api/webhooks/stripe/route.ts).
+model Donation {
+  id          String   @id @default(cuid())
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  email       String?
+  amountCents Int
+  currency    String   @default("usd")
+  // "once" | "monthly" (DonateFrequency in src/lib/donate/config).
+  frequency   String
+  // Placement token the donor came from (e.g. "gods_eye_view").
+  source      String?
+  stripeRef   String   @unique
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
 }
 
 // ── Account settings expansion (2026-10-22) ─────────────────────────

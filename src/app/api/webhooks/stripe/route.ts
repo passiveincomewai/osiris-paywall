@@ -18,6 +18,12 @@ import { findBaseItem, reconcileOrgSeatsFromSubscription } from "@/lib/team/seat
 import { recordTeamEvent } from "@/lib/team/analytics";
 import { sendPaymentFailedRecovery } from "@/lib/billing/dunning";
 import { fulfillGiftPurchase, isGiftStripeSubscription } from "@/lib/billing/gift";
+import {
+  donationFromCheckoutSession,
+  donationFromInvoice,
+  markSupporter,
+  recordDonation,
+} from "@/lib/donate/record";
 import { isAmbientPriceId, isPowderPassPriceId } from "@/lib/plan-tier";
 import {
   trialConvertedWelcomeEmail,
@@ -122,6 +128,16 @@ async function syncSubscription(sub: Stripe.Subscription): Promise<string | unde
   // here would hand the buyer (or a guest-resolved account) a plan
   // they bought for someone else.
   if (isGiftStripeSubscription(sub)) {
+    return undefined;
+  }
+  // Donation subscriptions (Support WorldEye monthly — metadata
+  // type=donation, set by /api/donate/session's subscription_data)
+  // never entitle anyone either: a gift is not a plan. Without this
+  // guard a $5/mo donation would upsert a subscription row, resolve
+  // (or auto-create) an account from the customer email, and read as
+  // paid access. The donation itself is recorded by the
+  // checkout/invoice donation branches (src/lib/donate/record).
+  if (sub.metadata?.type === "donation") {
     return undefined;
   }
   // NOTE: Stripe's Metadata index signature types `.userId` as `string`
@@ -335,7 +351,8 @@ export async function POST(req: NextRequest) {
     // the stripe@18.5.0 Event type union — hence the string comparison.
     if ((event.type as string) === "checkout.session.created") {
       const s = event.data.object as Stripe.Checkout.Session;
-      if (s.mode === "subscription") {
+      // Donation sessions skip checkout-attempt tracking (no plan funnel).
+      if (s.mode === "subscription" && s.metadata?.type !== "donation") {
         const email = s.customer_details?.email ?? s.customer_email ?? null;
         const plan = s.metadata?.plan ?? null;
         await db.checkoutAttempt.upsert({
@@ -345,6 +362,35 @@ export async function POST(req: NextRequest) {
         }).catch(() => {});
       }
       return NextResponse.json({ received: true });
+    }
+
+    // ── Donations (Support WorldEye) ─────────────────────────────
+    // A completed donation checkout records the gift (+ supporter
+    // flag for signed-in donors) and NOTHING else: no plan sync, no
+    // commissions, no discount attribution, no Meta CAPI. Monthly
+    // donations create a real Stripe subscription, but
+    // syncSubscription refuses donation metadata, so no plan row can
+    // ever come from one. Sessions that complete unpaid (async
+    // payment methods) wait for async_payment_succeeded; recording
+    // is idempotent on the session id, so Stripe replays no-op.
+    if (
+      event.type === "checkout.session.completed" ||
+      (event.type as string) === "checkout.session.async_payment_succeeded"
+    ) {
+      const s = event.data.object as Stripe.Checkout.Session;
+      if (s.metadata?.type === "donation") {
+        const rec = donationFromCheckoutSession(s);
+        if (rec && s.payment_status === "paid") {
+          await recordDonation(rec);
+        }
+        await db.checkoutAttempt
+          .updateMany({
+            where: { stripeSessionId: s.id },
+            data: { status: "completed" },
+          })
+          .catch(() => {});
+        return NextResponse.json({ received: true });
+      }
     }
 
     switch (event.type) {
@@ -486,6 +532,27 @@ export async function POST(req: NextRequest) {
               .catch(() => null)
           )?.status;
           await subscriptionFromId(subId);
+          // Donation renewals (Support WorldEye monthly): record the
+          // gift — the subscription-row lookup below finds nothing for
+          // a donation sub (syncSubscription refuses them), so
+          // commissions and CAPI stay skipped. The FIRST invoice
+          // (billing_reason "subscription_create") duplicates the
+          // checkout-session record, so it only re-affirms the
+          // supporter flag instead of double-counting the gift.
+          {
+            const stripeSub = await stripe()
+              .subscriptions.retrieve(subId)
+              .catch(() => null);
+            if (stripeSub && stripeSub.metadata?.type === "donation") {
+              if (invoice.billing_reason === "subscription_create") {
+                const donorId = stripeSub.metadata?.userId;
+                if (donorId) await markSupporter(donorId).catch(() => {});
+              } else {
+                const rec = donationFromInvoice(invoice, stripeSub);
+                if (rec) await recordDonation(rec);
+              }
+            }
+          }
           // Affiliate commissions: only real paid subscription invoices.
           if (invoice.amount_paid > 0) {
             const sub = await db.subscription.findUnique({

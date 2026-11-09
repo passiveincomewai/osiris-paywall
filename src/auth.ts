@@ -44,6 +44,10 @@ declare module "next-auth" {
        * FRAUD_RADAR_ENABLED is off (the resolver short-circuits
        * without a DB read). Additive claim only. */
       fraudRadarTier?: string;
+      /** Support WorldEye supporter flag (User.supporter): true once
+       * the account has completed a donation. Drives donation-prompt
+       * suppression only — never an entitlement. */
+      supporter?: boolean;
       /** True when the account has 2FA on and this session hasn't
        * passed the step-up challenge yet (item 2). Middleware bounces
        * app surfaces to /auth/totp while this is true. */
@@ -65,6 +69,7 @@ declare module "next-auth/jwt" {
     ambientAccess?: boolean;
     skiAccess?: boolean;
     fraudRadarTier?: string;
+    supporter?: boolean;
     subscriptionCheckedAt?: number;
     totpEnabled?: boolean;
     totpVerified?: boolean;
@@ -104,8 +109,22 @@ const SUBSCRIPTION_TTL_MS = 60_000;
  */
 async function resolveSubscriptionClaims(
   userId: string,
-): Promise<{ status: string; tier: string; ambientAccess: boolean; skiAccess: boolean; fraudRadarTier: string }> {
+): Promise<{ status: string; tier: string; ambientAccess: boolean; skiAccess: boolean; fraudRadarTier: string; supporter: boolean }> {
   const sub = await db.subscription.findUnique({ where: { userId } });
+  // Support WorldEye supporter flag (User.supporter, set by the Stripe
+  // webhook on a completed donation): rides the same claims pass so
+  // donation prompts can stop for the account. Fail-soft like the
+  // team-grant lookup — a hiccup resolves to false, never an error.
+  let supporter = false;
+  try {
+    const u = await db.user.findUnique({
+      where: { id: userId },
+      select: { supporter: true },
+    });
+    supporter = u?.supporter === true;
+  } catch {
+    supporter = false;
+  }
   const ownTier: PlanTier = planTierForRow(sub, process.env);
   let tier: PlanTier = ownTier;
   try {
@@ -143,6 +162,7 @@ async function resolveSubscriptionClaims(
       (e) => e.tier,
       () => "none" as const,
     ),
+    supporter,
   };
 }
 
@@ -205,13 +225,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       // Refresh on sign-in, on explicit session update(), when the cache is
       // stale, or when either claim is missing entirely (a token minted
       // before planTier existed must heal on its next session fetch).
-      if (user?.id || trigger === "update" || stale || !token.subscriptionStatus || !token.planTier || token.ambientAccess === undefined || token.skiAccess === undefined || token.fraudRadarTier === undefined || token.emailVerified === undefined) {
+      if (user?.id || trigger === "update" || stale || !token.subscriptionStatus || !token.planTier || token.ambientAccess === undefined || token.skiAccess === undefined || token.fraudRadarTier === undefined || token.supporter === undefined || token.emailVerified === undefined) {
         const claims = await resolveSubscriptionClaims(userId);
         token.subscriptionStatus = claims.status;
         token.planTier = claims.tier;
         token.ambientAccess = claims.ambientAccess;
         token.skiAccess = claims.skiAccess;
         token.fraudRadarTier = claims.fraudRadarTier;
+        token.supporter = claims.supporter;
         token.subscriptionCheckedAt = now;
         // Verification rides the same pass (fail-soft inside the
         // resolver; it also stamps provider-verified OAuth rows the
@@ -261,6 +282,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.ambientAccess = token.ambientAccess ?? false;
         session.user.skiAccess = token.skiAccess ?? false;
         session.user.fraudRadarTier = token.fraudRadarTier ?? "none";
+        session.user.supporter = token.supporter ?? false;
         // The session claim is boolean by design (JWT + Session
         // augmentations above), but this callback's session.user is
         // also intersected with AdapterUser, whose emailVerified is

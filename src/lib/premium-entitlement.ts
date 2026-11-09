@@ -67,6 +67,9 @@ export interface SessionIdentity {
      *  prompt at the cap; true (or a Google session) = the full
      *  allowance. Absent on legacy sessions → treated as unverified. */
     emailVerified?: boolean;
+    /** Support WorldEye supporter flag (User.supporter via the session
+     *  claims). Donation prompts read it to stop for donors. */
+    supporter?: boolean;
   };
 }
 
