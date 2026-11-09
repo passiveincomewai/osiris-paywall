@@ -3,6 +3,8 @@
 import { buildGeometry, closeRing, drawReducer, initialDrawState, measure, type DrawAction, type DrawMode, type DrawProgress, type DrawResult, type DrawState } from '@/lib/draw';
 import { useEffect, useRef, useState, useCallback, memo } from 'react';
 import * as maplibregl from 'maplibre-gl';
+import { classifyWebGL, glPanelOverride, isWebGLInitError } from '@/lib/webgl-probe';
+import GlFallbackPanel from './GlFallbackPanel';
 import { installTerrainTileProtocol } from '@/lib/terrain-tiles';
 import { CLOUDS_ATTRIBUTION, CLOUDS_CREDIT, CLOUDS_LAYER, frameTime } from '@/lib/live-clouds';
 import { createCloudLayer } from '@/lib/live-clouds-layer';
@@ -413,6 +415,11 @@ const DIRECTOR_PRESETS = [...FLIGHT_FOLLOW_PRESETS, spaceMissionPreset()];
 function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightClick, onViewStateChange, onReady, flyToLocation, alertPinIds = null, projection = 'globe', terrainEnabled = false, terrainRetry = 0, terrainFocus = 0, onTerrainStatusChange, mapStyle = 'dark', basemapMode = 'night', onBasemapModeChange, satelliteOn = false, onSatelliteToggle, onSatelliteViewChange, satelliteSelection = LATEST_SELECTION, onSatelliteSelectionChange, directorOpenSignal, sweepData, scanTargets = [], demoMode = false, drawnPolygons = [], arcgisLayers = [], drawMode = null, onDrawComplete, onDrawProgress, onDrawCancel, drawCommand = null, onMapCenter, route = null, userLocation = null, followUser = false, onFollowInterrupt, onLocateMe, locating = false, locateNote = null, navigating = false, aircraftAirports = {}, onOiGlobe, onOiSelect, onOiHover, onOiFollow, oiHighlight = null, sensorEffect, onSensorEffectChange }: OsirisMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
+  // True when this browser cannot run the globe engine at all (WebGL
+  // probe failed, or map construction threw its WebGL-init error): the
+  // fallback panel renders in place of the map instead of the error
+  // boundary's raw library message. See lib/webgl-probe.
+  const [glUnavailable, setGlUnavailable] = useState(false);
   const popupRef = useRef<maplibregl.Popup | null>(null);
   // GBFS + transit layers keep their data in-map (toggle-gated fetches).
   const gbfsSystemsRef = useRef<any[]>([]);
@@ -1445,7 +1452,18 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
-    
+
+    // Pre-flight WebGL probe (lib/webgl-probe). MapLibre 6 is
+    // WebGL2-only: on a browser that cannot create a WebGL2 context the
+    // constructor below throws its raw library error, which the error
+    // boundary rendered verbatim (truncated) over a black globe.
+    // Classify first instead — a browser this engine cannot run gets
+    // the designed fallback panel, and no map construction is attempted.
+    if (glPanelOverride() || classifyWebGL() !== 'webgl2') {
+      setGlUnavailable(true);
+      return;
+    }
+
     // Basemap style: our own dark style on the keyless OpenFreeMap
     // vector source (lib/basemap-style). CARTO's hosted Dark Matter
     // style was removed 2026-11-07: its keyless tile access closed
@@ -1505,7 +1523,19 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       } catch (e) {
         // A failed constructor leaves its canvas behind; the next attempt needs a clean container.
         container.innerHTML = '';
-        if (canvasContextAttributes === attributeFallbacks[attributeFallbacks.length - 1]) throw e;
+        if (canvasContextAttributes === attributeFallbacks[attributeFallbacks.length - 1]) {
+          // A WebGL-initialization failure on the last rung means this
+          // browser cannot run the globe engine at all (the probe can
+          // disagree with the real constructor — e.g. context limits):
+          // show the fallback panel rather than throwing the raw
+          // library message into the error boundary. Any other error
+          // is genuine and still rethrows.
+          if (isWebGLInitError(e)) {
+            setGlUnavailable(true);
+            return;
+          }
+          throw e;
+        }
         console.warn('[OSIRIS] WebGL context rejected, retrying with weaker attributes:', e instanceof Error ? e.message : e);
       }
     }
@@ -7141,6 +7171,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
   return (
     <>
       <div ref={containerRef} className="absolute inset-0 w-full h-full" />
+      {glUnavailable && <GlFallbackPanel />}
       {mapReady && mapRef.current && (
         <CctvPreviews
           mapRef={mapRef}
