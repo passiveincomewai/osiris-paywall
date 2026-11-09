@@ -40,6 +40,277 @@ export type BlogPost = {
 };
 
 export const POSTS: BlogPost[] = [
+// Blog daily 2026-11-09 — three sourced event stories, news: true, date 2026-11-09.
+// Facts verified from sources actually opened this run (browser.open):
+// USGS event page us7000tx16 + Watchers (USGS figures) + Earthquake Today (USGS telemetry)
+// for the Lata quake; SpaceX mission briefing via No Earlier Than + Arizona Republic
+// and Ventura County Star (USA TODAY Network, Nov 9) for USSF-627; Copper Mountain's
+// own Nov 8 snow report (via search excerpt of coppercolorado.com) + I-70 Things
+// Nov 8 update + Packzup (resort sites re-checked Nov 9) for Copper's opening.
+  {
+    slug: "magnitude-6-4-earthquake-lata-solomon-islands-november-9",
+    title: "Magnitude 6.4 Earthquake Strikes Near Lata, Solomon Islands",
+    seoTitle: "M6.4 Quake Near Lata | WorldEye Blog",
+    date: "2026-11-09",
+    excerpt:
+      "A strong, shallow magnitude 6.4 earthquake struck 30 kilometres west-southwest of Lata in the Solomon Islands at 03:34 UTC on Monday, November 9. The USGS issued a green alert, there is no tsunami threat, and no casualties were reported in the first hours after the shaking.",
+    seoDescription:
+      "A magnitude 6.4 earthquake struck 30 km WSW of Lata, Solomon Islands, at 03:34 UTC on November 9 at 17 km depth. USGS green alert; no tsunami threat.",
+    tags: ["earthquake", "solomon-islands", "lata", "usgs", "pacific"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "The Solomon Islands were shaken by the largest earthquake recorded anywhere in the world so far today. A magnitude 6.4 earthquake struck at 03:34 UTC on Monday, November 9, 2026 (2:34 p.m. local time), with its epicentre about 30 kilometres (19 miles) west-southwest of Lata, according to the U.S. Geological Survey (USGS). The quake was shallow, at a depth of 17.0 kilometres, near the Santa Cruz Islands in Temotu Province.",
+          "Lata, the main town of Temotu Province, is the closest populated centre to the epicentre. The USGS issued a green alert for the event, indicating a low likelihood of casualties or damage, with a maximum estimated shaking intensity of VI and a significance index of 630 on a scale that runs to 1,000.",
+          "No casualties or infrastructure damage were reported in the first wire reports after the earthquake, and there is no tsunami threat associated with the event, based on its location and the available data.",
+        ],
+      },
+      {
+        heading: "What happened near Lata this morning?",
+        body: [
+          "The mainshock struck at 03:34 UTC at coordinates near 10.9°S, 165.6°E, beneath the waters west-southwest of Lata. At 17 kilometres deep, it sits in the shallow crust, the depth range where earthquakes are typically felt most sharply at the surface — but this one struck offshore, near a sparsely populated island group, which is why the USGS impact estimate stayed low.",
+          "Early agency determinations placed the epicentre 27 kilometres southwest of Lata at a depth of about 25 kilometres; the USGS reviewed solution puts it 30 kilometres west-southwest of Lata at 17 kilometres. Small revisions like that are normal in the first hours as more seismic stations report in.",
+          "The day's seismic sequence did not end with the mainshock. USGS recorded a magnitude 4.8 earthquake at 05:16 UTC, about 26 kilometres southwest of Lata at a depth of 10 kilometres — the kind of aftershock a shallow magnitude 6.4 event is expected to produce, and a reminder that the sequence is still active.",
+        ],
+      },
+      {
+        heading: "Is there a tsunami threat from this earthquake?",
+        body: [
+          "No. No tsunami warning, watch or advisory was issued for this earthquake, and the assessment based on the event's location and available data is that there is no tsunami threat. The Malaysian Meteorological Department likewise confirmed there was no tsunami threat to Malaysia from the Santa Cruz Islands event.",
+          "That pairing — a strong, shallow, offshore quake with no tsunami — is common in this part of the Pacific: tsunami generation depends on how the seafloor itself moves, not on magnitude alone, and the agencies that run the warning system assessed this rupture as not displacing the water column in a dangerous way.",
+        ],
+      },
+      {
+        heading: "Why do so many earthquakes strike the Solomon Islands?",
+        body: [
+          "The Solomon Islands sit along the boundary of the Australian and Pacific plates, in one of the most seismically active zones on Earth. The Santa Cruz Islands, near today's epicentre, lie along that plate boundary system, where subduction steadily loads the faults that periodically release as strong shallow earthquakes.",
+          "For island communities like Lata, that geology is a standing condition rather than a surprise: harbours, coastal roads and regional airstrips that link the outer islands are the infrastructure most exposed when a strong quake strikes nearby, which is why the first damage checks after an event like this one focus on those links.",
+        ],
+      },
+      {
+        heading: "Are aftershocks expected near Lata?",
+        body: [
+          "Yes. A magnitude 4.8 aftershock was already recorded less than two hours after the mainshock, and aftershock sequences after a shallow magnitude 6.4 typically continue for days to weeks, declining in frequency over time. The largest aftershocks are usually about a magnitude unit smaller than the mainshock, though the sequence is monitored rather than predicted.",
+          "Anyone checking on the region should rely on the USGS event record as it updates: magnitudes, depths and impact estimates for events like this one are revised as more data arrives, and the reviewed figures in this story are the ones to quote.",
+        ],
+      },
+      {
+        heading: "Where can I track this earthquake sequence?",
+        body: [
+          "WorldEye's [earthquake tracker](/earthquake-tracker) plots the latest USGS-catalogued earthquakes on the same live globe as the site's 74,229 cameras, so the Lata mainshock and the aftershocks that follow it can be followed in sequence against the rest of the Pacific's activity today.",
+          "For the authoritative record, the [USGS event page for this earthquake](https://earthquake.usgs.gov/earthquakes/eventpage/us7000tx16) carries the reviewed magnitude, depth, impact alerts and any further revisions as seismologists complete their analysis.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When did the Solomon Islands earthquake happen?",
+        a: "At 03:34 UTC on Monday, November 9, 2026 (2:34 p.m. local time), about 30 kilometres west-southwest of Lata in the Solomon Islands, according to the USGS.",
+      },
+      {
+        q: "How big was the earthquake near Lata?",
+        a: "Magnitude 6.4 at a shallow depth of 17.0 kilometres, according to the USGS reviewed solution. Its significance index was 630 and the maximum estimated shaking intensity was VI.",
+      },
+      {
+        q: "Was there a tsunami warning after the Lata earthquake?",
+        a: "No. No tsunami warning, watch, or advisory was issued, and the assessment based on the event's location and available data is that there is no tsunami threat.",
+      },
+      {
+        q: "Were there casualties in the Solomon Islands earthquake?",
+        a: "No casualties or infrastructure damage were reported in the first reports after the quake, and the USGS issued a green alert, indicating a low likelihood of casualties or damage.",
+      },
+      {
+        q: "Have there been aftershocks near Lata?",
+        a: "Yes. A magnitude 4.8 aftershock was recorded at 05:16 UTC on November 9, about 26 kilometres southwest of Lata at 10 kilometres depth, and further aftershocks are expected over the coming days.",
+      },
+    ],
+    sources: [
+      {
+        name: "USGS Earthquake Hazards Program — event us7000tx16",
+        url: "https://earthquake.usgs.gov/earthquakes/eventpage/us7000tx16",
+      },
+      {
+        name: "The Watchers (watchers.live) — shallow M6.4 earthquake hits near Lata (USGS figures)",
+        url: "https://watchers.live/2026/11/09/shallow-m6-4-earthquake-hits-near-lata-solomon-islands/",
+      },
+      {
+        name: "Earthquake Today — M6.4 near Lata (USGS telemetry)",
+        url: "https://earthquaketoday.org/solomon-islands/lata-solomon-islands-M6.4-us7000tx16",
+      },
+    ],
+  },
+  {
+    slug: "spacex-ussf-627-launch-vandenberg-november-9",
+    title: "SpaceX Targets Monday Night USSF-627 Launch From Vandenberg",
+    seoTitle: "USSF-627 Launch Tonight | WorldEye Blog",
+    date: "2026-11-09",
+    excerpt:
+      "SpaceX is targeting Monday night, November 9, for the classified USSF-627 mission from Vandenberg Space Force Base. The four-hour Falcon 9 window opens at 7:03 p.m. PT, the booster flies for the seventh time, and a backup opportunity follows on Tuesday evening.",
+    seoDescription:
+      "SpaceX targets the classified USSF-627 Falcon 9 launch from Vandenberg on Monday, November 9. The window opens 7:03 p.m. PT; backup Tuesday 6:49 p.m. PT.",
+    tags: ["spacex", "falcon-9", "vandenberg", "ussf-627", "launch"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "California's busy November launch cadence continues tonight. SpaceX is targeting Monday, November 9, for a Falcon 9 launch of the USSF-627 mission from Space Launch Complex 4E (SLC-4E) at Vandenberg Space Force Base in California, the company said in its mission briefing. The four-hour launch window opens at 7:03 p.m. PT (03:03 UTC on November 10) and runs to 11:03 p.m. PT.",
+          "USSF-627 is a classified mission for the U.S. Space Force. SpaceX and the Space Force have not disclosed the payload's details; launch trackers note that the mission's stage drop zones closely match those of previous Starlink Group 15 flights, which has fuelled speculation that the cargo is built on SpaceX's Starshield satellite bus — that identification is unconfirmed, and the official description remains a classified satellite deployment mission.",
+          "It would be the second Vandenberg launch of November, three days after Friday's USSF-432 liftoff from the same pad, and the next one is already queued behind it: USSF-317 is scheduled from SLC-4E later this week.",
+        ],
+      },
+      {
+        heading: "When is the USSF-627 launch window?",
+        body: [
+          "The window opens at 7:03 p.m. PT on Monday, November 9, and stays open for four hours, until 11:03 p.m. PT. If the mission does not fly tonight, SpaceX lists a backup opportunity on Tuesday, November 10, at 6:49 p.m. PT.",
+          "The mission had already shifted by a day — it was previously listed for Sunday, November 8 — which is routine at Vandenberg, where fog, upper-level winds and range scheduling move launch dates frequently. The time to beat is the opening of the window, not a single fixed instant: Falcon 9 can lift off at any point inside the four hours.",
+        ],
+      },
+      {
+        heading: "Which booster is flying, and where does it land?",
+        body: [
+          "This will be the seventh flight for the first-stage booster supporting the mission, which previously launched NROL-179, SDA-T1TL-E, SDA-T1TL-A and three Starlink missions, according to SpaceX. Its most recent flight was about a month ago, a turnaround of roughly 31 days.",
+          "After stage separation, about two and a half minutes into flight, the booster will return to the droneship Of Course I Still Love You, stationed about 574 kilometres downrange in the Pacific Ocean. The published flight plan puts the booster landing at roughly eight minutes after liftoff.",
+        ],
+      },
+      {
+        heading: "Where can I watch the USSF-627 launch live?",
+        body: [
+          "SpaceX will carry a live webcast of the mission beginning about 10 minutes before liftoff, on its mission page and on X @SpaceX. Because USSF-627 is classified, coverage is limited by design: there will be no video from the second stage showing fairing deployment after stage separation.",
+          "For people near the coast, the launch is a night liftoff on a southeast trajectory — the profile that gives viewers in Southern California, and potentially Arizona, their best chance of seeing the rocket climb. SpaceX also advises that residents of Santa Barbara, San Luis Obispo and Ventura counties may hear one or more sonic booms during the launch, depending on weather and other conditions.",
+        ],
+      },
+      {
+        heading: "What happens after USSF-627 flies?",
+        body: [
+          "The same pad turns around again almost immediately. USSF-317, another classified Space Force mission, is listed for Thursday, November 12, with a window opening at 8:23 p.m. PT — a pad turnaround of about three days between the two missions, on top of the three days between USSF-432 and tonight's attempt.",
+          "Whatever USSF-627 carries will join the tracked orbital catalog once it is in orbit. WorldEye's [satellite tracker](/satellite-tracker) follows catalogued objects on the live globe, alongside the [space station tracker](/space-station-tracker) and the site's 74,229 cameras — the place to watch tonight's classified payload become tomorrow's tracked object.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When is the SpaceX USSF-627 launch?",
+        a: "SpaceX is targeting Monday, November 9, 2026, with a four-hour window opening at 7:03 p.m. PT (03:03 UTC on November 10) from SLC-4E at Vandenberg Space Force Base. A backup opportunity is listed for Tuesday, November 10, at 6:49 p.m. PT.",
+      },
+      {
+        q: "What is the USSF-627 payload?",
+        a: "It is a classified U.S. Space Force payload, and its details have not been disclosed. Trackers note its drop zones match previous Starlink Group 15 flights and speculate it uses the Starshield bus, but that is unconfirmed.",
+      },
+      {
+        q: "How can I watch the USSF-627 launch?",
+        a: "SpaceX provides a live webcast starting about 10 minutes before liftoff on its mission page and on X @SpaceX. Because the mission is classified, there is no second-stage video of fairing deployment.",
+      },
+      {
+        q: "Where will the Falcon 9 booster land?",
+        a: "On the droneship Of Course I Still Love You in the Pacific Ocean, about 574 kilometres downrange. It is the booster's seventh flight, after NROL-179, two SDA missions and three Starlink missions.",
+      },
+      {
+        q: "Will there be sonic booms from the USSF-627 launch?",
+        a: "Possibly. SpaceX says residents of Santa Barbara, San Luis Obispo and Ventura counties may hear one or more sonic booms during the launch, depending on weather and other conditions.",
+      },
+    ],
+    sources: [
+      {
+        name: "SpaceX USSF-627 mission briefing (republished in full by No Earlier Than)",
+        url: "https://noearlierthan.com/",
+      },
+      {
+        name: "Arizona Republic (USA TODAY Network) — California rocket launch schedule, November 9",
+        url: "https://www.azcentral.com/story/news/arizona/2026/11/09/spacex-falcon-9-rocket-launch-today-schedule/92640062007/",
+      },
+      {
+        name: "Ventura County Star (USA TODAY Network) — Vandenberg launch schedule, November 9",
+        url: "https://www.vcstar.com/story/news/local/california/2026/11/09/spacex-california-rocket-launch-schedule/92639416007/",
+      },
+    ],
+  },
+  {
+    slug: "copper-mountain-opening-day-november-8-2026",
+    title: "Copper Mountain Opens Two Days Late: American Eagle Starts the Season",
+    seoTitle: "Copper Mountain Opens Nov 8 | WorldEye Blog",
+    date: "2026-11-09",
+    excerpt:
+      "Copper Mountain opened for the 2026-27 season on Sunday, November 8 — two days after its planned opening, which a warm stretch had forced it to postpone. The American Eagle lift started at 9 a.m. with almost 1,500 vertical feet open, making Copper the fourth resort running on Colorado's I-70 corridor.",
+    seoDescription:
+      "Copper Mountain opened Sunday, November 8, two days late, with American Eagle spinning at 9 a.m. and almost 1,500 vertical feet. Four I-70 resorts now open.",
+    tags: ["ski", "copper-mountain", "colorado", "opening-day", "i-70"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "Copper Mountain's season is under way — two days later than planned, and all the better for the wait. The Colorado resort opened for the 2026-27 winter season on Sunday, November 8, with the American Eagle lift spinning at 9 a.m. and almost 1,500 vertical feet of terrain open, after several productive days and nights of snowmaking.",
+          "Sunday's opening makes Copper the fourth resort operating on the I-70 corridor, joining Arapahoe Basin (opened October 28), Keystone (October 30) and Loveland (November 7). It is also the fifth dated opening of the North American season so far, in a start to winter that has split sharply between resorts that found cold nights and resorts still waiting for them.",
+          "Copper's own opening-morning snow report set the day up as a sunny one, with temperatures in the mid-to-high 40s at the Aerie and light west-northwest winds — spring-like weather for an opening day that only just made it onto the calendar.",
+        ],
+      },
+      {
+        heading: "Why was Copper Mountain's opening delayed?",
+        body: [
+          "Warmth, at exactly the wrong altitude. Copper and Breckenridge had both targeted Friday, November 6, and both called it off on Thursday, November 5, after a warm stretch kept overnight temperatures too high for snowmaking crews to build enough coverage on their opening terrain.",
+          "Copper had a full opening-day celebration planned for Friday, and pulled its opening-day listing on Thursday without naming a replacement date. What changed was the snowmaking window: several productive cold nights followed, and by Sunday morning the resort had enough cover on its American Eagle terrain to open — two days late rather than a week or more, which is how these delays often run.",
+          "Breckenridge, forty minutes east, was not so lucky. It still had no new opening date as of Monday, November 9, describing its plan only as opening as soon as possible.",
+        ],
+      },
+      {
+        heading: "What terrain is open at Copper Mountain?",
+        body: [
+          "Day one ran on the American Eagle lift, serving Rhapsody, Fair Play and Main Vein, according to the resort's opening-day snow report — almost 1,500 vertical feet of groomed, snowmaking-built terrain. An early-season hike-to terrain park was open at the top of American Eagle.",
+          "The limits are the usual early-season ones, stated plainly by the resort: no green (beginner) terrain is available yet. Uphill access remains closed and is expected to open in mid-December, all interior parking lots became paid lots from opening day, and the 8:30 a.m. Fast Tracks early-access start begins on Monday, November 9, rather than on opening day itself.",
+        ],
+      },
+      {
+        heading: "Which Colorado ski resorts are open now?",
+        body: [
+          "Four on the I-70 corridor: Arapahoe Basin, which opened first in North America on Wednesday, October 28; Keystone, on Friday, October 30; Loveland, on Saturday, November 7; and now Copper Mountain, on Sunday, November 8. Lake Louise in Alberta (November 1) and Mammoth Mountain in California (November 5, eight days early) complete the list of dated openings so far this season.",
+          "The next dated openings on the calendar are Vail Mountain and Eldora, both on Friday, November 13. Breckenridge and Utah's Brian Head — the other two resorts that had targeted November 6 — remain the notable holdouts, both still waiting on the cold nights their snowmaking depends on.",
+        ],
+      },
+      {
+        heading: "Where can I check Copper Mountain's conditions?",
+        body: [
+          "WorldEye's [ski webcams](/ski-webcams) bring together live resort cameras and snow stakes, so Copper's early-season cover — and the difference a few cold nights make — can be checked before the drive up I-70 rather than after it. The resort's own snow report remains the authority for which lifts and runs are open on any given morning.",
+          "Early season rewards the flexible: terrain will expand run by run as snowmaking and natural snow allow, and the resorts still closed are a cold snap away from joining the list. This week, the corridor's story is that four of its five early-season names are now spinning.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When did Copper Mountain open for the 2026-27 season?",
+        a: "On Sunday, November 8, 2026, with the American Eagle lift spinning at 9 a.m. The opening came two days after the resort's planned November 6 date, which was postponed because warm weather limited snowmaking.",
+      },
+      {
+        q: "What is open at Copper Mountain on opening day?",
+        a: "The American Eagle lift serving Rhapsody, Fair Play and Main Vein — almost 1,500 vertical feet — plus an early-season hike-to terrain park at the top of the lift. No beginner (green) terrain is available yet, per the resort's snow report.",
+      },
+      {
+        q: "Why did Copper Mountain delay its opening?",
+        a: "A warm stretch kept overnight temperatures too high for sustained snowmaking, so Copper and Breckenridge both postponed their planned Friday, November 6 openings on November 5. Several productive snowmaking nights then allowed Copper to open on November 8.",
+      },
+      {
+        q: "Which I-70 ski resorts are open now?",
+        a: "Four: Arapahoe Basin (opened October 28), Keystone (October 30), Loveland (November 7) and Copper Mountain (November 8). Breckenridge has not yet announced a new opening date.",
+      },
+      {
+        q: "When do Vail and Eldora open?",
+        a: "Both are scheduled for Friday, November 13, 2026 — the next dated openings on the Colorado calendar after Copper Mountain's November 8 start.",
+      },
+    ],
+    sources: [
+      {
+        name: "Copper Mountain — opening-day snow report, November 8 (coppercolorado.com)",
+        url: "https://www.coppercolorado.com/",
+      },
+      {
+        name: "I-70 Things — Breckenridge and Copper push opening day back (updated November 8)",
+        url: "https://i70things.com/blogs/news/breckenridge-and-copper-both-push-opening-day-back",
+      },
+      {
+        name: "Packzup — Ski resort opening dates 2026-27 (resort sites re-checked November 9)",
+        url: "https://packzup.com/ski-resort-opening-dates-2026-27/",
+      },
+    ],
+  },
 // Blog daily 2026-11-08 — three sourced event stories, news: true, date 2026-11-08.
 // Facts verified from browser.search excerpts of the cited sources (browser.open
 // was failing with browser-service errors all run, as on 2026-11-07; every event
