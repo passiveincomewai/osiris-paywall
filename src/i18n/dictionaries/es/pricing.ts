@@ -49,10 +49,10 @@ export const esPricing: PricingCopy = {
   proBadge: "PRO",
   hero: {
     eyebrow: "INTELIGENCIA GLOBAL. IMPACTO REAL.",
-    h1Before: "Descubre la ",
-    h1Accent: "imagen completa.",
+    h1Before: "La versión gratuita te muestra 5 cámaras. ",
+    h1Accent: "La de pago te muestra el planeta.",
     h1After: "",
-    sub: "El mapa es gratis. Un plan de pago elimina los límites: un analista de IA que trabaja el globo por ti, tráfico en vivo, búsqueda avanzada, el estudio de grabación — y, en el nivel superior, los feeds de inteligencia premium.",
+    sub: "74.229 cámaras en vivo, vuelos, satélites, barcos y clima en un solo globo 3D, más un analista de IA que trabaja el mapa por ti. Empieza gratis durante 10 días.",
   },
   heroFeatures: [
     { title: "74.229 cámaras en vivo", desc: "Todas las cámaras públicas en un solo globo" },
@@ -162,15 +162,15 @@ export const esPricing: PricingCopy = {
   tiers: {
     lite: {
       name: "Lite",
-      tagline: "Lo esencial, desbloqueado: todas las cámaras, las capas premium y el asistente de IA.",
+      tagline: "Míralo todo.",
     },
     pro: {
       name: "Pro",
-      tagline: "El kit completo: OSINT, alertas de cámara y espacio para grabar.",
+      tagline: "Investígalo todo.",
     },
     ultra: {
       name: "Ultra",
-      tagline: "Todo lo de Pro, más feeds de inteligencia, timelapse y los límites más altos.",
+      tagline: "La imagen completa.",
     },
     annualBadge: "VIP",
     periods: { weekly: "Semanal", monthly: "Mensual", annual: "Anual" },
@@ -239,7 +239,7 @@ export const esPricing: PricingCopy = {
     ultraHeader: "ULTRA",
     rows: [
       "Globo 3D interactivo",
-      "Seguimiento de vuelos en vivo y seguimiento de aeronaves",
+      "Seguimiento de vuelos en vivo",
       "74.229 cámaras CCTV públicas",
       "Seguimiento de satélites y del espacio",
       "Búsqueda básica: vuela a cualquier lugar",
@@ -249,17 +249,20 @@ export const esPricing: PricingCopy = {
       "Radar, rayos, huracanes y perímetros de incendios",
       "Medidores de ríos y sistemas de bicicletas compartidas",
       "Efectos de sensores",
-      "Director cinematográfico (gratis para afiliados)",
       "Terremotos, incendios y clima",
-      "Asistente de IA OI (IA integrada incluida)",
       "Vista de imágenes satelitales",
+      "Asistente de IA OI (IA integrada incluida)",
       "Capa de tráfico en vivo (congestión modelada)",
       "Filtros de búsqueda avanzados",
+      "Estudio de grabación de cámaras (5 / 20 / 40 cámaras a la vez)",
       "Kit de herramientas OSINT (nmap, DNS, WHOIS, SSL)",
-      "Estudio de grabación de cámaras",
       "Alertas de cámara (2 en Pro · 10 en Ultra)",
+      "Ruta de vuelo de la aeronave que sigues",
       "Feeds de inteligencia premium (ciber, GDELT, marítimo, noticias en vivo)",
       "Timelapse de cámaras",
+      "Alertas de eventos",
+      "Resumen personal",
+      "Vistas guardadas (hasta 25)",
     ],
     noteBefore: "El Director cinematográfico no es una función de ningún plan: es gratis para los miembros del ",
     noteLink: "programa de afiliados",
@@ -268,6 +271,22 @@ export const esPricing: PricingCopy = {
   },
   faqHeading: "Preguntas, respondidas.",
   faqs: [
+    {
+      q: "¿Cuánto dura la prueba gratuita?",
+      a: "Los planes semanales empiezan con una prueba gratuita de 3 días; los mensuales y anuales, con una de 10 días. Nunca se te cobra durante la prueba: cancela antes de que termine y no pagas nada.",
+    },
+    {
+      q: "¿Puedo cancelar cuando quiera?",
+      a: "Cuando quieras, con un clic. Tu acceso Pro continúa hasta el final del período que ya pagaste —semanal, mensual o anual— y después simplemente se detiene. Sin llamadas de retención ni patrones oscuros. Y en una prueba gratis nunca se te cobra durante la prueba: cancela antes de que termine y no pagas nada.",
+    },
+    {
+      q: "¿Qué pasa con mis grabaciones y mis datos guardados si cancelo?",
+      a: "Cancelar detiene las renovaciones futuras: no elimina tu cuenta ni tus datos. Tu acceso de pago continúa hasta el final del período que ya pagaste, y después tu cuenta simplemente vuelve al nivel gratuito. Los clips que grabas se guardan en tu navegador, en tu propio dispositivo, así que permanecen ahí pase lo que pase con tu plan. Y puedes descargar todo lo que WorldEye guarda de tu cuenta —perfil, ajustes, cámaras guardadas, reglas de alertas y tu lista de grabaciones— en JSON o CSV desde la sección Tus datos de Ajustes, antes o después de cancelar.",
+    },
+    {
+      q: "¿Cuál es la diferencia entre Lite, Pro y Ultra?",
+      a: "Lite cuesta $4.99/semana, $8.99/mes o $44.99/año: graba hasta 5 cámaras a la vez, sin reglas de alertas de cámara. Pro cuesta $7.99/semana, $13.99/mes o $74.99/año: grabación de 20 cámaras y 2 reglas de alertas, además del kit OSINT. Ultra cuesta $12.99/semana, $24.99/mes o $149.99/año: grabación de 40 cámaras, 10 reglas de alertas, timelapse de cámaras y los feeds de inteligencia premium. Los tres eliminan los límites de apertura de cámaras del nivel gratuito.",
+    },
     {
       q: "¿Cuánto cuesta WorldEye?",
       a: "El mapa en sí es gratis: el globo, 74.229 cámaras, vuelos, satélites y el clima, sin necesidad de cuenta. Los planes de pago tienen tres niveles, cada uno con facturación semanal, mensual o anual: Lite cuesta $4.99/semana, $8.99/mes o $44.99/año; Pro cuesta $7.99/semana, $13.99/mes o $74.99/año; Ultra cuesta $12.99/semana, $24.99/mes o $149.99/año. Los planes semanales empiezan con una prueba gratuita de 3 días; los mensuales y anuales, con una de 10 días. Enterprise — la API de cámaras y la inserción para tu propia plataforma — cuesta $999/año y no tiene prueba gratuita. Todos los planes de pago se pueden cancelar en cualquier momento.",
@@ -279,14 +298,6 @@ export const esPricing: PricingCopy = {
     {
       q: "¿Necesito mi propia clave API para el asistente de IA?",
       a: "No. OI funciona con la IA integrada de WorldEye, sin configurar nada: no tienes que traer una clave API, ni una cuenta de otro proveedor, ni nadie más te factura por separado. Si prefieres usar tu propia cuenta de modelos, puedes añadir tu clave API en los ajustes de OI: permanece en tu navegador y se usa siempre que esté presente.",
-    },
-    {
-      q: "¿Puedo cancelar cuando quiera?",
-      a: "Cuando quieras, con un clic. Tu acceso Pro continúa hasta el final del período que ya pagaste —semanal, mensual o anual— y después simplemente se detiene. Sin llamadas de retención ni patrones oscuros. Y en una prueba gratis nunca se te cobra durante la prueba: cancela antes de que termine y no pagas nada.",
-    },
-    {
-      q: "¿Qué pasa con mis grabaciones y mis datos guardados si cancelo?",
-      a: "Cancelar detiene las renovaciones futuras: no elimina tu cuenta ni tus datos. Tu acceso de pago continúa hasta el final del período que ya pagaste, y después tu cuenta simplemente vuelve al nivel gratuito. Los clips que grabas se guardan en tu navegador, en tu propio dispositivo, así que permanecen ahí pase lo que pase con tu plan. Y puedes descargar todo lo que WorldEye guarda de tu cuenta —perfil, ajustes, cámaras guardadas, reglas de alertas y tu lista de grabaciones— en JSON o CSV desde la sección Tus datos de Ajustes, antes o después de cancelar.",
     },
     {
       q: "¿Y si olvido cancelar? ¿Puedo pedir un reembolso?",
@@ -309,17 +320,10 @@ export const esPricing: PricingCopy = {
       a: "El mismo motor de código abierto, más los niveles de pago: un analista de IA que trabaja el mapa por ti, tráfico en vivo, filtros de búsqueda avanzados y —en Ultra— los feeds de inteligencia premium que el sitio gratuito no restringe, porque allí no hay puerta. Aquí, los niveles financian la infraestructura.",
     },
     {
-      q: "¿Cuánto dura la prueba gratuita?",
-      a: "Los planes semanales empiezan con una prueba gratuita de 3 días; los mensuales y anuales, con una de 10 días. Nunca se te cobra durante la prueba: cancela antes de que termine y no pagas nada.",
-    },
-    {
-      q: "¿Cuál es la diferencia entre Lite, Pro y Ultra?",
-      a: "Lite cuesta $4.99/semana, $8.99/mes o $44.99/año: graba hasta 5 cámaras a la vez, sin reglas de alertas de cámara. Pro cuesta $7.99/semana, $13.99/mes o $74.99/año: grabación de 20 cámaras y 2 reglas de alertas, además del kit OSINT. Ultra cuesta $12.99/semana, $24.99/mes o $149.99/año: grabación de 40 cámaras, 10 reglas de alertas, timelapse de cámaras y los feeds de inteligencia premium. Los tres eliminan los límites de apertura de cámaras del nivel gratuito.",
-    },
-    {
       q: "¿Cuántas cámaras puedo ver?",
       a: "El directorio reúne 74.229 cámaras públicas, y ninguna está bloqueada por nivel: cualquier cámara del directorio se puede abrir con cualquier plan. El nivel gratuito incluye una asignación de aperturas de cámaras: 5 por dispositivo sin iniciar sesión, y 10 en una cuenta gratuita una vez verificado su correo; Lite, Pro y Ultra eliminan los límites de apertura, así que puedes ver sin límite. Lo que cambian los planes es la grabación y las alertas: graba 5 cámaras a la vez en Lite, 20 en Pro y 40 en Ultra, con reglas de alertas de cámara: ninguna en Lite, 2 en Pro y 10 en Ultra.",
     },
+
   ],
   compareTeasers: {
     heading: "¿Comparando tus opciones?",
@@ -407,6 +411,176 @@ export const esPricing: PricingCopy = {
         desc: "Todo el panel RECON en una página: escáner de puertos, DNS, WHOIS, certificados y búsquedas de hosts, cada tarjeta etiquetada como gratuita o Pro.",
       },
     ],
+  },
+  v3: {
+    toggleYearly: "Anual",
+    toggleMonthly: "Mensual",
+    toggleSavePill: "Ahorra hasta 58%",
+    weeklyLink: "¿Solo necesitas unos días? Consigue un pase de 7 días →",
+    nudgeAlt:
+      "Antes de elegir mensual: un año completo de Ultra cuesta menos que un año de Pro pagado mensualmente — Pro mensual $167.88 al año, Ultra anual $149.99, Pro anual $74.99. La misma tarjeta, la misma prueba gratuita de 10 días; el anual simplemente cuesta menos.",
+    statsBandAlt:
+      "74.229 cámaras públicas en vivo · Más de 18.000 satélites rastreados · Vuelos comerciales, privados y militares en vivo · Analista de IA integrado, sin configurar nada",
+    badgeAlt: "El más popular",
+    sealAlt: "Garantía de devolución de 7 días en tu primer cargo",
+    ladderAlt:
+      "Qué añade cada plan: Free $0, Lite $3.75/mes anual, Pro $6.25/mes anual, Ultra $12.50/mes anual — cada paso conserva todo lo del anterior",
+    recordingAlt:
+      "Estudio de grabación de cámaras: graba feeds en vivo en tu navegador — 5 cámaras a la vez en Lite, 20 en Pro, 40 en Ultra",
+    teamGraphicAlt:
+      "Acceso para equipos: los asientos se abaratan a medida que crece tu equipo — $11.99/asiento/mes para los asientos 1–5, $10.99 para los asientos 6–10, $9.99 desde el asiento 11, hasta 50 miembros",
+    enterpriseGraphicAlt:
+      "Enterprise, $999/año: pon cámaras en vivo en tu propio sitio con el reproductor integrable de WorldEye",
+    finalCtaAlt:
+      "El mapa es gratis. La imagen completa está a 10 días. Empieza mi prueba gratuita de 10 días — $0 hoy, recordatorio antes del cargo, cancela en 1 clic",
+    card: {
+      eqPer: "/mes",
+      billedBefore: "facturado ",
+      billedAfter: " al año",
+      monthlyLine: "Facturación mensual",
+      eqPrices: { lite: "$3.75", pro: "$6.25", ultra: "$12.50" },
+      savePills: { lite: "Ahorra 58%", pro: "Ahorra 55%", ultra: "Ahorra 50%" },
+      ctas: {
+        lite: "Empezar mi prueba gratuita",
+        pro: "Empezar mi prueba gratuita de 10 días",
+        ultra: "Empezar Ultra gratis",
+      },
+      trustLine: ["$0 hoy", "Recordatorio antes del cargo", "Cancela en 1 clic"],
+      everythingBefore: "Todo lo de ",
+      everythingAfter: ", más:",
+    },
+    bullets: {
+      lite: [
+        { title: "Todas las cámaras, sin límite", tip: "Mira tantas de las 74.229 cámaras en vivo como quieras: los planes de pago no tienen límite de aperturas." },
+        { title: "Analista de IA (OI) integrado", tip: "Habla con el mapa. Pronósticos, análisis y reconocimiento, con la IA integrada de WorldEye y sin configurar nada." },
+        { title: "Tráfico y capas premium del mapa", tip: "La capa de tráfico (modelada a partir de datos de carreteras y etiquetada como modelada en el mapa) y el resto del conjunto de capas premium." },
+        { title: "Filtros de búsqueda avanzados", tip: "Reduce los resultados de cámaras por país, tipo y feeds en vivo; los lugares nunca se filtran." },
+        { title: "Graba hasta 5 cámaras a la vez", tip: "Graba feeds de cámaras en vivo directamente en tu navegador y guarda los clips — hasta 5 cámaras a la vez en Lite." },
+        { title: "Modo Ambiente incluido", tip: "El reproductor ambiental de TV lenta también queda desbloqueado: no necesitas un plan Ambient aparte." },
+      ],
+      pro: [
+        { title: "Kit OSINT (DNS, WHOIS, SSL, escaneos)", tip: "Escaneos Nmap, DNS/WHOIS, análisis SSL e inteligencia de amenazas, en el navegador." },
+        { title: "Alertas de cámara con foto (2 cámaras)", tip: "Vigila hasta 2 cámaras y recibe un correo — con la foto — cuando aparezca una condición que describas, como nieve o inundaciones." },
+        { title: "Graba hasta 20 cámaras a la vez", tip: "Graba feeds de cámaras en vivo directamente en tu navegador y guarda los clips — hasta 20 cámaras a la vez en Pro." },
+        { title: "Sigue la ruta de cualquier aeronave", tip: "Sigue una aeronave y ve su ruta de vuelo dibujada sobre el globo." },
+      ],
+      ultra: [
+        { title: "Feeds de ciber, marítimo y conflictos", tip: "Ciberamenazas, eventos GDELT, seguimiento marítimo y zonas de conflicto — parte de los feeds de inteligencia premium de Ultra." },
+        { title: "Feed de noticias en vivo en el globo", tip: "El feed de noticias en vivo situado sobre el globo, parte de los feeds de inteligencia premium de Ultra." },
+        { title: "Timelapse de cámaras", tip: "Captura las cámaras de instantáneas fotograma a fotograma y exporta la película: solo Ultra." },
+        { title: "10 alertas de cámara + alertas de eventos", tip: "10 cámaras vigiladas, más alertas de eventos — terremotos cerca de tus lugares, recordatorios de lanzamientos y pasos de la ISS — por correo y en la app." },
+        { title: "Resumen personal y 25 vistas guardadas", tip: "Un resumen creado desde tu cuenta, más hasta 25 configuraciones del globo con nombre que puedes restaurar con un clic." },
+        { title: "Graba hasta 40 cámaras a la vez", tip: "Graba feeds de cámaras en vivo directamente en tu navegador y guarda los clips — hasta 40 cámaras a la vez en Ultra." },
+      ],
+    },
+    trustStrip: [
+      "Sin cargo hoy",
+      "Correo de recordatorio",
+      "Cancela en 1 clic",
+      "Reembolso de 7 días",
+      "Pago con Stripe",
+      "Sin anuncios ni venta de datos",
+    ],
+    moneyBackLine:
+      "Cubierto por una garantía de devolución de 7 días en tu primer cargo. Escríbenos y te reembolsamos, sin preguntas.",
+    whyPaid: {
+      heading: "Lo gratuito son 5 cámaras. Lo de pago son todas.",
+      freeLabel: "Free",
+      freeValue: "5 aperturas de cámara por dispositivo",
+      paidLabel: "Cualquier plan de pago",
+      paidValue: "Aperturas ilimitadas · las 74.229 cámaras",
+    },
+    trialSteps: {
+      heading: "Cómo funciona la prueba gratuita",
+      steps: [
+        { title: "Hoy", desc: "Todo se desbloquea — cada función de tu plan, desde el primer minuto." },
+        { title: "Antes del día 10", desc: "Te enviamos un correo de recordatorio antes del cargo. Sin sorpresas." },
+        { title: "Día 10", desc: "Tu plan empieza. Cancela en 1 clic en cualquier momento antes y no pagas nada." },
+      ],
+    },
+    picker: {
+      heading: "¿Qué plan te conviene?",
+      cards: [{ text: "Quieres mirar" }, { text: "Quieres investigar" }, { text: "Quieres la imagen completa" }],
+    },
+    proAdds: {
+      heading: "Qué añade Pro",
+      alertsTitle: "Alertas de cámara, con la foto",
+      alertsSteps: [
+        "Elige una cámara para vigilar",
+        "Describe la condición — nieve, inundaciones, una multitud",
+        "Recibe un correo con la foto cuando aparezca",
+      ],
+      osintTitle: "Kit de herramientas OSINT",
+      osintDesc:
+        "Consultas DNS, WHOIS, análisis SSL y escaneos — desde tu navegador, sin instalar herramientas aparte.",
+    },
+    seeLive: {
+      heading: "Cada pantalla aquí es el WorldEye real.",
+      sub: "Sin maquetas. Estas son las pantallas que tu plan desbloquea.",
+      items: [
+        {
+          src: "/landing/camera-viewer.jpg",
+          alt: "Una cámara de autopista en vivo abierta en el visor de WorldEye, con su panel de grabación",
+          title: "Cámaras ilimitadas",
+          desc: "Cada cámara se abre a pantalla completa así — un feed de autopista en vivo en el visor, con análisis de IA y el panel de grabación en los planes de pago.",
+        },
+        {
+          src: "/landing/oi-assist.jpg",
+          alt: "El panel del asistente OI abierto sobre el globo de WorldEye",
+          title: "Analista de IA (OI)",
+          desc: "El analista integrado, abierto sobre el globo: pide un lugar y OI vuela hasta allí, cambia las capas y marca lo que está en vivo. Sin configurar nada.",
+        },
+        {
+          src: "/landing/track-flights.jpg",
+          alt: "Una aeronave seguida en el globo de WorldEye con su ruta de vuelo",
+          title: "Sigue cualquier aeronave",
+          desc: "Sigue un vuelo y mantén su ruta sobre el globo — una función Pro, sobre el seguimiento de vuelos en vivo gratuito.",
+        },
+        {
+          src: "/landing/features-globe.jpg",
+          alt: "Vuelos en vivo rastreados sobre la Tierra en WorldEye",
+          title: "Seguimiento de vuelos en vivo",
+          desc: "Vuelos comerciales, privados y militares moviéndose sobre el mismo globo, en vivo — gratis para explorar, como el propio mapa.",
+        },
+        {
+          src: "/landing/track-satellites.jpg",
+          alt: "Satélites rastreados en vivo sobre la Tierra en WorldEye",
+          title: "Seguimiento de satélites",
+          desc: "Satélites rastreados moviéndose sobre el mismo globo — Ultra añade encima los feeds de inteligencia premium.",
+        },
+      ],
+    },
+    savings: {
+      heading: "Un año de Pro, tres formas de pagarlo",
+      rows: [
+        { label: "Semanal", value: "$415.48" },
+        { label: "Mensual", value: "$167.88" },
+        { label: "Anual", value: "$74.99" },
+      ],
+      note: "El mismo plan Pro de cualquier forma. El anual es simplemente el total más bajo.",
+    },
+    comparisonV3: {
+      heading: "Lo gratuito es generoso. Lo de pago elimina los límites.",
+      groups: {
+        globe: "El globo",
+        paid: "Se desbloquea con cualquier plan de pago",
+        proUp: "Pro y superiores",
+        ultraOnly: "Solo Ultra",
+      },
+      opensLabel: "Aperturas de cámaras en vivo",
+      opensFree: "5 por dispositivo",
+      opensPaid: "Ilimitadas",
+      showFreeBefore: "Mostrar ",
+      showFreeAfter: " funciones gratuitas",
+      hideFree: "Ocultar las funciones gratuitas",
+      footnote: "*El tráfico se modela a partir de datos de carreteras y está claramente etiquetado en el mapa.",
+      freeForever: "Gratis para siempre",
+    },
+    sticky: {
+      cta: "Empezar prueba gratuita",
+      perYearly: "/mes anual",
+      perMonthly: "/mes mensual",
+    },
   },
   planDetails: {
     backToPricing: "← Todos los planes",

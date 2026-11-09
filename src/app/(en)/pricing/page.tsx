@@ -23,9 +23,23 @@ export const metadata = {
   ...baseMetadata,
   // The page's OG description differs from its meta description
   // (as it did pre-i18n) — restore it over the helper's default.
+  // Pricing Redesign v3 (2026-11-09): the page carries its own
+  // share image (owner-supplied artwork, public/pricing-og-1200x630.jpg).
   openGraph: {
     ...baseMetadata.openGraph,
     description: enPricing.meta.ogDescription,
+    images: [
+      {
+        url: "https://worldeye.app/pricing-og-1200x630.jpg",
+        width: 1200,
+        height: 630,
+        alt: "WorldEye pricing — the map is free; the full picture starts at $3.75/mo",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["https://worldeye.app/pricing-og-1200x630.jpg"],
   },
 };
 

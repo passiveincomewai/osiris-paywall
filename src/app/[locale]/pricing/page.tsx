@@ -31,7 +31,24 @@ export async function generateMetadata({
   });
   return {
     ...base,
-    openGraph: { ...base.openGraph, description: copy.meta.ogDescription },
+    openGraph: {
+      ...base.openGraph,
+      description: copy.meta.ogDescription,
+      // Pricing Redesign v3 (2026-11-09): same owner-supplied share
+      // image as the English page (public/pricing-og-1200x630.jpg).
+      images: [
+        {
+          url: "https://worldeye.app/pricing-og-1200x630.jpg",
+          width: 1200,
+          height: 630,
+          alt: "WorldEye pricing — the map is free; the full picture starts at $3.75/mo",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      images: ["https://worldeye.app/pricing-og-1200x630.jpg"],
+    },
   };
 }
 

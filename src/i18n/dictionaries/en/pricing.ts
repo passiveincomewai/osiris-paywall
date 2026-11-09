@@ -65,6 +65,20 @@
  * the manifest's pricing sourceHash was recomputed (updatedAt
  * stays 2026-10-31).
  *
+ * Amended 2026-11-09 (Pricing Redesign v3): the page rebuilt to the
+ * owner's v3 spec — Yearly/Monthly toggle (Yearly default), monthly-
+ * equivalent display prices with the billed-yearly line (display
+ * only; checkout amounts unchanged), spec card bullets in the new
+ * `v3` block, the two big stat boxes retired, comparison regrouped
+ * (25 rows: globe / any-paid / Pro-and-up / Ultra-only, cinematic row
+ * dropped, flight-path + event alerts + personal brief + saved views
+ * rows added), FAQs reordered (trial length, cancel, recordings,
+ * tier difference first), hero headline/sub replaced. Canonical
+ * liteFeatures/proFeatures/vipFeatures blocks unchanged (the
+ * premium-features mirror + vip-rename pins read them). Spanish
+ * re-synced the same day; the manifest's pricing sourceHash was
+ * recomputed (updatedAt stays 2026-10-31).
+ *
  * Amended 2026-11-06 (pricing improvements): the "How many cameras
  * can I watch?" FAQ now states the real free-tier camera-opens
  * ladder (5 per device while signed out; 10 on a free account once
@@ -214,6 +228,96 @@ export interface PricingCopy {
     h2Accent: string;
     items: { title: string; desc: string }[];
   };
+  /** Pricing Redesign v3 (2026-11-09) — the rebuilt page's own copy:
+      short card bullets with tooltip explanations, the HTML trust
+      strip, value meter, trial timeline, plan picker, savings block
+      and the regrouped comparison chrome. Prices inside it are
+      DISPLAY strings only (monthly equivalents of the annual totals,
+      always rendered next to the billed-yearly line) — checkout
+      amounts never come from here (owner price lock, 2026-11-09). */
+  v3: {
+    toggleYearly: string;
+    toggleMonthly: string;
+    toggleSavePill: string;
+    weeklyLink: string;
+    nudgeAlt: string;
+    statsBandAlt: string;
+    badgeAlt: string;
+    sealAlt: string;
+    ladderAlt: string;
+    recordingAlt: string;
+    teamGraphicAlt: string;
+    enterpriseGraphicAlt: string;
+    finalCtaAlt: string;
+    card: {
+      eqPer: string;
+      billedBefore: string;
+      billedAfter: string;
+      monthlyLine: string;
+      eqPrices: { lite: string; pro: string; ultra: string };
+      savePills: { lite: string; pro: string; ultra: string };
+      ctas: { lite: string; pro: string; ultra: string };
+      trustLine: string[];
+      everythingBefore: string;
+      everythingAfter: string;
+    };
+    bullets: {
+      lite: { title: string; tip: string }[];
+      pro: { title: string; tip: string }[];
+      ultra: { title: string; tip: string }[];
+    };
+    trustStrip: string[];
+    moneyBackLine: string;
+    whyPaid: {
+      heading: string;
+      freeLabel: string;
+      freeValue: string;
+      paidLabel: string;
+      paidValue: string;
+    };
+    trialSteps: {
+      heading: string;
+      steps: { title: string; desc: string }[];
+    };
+    picker: {
+      heading: string;
+      cards: { text: string }[];
+    };
+    proAdds: {
+      heading: string;
+      alertsTitle: string;
+      alertsSteps: string[];
+      osintTitle: string;
+      osintDesc: string;
+    };
+    seeLive: {
+      heading: string;
+      sub: string;
+      items: { src: string; alt: string; title: string; desc: string }[];
+    };
+    savings: {
+      heading: string;
+      rows: { label: string; value: string }[];
+      note: string;
+    };
+    comparisonV3: {
+      heading: string;
+      groups: { globe: string; paid: string; proUp: string; ultraOnly: string };
+      opensLabel: string;
+      opensFree: string;
+      opensPaid: string;
+      showFreeBefore: string;
+      showFreeAfter: string;
+      hideFree: string;
+      footnote: string;
+      freeForever: string;
+    };
+    sticky: {
+      cta: string;
+      perYearly: string;
+      perMonthly: string;
+    };
+  };
   /** Feature showcase — real captures of the live site (Pricing v3). */
   showcase: {
     h2Before: string;
@@ -264,10 +368,10 @@ export const enPricing: PricingCopy = {
   proBadge: "PRO",
   hero: {
     eyebrow: "GLOBAL INTELLIGENCE. REAL IMPACT.",
-    h1Before: "Unlock the ",
-    h1Accent: "full picture.",
+    h1Before: "Free shows you 5 cameras. ",
+    h1Accent: "Paid shows you the planet.",
     h1After: "",
-    sub: "The map is free. A paid plan removes the limits: an AI analyst that works the globe for you, live traffic, advanced search, the recording studio — and, on the top tier, the premium intel feeds.",
+    sub: "74,229 live cameras, flights, satellites, ships and weather on one 3D globe, plus an AI analyst that works the map for you. Start free for 10 days.",
   },
   heroFeatures: [
     { title: "74,229 live cameras", desc: "Every public camera on one globe" },
@@ -377,15 +481,15 @@ export const enPricing: PricingCopy = {
   tiers: {
     lite: {
       name: "Lite",
-      tagline: "The essentials, unlocked — every camera, the premium layers and the AI assistant.",
+      tagline: "Watch everything.",
     },
     pro: {
       name: "Pro",
-      tagline: "The full toolkit — OSINT, camera alerts and room to record.",
+      tagline: "Investigate anything.",
     },
     ultra: {
       name: "Ultra",
-      tagline: "Everything in Pro, plus intel feeds, timelapse and the highest limits.",
+      tagline: "See the full picture.",
     },
     annualBadge: "VIP",
     periods: { weekly: "Weekly", monthly: "Monthly", annual: "Annual" },
@@ -442,7 +546,7 @@ export const enPricing: PricingCopy = {
     ultraHeader: "ULTRA",
     rows: [
       "Interactive 3D globe",
-      "Live flight tracking & aircraft follow",
+      "Live flight tracking",
       "74,229 public CCTV cameras",
       "Satellite & space tracking",
       "Basic search — fly to any place",
@@ -452,17 +556,20 @@ export const enPricing: PricingCopy = {
       "Radar, lightning, hurricanes & fire perimeters",
       "River gauges & bike-share systems",
       "Sensor effects",
-      "Cinematic director (free for affiliates)",
       "Earthquakes, wildfires & weather",
-      "OI AI assistant (built-in AI included)",
       "Satellite imagery view",
+      "OI AI assistant (built-in AI included)",
       "Live traffic layer (modeled congestion)",
       "Advanced search filters",
+      "Camera Recording Studio (5 / 20 / 40 cameras at once)",
       "OSINT toolkit (nmap, DNS, WHOIS, SSL)",
-      "Camera Recording Studio",
       "Camera alerts (2 on Pro · 10 on Ultra)",
+      "Flight path for followed aircraft",
       "Premium intel feeds (cyber, GDELT, maritime, live news)",
       "Camera timelapse",
+      "Event alerts",
+      "Personal brief",
+      "Saved views (up to 25)",
     ],
     noteBefore: "The Cinematic Director isn't a plan feature — it's free for members of the ",
     noteLink: "affiliate program",
@@ -471,6 +578,22 @@ export const enPricing: PricingCopy = {
   },
   faqHeading: "Questions, answered.",
   faqs: [
+    {
+      q: "How long is the free trial?",
+      a: "Weekly plans start with a 3-day free trial; monthly and annual plans start with a 10-day free trial. You're never charged during a trial — cancel before it ends and you pay nothing.",
+    },
+    {
+      q: "Can I cancel anytime?",
+      a: "Anytime, in one click. Your Pro access runs until the end of the billing period you've paid for — weekly, monthly or yearly — and then simply stops. No retention calls, no dark patterns. On a free trial you're never charged during the trial: cancel before it ends and you pay nothing.",
+    },
+    {
+      q: "What happens to my recordings and saved data if I cancel?",
+      a: "Cancelling stops future renewals — it doesn't delete your account or your data. Your paid access runs until the end of the period you've already paid for, and then your account simply returns to the free tier. The clips you record are stored in your browser, on your own device, so they stay put whatever your plan does. And you can download everything WorldEye holds for your account — profile, settings, saved cameras, alert rules and your recordings list — as JSON or CSV from the Your data section of Settings, before or after cancelling.",
+    },
+    {
+      q: "What is the difference between Lite, Pro and Ultra?",
+      a: "Lite is $4.99/week, $8.99/month or $44.99/year — record up to 5 cameras at once, with no camera alert rules. Pro is $7.99/week, $13.99/month or $74.99/year — 20-camera recording and 2 alert rules, plus the OSINT toolkit. Ultra is $12.99/week, $24.99/month or $149.99/year — 40-camera recording, 10 alert rules, camera timelapse and the premium intel feeds. All three remove the free tier's camera-open limits.",
+    },
     {
       q: "How much does WorldEye cost?",
       a: "The map itself is free — the globe, 74,229 cameras, flights, satellites and weather, no account needed. Paid plans come in three tiers, each billed weekly, monthly or annually: Lite is $4.99/week, $8.99/month or $44.99/year; Pro is $7.99/week, $13.99/month or $74.99/year; Ultra is $12.99/week, $24.99/month or $149.99/year. Weekly plans start with a 3-day free trial; monthly and annual plans start with a 10-day free trial. Enterprise — the camera feed API and embed for your own platform — is $999/year and has no free trial. Every paid plan can be cancelled anytime.",
@@ -482,14 +605,6 @@ export const enPricing: PricingCopy = {
     {
       q: "Do I need my own API key for the AI assistant?",
       a: "No. OI is powered by WorldEye's built-in AI, with nothing to set up — no API key to bring, no separate provider account, nothing billed to you by a third party. If you'd rather run on your own model account, you can add your own API key in OI settings — it stays in your browser and takes over whenever it's present.",
-    },
-    {
-      q: "Can I cancel anytime?",
-      a: "Anytime, in one click. Your Pro access runs until the end of the billing period you've paid for — weekly, monthly or yearly — and then simply stops. No retention calls, no dark patterns. On a free trial you're never charged during the trial: cancel before it ends and you pay nothing.",
-    },
-    {
-      q: "What happens to my recordings and saved data if I cancel?",
-      a: "Cancelling stops future renewals — it doesn't delete your account or your data. Your paid access runs until the end of the period you've already paid for, and then your account simply returns to the free tier. The clips you record are stored in your browser, on your own device, so they stay put whatever your plan does. And you can download everything WorldEye holds for your account — profile, settings, saved cameras, alert rules and your recordings list — as JSON or CSV from the Your data section of Settings, before or after cancelling.",
     },
     {
       q: "What if I forget to cancel — can I get a refund?",
@@ -512,17 +627,10 @@ export const enPricing: PricingCopy = {
       a: "Same open-source engine, plus the paid tiers: an AI analyst that works the map for you, live traffic, advanced search filters and — on Ultra — the premium intel feeds the free site doesn't gate, because there is no gate there. Here, the tiers fund the infrastructure.",
     },
     {
-      q: "How long is the free trial?",
-      a: "Weekly plans start with a 3-day free trial; monthly and annual plans start with a 10-day free trial. You're never charged during a trial — cancel before it ends and you pay nothing.",
-    },
-    {
-      q: "What is the difference between Lite, Pro and Ultra?",
-      a: "Lite is $4.99/week, $8.99/month or $44.99/year — record up to 5 cameras at once, with no camera alert rules. Pro is $7.99/week, $13.99/month or $74.99/year — 20-camera recording and 2 alert rules, plus the OSINT toolkit. Ultra is $12.99/week, $24.99/month or $149.99/year — 40-camera recording, 10 alert rules, camera timelapse and the premium intel feeds. All three remove the free tier's camera-open limits.",
-    },
-    {
       q: "How many cameras can I watch?",
       a: "The directory holds 74,229 public cameras, and none of them is locked behind a tier — every camera in the directory can be opened on any plan. The free tier includes an allowance of camera opens — 5 per device while signed out, and 10 on a free account once its email is verified; Lite, Pro and Ultra remove the camera-open limits, so watching is unlimited there. What the plans change is recording and alerts: record 5 cameras at once on Lite, 20 on Pro and 40 on Ultra, with camera alert rules — none on Lite, 2 on Pro, 10 on Ultra.",
     },
+
   ],
   compareTeasers: {
     heading: "Comparing your options?",
@@ -610,6 +718,176 @@ export const enPricing: PricingCopy = {
         desc: "The whole RECON board on one page — port scanner, DNS, WHOIS, certificate and host lookups, each card labelled free or Pro.",
       },
     ],
+  },
+  v3: {
+    toggleYearly: "Yearly",
+    toggleMonthly: "Monthly",
+    toggleSavePill: "Save up to 58%",
+    weeklyLink: "Just need a few days? Get a 7-day pass →",
+    nudgeAlt:
+      "Before you pick monthly: a full year of Ultra costs less than a year of Pro paid monthly — Pro monthly $167.88 a year, Ultra yearly $149.99, Pro yearly $74.99. Same card, same 10-day free trial; yearly just costs less.",
+    statsBandAlt:
+      "74,229 live public cameras · 18,000+ satellites tracked · Live commercial, private and military flights · Built-in AI analyst, nothing to set up",
+    badgeAlt: "Most popular",
+    sealAlt: "Money-back 7-day guarantee on your first charge",
+    ladderAlt:
+      "What each plan adds: Free $0, Lite $3.75/mo yearly, Pro $6.25/mo yearly, Ultra $12.50/mo yearly — every step up keeps everything below it",
+    recordingAlt:
+      "Camera Recording Studio: record live feeds in your browser — 5 cameras at once on Lite, 20 on Pro, 40 on Ultra",
+    teamGraphicAlt:
+      "Team access: seats get cheaper as your team grows — $11.99/seat/mo for seats 1–5, $10.99 for seats 6–10, $9.99 from seat 11, up to 50 members",
+    enterpriseGraphicAlt:
+      "Enterprise, $999/year: put live cameras on your own site with the embeddable WorldEye player",
+    finalCtaAlt:
+      "The map is free. The full picture is 10 days away. Start my 10-day free trial — $0 today, reminder before you're billed, cancel in 1 click",
+    card: {
+      eqPer: "/mo",
+      billedBefore: "billed ",
+      billedAfter: " yearly",
+      monthlyLine: "Billed monthly",
+      eqPrices: { lite: "$3.75", pro: "$6.25", ultra: "$12.50" },
+      savePills: { lite: "Save 58%", pro: "Save 55%", ultra: "Save 50%" },
+      ctas: {
+        lite: "Start my free trial",
+        pro: "Start my 10-day free trial",
+        ultra: "Start Ultra free",
+      },
+      trustLine: ["$0 today", "Reminder before you're billed", "Cancel in 1 click"],
+      everythingBefore: "Everything in ",
+      everythingAfter: ", plus:",
+    },
+    bullets: {
+      lite: [
+        { title: "Every camera, unlimited", tip: "Watch as many of the 74,229 live cameras as you like — paid plans have no open limits." },
+        { title: "AI analyst (OI) built in", tip: "Talk to the map. Forecasts, analysis and recon — powered by WorldEye's built-in AI, with nothing to set up." },
+        { title: "Traffic & premium map layers", tip: "The traffic layer (modeled from road data and labeled as modeled on the map) plus the rest of the premium layer set." },
+        { title: "Advanced search filters", tip: "Narrow camera results by country, type and live feeds — places are never filtered." },
+        { title: "Record up to 5 cameras at once", tip: "Record live camera feeds right in your browser and save the clips — up to 5 cameras at once on Lite." },
+        { title: "Ambient Mode included", tip: "The Slow-TV ambient player is unlocked too — no separate Ambient plan needed." },
+      ],
+      pro: [
+        { title: "OSINT toolkit (DNS, WHOIS, SSL, scans)", tip: "Nmap scans, DNS/WHOIS, SSL analysis and threat intel — in-browser." },
+        { title: "Camera alerts with photo (2 cameras)", tip: "Watch up to 2 cameras and get emailed — with the photo — when a condition you describe, like snow or flooding, shows up." },
+        { title: "Record up to 20 cameras at once", tip: "Record live camera feeds right in your browser and save the clips — up to 20 cameras at once on Pro." },
+        { title: "Follow any aircraft's flight path", tip: "Follow an aircraft and see its flight path drawn on the globe." },
+      ],
+      ultra: [
+        { title: "Cyber, maritime & conflict intel feeds", tip: "Cyber threats, GDELT events, maritime tracking and conflict zones — part of Ultra's premium intel feeds." },
+        { title: "Live news feed on the globe", tip: "The live news feed plotted on the globe, part of Ultra's premium intel feeds." },
+        { title: "Camera timelapse", tip: "Capture snapshot cameras frame by frame and export the film — Ultra only." },
+        { title: "10 camera alerts + event alerts", tip: "10 watched cameras, plus event alerts — earthquakes near your places, launch reminders and ISS passes — by email and in-app." },
+        { title: "Personal brief & 25 saved views", tip: "A brief built from your account, plus up to 25 named globe setups you can restore in one click." },
+        { title: "Record up to 40 cameras at once", tip: "Record live camera feeds right in your browser and save the clips — up to 40 cameras at once on Ultra." },
+      ],
+    },
+    trustStrip: [
+      "No charge today",
+      "Reminder email",
+      "1-click cancel",
+      "7-day refund",
+      "Stripe checkout",
+      "No ads / no data selling",
+    ],
+    moneyBackLine:
+      "Covered by a 7-day money-back guarantee on your first charge. Email us and we refund you, no questions asked.",
+    whyPaid: {
+      heading: "Free is 5 cameras. Paid is all of them.",
+      freeLabel: "Free",
+      freeValue: "5 camera opens per device",
+      paidLabel: "Any paid plan",
+      paidValue: "Unlimited opens · all 74,229 cameras",
+    },
+    trialSteps: {
+      heading: "How the free trial works",
+      steps: [
+        { title: "Today", desc: "Everything unlocks — every feature in your plan, from the first minute." },
+        { title: "Before day 10", desc: "We email you a reminder before you're billed. No surprises." },
+        { title: "Day 10", desc: "Your plan starts. Cancel in 1 click any time before then and you pay nothing." },
+      ],
+    },
+    picker: {
+      heading: "Which plan is right for you?",
+      cards: [{ text: "You want to watch" }, { text: "You want to investigate" }, { text: "You want the full picture" }],
+    },
+    proAdds: {
+      heading: "What Pro adds",
+      alertsTitle: "Camera alerts, with the photo",
+      alertsSteps: [
+        "Pick a camera to watch",
+        "Describe the condition — snow, flooding, a crowd",
+        "Get an email with the photo when it shows up",
+      ],
+      osintTitle: "OSINT toolkit",
+      osintDesc:
+        "DNS lookups, WHOIS, SSL analysis and scans — run from your browser, no separate tools to install.",
+    },
+    seeLive: {
+      heading: "Every screen here is the real WorldEye.",
+      sub: "No mockups. These are the screens your plan unlocks.",
+      items: [
+        {
+          src: "/landing/camera-viewer.jpg",
+          alt: "A live highway camera open in the WorldEye viewer, with its record panel",
+          title: "Unlimited cameras",
+          desc: "Every camera opens full-screen like this — a live highway feed in the viewer, with AI analysis and the record panel on paid plans.",
+        },
+        {
+          src: "/landing/oi-assist.jpg",
+          alt: "The OI assistant panel open on the WorldEye globe",
+          title: "AI analyst (OI)",
+          desc: "The built-in analyst, open on the globe: ask for a place and OI flies there, switches layers and marks what is live. Nothing to set up.",
+        },
+        {
+          src: "/landing/track-flights.jpg",
+          alt: "An aircraft followed on the WorldEye globe with its flight path",
+          title: "Follow any aircraft",
+          desc: "Follow a flight and keep its path on the globe — a Pro feature, on top of the free live flight tracking.",
+        },
+        {
+          src: "/landing/features-globe.jpg",
+          alt: "Live flights tracked over the Earth on WorldEye",
+          title: "Live flight tracking",
+          desc: "Commercial, private and military flights moving over the same globe, live — free to browse, like the map itself.",
+        },
+        {
+          src: "/landing/track-satellites.jpg",
+          alt: "Satellites tracked live over the Earth on WorldEye",
+          title: "Satellite tracking",
+          desc: "Tracked satellites moving over the same globe — Ultra layers the premium intel feeds on top.",
+        },
+      ],
+    },
+    savings: {
+      heading: "One year of Pro, three ways to pay",
+      rows: [
+        { label: "Weekly", value: "$415.48" },
+        { label: "Monthly", value: "$167.88" },
+        { label: "Annual", value: "$74.99" },
+      ],
+      note: "The same Pro plan either way. Annual is simply the lowest total.",
+    },
+    comparisonV3: {
+      heading: "Free is generous. Paid removes the limits.",
+      groups: {
+        globe: "The globe",
+        paid: "Unlocks with any paid plan",
+        proUp: "Pro and up",
+        ultraOnly: "Ultra only",
+      },
+      opensLabel: "Live camera opens",
+      opensFree: "5 per device",
+      opensPaid: "Unlimited",
+      showFreeBefore: "Show ",
+      showFreeAfter: " free features",
+      hideFree: "Hide the free features",
+      footnote: "*Traffic is modeled from road data and clearly labeled on the map.",
+      freeForever: "Free forever",
+    },
+    sticky: {
+      cta: "Start free trial",
+      perYearly: "/mo yearly",
+      perMonthly: "/mo monthly",
+    },
   },
   planDetails: {
     backToPricing: "← All plans",

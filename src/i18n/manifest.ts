@@ -90,7 +90,7 @@ const ES_TRANCHE_DATE = "2026-10-26";
 // computed at publish time; dictionaries.test.ts recomputes and pins them.
 const ES_SOURCE_HASHES: Record<string, string> = {
   "": "4bd60efc2e764eddb691f4976ca021ee100244830049e30bad1ed7c6e96c2fc2",
-  pricing: "ee1ba86c3fb048afebbb82396689686ce7ff6d6ac3e40a894cec16a441f44622",
+  pricing: "bc8c98dda041fb88e4b1811182c85ec381d14731d48a399f46da34fa4deb61e6",
   "live-webcams": "4d16ef5f2d7d573e832b1a7d5eed2fda1c29531edd2f0b054c3d07abafc5b959",
   faq: "afe85820b76916835d3d719073a1c9b3ad660536cfc16eef207a24aa80cc2d4c",
   "live-flight-tracker": "f62d7fceef5d66a56c9a5c87cc82d737c82ca29a039f7d8e8649c3f5f7d6f887",
@@ -165,6 +165,12 @@ const ES_SOURCE_HASHES: Record<string, string> = {
 // live TomTom flow is not currently served. The Spanish dictionaries
 // were re-synced the same day, so the pricing and faq hashes moved;
 // their updatedAt stays 2026-10-31.
+// Re-sync (2026-11-09, Pricing Redesign v3): the pricing dictionary
+// gained the v3 block (toggle/card/trust-strip/meter/timeline/
+// picker/savings/comparison chrome), the v3 hero headline/sub and
+// tier taglines, the regrouped 25-row comparison and the reordered
+// FAQs. The Spanish dictionary was re-synced the same day, so the
+// pricing hash moved; its updatedAt stays 2026-10-31.
 // Re-sync (2026-11-01, Pricing v3): the pricing dictionary gained
 // the feature-showcase block (real site captures) and one added
 // feature capture on the Lite and Pro detail copy. The Spanish
