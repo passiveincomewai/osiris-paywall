@@ -1,5 +1,6 @@
 "use client";
 
+import { openUpgradePopup } from "@/lib/upgrade-popup";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
@@ -165,10 +166,13 @@ export default function HeaderProfileMenu() {
 
           {/* Free-plan upgrade card — first thing a free account sees. */}
           {isFree && (
-            <Link
-              href="/pricing"
-              onClick={() => setOpen(false)}
-              className="flex items-center gap-3 rounded-2xl border border-[#D4AF37]/55 bg-gradient-to-b from-[#D4AF37]/[0.14] to-[#D4AF37]/[0.04] px-3 py-1.5 hover:from-[#D4AF37]/[0.20] transition"
+            <button
+              type="button"
+              onClick={() => {
+                setOpen(false);
+                openUpgradePopup({ step: 1, trigger: "upgrade_button" });
+              }}
+              className="flex w-full items-center gap-3 rounded-2xl border border-[#D4AF37]/55 bg-gradient-to-b from-[#D4AF37]/[0.14] to-[#D4AF37]/[0.04] px-3 py-1.5 text-left hover:from-[#D4AF37]/[0.20] transition"
             >
               <span className="w-7 h-7 rounded-full border border-[#D4AF37]/70 bg-black/40 flex items-center justify-center shrink-0">
                 <Crown className="w-[14px] h-[14px] text-[#e8c55a]" />
@@ -180,7 +184,7 @@ export default function HeaderProfileMenu() {
                 </span>
               </span>
               <ChevronRight className="w-4 h-4 text-[#e8c55a] shrink-0" />
-            </Link>
+            </button>
           )}
 
           {/* Invite tracker — the user's own referral count and link. */}

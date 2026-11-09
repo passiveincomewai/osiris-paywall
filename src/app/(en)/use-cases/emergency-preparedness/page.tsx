@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import UpgradeImageButton from "@/components/upgrade/UpgradeImageButton";
 import LanguageHeaderControl from "@/components/translate/LanguageHeaderControl";
 import Link from "next/link";
 import {
@@ -261,12 +262,7 @@ export default function EmergencyPreparednessPage() {
               >
                 <Globe className="w-4 h-4" /> Open the live map
               </Link>
-              <Link
-                href="/pricing"
-                className="inline-block hover:brightness-110 transition"
-              >
-                <img src="/upgrade-to-pro.png" alt="Upgrade to Pro" width={1072} height={262} className="h-12 w-auto" draggable={false} />
-              </Link>
+              <UpgradeImageButton />
             </div>
           </div>
         </section>

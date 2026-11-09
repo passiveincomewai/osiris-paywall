@@ -1,5 +1,6 @@
 'use client';
 
+import { openUpgradePopup } from "@/lib/upgrade-popup";
 import { Fragment, memo, useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -1119,9 +1120,10 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, capabilitie
      free-viewer only (Pro users never saw the embed either). */
   const proFooter = !isPremiumUser ? (
     <div className="px-3 mt-3 pb-1">
-      <a
-        href="/pricing"
-        className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl transition-all hover:brightness-125 focus:outline-none focus-visible:ring-1 focus-visible:ring-[#D4AF37]/70"
+      <button
+        type="button"
+        onClick={() => openUpgradePopup({ step: 1, trigger: "upgrade_button" })}
+        className="flex w-full items-center gap-2.5 px-3 py-2.5 text-left rounded-xl transition-all hover:brightness-125 focus:outline-none focus-visible:ring-1 focus-visible:ring-[#D4AF37]/70"
         style={{
           border: '1px solid rgba(212,175,55,0.65)',
           background: 'linear-gradient(100deg, rgba(42,30,4,0.92), rgba(16,10,2,0.95) 60%, rgba(58,40,6,0.9))',
@@ -1136,7 +1138,7 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, capabilitie
         <span className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ border: '1px solid rgba(212,175,55,0.55)', background: 'rgba(212,175,55,0.10)' }}>
           <ChevronRight className="w-4 h-4 text-[#F3C84B]" />
         </span>
-      </a>
+      </button>
     </div>
   ) : null;
 

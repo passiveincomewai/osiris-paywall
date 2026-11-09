@@ -11,6 +11,7 @@ import {
 } from "@/lib/premium-entitlement";
 import { useLocale } from "@/i18n/LocaleProvider";
 import { getChromeCopy } from "@/i18n/dictionaries";
+import { openUpgradePopup } from "@/lib/upgrade-popup";
 
 /**
  * The header's account slot — one control for every identity state.
@@ -61,11 +62,18 @@ export default function AccountHudControl({
     };
   }, []);
 
+  // The Upgrade pill opens the upgrade popup in place (2026-11-09) —
+  // it no longer navigates to /pricing. The popup host re-checks
+  // identity before opening, so a premium viewer can never be shown
+  // it even if this pill renders during a stale-identity moment.
   const pill = (
-    <Link
-      href="/pricing"
+    <button
+      type="button"
       aria-label="Upgrade to PRO"
-      onClick={() => trackAnalyticsEvent("header_upgrade_click")}
+      onClick={() => {
+        trackAnalyticsEvent("header_upgrade_click");
+        openUpgradePopup({ step: 1, trigger: "upgrade_button" });
+      }}
       className={
         variant === "desktop"
           ? "upgrade-pill-glow pointer-events-auto inline-block"
@@ -80,7 +88,7 @@ export default function AccountHudControl({
         draggable={false}
         className={variant === "desktop" ? "h-12 w-auto" : "h-9 w-auto"}
       />
-    </Link>
+    </button>
   );
 
   // Logged-out only: rendered solely in the anonymous branch below, so a

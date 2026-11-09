@@ -19,6 +19,7 @@
  * path, never a fake-created rule; a stream-only camera (no still for
  * the checker to look at) says so up front instead of failing at save.
  */
+import { openUpgradePopup } from "@/lib/upgrade-popup";
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Bell, BellRing, Crown, Loader2, Trash2, X } from 'lucide-react';
@@ -272,9 +273,9 @@ export default function CameraAlertButton({ camera }: { camera: any | null }) {
                   Pro can watch up to 2 cameras like this one; VIP Pro (the annual plan) raises it
                   to 10 — and you get emailed when a condition first shows.
                 </p>
-                <Link href="/pricing" className={goldBtn}>
+                <button type="button" onClick={() => openUpgradePopup({ step: 1, trigger: "upgrade_button", cameraId: cameraId ?? undefined })} className={goldBtn}>
                   SEE PLANS
-                </Link>
+                </button>
               </div>
             )}
 
@@ -298,9 +299,9 @@ export default function CameraAlertButton({ camera }: { camera: any | null }) {
                     : `You’re watching ${ready.maxActive} cameras — your Pro limit. VIP Pro raises it to 10.`}
                 </p>
                 {!ready.vip && (
-                  <Link href="/pricing" className={goldBtn}>
+                  <button type="button" onClick={() => openUpgradePopup({ step: 1, plan: "ultra", trigger: "upgrade_button", cameraId: cameraId ?? undefined })} className={goldBtn}>
                     GET VIP PRO
-                  </Link>
+                  </button>
                 )}
                 <Link href="/dashboard#alerts" className={ghostBtn}>
                   MANAGE ALERTS
