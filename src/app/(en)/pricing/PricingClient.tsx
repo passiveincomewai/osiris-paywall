@@ -531,8 +531,11 @@ function ComparisonTable({
   const [showFree, setShowFree] = useState(false);
   const cv = copy.v3.comparisonV3;
   const freeCount = COMPARE_GROUPS[0].end - COMPARE_GROUPS[0].start;
+  // The FREE track is wider than the paid check columns: the first
+  // row's "5 per device" value needs ~80px at text-sm bold and was
+  // wrapping to two lines inside the old 64/72px track.
   const gridCols =
-    "grid-cols-[minmax(170px,1fr)_64px_64px_64px_72px] md:grid-cols-[1fr_72px_72px_72px_72px]";
+    "grid-cols-[minmax(170px,1fr)_84px_64px_64px_72px] md:grid-cols-[1fr_88px_72px_72px_72px]";
   const renderRow = (i: number) => {
     const feature = copy.comparison.rows[i];
     const r = COMPARE_BOOLEANS[i] ?? { free: false, lite: false, pro: false, ultra: false };
@@ -595,7 +598,7 @@ function ComparisonTable({
           {/* First row, bold + highlighted: the opens ladder. */}
           <div className={`grid ${gridCols} border-b border-white/10 bg-[#E4B93F]/[0.10] text-sm font-bold`}>
             <div className="px-4 md:px-7 py-2.5 text-white">{cv.opensLabel}</div>
-            <div className="py-2.5 text-center text-white/85">{cv.opensFree}</div>
+            <div className="py-2.5 text-center whitespace-nowrap text-white/85">{cv.opensFree}</div>
             {(["lite", "pro", "ultra"] as TierKey[]).map((t) => (
               <div
                 key={t}
@@ -635,14 +638,27 @@ function ComparisonTable({
           {Array.from({ length: COMPARE_GROUPS[3].end - COMPARE_GROUPS[3].start }, (_, k) =>
             renderRow(COMPARE_GROUPS[3].start + k),
           )}
-          {/* CTA row: one button per paid column. */}
-          <div className={`grid ${gridCols} bg-white/[0.02]`}>
+          {/* CTA row: one button per paid plan. This row deliberately
+              does NOT reuse gridCols. That template's paid tracks are
+              64-72px check-mark columns, and this row renders only
+              four children (label + 3 buttons) into its five tracks,
+              so grid auto-placement shifted every button one column
+              left (Lite under FREE, Pro under LITE, Ultra under PRO,
+              ULTRA left empty) inside a ~48px text measure — the full
+              labels wrapped to 2-3 ragged lines no matter how the
+              button itself was styled (why the round-2 restyle of
+              this row did not fix the render). Here the label cell
+              and the three button cells split the full table width:
+              each button fills its wide cell, the row stretches all
+              three to one equal height, and a label that cannot fit
+              on one line wraps to at most two balanced lines. */}
+          <div className="grid grid-cols-[repeat(4,minmax(0,1fr))] items-stretch bg-white/[0.02]">
             <div className="px-4 md:px-7 py-3 text-xs text-white/40 flex items-center">{cv.freeForever}</div>
             {(["lite", "pro", "ultra"] as TierKey[]).map((t) => (
-              <div key={t} className="py-3 px-1 flex">
+              <div key={t} className="py-3 px-1.5 flex">
                 <button
                   onClick={() => onCheckout(checkoutKeyFor(t, period))}
-                  className={`w-full h-full flex items-center justify-center text-center leading-tight px-2 py-2 rounded-xl text-[11px] font-bold hover:brightness-110 active:scale-[0.99] transition ${TIER_ACCENTS[t].btn}`}
+                  className={`flex-1 h-full flex items-center justify-center text-center leading-tight [text-wrap:balance] px-2 py-2 rounded-xl text-[11px] font-bold hover:brightness-110 active:scale-[0.99] transition ${TIER_ACCENTS[t].btn}`}
                 >
                   {copy.v3.card.ctas[t]}
                 </button>
