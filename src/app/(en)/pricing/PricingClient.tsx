@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useState, type ReactNode } from "react";
-import LanguageHeaderControl from "@/components/translate/LanguageHeaderControl";
 import Link from "next/link";
 import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
@@ -19,10 +18,10 @@ import { preloadStripeJs } from "@/lib/billing/stripe-preload";
 import type { CheckoutPlanId } from "@/lib/billing/trial-checkout";
 import { motion, AnimatePresence, MotionConfig } from "framer-motion";
 import {
-  ArrowLeft, Check, ChevronDown, Minus, Info, ShieldCheck, BadgeCheck,
+  Check, ChevronDown, Minus, Info, ShieldCheck, BadgeCheck,
   Bell, Lock, EyeOff, Zap,
 } from "lucide-react";
-import { localizedPath, type LocaleCode } from "@/i18n/config";
+import type { LocaleCode } from "@/i18n/config";
 import { localizedUrl } from "@/lib/i18n-seo";
 import { enPricing, type PricingCopy, type PricingPlanCopy } from "@/i18n/dictionaries/en/pricing";
 import { getChromeCopy } from "@/i18n/dictionaries";
@@ -346,7 +345,7 @@ function TierCard({
           width={1200}
           height={675}
           loading="lazy"
-          className="w-full h-36 md:h-40 object-cover rounded-t-[calc(22px-1px)]"
+          className="w-full h-28 md:h-32 object-cover rounded-t-[calc(22px-1px)]"
         />
         <span className="absolute inset-0 bg-gradient-to-t from-[#111317]/90 via-transparent to-transparent rounded-t-[calc(22px-1px)]" />
       </Link>
@@ -640,10 +639,10 @@ function ComparisonTable({
           <div className={`grid ${gridCols} bg-white/[0.02]`}>
             <div className="px-4 md:px-7 py-3 text-xs text-white/40 flex items-center">{cv.freeForever}</div>
             {(["lite", "pro", "ultra"] as TierKey[]).map((t) => (
-              <div key={t} className="py-3 px-1 flex justify-center items-center">
+              <div key={t} className="py-3 px-1 flex">
                 <button
                   onClick={() => onCheckout(checkoutKeyFor(t, period))}
-                  className={`px-2 py-2 rounded-xl text-[11px] font-bold hover:brightness-110 active:scale-[0.99] transition ${TIER_ACCENTS[t].btn}`}
+                  className={`w-full h-full flex items-center justify-center text-center leading-tight px-2 py-2 rounded-xl text-[11px] font-bold hover:brightness-110 active:scale-[0.99] transition ${TIER_ACCENTS[t].btn}`}
                 >
                   {copy.v3.card.ctas[t]}
                 </button>
@@ -674,7 +673,6 @@ export default function PricingPage({
   const [period, setPeriod] = useState<DisplayPeriod>("annual");
   const faqJsonLd = buildFaqJsonLd(copy, locale);
   const enterpriseFeatures = copy.enterprise.features ?? ENTERPRISE_FEATURES;
-  const homeHref = localizedPath("", locale);
   // Checkout opens IN PLACE: the plan CTAs raise the embedded form in a
   // sheet (components/CheckoutSheet — bottom sheet on mobile, dialog on
   // desktop) instead of navigating to /checkout. It is the same
@@ -685,10 +683,10 @@ export default function PricingPage({
   const [sheetPlan, setSheetPlan] = useState<CheckoutPlanId | null>(null);
   const closeSheet = useCallback(() => setSheetPlan(null), []);
   const openCheckout = useCallback((plan: CheckoutPlanId) => setSheetPlan(plan), []);
-  // The hero's ambient video loop is decorative motion the
+  // The See-it-live ambient video loop is decorative motion the
   // MotionConfig below can't gate (it is not a framer transform):
   // hold it for visitors who prefer reduced motion — they keep
-  // the static capture as the backdrop.
+  // the static capture instead.
   const [reduceMotion, setReduceMotion] = useState(false);
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -724,75 +722,16 @@ export default function PricingPage({
         <div className="absolute bottom-0 left-0 w-[500px] h-[300px] rounded-full opacity-10 blur-[100px] bg-[#22D3EE]" />
       </div>
 
-      <div className="relative max-w-5xl mx-auto px-6 py-6 md:py-8">
-        {/* Top bar */}
-        <div className="flex items-center justify-between mb-6">
-          <Link href={homeHref} className="flex items-center gap-2 text-sm text-white/50 hover:text-white transition">
-            <ArrowLeft className="w-4 h-4" /> {copy.backToMap}
-          </Link>
-          <div className="flex items-center gap-3">
-            <Link href={homeHref} aria-label="WorldEye — back to the live globe" className="shrink-0 inline-flex items-center"><img src="/worldeye-header-logo.png" alt="WorldEye" width={1063} height={290} className="h-6 w-auto" /></Link><span className="text-[11px] font-mono tracking-[0.3em] text-[#E4B93F]">{copy.proBadge}</span>
-            <LanguageHeaderControl variant="mobile" />
-          </div>
-        </div>
-
-        {/* Hero — the existing real-capture globe backdrop (the v3
-            hero-background artwork did not arrive; the page keeps
-            its tip hero treatment), eyebrow, the v3 headline, the
-            owner's stats-band graphic in place of the old feature
-            chips, and the Yearly/Monthly toggle. */}
-        <div className="relative left-1/2 -translate-x-1/2 w-screen overflow-hidden">
-          <img
-            src="/landing/features-globe.jpg"
-            alt=""
-            aria-hidden
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-          {!reduceMotion && (
-            <video
-              className="absolute inset-0 w-full h-full object-cover"
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="auto"
-              poster="/landing/features-globe.jpg"
-              aria-hidden
-            >
-              <source src="/landing/track-flights.webm" type="video/webm" />
-              <source src="/landing/track-flights.mp4" type="video/mp4" />
-            </video>
-          )}
-          <div className="absolute inset-0 bg-black/55" />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#08090C]/70 via-transparent to-[#08090C]" />
-          <div className="relative max-w-3xl mx-auto px-6 pt-12 pb-10 md:pt-16 md:pb-12 text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <p className="text-[11px] md:text-xs font-bold tracking-[0.3em] text-[#E4B93F]">
-                {copy.hero.eyebrow}
-              </p>
-              <h1 className="mt-3 text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">
-                {copy.hero.h1Before}<span className="text-[#E4B93F]">{copy.hero.h1Accent}</span>{copy.hero.h1After}
-              </h1>
-              <p className="mt-4 text-sm md:text-base text-white/60 leading-relaxed max-w-2xl mx-auto">{copy.hero.sub}</p>
-            </motion.div>
-
-            {/* Stats band — the owner's graphic replaces the 4
-                feature chips AND the two big stat boxes (v3 §1). */}
-            <img
-              src="/pricing-v3/stats-band.webp"
-              alt={copy.v3.statsBandAlt}
-              width={2800}
-              height={268}
-              className="mt-8 w-full h-auto"
-            />
-
-            {/* Billing toggle — Yearly (default, with the green
-                savings pill) | Monthly. No Weekly here (v3 §2). */}
-            <div className="mt-10 flex sm:inline-flex p-1.5 rounded-2xl bg-black/50 border border-[#E4B93F]/25 backdrop-blur w-full sm:w-auto max-w-full">
+      <div className="relative max-w-5xl mx-auto px-6 pt-4 pb-6 md:pt-5 md:pb-8">
+        {/* Billing toggle — Yearly (default, with the green
+            savings pill) | Monthly. No Weekly here (v3 §2).
+            Round-2 trims (2026-11-09): the hero band and the page
+            top bar are removed — the page opens directly with the
+            plan controls so the plans and their CTAs are visible
+            without scrolling. The pt-4 gives the toggle's save
+            pill (absolute, -top-3.5) clear space at the page top. */}
+        <div className="flex justify-center pt-4">
+            <div className="flex sm:inline-flex p-1.5 rounded-2xl bg-black/50 border border-[#E4B93F]/25 backdrop-blur w-full sm:w-auto max-w-full">
               {(["annual", "monthly"] as DisplayPeriod[]).map((key) => (
                 <button
                   key={key}
@@ -819,7 +758,6 @@ export default function PricingPage({
                 </button>
               ))}
             </div>
-          </div>
         </div>
 
         {/* Monthly → yearly nudge (v3 §3): the owner's graphic, shown
@@ -828,7 +766,7 @@ export default function PricingPage({
         {period === "monthly" && (
           <button
             onClick={() => pickPeriod("annual")}
-            className="mt-8 block w-full max-w-4xl mx-auto hover:brightness-110 transition"
+            className="mt-6 block w-full max-w-2xl mx-auto hover:brightness-110 transition"
             aria-label={copy.v3.nudgeAlt}
           >
             <img
@@ -843,7 +781,7 @@ export default function PricingPage({
 
         {/* The 3-tier grid. Mobile order: Pro first, then Lite, then
             Ultra (v3 mobile rules) via order classes. */}
-        <div id="plans" className="mt-10 grid gap-6 md:grid-cols-3 items-start">
+        <div id="plans" className="mt-6 grid gap-6 md:grid-cols-3 items-start">
           <TierCard copy={copy} tier="lite" period={period} orderClass="order-2 md:order-1" onCheckout={openCheckout} />
           <TierCard copy={copy} tier="pro" period={period} orderClass="order-1 md:order-2" onCheckout={openCheckout} />
           <TierCard copy={copy} tier="ultra" period={period} orderClass="order-3" onCheckout={openCheckout} />
@@ -892,7 +830,7 @@ export default function PricingPage({
 
         {/* Why paid? (v3 §5) — HTML value meter (the value-meter
             graphic did not arrive): factual numbers only. */}
-        <Reveal className="mt-12 max-w-3xl mx-auto">
+        <Reveal className="mt-10 max-w-3xl mx-auto">
           <h2 className="text-xl md:text-2xl font-bold text-center">{copy.v3.whyPaid.heading}</h2>
           <div className="mt-5 rounded-[22px] border border-white/10 bg-[#111317] p-5 space-y-4">
             <div>
@@ -918,7 +856,7 @@ export default function PricingPage({
 
         {/* How the trial works (v3 §6) — HTML 3-step timeline (the
             trial-timeline graphic did not arrive). */}
-        <Reveal className="mt-12 max-w-3xl mx-auto">
+        <Reveal className="mt-10 max-w-3xl mx-auto">
           <h2 className="text-xl md:text-2xl font-bold text-center">{copy.v3.trialSteps.heading}</h2>
           <div className="mt-6 grid gap-4 sm:grid-cols-3">
             {copy.v3.trialSteps.steps.map((step, i) => (
@@ -935,7 +873,7 @@ export default function PricingPage({
 
         {/* Which plan is right for you? (v3 §7) — three small cards;
             each scrolls up to its plan card. */}
-        <Reveal className="mt-12 max-w-3xl mx-auto">
+        <Reveal className="mt-10 max-w-3xl mx-auto">
           <h2 className="text-xl md:text-2xl font-bold text-center">{copy.v3.picker.heading}</h2>
           <div className="mt-5 grid gap-3 sm:grid-cols-3">
             {(["lite", "pro", "ultra"] as TierKey[]).map((tier, i) => (
@@ -956,7 +894,7 @@ export default function PricingPage({
         {/* What Pro adds (v3) — replaces the old "Why upgrade to
             Pro?" tiles with two HTML panels on real features (the
             explainer graphics did not arrive). */}
-        <Reveal className="mt-12 max-w-3xl mx-auto">
+        <Reveal className="mt-10 max-w-3xl mx-auto">
           <h2 className="text-xl md:text-2xl font-bold text-center">{copy.v3.proAdds.heading}</h2>
           <div className="mt-5 grid gap-4 md:grid-cols-2">
             <div className="rounded-[22px] border border-[#E4B93F]/30 bg-[#111317] p-5">
@@ -989,12 +927,12 @@ export default function PricingPage({
             the grid of real captures matched to the spec captions.
             The traffic-layer tile is dropped: no real traffic
             capture exists in the repo (see NOTES). */}
-        <div className="mt-14">
+        <div className="mt-10">
           <h2 className="text-xl md:text-2xl font-bold text-center">{copy.v3.seeLive.heading}</h2>
           <p className="mt-2 text-sm text-white/50 text-center max-w-xl mx-auto leading-relaxed">{copy.v3.seeLive.sub}</p>
           {!reduceMotion ? (
             <video
-              className="mt-6 w-full max-w-[1100px] mx-auto rounded-[22px] border border-white/10 block"
+              className="mt-6 w-full max-w-[720px] mx-auto rounded-[22px] border border-white/10 block"
               autoPlay
               muted
               loop
@@ -1013,7 +951,7 @@ export default function PricingPage({
               width={1200}
               height={624}
               loading="lazy"
-              className="mt-6 w-full max-w-[1100px] mx-auto rounded-[22px] border border-white/10 block"
+              className="mt-6 w-full max-w-[720px] mx-auto rounded-[22px] border border-white/10 block"
             />
           )}
           <img
@@ -1022,9 +960,9 @@ export default function PricingPage({
             width={2400}
             height={902}
             loading="lazy"
-            className="mt-6 w-full max-w-[1100px] mx-auto h-auto"
+            className="mt-6 w-full max-w-[720px] mx-auto h-auto"
           />
-          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 max-w-[820px] mx-auto">
             {copy.v3.seeLive.items.map((item, i) => (
               <motion.figure
                 key={item.src}
@@ -1041,7 +979,7 @@ export default function PricingPage({
                     width={1200}
                     height={675}
                     loading="lazy"
-                    className="w-full h-44 object-cover transition duration-500 group-hover:scale-[1.04]"
+                    className="w-full h-36 object-cover transition duration-500 group-hover:scale-[1.04]"
                   />
                 </div>
                 <figcaption className="mt-2.5 px-1">
@@ -1055,7 +993,7 @@ export default function PricingPage({
 
         {/* Comparison (v3 §10) — the owner's plan-ladder graphic
             directly above the regrouped table. */}
-        <Reveal className="mt-14">
+        <Reveal className="mt-10">
           <h2 className="text-xl md:text-2xl font-bold text-center">{copy.v3.comparisonV3.heading}</h2>
           <img
             src="/pricing-v3/plan-ladder.webp"
@@ -1063,7 +1001,7 @@ export default function PricingPage({
             width={2400}
             height={856}
             loading="lazy"
-            className="mt-6 w-full max-w-[1100px] mx-auto h-auto"
+            className="mt-6 w-full max-w-[720px] mx-auto h-auto"
           />
           <div className="mt-6">
             <ComparisonTable copy={copy} period={period} onCheckout={openCheckout} />
@@ -1072,7 +1010,7 @@ export default function PricingPage({
 
         {/* Annual savings (v3 §8) — small HTML block before the FAQ
             with the owner's exact figures. */}
-        <Reveal className="mt-12 max-w-2xl mx-auto">
+        <Reveal className="mt-10 max-w-2xl mx-auto">
           <h2 className="text-lg md:text-xl font-bold text-center">{copy.v3.savings.heading}</h2>
           <div className="mt-4 grid grid-cols-3 gap-3">
             {copy.v3.savings.rows.map((row) => (
@@ -1106,7 +1044,7 @@ export default function PricingPage({
               width={2400}
               height={876}
               loading="lazy"
-              className="w-full h-auto rounded-[22px] border border-white/10"
+              className="w-full max-w-[350px] mx-auto block h-auto rounded-[22px] border border-white/10"
             />
             <TeamSection />
           </div>
@@ -1146,7 +1084,7 @@ export default function PricingPage({
                 width={2400}
                 height={764}
                 loading="lazy"
-                className="mt-6 w-full h-auto rounded-2xl border border-white/10"
+                className="mt-6 w-full max-w-[320px] mx-auto block h-auto rounded-2xl border border-white/10"
               />
             </div>
           </Reveal>
@@ -1155,7 +1093,7 @@ export default function PricingPage({
         {/* FAQ (v3 §12) — the existing questions, reordered in the
             dictionary (trial length, cancel, recordings, tier
             difference first). */}
-        <Reveal className="mt-12 max-w-2xl mx-auto">
+        <Reveal className="mt-10 max-w-2xl mx-auto">
           <h2 className="text-xl md:text-2xl font-bold text-center mb-4">{copy.faqHeading}</h2>
           <div className="space-y-2">
             {copy.faqs.map((f) => (
@@ -1168,7 +1106,7 @@ export default function PricingPage({
             whole band opens the Pro yearly checkout. */}
         <button
           onClick={() => openCheckout(checkoutKeyFor("pro", "annual"))}
-          className="mt-12 block w-full rounded-[22px] overflow-hidden border border-[#E4B93F]/30 hover:brightness-110 active:scale-[0.995] transition"
+          className="mt-10 block w-full max-w-[720px] mx-auto rounded-[22px] overflow-hidden border border-[#E4B93F]/30 hover:brightness-110 active:scale-[0.995] transition"
           aria-label={copy.v3.finalCtaAlt}
         >
           <img
