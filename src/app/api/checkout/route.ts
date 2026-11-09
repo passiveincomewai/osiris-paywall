@@ -64,9 +64,10 @@ export async function POST(req: Request) {
   const session = await auth();
   const userId = session?.user?.id;
 
-  const { plan, ui } = (await req.json().catch(() => ({}))) as {
+  const { plan, ui, ui_context } = (await req.json().catch(() => ({}))) as {
     plan?: string;
     ui?: string;
+    ui_context?: string;
   };
   // Powder Pass ("ski") is dark-launched: until POWDER_PASS_ENABLED is
   // set it is indistinguishable from a plan that does not exist.
@@ -200,14 +201,29 @@ export async function POST(req: Request) {
     // get blocked as highest-risk (first observed 2026-10-23).
     billing_address_collection: "required",
     ...(embedded
-      ? {
-          ui_mode: "embedded" as const,
-          // Completion redirects the top page to return_url (the default
-          // redirect_on_completion is "always"; stated so it can't drift),
-          // exactly like the hosted success_url below.
-          redirect_on_completion: "always" as const,
-          return_url: completionUrl,
-        }
+      ? ui_context === "upgrade_popup"
+        ? {
+            // The upgrade popup (lib/upgrade-popup, 2026-11-09): the
+            // form lives inside a modal on the globe, so completion
+            // must NOT navigate the top page away — Stripe reports it
+            // to the popup's onComplete instead, and only payment
+            // methods that genuinely need a redirect (3-D Secure and
+            // friends) leave, landing on /checkout/return, which hands
+            // the buyer to the same member/guest completion targets
+            // completionUrl names below. WHAT is bought (price, trial,
+            // metadata, guard) is unchanged — presentation only.
+            ui_mode: "embedded" as const,
+            redirect_on_completion: "if_required" as const,
+            return_url: `${appUrl()}/checkout/return?session_id={CHECKOUT_SESSION_ID}`,
+          }
+        : {
+            ui_mode: "embedded" as const,
+            // Completion redirects the top page to return_url (the default
+            // redirect_on_completion is "always"; stated so it can't drift),
+            // exactly like the hosted success_url below.
+            redirect_on_completion: "always" as const,
+            return_url: completionUrl,
+          }
       : {
           success_url: completionUrl,
           cancel_url:
