@@ -11,6 +11,7 @@ import CaptureIndicator from '@/components/recording/CaptureIndicator';
 import InstallPrompt from '@/components/pwa/InstallPrompt';
 import ServiceWorkerRegister from '@/components/pwa/ServiceWorkerRegister';
 import TrialPrompt from '@/components/TrialPrompt';
+import UpgradePopupHost from '@/components/upgrade/UpgradePopupHost';
 import NewsletterAccountPopup from '@/components/NewsletterAccountPopup';
 import PreferencesProvider from '@/components/PreferencesProvider';
 import DeviceHeartbeat from '@/components/DeviceHeartbeat';
@@ -231,6 +232,11 @@ export default function RootShell({
         </SilentBoundary>
         <SilentBoundary name="TrialPrompt">
           <TrialPrompt />
+        </SilentBoundary>
+        {/* Upgrade popup (2026-11-09): renders nothing until a corner
+            promo or an "Upgrade to PRO" button asks it to open. */}
+        <SilentBoundary name="UpgradePopupHost">
+          <UpgradePopupHost />
         </SilentBoundary>
         {/* Post-newsletter-signup account popup (conversion test,
             2026-10-29): renders nothing until NewsletterForm reports a

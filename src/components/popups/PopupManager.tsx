@@ -17,7 +17,7 @@
  *  - the post-newsletter Google popup + the PWA install bar: the
  *    shared session claim (worldeye.popupClaimed) silences this
  *    manager for the session, and this manager's claim silences them;
- *  - TimedTrialPopup / ShareAwayPrompt (docked cards, not dialogs)
+ *  - UpgradeCornerPromo / ShareAwayPrompt (docked cards, not dialogs)
  *    may sit under a modal's backdrop — the same relationship the
  *    ladder prompt already has with them.
  */
