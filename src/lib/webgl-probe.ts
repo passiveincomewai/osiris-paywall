@@ -63,15 +63,22 @@ export function classifyWebGL(
   makeCanvas: () => ProbeCanvas = () => document.createElement('canvas'),
 ): WebGLClass {
   if (cached) return cached;
-  let canvas: ProbeCanvas;
-  try {
-    canvas = makeCanvas();
-  } catch {
-    cached = 'none';
-    return cached;
-  }
-  if (tryContext(canvas, 'webgl2')) cached = 'webgl2';
-  else if (tryContext(canvas, 'webgl')) cached = 'webgl1';
+  // A FRESH canvas per context-type attempt: a canvas locks its context
+  // mode on the first getContext call, so reusing one canvas for the
+  // webgl attempt after a failed webgl2 attempt can return null in
+  // browsers where WebGL1 actually exists (probe false negative —
+  // Push 3 hardening, 2026-11-09).
+  const attempt = (type: 'webgl2' | 'webgl'): boolean => {
+    let canvas: ProbeCanvas;
+    try {
+      canvas = makeCanvas();
+    } catch {
+      return false;
+    }
+    return tryContext(canvas, type);
+  };
+  if (attempt('webgl2')) cached = 'webgl2';
+  else if (attempt('webgl')) cached = 'webgl1';
   else cached = 'none';
   return cached;
 }

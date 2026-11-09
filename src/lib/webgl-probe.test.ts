@@ -4,6 +4,9 @@
  * classification must not drift:
  *  - WebGL2 granted (even with the weakest attributes) → 'webgl2';
  *  - WebGL2 refused, WebGL granted → 'webgl1';
+ *  - each attempt uses a FRESH canvas (a canvas locks its context mode
+ *    on first use; reusing one could mask WebGL1 behind a refused
+ *    WebGL2 attempt);
  *  - both refused or throwing → 'none';
  *  - ?glfallback=panel parses as the panel override, nothing else does;
  *  - MapLibre's WebGL-initialization errors are recognised as the
@@ -30,6 +33,29 @@ function fakeCanvas(grants: Record<string, boolean>, throwing = false) {
   }) as never;
 }
 
+/**
+ * A canvas stub that models real-browser context-mode locking: the
+ * first getContext call fixes the canvas's type, and a later call with
+ * a DIFFERENT type returns null even when that type is grantable. Each
+ * invocation of the factory returns a new, independent stub.
+ */
+function lockingCanvas(grants: Record<string, boolean>) {
+  let made = 0;
+  const make = () => {
+    made += 1;
+    let lockedType: string | null = null;
+    return {
+      getContext: (type: string) => {
+        if (lockedType !== null && lockedType !== type) return null;
+        lockedType = type;
+        if (!grants[type]) return null;
+        return { getExtension: () => ({ loseContext: () => {} }) };
+      },
+    } as never;
+  };
+  return { make, made: () => made };
+}
+
 beforeEach(() => resetWebGLProbeCache());
 
 describe('classifyWebGL', () => {
@@ -47,6 +73,22 @@ describe('classifyWebGL', () => {
 
   it('classifies a throwing getContext as none', () => {
     expect(classifyWebGL(fakeCanvas({}, true))).toBe('none');
+  });
+
+  it('uses a fresh canvas per attempt, so a mode-locking canvas cannot hide WebGL1', () => {
+    // One shared canvas would lock to 'webgl2' on the refused attempt
+    // and then refuse 'webgl' too — classifying 'none' on a browser
+    // that has WebGL1. A fresh canvas for the second attempt must
+    // classify 'webgl1', and the factory must be asked twice.
+    const { make, made } = lockingCanvas({ webgl2: false, webgl: true });
+    expect(classifyWebGL(make)).toBe('webgl1');
+    expect(made()).toBe(2);
+  });
+
+  it('stops at one canvas when WebGL2 is granted', () => {
+    const { make, made } = lockingCanvas({ webgl2: true, webgl: true });
+    expect(classifyWebGL(make)).toBe('webgl2');
+    expect(made()).toBe(1);
   });
 
   it('caches the classification within the page lifetime', () => {

@@ -3,7 +3,7 @@
 import { buildGeometry, closeRing, drawReducer, initialDrawState, measure, type DrawAction, type DrawMode, type DrawProgress, type DrawResult, type DrawState } from '@/lib/draw';
 import { useEffect, useRef, useState, useCallback, memo } from 'react';
 import * as maplibregl from 'maplibre-gl';
-import { classifyWebGL, glContextOverride, glPanelOverride, isWebGLInitError, webgl2Available } from '@/lib/webgl-probe';
+import { glContextOverride, glPanelOverride, isWebGLInitError, webgl2Available } from '@/lib/webgl-probe';
 import GlFallbackPanel from './GlFallbackPanel';
 import { installTerrainTileProtocol } from '@/lib/terrain-tiles';
 import { CLOUDS_ATTRIBUTION, CLOUDS_CREDIT, CLOUDS_LAYER, frameTime } from '@/lib/live-clouds';
@@ -1458,13 +1458,21 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
 
-    // Pre-flight WebGL probe (lib/webgl-probe). The engine is dual-mode
-    // (MapLibre 5: WebGL2 where available, WebGL1 otherwise), so only a
-    // browser with NO WebGL at all cannot run the globe — it gets the
-    // designed fallback panel instead of the raw library error the
-    // constructor would throw into the error boundary (rendered
-    // verbatim, truncated, over a black globe in the WebGL2-only era).
-    if (glPanelOverride() || classifyWebGL() === 'none') {
+    // Fallback panel pre-gate: ONLY the ?glfallback=panel test/support
+    // override shows the panel without trying the globe. The probe
+    // class deliberately does NOT gate construction (Push 3 hardening,
+    // 2026-11-09): any probe false negative would otherwise deny a
+    // globe MapLibre itself could have created — a real visitor got
+    // the panel in a browser whose capability the probe misread. The
+    // engine is dual-mode (MapLibre 5: WebGL2 where available, WebGL1
+    // otherwise) and its constructor throws synchronously when no
+    // WebGL context can be created at all (_setupPainter); the ladder
+    // below catches that, and a WebGL-initialization failure on the
+    // last rung sets glUnavailable instead of rethrowing — so a
+    // browser with truly no WebGL lands on the same panel, with no
+    // probe in the decision. The probe still runs via webgl2Available()
+    // to guard the WebGL2-only shader layers.
+    if (glPanelOverride()) {
       setGlUnavailable(true);
       return;
     }
