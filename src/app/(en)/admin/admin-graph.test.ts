@@ -1,6 +1,6 @@
-/* Regression tests for the admin visits graphs (per-visit strip + traffic
-   trend). Renders the real AdminDashboardPage with @/lib/db mocked over
-   synthetic PageView rows.
+/* Regression tests for the admin visits graphs (visits-by-hour bar chart +
+   traffic trend). Renders the real AdminDashboardPage with @/lib/db mocked
+   over synthetic PageView rows.
 
    The bug this guards: both graph SVGs combined a fluid width (w-full) with a
    FIXED pixel height style. On any viewport narrower than the viewBox, the
@@ -159,14 +159,19 @@ describe("admin visits graphs", () => {
     html = renderToString(el as React.ReactElement);
   }, 120_000);
 
-  it("renders one dot per plain visit in the last 24h, events excluded", () => {
-    expect(html).toContain("Every visit · last 24 hours");
-    expect(html).toContain("24<!-- --> visits · one dot each");
-    // Count circles inside the visits section only (the traffic chart
-    // further down the page has circles of its own).
-    const seg = html.slice(html.indexOf("Every visit"), html.indexOf("Total users"));
-    const circles = (seg.match(/<circle/g) || []).length;
-    expect(circles).toBe(24);
+  it("renders visits as an hourly bar chart (24 bars, no dots), events excluded", () => {
+    expect(html).toContain("Visits by hour · last 24 hours");
+    expect(html).toContain("24<!-- --> visits · hourly totals · Denver time");
+    const seg = html.slice(html.indexOf("Visits by hour"), html.indexOf("Total users"));
+    // One bar per hour across the 24h window, and no per-visit dots
+    // anywhere in the section (the dot strip was replaced 2026-11-10).
+    expect((seg.match(/<rect/g) || []).length).toBe(24);
+    expect((seg.match(/<circle/g) || []).length).toBe(0);
+    // Labelled axes and hover titles carrying exact per-hour counts; the
+    // 24 fixture visits are plain views, the 3 interaction rows excluded.
+    expect(seg).toContain(">Visits<");
+    expect(seg).toContain("Hour (Denver time)");
+    expect(seg).toMatch(/Denver · \d+ visits<\/title>/);
   });
 
   it("renders the traffic trend with event-filtered Denver totals (30d default)", () => {
@@ -182,6 +187,11 @@ describe("admin visits graphs", () => {
     expect(seg).toContain('font-extrabold text-white tabular-nums">7<');
     expect(seg).toContain('font-extrabold text-white tabular-nums">1<');
     expect(seg).toContain("Exact values per day");
+    // Readability pass: axis titles present, plain lines with no point
+    // dots (the invisible r=9 hover targets stay).
+    expect(seg).toContain(">Count<");
+    expect(seg).toContain("Time (Denver)");
+    expect(seg).not.toContain('r="2"');
   });
 
   it("range=24h renders hourly buckets over the rolling day", async () => {
@@ -200,7 +210,7 @@ describe("admin visits graphs", () => {
   it("graph SVGs scale proportionally (h-auto), never a fixed pixel height", () => {
     const svgTags = html.match(/<svg[^>]*>/g) ?? [];
     const graphs = svgTags.filter((t) => t.includes('viewBox="0 0 1120') || t.includes('viewBox="0 0 560'));
-    expect(graphs.length).toBe(4); // 1 visit strip + 3 trend charts (signups, traffic, revenue)
+    expect(graphs.length).toBe(4); // 1 visits chart + 3 trend charts (signups, traffic, revenue)
     for (const tag of graphs) {
       expect(tag).not.toMatch(/style="[^"]*height:/);
       expect(tag).toContain("h-auto");
