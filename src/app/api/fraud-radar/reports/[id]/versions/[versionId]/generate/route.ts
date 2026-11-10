@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { fraudRadarEnabled } from "@/lib/fraud-radar/flag";
+import { fraudRadarAdminPreview } from "@/lib/fraud-radar/access";
 import {
   caseSession,
   loadReportForRoute,
@@ -37,7 +38,7 @@ export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string; versionId: string }> },
 ) {
-  if (!fraudRadarEnabled()) return notFound();
+  if (!fraudRadarEnabled() && !(await fraudRadarAdminPreview())) return notFound();
   const session = await caseSession();
   if (!session) return signInRequired();
   const { id, versionId } = await params;

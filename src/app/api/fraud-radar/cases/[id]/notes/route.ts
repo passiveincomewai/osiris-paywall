@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { fraudRadarEnabled } from "@/lib/fraud-radar/flag";
+import { fraudRadarAdminPreview } from "@/lib/fraud-radar/access";
 import {
   caseSession,
   loadCaseForRoute,
@@ -22,7 +23,7 @@ export async function GET(
   _req: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  if (!fraudRadarEnabled()) return notFound();
+  if (!fraudRadarEnabled() && !(await fraudRadarAdminPreview())) return notFound();
   const session = await caseSession();
   if (!session) return signInRequired();
   const { id } = await params;
@@ -36,7 +37,7 @@ export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  if (!fraudRadarEnabled()) return notFound();
+  if (!fraudRadarEnabled() && !(await fraudRadarAdminPreview())) return notFound();
   const session = await caseSession();
   if (!session) return signInRequired();
   const { id } = await params;

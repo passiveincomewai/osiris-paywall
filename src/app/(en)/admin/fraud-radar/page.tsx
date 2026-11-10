@@ -138,9 +138,10 @@ export default async function FraudRadarAdminPage() {
   return (
     <div className="docs-root min-h-screen" style={{ background: "#050810" }}>
       <div className="max-w-5xl mx-auto px-4 py-6 sm:px-6 sm:py-10 text-white">
-        {/* No AdminNav entry yet: the shared nav is flag-off isolation
-            surface (AUDIT §13.3) — Fraud Radar joins it in the flag-flip
-            payload, not before. */}
+        {/* The shared AdminNav carries a "Fraud Radar (Preview)" entry
+            (owner request, 2026-11-10) so this page is reachable from
+            every admin screen while the feature is dark; this page
+            keeps its own slim header like it always has. */}
         <Link href="/admin" className="text-sm text-cyan-300 hover:underline">← Admin dashboard</Link>
         <h1 className="mt-4 text-2xl font-bold">Fraud Radar — Data Source Registry</h1>
         <p className="mt-2 text-sm text-white/50">
@@ -151,6 +152,16 @@ export default async function FraudRadarAdminPage() {
           . Registry rows track provenance, freshness and import health for
           every official source (spec §5).
         </p>
+        <div className="mt-4 rounded-2xl border border-cyan-400/30 bg-cyan-400/[0.06] p-4">
+          <Link href="/fraud-radar" className="text-sm font-semibold text-cyan-200 hover:underline">
+            Open Fraud Radar preview →
+          </Link>
+          <p className="mt-1 text-sm text-white/60 leading-relaxed">
+            {enabled
+              ? "Fraud Radar is live. This opens the public home surface in your current session."
+              : "While the flag is off, your admin session can open every Fraud Radar surface for pre-launch testing — everyone else, signed in or not, still gets a 404."}
+          </p>
+        </div>
 
         {!health.available ? (
           <div className="mt-8 rounded-2xl border border-white/10 bg-white/[0.03] p-6">

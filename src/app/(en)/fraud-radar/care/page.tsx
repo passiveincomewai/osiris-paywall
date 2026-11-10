@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { fraudRadarEnabled } from "@/lib/fraud-radar/flag";
+import { fraudRadarAdminPreview } from "@/lib/fraud-radar/access";
 import { getCareDatasetMeta, DERIVED_NOTE } from "@/lib/fraud-radar/care-data";
 import { formatCount } from "@/lib/fraud-radar/healthcare-data";
 import { listMedicareYearly } from "@/lib/fraud-radar/care-neon";
@@ -29,7 +30,7 @@ export const metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function CarePage() {
-  if (!fraudRadarEnabled()) notFound();
+  if (!fraudRadarEnabled() && !(await fraudRadarAdminPreview())) notFound();
 
   const [meta, yearly] = await Promise.all([
     getCareDatasetMeta(),

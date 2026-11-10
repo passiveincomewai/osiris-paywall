@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { fraudRadarEnabled } from "@/lib/fraud-radar/flag";
+import { fraudRadarAdminPreview } from "@/lib/fraud-radar/access";
 import ReportDetailClient from "./ReportDetailClient";
 
 /**
@@ -28,7 +29,7 @@ export default async function ReportPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  if (!fraudRadarEnabled()) notFound();
+  if (!fraudRadarEnabled() && !(await fraudRadarAdminPreview())) notFound();
   const { id } = await params;
 
   return (

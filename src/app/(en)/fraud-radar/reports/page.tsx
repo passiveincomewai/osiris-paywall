@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { fraudRadarEnabled } from "@/lib/fraud-radar/flag";
+import { fraudRadarAdminPreview } from "@/lib/fraud-radar/access";
 import { RESEARCH_LEADS_NOTE } from "@/lib/fraud-radar/investigator/guardrails";
 import { REPORT_TEMPLATES } from "@/lib/fraud-radar/reports/templates";
 import ReportsClient from "./ReportsClient";
@@ -28,8 +29,8 @@ export const metadata = {
 
 export const dynamic = "force-dynamic";
 
-export default function ReportsPage() {
-  if (!fraudRadarEnabled()) notFound();
+export default async function ReportsPage() {
+  if (!fraudRadarEnabled() && !(await fraudRadarAdminPreview())) notFound();
 
   const templates = REPORT_TEMPLATES.map((t) => ({
     id: t.id,

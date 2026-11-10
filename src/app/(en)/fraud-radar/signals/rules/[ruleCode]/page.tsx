@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { fraudRadarEnabled } from "@/lib/fraud-radar/flag";
+import { fraudRadarAdminPreview } from "@/lib/fraud-radar/access";
 import {
   getSignalsDatasetMeta,
   getSignalsRules,
@@ -60,7 +61,7 @@ export default async function SignalRuleDetailPage({
 }: {
   params: Promise<{ ruleCode: string }>;
 }) {
-  if (!fraudRadarEnabled()) notFound();
+  if (!fraudRadarEnabled() && !(await fraudRadarAdminPreview())) notFound();
   const { ruleCode: rawCode } = await params;
   const ruleCode = decodeURIComponent(rawCode).trim().toUpperCase();
   if (!ruleCode) notFound();

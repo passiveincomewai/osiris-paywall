@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import { fraudRadarEnabled } from '@/lib/fraud-radar/flag';
+import { fraudRadarAdminPreview } from "@/lib/fraud-radar/access";
 import GraphExplorer from './GraphExplorer';
 
 /**
@@ -17,7 +18,7 @@ export default async function FraudRadarGraphPage({
 }: {
   searchParams: Promise<{ engine?: string; key?: string }>;
 }) {
-  if (!fraudRadarEnabled()) notFound();
+  if (!fraudRadarEnabled() && !(await fraudRadarAdminPreview())) notFound();
   const sp = await searchParams;
   return (
     <main className="docs-root min-h-screen" style={{ background: '#050810' }}>

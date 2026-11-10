@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { fraudRadarEnabled } from "@/lib/fraud-radar/flag";
+import { fraudRadarAdminPreview } from "@/lib/fraud-radar/access";
 import { resolveFraudRadarEntitlement } from "@/lib/fraud-radar/billing/tier";
 import { getDefaultUsageStore, usageSummary } from "@/lib/fraud-radar/billing/usage";
 import { FRAUD_RADAR_TRIAL_DAYS, FR_PLAN_DEFS } from "@/lib/fraud-radar/billing/plans";
@@ -16,7 +17,7 @@ import { FRAUD_RADAR_TRIAL_DAYS, FR_PLAN_DEFS } from "@/lib/fraud-radar/billing/
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  if (!fraudRadarEnabled()) {
+  if (!fraudRadarEnabled() && !(await fraudRadarAdminPreview())) {
     return NextResponse.json({ error: "not_found" }, { status: 404 });
   }
   const session = await auth();

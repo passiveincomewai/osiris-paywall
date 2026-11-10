@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import { fraudRadarEnabled } from '@/lib/fraud-radar/flag';
+import { fraudRadarAdminPreview } from "@/lib/fraud-radar/access";
 import { geoConfig, DEFAULT_GEO_VERSION } from '@/lib/fraud-radar/geo-data';
 import { getGeoYearly } from '@/lib/fraud-radar/geo-neon';
 import GeoExplorer from './GeoExplorer';
@@ -16,7 +17,7 @@ import GeoExplorer from './GeoExplorer';
 export const dynamic = 'force-dynamic';
 
 export default async function FraudRadarGeoPage() {
-  if (!fraudRadarEnabled()) notFound();
+  if (!fraudRadarEnabled() && !(await fraudRadarAdminPreview())) notFound();
   const configured = geoConfig() !== null;
   const national = configured
     ? await getGeoYearly('grants', 'grants_recipient_state')

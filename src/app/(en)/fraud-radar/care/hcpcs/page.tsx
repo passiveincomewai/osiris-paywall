@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { fraudRadarEnabled } from "@/lib/fraud-radar/flag";
+import { fraudRadarAdminPreview } from "@/lib/fraud-radar/access";
 import { listMedicareHcpcs } from "@/lib/fraud-radar/care-neon";
 import { CARE_YEARS, DERIVED_NOTE } from "@/lib/fraud-radar/care-data";
 import { formatCount, formatUsd } from "@/lib/fraud-radar/healthcare-data";
@@ -26,7 +27,7 @@ export default async function MedicareHcpcsPage({
 }: {
   searchParams: Promise<{ q?: string; year?: string; sort?: string; page?: string }>;
 }) {
-  if (!fraudRadarEnabled()) notFound();
+  if (!fraudRadarEnabled() && !(await fraudRadarAdminPreview())) notFound();
   const sp = await searchParams;
   const q = (sp.q ?? "").trim().toUpperCase();
   const yearRaw = Number.parseInt(sp.year ?? "", 10);

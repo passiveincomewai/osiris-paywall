@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { fraudRadarEnabled } from "@/lib/fraud-radar/flag";
+import { fraudRadarAdminPreview } from "@/lib/fraud-radar/access";
 import {
   searchGrantRecipients,
   getGrantsDatasetMeta,
@@ -34,7 +35,7 @@ export default async function GrantRecipientsSearchPage({
 }: {
   searchParams: Promise<{ q?: string; page?: string }>;
 }) {
-  if (!fraudRadarEnabled()) notFound();
+  if (!fraudRadarEnabled() && !(await fraudRadarAdminPreview())) notFound();
   const sp = await searchParams;
   const q = (sp.q ?? "").trim();
   const page = Math.max(1, Number.parseInt(sp.page ?? "1", 10) || 1);

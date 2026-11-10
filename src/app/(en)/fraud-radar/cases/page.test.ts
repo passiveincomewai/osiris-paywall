@@ -1,6 +1,16 @@
-import { describe, it, expect, vi, afterEach } from "vitest";
+import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
 import React from "react";
 import { renderToString } from "react-dom/server";
+
+// Admin preview (2026-11-10): the page gate also consults
+// fraudRadarAdminPreview while the flag is off. Mocked to "no
+// preview" here — the pre-preview behaviour; the helper itself is
+// pinned in lib/fraud-radar/access.test.ts.
+const previewMock = vi.fn(async () => false);
+vi.mock("@/lib/fraud-radar/access", () => ({
+  fraudRadarAdminPreview: () => previewMock(),
+}));
+
 import CasesPage from "./page";
 import {
   CaseCard,
@@ -58,16 +68,21 @@ const USAGE: WireUsage = {
   resetAt: "2026-11-01T00:00:00.000Z",
 };
 
+beforeEach(() => {
+  previewMock.mockReset();
+  previewMock.mockResolvedValue(false);
+});
+
 afterEach(() => {
   vi.unstubAllEnvs();
 });
 
 describe("/fraud-radar/cases — flag gate + framing", () => {
-  it("404s while FRAUD_RADAR_ENABLED is off (the default)", () => {
+  it("404s while FRAUD_RADAR_ENABLED is off (the default)", async () => {
     vi.stubEnv("FRAUD_RADAR_ENABLED", "");
     let thrown: unknown;
     try {
-      CasesPage();
+      await CasesPage();
     } catch (e) {
       thrown = e;
     }
@@ -77,9 +92,10 @@ describe("/fraud-radar/cases — flag gate + framing", () => {
     ).toBe(true);
   });
 
-  it("renders the standing framing verbatim when enabled", () => {
+  it("renders the standing framing verbatim when enabled", async () => {
     vi.stubEnv("FRAUD_RADAR_ENABLED", "1");
-    const html = renderToString(React.createElement(CasesPage)).replace(/<!-- -->/g, "");
+    const el = await CasesPage();
+    const html = renderToString(el).replace(/<!-- -->/g, "");
     expect(html).toContain("Your research cases.");
     expect(html).toContain("visible only to you");
     // The research-leads framing is the single-source text, verbatim.

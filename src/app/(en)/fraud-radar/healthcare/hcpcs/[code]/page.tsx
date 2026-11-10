@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { fraudRadarEnabled } from "@/lib/fraud-radar/flag";
+import { fraudRadarAdminPreview } from "@/lib/fraud-radar/access";
 import { getHcpcsSummary } from "@/lib/fraud-radar/healthcare-neon";
 import {
   getTopProviders,
@@ -30,7 +31,7 @@ export default async function HcpcsDetailPage({
 }: {
   params: Promise<{ code: string }>;
 }) {
-  if (!fraudRadarEnabled()) notFound();
+  if (!fraudRadarEnabled() && !(await fraudRadarAdminPreview())) notFound();
   const { code: rawCode } = await params;
   const code = decodeURIComponent(rawCode).toUpperCase();
 

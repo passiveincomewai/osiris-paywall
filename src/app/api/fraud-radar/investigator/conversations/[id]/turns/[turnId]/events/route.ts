@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { fraudRadarEnabled } from "@/lib/fraud-radar/flag";
+import { fraudRadarAdminPreview } from "@/lib/fraud-radar/access";
 import { investigatorSession } from "@/lib/fraud-radar/investigator/route-helpers";
 import { getInvestigatorStore } from "@/lib/fraud-radar/investigator/store";
 
@@ -21,7 +22,7 @@ export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string; turnId: string }> },
 ) {
-  if (!fraudRadarEnabled()) {
+  if (!fraudRadarEnabled() && !(await fraudRadarAdminPreview())) {
     return NextResponse.json({ error: "not_found" }, { status: 404 });
   }
   const session = await investigatorSession();

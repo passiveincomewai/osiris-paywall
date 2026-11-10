@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { fraudRadarEnabled } from "@/lib/fraud-radar/flag";
+import { fraudRadarAdminPreview } from "@/lib/fraud-radar/access";
 import {
   listHcpcsSummaries,
   type HcpcsSort,
@@ -41,7 +42,7 @@ export default async function HcpcsExplorerPage({
 }: {
   searchParams: Promise<{ q?: string; sort?: string; page?: string }>;
 }) {
-  if (!fraudRadarEnabled()) notFound();
+  if (!fraudRadarEnabled() && !(await fraudRadarAdminPreview())) notFound();
   const sp = await searchParams;
   const q = (sp.q ?? "").trim().toUpperCase();
   const sort = (SORTS.some((s) => s.key === sp.sort) ? sp.sort : "paid") as HcpcsSort;

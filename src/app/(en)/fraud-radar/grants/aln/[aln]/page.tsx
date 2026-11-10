@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { fraudRadarEnabled } from "@/lib/fraud-radar/flag";
+import { fraudRadarAdminPreview } from "@/lib/fraud-radar/access";
 import { listGrantsAln } from "@/lib/fraud-radar/grants-neon";
 import {
   getGrantsTopRecipients,
@@ -28,7 +29,7 @@ export default async function GrantsAlnDetailPage({
 }: {
   params: Promise<{ aln: string }>;
 }) {
-  if (!fraudRadarEnabled()) notFound();
+  if (!fraudRadarEnabled() && !(await fraudRadarAdminPreview())) notFound();
   const { aln: rawAln } = await params;
   const aln = rawAln.trim();
   const [byYear, top, meta] = await Promise.all([

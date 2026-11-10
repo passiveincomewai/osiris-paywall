@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { fraudRadarEnabled } from "@/lib/fraud-radar/flag";
+import { fraudRadarAdminPreview } from "@/lib/fraud-radar/access";
 import {
   fraudRadarTierOf,
   quotaForTier,
@@ -29,7 +30,7 @@ export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  if (!fraudRadarEnabled()) {
+  if (!fraudRadarEnabled() && !(await fraudRadarAdminPreview())) {
     return NextResponse.json({ error: "not_found" }, { status: 404 });
   }
   const session = await investigatorSession();

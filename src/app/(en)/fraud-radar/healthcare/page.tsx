@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { fraudRadarEnabled } from "@/lib/fraud-radar/flag";
+import { fraudRadarAdminPreview } from "@/lib/fraud-radar/access";
 import {
   getDatasetMeta,
   formatCount,
@@ -30,7 +31,7 @@ export const metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function HealthcarePage() {
-  if (!fraudRadarEnabled()) notFound();
+  if (!fraudRadarEnabled() && !(await fraudRadarAdminPreview())) notFound();
 
   const [meta, national] = await Promise.all([
     getDatasetMeta(),

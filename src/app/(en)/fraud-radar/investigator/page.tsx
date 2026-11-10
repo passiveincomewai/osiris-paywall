@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { fraudRadarEnabled } from "@/lib/fraud-radar/flag";
+import { fraudRadarAdminPreview } from "@/lib/fraud-radar/access";
 import {
   CAVEAT_TEXT,
   INVESTIGATOR_NOT_CONFIGURED_TEXT,
@@ -39,8 +40,8 @@ export const metadata = {
 
 export const dynamic = "force-dynamic";
 
-export default function InvestigatorPage() {
-  if (!fraudRadarEnabled()) notFound();
+export default async function InvestigatorPage() {
+  if (!fraudRadarEnabled() && !(await fraudRadarAdminPreview())) notFound();
 
   return (
     <main className="docs-root min-h-screen" style={{ background: "#050810" }}>

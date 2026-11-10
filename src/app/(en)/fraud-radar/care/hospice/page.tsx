@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { fraudRadarEnabled } from "@/lib/fraud-radar/flag";
+import { fraudRadarAdminPreview } from "@/lib/fraud-radar/access";
 import { listHospiceProviders, CARE_COMPARE_VERSION } from "@/lib/fraud-radar/care-neon";
 import { formatCount } from "@/lib/fraud-radar/healthcare-data";
 import { ResearchLeadNotice, NotPublishedYet } from "@/components/fraud-radar/Provenance";
@@ -30,7 +31,7 @@ export default async function HospiceDirectoryPage({
 }: {
   searchParams: Promise<{ q?: string; state?: string; page?: string }>;
 }) {
-  if (!fraudRadarEnabled()) notFound();
+  if (!fraudRadarEnabled() && !(await fraudRadarAdminPreview())) notFound();
   const sp = await searchParams;
   const q = (sp.q ?? "").trim();
   const state = (sp.state ?? "").trim().toUpperCase();

@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { fraudRadarEnabled } from "@/lib/fraud-radar/flag";
+import { fraudRadarAdminPreview } from "@/lib/fraud-radar/access";
 import { getGrantsDatasetMeta, FAC_NOTE } from "@/lib/fraud-radar/grants-data";
 import { formatCount, formatUsd } from "@/lib/fraud-radar/healthcare-data";
 import { listFacYearly } from "@/lib/fraud-radar/grants-neon";
@@ -24,7 +25,7 @@ export const metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function GrantsFacPage() {
-  if (!fraudRadarEnabled()) notFound();
+  if (!fraudRadarEnabled() && !(await fraudRadarAdminPreview())) notFound();
 
   const [meta, yearly] = await Promise.all([
     getGrantsDatasetMeta(),

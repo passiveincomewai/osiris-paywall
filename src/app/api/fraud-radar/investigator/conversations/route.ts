@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { fraudRadarEnabled } from "@/lib/fraud-radar/flag";
+import { fraudRadarAdminPreview } from "@/lib/fraud-radar/access";
 import {
   investigatorSession,
   serializeConversation,
@@ -16,7 +17,7 @@ import { getInvestigatorStore } from "@/lib/fraud-radar/investigator/store";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  if (!fraudRadarEnabled()) {
+  if (!fraudRadarEnabled() && !(await fraudRadarAdminPreview())) {
     return NextResponse.json({ error: "not_found" }, { status: 404 });
   }
   const session = await investigatorSession();
@@ -35,7 +36,7 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  if (!fraudRadarEnabled()) {
+  if (!fraudRadarEnabled() && !(await fraudRadarAdminPreview())) {
     return NextResponse.json({ error: "not_found" }, { status: 404 });
   }
   const session = await investigatorSession();

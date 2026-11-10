@@ -1,6 +1,16 @@
-import { describe, it, expect, vi, afterEach } from "vitest";
+import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
 import React from "react";
 import { renderToString } from "react-dom/server";
+
+// Admin preview (2026-11-10): the page gate also consults
+// fraudRadarAdminPreview while the flag is off. Mocked to "no
+// preview" here — the pre-preview behaviour; the helper itself is
+// pinned in lib/fraud-radar/access.test.ts.
+const previewMock = vi.fn(async () => false);
+vi.mock("@/lib/fraud-radar/access", () => ({
+  fraudRadarAdminPreview: () => previewMock(),
+}));
+
 import InvestigatorPage from "./page";
 import {
   CitationChips,
@@ -70,16 +80,21 @@ function message(patch: Partial<WireMessage>): WireMessage {
   };
 }
 
+beforeEach(() => {
+  previewMock.mockReset();
+  previewMock.mockResolvedValue(false);
+});
+
 afterEach(() => {
   vi.unstubAllEnvs();
 });
 
 describe("/fraud-radar/investigator — flag gate + framing", () => {
-  it("404s while FRAUD_RADAR_ENABLED is off (the default)", () => {
+  it("404s while FRAUD_RADAR_ENABLED is off (the default)", async () => {
     vi.stubEnv("FRAUD_RADAR_ENABLED", "");
     let thrown: unknown;
     try {
-      InvestigatorPage();
+      await InvestigatorPage();
     } catch (e) {
       thrown = e;
     }
@@ -89,9 +104,10 @@ describe("/fraud-radar/investigator — flag gate + framing", () => {
     ).toBe(true);
   });
 
-  it("renders the standing framing from the guardrails constants when enabled", () => {
+  it("renders the standing framing from the guardrails constants when enabled", async () => {
     vi.stubEnv("FRAUD_RADAR_ENABLED", "1");
-    const html = renderToString(React.createElement(InvestigatorPage));
+    const el = await InvestigatorPage();
+    const html = renderToString(el);
     expect(html).toContain("AI Investigator");
     expect(html).toContain("research assistant over the public records");
     expect(html).toContain("does not determine that any person or organization");

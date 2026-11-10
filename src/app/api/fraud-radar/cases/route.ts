@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { fraudRadarEnabled } from "@/lib/fraud-radar/flag";
+import { fraudRadarAdminPreview } from "@/lib/fraud-radar/access";
 import {
   caseSession,
   notFound,
@@ -20,7 +21,7 @@ import { caseEntitlementsForSession } from "@/lib/fraud-radar/cases/entitlements
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  if (!fraudRadarEnabled()) return notFound();
+  if (!fraudRadarEnabled() && !(await fraudRadarAdminPreview())) return notFound();
   const session = await caseSession();
   if (!session) return signInRequired();
   const cases = await getCaseStore().listCases(session.userId);
@@ -28,7 +29,7 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  if (!fraudRadarEnabled()) return notFound();
+  if (!fraudRadarEnabled() && !(await fraudRadarAdminPreview())) return notFound();
   const session = await caseSession();
   if (!session) return signInRequired();
   let body: { title?: unknown; summary?: unknown } = {};

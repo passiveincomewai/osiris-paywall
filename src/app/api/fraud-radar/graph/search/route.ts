@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { fraudRadarEnabled } from "@/lib/fraud-radar/flag";
+import { fraudRadarAdminPreview } from "@/lib/fraud-radar/access";
 import {
   searchGraphEntities,
   graphsConfig,
@@ -18,7 +19,7 @@ import { checkGraphRateLimit, clientIp } from "@/lib/fraud-radar/rate-limit";
 export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
-  if (!fraudRadarEnabled()) {
+  if (!fraudRadarEnabled() && !(await fraudRadarAdminPreview())) {
     return NextResponse.json({ error: "not_found" }, { status: 404 });
   }
   const rl = checkGraphRateLimit(clientIp(req));

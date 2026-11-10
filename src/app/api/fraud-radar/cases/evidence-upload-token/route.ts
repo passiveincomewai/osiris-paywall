@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import { fraudRadarEnabled } from "@/lib/fraud-radar/flag";
+import { fraudRadarAdminPreview } from "@/lib/fraud-radar/access";
 import { caseSession, notFound } from "@/lib/fraud-radar/cases/route-helpers";
 import { getCaseStore } from "@/lib/fraud-radar/cases/store";
 import {
@@ -24,7 +25,7 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
-  if (!fraudRadarEnabled()) return notFound();
+  if (!fraudRadarEnabled() && !(await fraudRadarAdminPreview())) return notFound();
   if (!vaultStorageConfigured()) {
     return NextResponse.json(
       { error: "storage_unavailable", code: "STORAGE_UNAVAILABLE" },

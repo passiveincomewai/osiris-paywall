@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { fraudRadarEnabled } from "@/lib/fraud-radar/flag";
+import { fraudRadarAdminPreview } from "@/lib/fraud-radar/access";
 
 /**
  * WorldEye Fraud Radar — public shell (Phase 1 foundation).
@@ -41,8 +42,8 @@ const ENGINES = [
   },
 ];
 
-export default function FraudRadarPage() {
-  if (!fraudRadarEnabled()) notFound();
+export default async function FraudRadarPage() {
+  if (!fraudRadarEnabled() && !(await fraudRadarAdminPreview())) notFound();
 
   return (
     <main className="docs-root min-h-screen" style={{ background: "#050810" }}>

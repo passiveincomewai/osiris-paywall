@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { fraudRadarEnabled } from "@/lib/fraud-radar/flag";
+import { fraudRadarAdminPreview } from "@/lib/fraud-radar/access";
 import { listContractsNaics } from "@/lib/fraud-radar/contracts-neon";
 import { formatCount, formatUsd } from "@/lib/fraud-radar/healthcare-data";
 import { NotPublishedYet } from "@/components/fraud-radar/Provenance";
@@ -22,7 +23,7 @@ export default async function ContractsNaicsPage({
 }: {
   searchParams: Promise<{ q?: string; fy?: string; page?: string }>;
 }) {
-  if (!fraudRadarEnabled()) notFound();
+  if (!fraudRadarEnabled() && !(await fraudRadarAdminPreview())) notFound();
   const sp = await searchParams;
   const page = Math.max(1, Number.parseInt(sp.page ?? "1", 10) || 1);
   const fy = sp.fy ? Number.parseInt(sp.fy, 10) || undefined : undefined;

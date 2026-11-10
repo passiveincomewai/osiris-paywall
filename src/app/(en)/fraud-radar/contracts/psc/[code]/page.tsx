@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { fraudRadarEnabled } from "@/lib/fraud-radar/flag";
+import { fraudRadarAdminPreview } from "@/lib/fraud-radar/access";
 import { listContractsPscYears } from "@/lib/fraud-radar/contracts-neon";
 import { getContractsTopVendors, contractsConfig } from "@/lib/fraud-radar/contracts-data";
 import { formatCount, formatUsd } from "@/lib/fraud-radar/healthcare-data";
@@ -23,7 +24,7 @@ export default async function ContractsPscDetailPage({
 }: {
   params: Promise<{ code: string }>;
 }) {
-  if (!fraudRadarEnabled()) notFound();
+  if (!fraudRadarEnabled() && !(await fraudRadarAdminPreview())) notFound();
   const { code } = await params;
   const [years, top] = await Promise.all([
     listContractsPscYears(code),

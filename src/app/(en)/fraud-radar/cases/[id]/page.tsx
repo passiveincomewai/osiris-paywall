@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { fraudRadarEnabled } from "@/lib/fraud-radar/flag";
+import { fraudRadarAdminPreview } from "@/lib/fraud-radar/access";
 import { RESEARCH_LEADS_NOTE } from "@/lib/fraud-radar/investigator/guardrails";
 import CaseDetailClient from "./CaseDetailClient";
 
@@ -30,7 +31,7 @@ export default async function CaseDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  if (!fraudRadarEnabled()) notFound();
+  if (!fraudRadarEnabled() && !(await fraudRadarAdminPreview())) notFound();
   const { id } = await params;
 
   return (

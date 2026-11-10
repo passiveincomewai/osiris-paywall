@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { fraudRadarEnabled } from "@/lib/fraud-radar/flag";
+import { fraudRadarAdminPreview } from "@/lib/fraud-radar/access";
 import { listGrantsAln } from "@/lib/fraud-radar/grants-neon";
 import { MEASURE_NOTE } from "@/lib/fraud-radar/grants-data";
 import { formatCount, formatUsd } from "@/lib/fraud-radar/healthcare-data";
@@ -31,7 +32,7 @@ export default async function GrantsAlnPage({
 }: {
   searchParams: Promise<{ q?: string; year?: string; sort?: string; page?: string }>;
 }) {
-  if (!fraudRadarEnabled()) notFound();
+  if (!fraudRadarEnabled() && !(await fraudRadarAdminPreview())) notFound();
   const sp = await searchParams;
   const q = (sp.q ?? "").trim().toUpperCase();
   const yearRaw = Number.parseInt(sp.year ?? "", 10);

@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { fraudRadarEnabled } from "@/lib/fraud-radar/flag";
+import { fraudRadarAdminPreview } from "@/lib/fraud-radar/access";
 import {
   getSignalsDatasetMeta,
   RESEARCH_LEADS_NOTE,
@@ -47,7 +48,7 @@ const NOT_COMPUTED_MEANINGS: Record<string, string> = {
 };
 
 export default async function SignalsMethodsPage() {
-  if (!fraudRadarEnabled()) notFound();
+  if (!fraudRadarEnabled() && !(await fraudRadarAdminPreview())) notFound();
 
   const meta = await getSignalsDatasetMeta();
 

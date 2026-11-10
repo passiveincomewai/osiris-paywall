@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { fraudRadarEnabled } from "@/lib/fraud-radar/flag";
+import { fraudRadarAdminPreview } from "@/lib/fraud-radar/access";
 import {
   getSignalsDatasetMeta,
   getSignalsRules,
@@ -85,7 +86,7 @@ function fmtExpected(n: number | null): string {
 }
 
 export default async function SignalsPage() {
-  if (!fraudRadarEnabled()) notFound();
+  if (!fraudRadarEnabled() && !(await fraudRadarAdminPreview())) notFound();
 
   const [meta, neonSummaries] = await Promise.all([
     getSignalsDatasetMeta(),
