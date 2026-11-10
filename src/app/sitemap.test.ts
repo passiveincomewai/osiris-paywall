@@ -103,7 +103,7 @@ describe("sitemap URL set", () => {
           !u.startsWith(`${BASE}/wildfires/`),
       )
       .sort();
-    expect(nonTransit.length).toBe(1140);
+    expect(nonTransit.length).toBe(1143);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     // Hash history: 6d75d0de… until the SEO audit fix #3 (2026-10-27)
     // normalised the es homepage entry from /es/ to its final /es
@@ -384,9 +384,15 @@ describe("sitemap URL set", () => {
     // trees (probe): the pristine tip reproduces 1,137 /
     // a4f2011f… exactly; the merged run's count is
     // exactly +3 and all 3 new /blog/ URLs are present
-    // in the executed set.
+    // in the executed set. The blog daily batch of
+    // 2026-11-10 (USSF-627 move to Tuesday, Cempaka
+    // becomes Samuel, Northern Taurids peak) then added
+    // its 3 post URLs → 1,143 (3e53bd6a…). Delta verified
+    // by executing sitemap() on the merged tree (probe):
+    // count exactly +3 over the 1,140 pin and all 3 new
+    // /blog/ URLs present in the executed set.
     expect(hash).toBe(
-      "399dff8b02267c97504a1bc8b6d880301e61a51cb047a4794172418b90e5457f",
+      "3e53bd6a69f1e921d0bac1d4639bfd3fc62aad42dd2dab4e4975868bffee1997",
     );
   });
 

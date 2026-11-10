@@ -40,6 +40,258 @@ export type BlogPost = {
 };
 
 export const POSTS: BlogPost[] = [
+// Blog daily 2026-11-10 — three sourced event stories, news: true, date 2026-11-10.
+// Facts verified from sources actually opened this run (browser.open):
+// SpaceX official USSF-627 mission page + Arizona Republic (USA TODAY Network,
+// updated Nov 9-10) for the USSF-627 move to Tuesday; PAGASA Bulletin No. 1 via
+// Breaking News Negor + BusinessWorld Nov 9 and Nov 10 (PAGASA) for Cempaka's
+// PAR entry as Samuel and its 150 km/h peak; National Geographic (Nov 5) +
+// Columbus Times (American Meteor Society calendar) for the Northern Taurids.
+  {
+    slug: "spacex-ussf-627-launch-moves-november-10",
+    title: "SpaceX's USSF-627 Launch Moves to Tuesday Night From Vandenberg",
+    seoTitle: "USSF-627 Launch Tuesday Night | WorldEye Blog",
+    date: "2026-11-10",
+    excerpt:
+      "The classified USSF-627 mission did not fly on Monday. SpaceX is now targeting Tuesday, November 10, with a four-hour window opening at 6:49 p.m. PT from Vandenberg — and a backup opportunity on Wednesday evening if Tuesday does not work either.",
+    seoDescription:
+      "SpaceX now targets Tuesday, November 10 at 6:49 p.m. PT for the classified USSF-627 launch from Vandenberg, with a Wednesday backup at 6:35 p.m. PT.",
+    tags: ["spacex", "falcon-9", "vandenberg", "ussf-627", "space-force", "launch"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "Vandenberg's busy November has slipped by a day. SpaceX is now targeting Tuesday, November 10 for the Falcon 9 launch of the USSF-627 mission from Space Launch Complex 4E (SLC-4E) at Vandenberg Space Force Base in California, the company says on its official mission page. The four-hour launch window opens at 6:49 p.m. PT and runs to 10:49 p.m. PT.",
+          "The mission had been set for Monday evening, November 9, with a window opening at 7:03 p.m. PT — the attempt WorldEye previewed yesterday. Monday came and went without a liftoff, and the updated schedule published by the Arizona Republic (USA TODAY Network), reflecting the new launch windows, now lists USSF-627 under its Monday heading with a Tuesday window: 6:49 to 10:49 p.m. PT on November 10. In effect, the mission has moved onto the backup slot that was already reserved for it.",
+          "If Tuesday does not work either, there is one more chance close behind it: SpaceX lists a backup opportunity on Wednesday, November 11 at 6:35 p.m. PT.",
+        ],
+      },
+      {
+        heading: "When is the USSF-627 launch window?",
+        body: [
+          "The window opens at 6:49 p.m. PT on Tuesday, November 10 (02:49 UTC on Wednesday, November 11) and stays open for four hours, until 10:49 p.m. PT. A backup opportunity follows on Wednesday, November 11 at 6:35 p.m. PT, according to SpaceX.",
+          "The flight plan SpaceX publishes for the mission is the standard Falcon 9 profile: liftoff at T-0, Max Q — the moment of peak mechanical stress — at 1 minute 7 seconds, main engine cutoff at 2 minutes 25 seconds, stage separation four seconds later, fairing separation at 2 minutes 56 seconds, and the first stage's landing burn beginning at 8 minutes, with touchdown targeted for 8 minutes 22 seconds after liftoff.",
+        ],
+      },
+      {
+        heading: "What is USSF-627 carrying?",
+        body: [
+          "USSF-627 is a classified satellite deployment mission for the U.S. Space Force, according to SpaceX, and the payload's details have not been disclosed. The Falcon 9 flying it is a two-stage, 230-foot reusable rocket capable of carrying more than 50,000 pounds of cargo to low-Earth orbit, and the mission flies on a southeast trajectory out of Vandenberg.",
+          "Because the mission is classified, outside analysis is necessarily speculative. Launch trackers have noted that the planned drop zones for the rocket's stages closely match previous Starlink Group 15 flights and have suggested the payload could be a batch of satellites based on SpaceX's Starshield bus — but that identification is unconfirmed, and neither SpaceX nor the Space Force has endorsed it.",
+        ],
+      },
+      {
+        heading: "Which booster is flying, and where does it land?",
+        body: [
+          "This will be the seventh flight for the first-stage booster supporting the mission, SpaceX says. The booster previously launched NROL-179, SDA-T1TL-E, SDA-T1TL-A and three Starlink missions — a flight history that mixes national-security payloads with SpaceX's own constellation work.",
+          "After stage separation, the booster will land on the droneship Of Course I Still Love You, which will be stationed in the Pacific Ocean downrange from Vandenberg. SpaceX also advises that residents of Santa Barbara, San Luis Obispo and Ventura counties may hear one or more sonic booms during the launch, depending on weather and other conditions.",
+        ],
+      },
+      {
+        heading: "Where can I watch the USSF-627 launch live?",
+        body: [
+          "SpaceX will carry a live webcast of the mission beginning about 10 minutes before liftoff, on its mission page and on X @SpaceX. For people watching with their own eyes, this is a night launch on a southeast trajectory — the profile the Arizona Republic notes gives spectators in Arizona a good chance of seeing the rocket streak overhead on a clear night, and the same geometry favours viewers across Southern California.",
+          "USSF-627 is the second of at least two classified Space Force missions from Vandenberg this week. The Arizona Republic's updated schedule lists USSF-317 next, on Friday, November 13, with a window opening at 8:09 p.m. PT and running to 12:09 a.m. PT on Saturday — also from SLC-4E, also southeast, and also landing its booster on Of Course I Still Love You. The two missions follow Friday, November 6's USSF-432 liftoff, making this the West Coast's third Space Force launch attempt of November.",
+          "Whatever USSF-627 carries will enter the tracked orbital catalog once it is in orbit. WorldEye's [satellite tracker](/satellite-tracker) follows catalogued objects on the live globe, alongside the [space station tracker](/space-station-tracker) and the site's 74,229 cameras — the place to watch tonight's classified payload become a tracked object.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When is the SpaceX USSF-627 launch?",
+        a: "SpaceX is targeting Tuesday, November 10, 2026, with a four-hour window opening at 6:49 p.m. PT (02:49 UTC on November 11) from SLC-4E at Vandenberg Space Force Base. A backup opportunity is listed for Wednesday, November 11 at 6:35 p.m. PT.",
+      },
+      {
+        q: "Why did USSF-627 move from Monday to Tuesday?",
+        a: "The mission was scheduled for Monday, November 9, but did not lift off that evening. SpaceX's updated mission page targets the Tuesday, November 10 window that had been held as the backup opportunity. SpaceX has not published a reason for the move.",
+      },
+      {
+        q: "What is the USSF-627 payload?",
+        a: "It is a classified U.S. Space Force payload, and its details have not been disclosed. Trackers speculate it may use the Starshield bus based on the stage drop zones, but that is unconfirmed.",
+      },
+      {
+        q: "How can I watch the USSF-627 launch?",
+        a: "SpaceX provides a live webcast starting about 10 minutes before liftoff on its mission page and on X @SpaceX. The night launch flies southeast from Vandenberg, which also gives viewers in Southern California and Arizona a chance to see it on a clear night.",
+      },
+      {
+        q: "Where will the Falcon 9 booster land?",
+        a: "On the droneship Of Course I Still Love You in the Pacific Ocean. It is the booster's seventh flight, after NROL-179, two SDA missions and three Starlink missions.",
+      },
+    ],
+    sources: [
+      {
+        name: "SpaceX — USSF-627 mission page (official)",
+        url: "https://www.spacex.com/launches/ussf627",
+      },
+      {
+        name: "Arizona Republic (USA TODAY Network) — California rocket launch schedule, updated November 9–10",
+        url: "https://www.azcentral.com/story/news/arizona/2026/11/09/spacex-falcon-9-rocket-launch-today-schedule/92640062007/",
+      },
+    ],
+  },
+  {
+    slug: "typhoon-cempaka-becomes-samuel-brief-par-entry",
+    title: "Typhoon Cempaka Enters as Samuel, Peaks at 150 km/h and Turns Away",
+    seoTitle: "Typhoon Cempaka Becomes Samuel | WorldEye Blog",
+    date: "2026-11-10",
+    excerpt:
+      "Typhoon Cempaka spent barely a day inside the Philippine Area of Responsibility. Renamed Samuel on Monday morning, it peaked at 150 km/h over the open Philippine Sea, raised no wind signals anywhere in the Philippines, and by Tuesday afternoon was 1,940 kilometres away and moving off.",
+    seoDescription:
+      "Typhoon Cempaka entered the Philippine Area as Samuel on November 9, peaked at 150 km/h, raised no wind signals, and is moving away with no landfall expected.",
+    tags: ["typhoon", "cempaka", "samuel", "pagasa", "philippines", "storm"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "Typhoon Cempaka's visit to Philippine waters was brief, strong and — for everyone on land — uneventful. The storm entered the Philippine Area of Responsibility (PAR) on Monday morning, November 9, where the Philippine Atmospheric, Geophysical and Astronomical Services Administration (PAGASA) gave it the local name Samuel, and issued Tropical Cyclone Bulletin No. 1 at 11:00 a.m. confirming that no Tropical Cyclone Wind Signal was in effect anywhere in the country.",
+          "Samuel is the Philippines' 19th tropical cyclone of the year, PAGASA weather specialist Aldczar D. Aurelio noted in the agency's Monday morning briefing. Even at entry, the forecast was for a cameo rather than a landfall: the typhoon was expected to recurve and exit the PAR within the day, and Aurelio stated plainly that it was not expected to affect or make landfall in any part of the country.",
+          "That is how it played out. By PAGASA's 4:00 p.m. advisory on Tuesday, November 10, reported by BusinessWorld, Cempaka — Samuel — was last located 1,940 kilometres northeast of Extreme Northern Luzon, still holding maximum sustained winds of 150 kilometres per hour with gusts of 185 km/h, continuing to move away, and not expected to make landfall anywhere in the Philippines.",
+        ],
+      },
+      {
+        heading: "Where is Typhoon Samuel now?",
+        body: [
+          "As of PAGASA's Tuesday afternoon advisory, the storm's centre was about 1,940 kilometres northeast of Extreme Northern Luzon — far out over the open Pacific, well outside the PAR it briefly clipped — and moving away from the country. PAGASA said Cempaka is not affecting the Philippines and is not expected to make landfall anywhere in the country.",
+          "The position is close to, but slightly short of, the track PAGASA forecast in Bulletin No. 1, which had the storm 2,010 kilometres east-northeast of Extreme Northern Luzon by 8:00 p.m. Tuesday at 130 km/h. Instead, the typhoon has held its peak strength of 150 km/h longer than that forecast point implied, while following the same general path away to the east-northeast.",
+        ],
+      },
+      {
+        heading: "How strong did Cempaka get inside the PAR?",
+        body: [
+          "At 10:00 a.m. on Monday, an hour before Bulletin No. 1, PAGASA placed Samuel's centre about 1,370 kilometres east-northeast of Extreme Northern Luzon, at 23.9°N, 134.7°E. The storm then carried maximum sustained winds of 120 km/h near its centre, gusts to 150 km/h, a central pressure of 980 hPa, and tropical cyclone-force winds extending up to 300 kilometres outward.",
+          "PAGASA expected the peak to come by Monday evening or early Tuesday morning, and its Bulletin No. 1 forecast table put the storm at 150 km/h by 8:00 a.m. Tuesday, 1,675 kilometres east-northeast of Extreme Northern Luzon. Tuesday's advisory confirmed the storm had reached and maintained that 150 km/h peak — the strongest reading of Cempaka's PAR passage, recorded entirely over open water.",
+          "WorldEye followed Cempaka's intensification southwest of Iwo To on Sunday, when the Joint Typhoon Warning Center forecast a Monday peak. The PAR entry, the Samuel renaming and the confirmed 150 km/h peak are the new developments that close that forecast out.",
+        ],
+      },
+      {
+        heading: "Did Samuel raise any wind signals in the Philippines?",
+        body: [
+          "No. No Tropical Cyclone Wind Signal was raised anywhere in the Philippines at any point in Samuel's passage, and PAGASA said the storm was less likely to directly affect the country's weather throughout the forecast period. The hazards the agency did flag came from the Northeast Monsoon, enhanced by the typhoon's circulation: strong to gale-force gusts across much of Luzon and the Visayas and parts of Mindanao, particularly in coastal and upland areas, persisting through Tuesday and into Wednesday.",
+          "The sharpest warnings were for the sea. PAGASA forecast very rough to rough seas along Luzon's northern coastlines — up to 5.5 metres on the northern seaboard of Batanes and up to 5.0 metres around the Babuyan Islands — and advised all mariners to remain in port or seek safe harbour where seas were very rough, with small craft told not to venture out at all. A Gale Warning over the northern seaboard of Northern Luzon was expected to follow on Monday afternoon.",
+        ],
+      },
+      {
+        heading: "What happens to Cempaka next?",
+        body: [
+          "The weakening phase. PAGASA's Bulletin No. 1 track had Samuel accelerating east-northeastward over the open Pacific and steadily losing strength: 130 km/h by Tuesday evening, 110 km/h and a downgrade to severe tropical storm by Wednesday morning, and 95 km/h by Wednesday evening, some 2,845 kilometres east-northeast of Extreme Northern Luzon. Unfavourable atmospheric conditions, rather than land, are what end this storm.",
+          "For the Philippines, the weather story of the next 24 hours belongs to the three systems PAGASA described on Tuesday — the northeast monsoon, the easterlies and a shear line — bringing rains with flooding and landslide risks over parts of Luzon, the Visayas and Mindanao, while the typhoon that briefly shared the map moves away.",
+          "You can follow Cempaka's remaining track and the monsoon weather it leaves behind on WorldEye's [hurricane tracker](/hurricane-tracker) and [weather radar](/weather-radar), part of the live globe of 74,229 cameras and weather layers.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Did Typhoon Cempaka make landfall in the Philippines?",
+        a: "No. Cempaka, renamed Samuel inside the Philippine Area of Responsibility, stayed over the open Philippine Sea, peaked at 150 km/h, and moved away. PAGASA said it is not affecting the country and is not expected to make landfall anywhere in the Philippines.",
+      },
+      {
+        q: "Why is Cempaka also called Samuel?",
+        a: "PAGASA assigns a local name to a tropical cyclone when it enters the Philippine Area of Responsibility. Cempaka entered on Monday morning, November 9, and became Samuel — the Philippines' 19th tropical cyclone of the year.",
+      },
+      {
+        q: "How strong is Typhoon Samuel?",
+        a: "At PAGASA's Tuesday, November 10 advisory it maintained maximum sustained winds of 150 km/h with gusts of 185 km/h, located about 1,940 km northeast of Extreme Northern Luzon and moving away.",
+      },
+      {
+        q: "Were any wind signals raised for Samuel?",
+        a: "No. PAGASA's Tropical Cyclone Bulletin No. 1 confirmed no Tropical Cyclone Wind Signal was in effect anywhere in the Philippines. The main hazards were monsoon gusts and very rough seas — up to 5.5 m off Batanes — rather than the typhoon itself.",
+      },
+      {
+        q: "Where is Typhoon Cempaka heading next?",
+        a: "East-northeastward over the open Pacific, weakening as it goes. PAGASA forecast it to drop to severe tropical storm strength by Wednesday, November 11, far from any landmass.",
+      },
+    ],
+    sources: [
+      {
+        name: "DOST-PAGASA Tropical Cyclone Bulletin No. 1 for Typhoon Samuel (via Breaking News Negor), November 9",
+        url: "https://breakingnewsnegor.com/article/typhoon-samuel-briefly-enters-par-no-landfall-expected-93399",
+      },
+      {
+        name: "BusinessWorld — Typhoon Cempaka to enter PAR as northeast monsoon drenches Luzon (PAGASA), November 9",
+        url: "https://bworldonline.com/the-nation/2026/11/09/792312/typhoon-cempaka-to-enter-par-as-northeast-monsoon-drenches-luzon/",
+      },
+      {
+        name: "BusinessWorld — Three weather systems to bring rains over PHL (PAGASA 4 p.m. advisory), November 10",
+        url: "https://bworldonline.com/the-nation/2026/11/10/792742/three-weather-systems-to-bring-rains-over-phl-pagasa/",
+      },
+    ],
+  },
+  {
+    slug: "northern-taurid-fireballs-peak-november-11-12",
+    title: "Northern Taurid Fireballs Peak on November 11–12 Under a Thin Crescent Moon",
+    seoTitle: "Northern Taurids Peak Nov 11–12 | WorldEye Blog",
+    date: "2026-11-10",
+    excerpt:
+      "The second half of Taurid season arrives tomorrow night. The Northern Taurids peak on the night of November 11 into the morning of November 12 — only about five meteors an hour, but the shower specialises in slow, bright fireballs, and this year they fall under a thin crescent Moon.",
+    seoDescription:
+      "The Northern Taurids peak on the night of November 11–12, 2026, with about five meteors an hour, bright fireballs, and a thin crescent Moon. How to watch.",
+    tags: ["meteor-shower", "taurids", "fireballs", "night-sky", "astronomy"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "November's fireball season reaches its second act tomorrow night. The Northern Taurid meteor shower peaks on the night of Wednesday, November 11 into the morning of Thursday, November 12, according to the American Meteor Society's 2026–2027 meteor shower calendar — a week after the Southern Taurids topped out on November 4–5, the peak WorldEye covered last week.",
+          "Nobody should expect a storm. The Northern Taurids produce only a handful of meteors — about five per hour under ideal conditions, National Geographic reports. What they offer instead is quality: the Taurid stream carries an unusually high proportion of larger, pebble-sized particles, and those bigger fragments are the ones that blaze up as fireballs, meteors brighter than Venus.",
+          "The timing this year is kind. Both Taurid showers peak near the new Moon of November 9, so moonlight will not be much of a problem, and the American Meteor Society lists a thin waxing crescent for the Northern peak — what the Columbus Times, working from the society's calendar, calls very favourable viewing conditions. The week around the new Moon, roughly November 7 to 11, is the darkest stretch of the month, and the Northern Taurid peak lands right at the end of it.",
+        ],
+      },
+      {
+        heading: "When do the Northern Taurids peak?",
+        body: [
+          "The peak night is Wednesday, November 11 into Thursday morning, November 12. The Northern Taurids are the later of the two related Taurid showers: the combined Taurids run from September 20 through December 10, with the Southern branch peaking on November 4–5 and the Northern branch following on November 11–12.",
+          "There is no sharp, single hour to aim for. Taurid rates ramble across the surrounding nights rather than switching on and off, so a clear night on November 10 or November 13 is still worth an hour outside — but November 11–12 is the night the calendars mark as the maximum.",
+        ],
+      },
+      {
+        heading: "Why do the Taurids make fireballs?",
+        body: [
+          "A fireball is a meteor that shines brighter than Venus, and the Taurids produce more of them than their low hourly rate would suggest. The stream is notable for carrying a high proportion of larger, pebble-sized debris, and Taurid meteors are also relatively slow — entering the atmosphere at about 17 to 18 miles per second — so their streaks can last longer than those of faster showers.",
+          "Both Taurid showers appear to radiate from the constellation Taurus and are commonly linked to comet 2P/Encke as their source, though the northern component may instead originate with an asteroid on a very similar orbit, 2004 TG10 — the two bodies' orbits are so alike that they may be fragments of a larger object that broke apart long ago.",
+          "In some years Earth passes through denser pockets of Taurid debris held in swarms by Jupiter's gravity, and fireball activity jumps. National Geographic reports that no swarm is expected in 2026 — Earth moved through one last year, and the next predicted encounter is in 2032 — but fireballs remain possible on any Taurid night, swarm year or not.",
+        ],
+      },
+      {
+        heading: "How can I watch the Northern Taurids?",
+        body: [
+          "The technique is the same as for the Southern peak: no telescope and no binoculars — their narrow fields of view make it easier to miss meteors elsewhere in the sky. Find a dark place with a broad view, give your eyes time to adjust to the darkness, and look up after midnight, when Taurus has climbed higher; the constellation rises in the east during the evening and stands highest overnight.",
+          "The Taurids are visible from both the Northern and Southern Hemispheres, because their radiant sits fairly close to the celestial equator, and meteors can appear anywhere in the sky — their paths simply trace back toward Taurus. Dress for a November night, settle in for at least an hour, and be patient: at five meteors an hour, the wait between ordinary Taurids can be long, and one bright fireball is what makes it worthwhile.",
+          "After the Northern Taurids, November still has its headline shower to come: the Leonids, active through the month and peaking around November 16–18, with the American Meteor Society listing the peak window as November 16–17. To scout a dark observing spot — or to watch the night sky from somewhere clearer — WorldEye's [dark-sky cameras](/dark-sky-cameras) and [aurora webcams](/aurora-webcams) show live night skies from dark locations around the globe of 74,229 cameras.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When do the Northern Taurids peak in 2026?",
+        a: "On the night of Wednesday, November 11 into the morning of Thursday, November 12, 2026, according to the American Meteor Society. The Southern Taurids peaked a week earlier, on November 4–5.",
+      },
+      {
+        q: "How many meteors will the Northern Taurids produce?",
+        a: "About five per hour under ideal dark-sky conditions. The shower is known less for its rate than for its fireballs — meteors brighter than Venus, produced by the stream's larger, pebble-sized debris.",
+      },
+      {
+        q: "Will the Moon interfere with the Northern Taurids?",
+        a: "No. The peak falls just after the new Moon of November 9, under a thin waxing crescent that the American Meteor Society rates as very favourable for viewing.",
+      },
+      {
+        q: "Where should I look for Northern Taurid meteors?",
+        a: "Anywhere in a dark, wide-open sky. The meteors appear to radiate from the constellation Taurus, which rises in the east in the evening and is highest after midnight, and they are visible from both hemispheres.",
+      },
+      {
+        q: "Is 2026 a Taurid swarm year?",
+        a: "No enhanced swarm is expected in 2026. Earth passed through a Taurid swarm last year, and the next predicted encounter is in 2032 — though individual fireballs are still possible.",
+      },
+    ],
+    sources: [
+      {
+        name: "National Geographic — These shooting stars can outshine Venus: the Taurids, November 5",
+        url: "https://www.nationalgeographic.com/science/article/taurid-meteor-shower-fireballs-when-to-watch",
+      },
+      {
+        name: "Columbus Times — November meteor showers, from the American Meteor Society calendar, November 8",
+        url: "https://columbustimes.com/story/602/meteor-showers-over-columbus-this-month-northern-taurid-fireballs-peak-nov-11",
+      },
+    ],
+  },
 // Blog daily 2026-11-09 — three sourced event stories, news: true, date 2026-11-09.
 // Facts verified from sources actually opened this run (browser.open):
 // USGS event page us7000tx16 + Watchers (USGS figures) + Earthquake Today (USGS telemetry)

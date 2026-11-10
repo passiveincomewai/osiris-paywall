@@ -87,6 +87,9 @@ describe("the launch story (real data, real dates)", () => {
   it("is one of the flagged posts, and every flagged post has sources", () => {
     const flagged = POSTS.filter(isNewsPost);
     expect(flagged.map((p) => p.slug)).toEqual([
+      "spacex-ussf-627-launch-moves-november-10",
+      "typhoon-cempaka-becomes-samuel-brief-par-entry",
+      "northern-taurid-fireballs-peak-november-11-12",
       "magnitude-6-4-earthquake-lata-solomon-islands-november-9",
       "spacex-ussf-627-launch-vandenberg-november-9",
       "copper-mountain-opening-day-november-8-2026",
@@ -135,6 +138,15 @@ describe("the launch story (real data, real dates)", () => {
     expect(fresh).toContain("mammoth-mountain-opens-early-november-5-2026");
     expect(fresh).toContain("mayon-ash-plume-november-4-strombolian-activity");
     expect(fresh).toContain("spacex-ussf-432-launch-moves-november-6");
+    expect(fresh).not.toContain(LAUNCH_SLUG);
+  });
+
+  it("the Nov 10 event stories are inside the 48-hour window on their publication day", () => {
+    const pubDay = new Date("2026-11-10T15:00:00Z");
+    const fresh = getFreshNewsPosts(POSTS, pubDay).map((p) => p.slug);
+    expect(fresh).toContain("spacex-ussf-627-launch-moves-november-10");
+    expect(fresh).toContain("typhoon-cempaka-becomes-samuel-brief-par-entry");
+    expect(fresh).toContain("northern-taurid-fireballs-peak-november-11-12");
     expect(fresh).not.toContain(LAUNCH_SLUG);
   });
 
