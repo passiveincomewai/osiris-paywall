@@ -2,14 +2,19 @@
  * Support WorldEye donations — Stripe price resolution (server only).
  *
  * The donation products are created by the owner in the Stripe
- * dashboard ("Support WorldEye (one-time)" / "Support WorldEye
- * (monthly)"); the code NEVER creates or mutates products/prices.
- * Preset amounts resolve to price IDs BY LOOKUP KEY (works in live
- * and test mode identically). Custom amounts use session-time
- * price_data against the resolved product ID. If the products do not
- * exist yet, resolution returns null and the session endpoint answers
- * 503 — the popup shows its load-error state rather than a fake
- * checkout.
+ * dashboard; the code NEVER creates or mutates products/prices.
+ * Preset amounts resolve to price IDs BY LOOKUP KEY first (works in
+ * live and test mode identically) — the lookup-key path stays
+ * preferred, so the owner can take over resolution at any time just
+ * by setting the keys. The four one-time prices the owner created
+ * currently have NO lookup keys set, so when lookup resolution finds
+ * nothing, one-time presets fall back to the known live price IDs
+ * below (each sits on its own "$N Donation" product). Monthly has no
+ * live prices at all yet, so monthly resolution stays lookup-only.
+ * Custom amounts use session-time price_data against the resolved
+ * product ID. If resolution returns null the session endpoint
+ * answers 503 — the popup shows its load-error state rather than a
+ * fake checkout.
  */
 import type Stripe from "stripe";
 import { stripe } from "@/lib/stripe";
@@ -25,8 +30,58 @@ interface ResolvedPrice {
   productId: string;
 }
 
+/**
+ * Fallback live price IDs for the owner-created one-time donation
+ * prices (lookup_key unset on all four; verified live 2026-11-09).
+ * Consulted ONLY when lookup-key resolution returns nothing, and
+ * only for frequency "once" — there are no monthly prices to fall
+ * back to.
+ */
+const DONATE_ONCE_PRICE_ID_FALLBACK: Record<number, string> = {
+  5: "price_1UZwpYGfHuTnzrlHaQi35iPK",
+  10: "price_1UZwpmGfHuTnzrlHq5e5Q02F",
+  25: "price_1UZwq0GfHuTnzrlHm7l1Co6L",
+  50: "price_1UZwqGGfHuTnzrlHMYqv3bDD",
+};
+
 const CACHE_TTL_MS = 5 * 60 * 1000;
 const cache = new Map<string, { value: ResolvedPrice | null; at: number }>();
+
+/**
+ * Fallback path: retrieve a known live one-time price directly by
+ * ID. Returns null (the 503 fail-safe) when there is no fallback for
+ * the amount, when Stripe errors, or when the price is inactive.
+ * Cached under its own `idfallback:` key so it can never collide
+ * with the lookup-key cache entries.
+ */
+async function resolveByPriceIdFallback(
+  frequency: DonateFrequency,
+  amount: number,
+): Promise<ResolvedPrice | null> {
+  if (frequency !== "once") return null;
+  const priceId = DONATE_ONCE_PRICE_ID_FALLBACK[amount];
+  if (!priceId) return null;
+  const cacheKey = `idfallback:${amount}`;
+  const hit = cache.get(cacheKey);
+  if (hit && Date.now() - hit.at < CACHE_TTL_MS) return hit.value;
+  let value: ResolvedPrice | null = null;
+  try {
+    const price = await stripe().prices.retrieve(priceId, {
+      expand: ["product"],
+    });
+    if (price && price.active) {
+      const product = price.product as Stripe.Product | string;
+      value = {
+        priceId: price.id,
+        productId: typeof product === "string" ? product : product.id,
+      };
+    }
+  } catch {
+    value = null;
+  }
+  cache.set(cacheKey, { value, at: Date.now() });
+  return value;
+}
 
 async function resolveDonatePrice(
   frequency: DonateFrequency,
@@ -35,7 +90,11 @@ async function resolveDonatePrice(
   const lookupKey = donateLookupKey(frequency, amount);
   if (!lookupKey) return null;
   const hit = cache.get(lookupKey);
-  if (hit && Date.now() - hit.at < CACHE_TTL_MS) return hit.value;
+  if (hit && Date.now() - hit.at < CACHE_TTL_MS) {
+    if (hit.value) return hit.value;
+    // Fresh negative lookup result — go straight to the ID fallback.
+    return resolveByPriceIdFallback(frequency, amount);
+  }
   let value: ResolvedPrice | null = null;
   try {
     const list = await stripe().prices.list({
@@ -56,7 +115,8 @@ async function resolveDonatePrice(
     value = null;
   }
   cache.set(lookupKey, { value, at: Date.now() });
-  return value;
+  if (value) return value;
+  return resolveByPriceIdFallback(frequency, amount);
 }
 
 export type DonateLineItemResult =
