@@ -7,6 +7,7 @@ import { planNameByPriceId } from "@/lib/billing/plans";
 import { isCompSubscription } from "@/lib/pro/comp";
 import { discoverySourceLabel } from "@/lib/discovery-sources";
 import AdminNav from "../../AdminNav";
+import AccountActions, { type AccountSubState } from "./AccountActions";
 
 export const metadata = { title: "Account detail — Admin" };
 export const dynamic = "force-dynamic";
@@ -253,6 +254,14 @@ export default async function AdminAccountDetailPage({
       ? `Comp grant via the site's comp engine (source: ${compSourceOf(sub.stripeSubscriptionId, user.id)}) — not a Stripe subscription`
       : "Stripe subscription (state synced from Stripe by webhook)";
 
+  const subState: AccountSubState = !sub
+    ? { kind: "none" }
+    : comp
+      ? sub.status === "active" && sub.currentPeriodEnd > new Date()
+        ? { kind: "comp_active", periodEndLabel: fmtDenverDay(sub.currentPeriodEnd) }
+        : { kind: "comp_inactive" }
+      : { kind: "stripe", label: `${planText} — a Stripe subscription (status: ${sub.status.replace(/_/g, " ")}).` };
+
   const discoveryLabel = discoverySourceLabel(user.discoverySource);
   const utmBits = first
     ? [
@@ -351,6 +360,13 @@ export default async function AdminAccountDetailPage({
             <Row k="Source" v={sourceText} />
           </dl>
         </Card>
+
+        <AccountActions
+          userId={user.id}
+          hasEmail={!!user.email}
+          emailOptOut={user.emailOptOut}
+          subState={subState}
+        />
 
         <Card title="Affiliate">
           {profile && affiliateStats ? (

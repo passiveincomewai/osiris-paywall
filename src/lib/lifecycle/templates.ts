@@ -1063,3 +1063,73 @@ export function trialPrechargeRecapEmail(input: {
     ),
   };
 }
+
+// ── Admin-sent (2026-11-10) ─────────────────────────────────────────
+// One-off emails an admin sends from the account detail page
+// (/admin/accounts/[userId]) via POST /api/admin/accounts/[userId].
+// The two marketing templates carry the unsubscribe footer and the
+// route refuses them for opted-out users; the grant notice is
+// transactional (it reports a change to the recipient's own account),
+// so no unsubscribe footer — the same rule as trialStartedEmail above.
+// Every admin send is logged in LifecycleEmailLog by the route, with
+// the acting admin's email in the contextKey.
+
+export function adminTrialInviteEmail(input: {
+  name: string | null;
+  unsubscribeUrl: string | null;
+}): RenderedEmail {
+  const first = escapeHtml(firstNameOf(input.name));
+  return {
+    subject: "A free 10 days of WorldEye Pro, on us",
+    html: shell(
+      "10 days of Pro, free",
+      "The WorldEye team would like to give you 10 days of WorldEye Pro — no card needed.",
+      `${P(`Hi ${first},`)}
+       ${P("We'd like to give you <strong style=\"color:#fff;\">10 days of WorldEye Pro, free</strong> — unlimited camera opens, camera recording, alerts and the OSINT toolkit. No card, no subscription, nothing to cancel: when the 10 days end you simply go back to the free plan unless you choose to upgrade.")}
+       ${P("Want it? Just reply to this email and we'll switch it on for your account.")}
+       ${unsubscribeLine(input.unsubscribeUrl)}`,
+      { label: "See what Pro unlocks", href: appUrl("/pricing") },
+      { why: "You're receiving this because the WorldEye team sent you a personal invitation." },
+    ),
+  };
+}
+
+export function adminCheckinEmail(input: {
+  name: string | null;
+  unsubscribeUrl: string | null;
+}): RenderedEmail {
+  const first = escapeHtml(firstNameOf(input.name));
+  return {
+    subject: "Checking in from WorldEye",
+    html: shell(
+      "The world is still live",
+      "A quick hello from the WorldEye team.",
+      `${P(`Hi ${first},`)}
+       ${P("Just checking in from the WorldEye team. The globe is live around the clock — <strong style=\"color:#fff;\">74,229 public cameras in 109 countries</strong>, plus live flights, satellites, weather radar and earthquake layers, all on one map.")}
+       ${P("If there's a place you keep coming back to — a hometown street, a favourite beach, a mountain pass — open it up and save it, and it'll be one click away next time.")}
+       ${unsubscribeLine(input.unsubscribeUrl)}`,
+      { label: "Open the globe", href: appUrl("/") },
+      { why: "You're receiving this because the WorldEye team sent you a personal check-in." },
+    ),
+  };
+}
+
+export function adminTrialGrantEmail(input: {
+  name: string | null;
+  /** e.g. "Thursday, November 20, 2026" — the day the comp ends (Denver). */
+  endsOnLabel: string;
+}): RenderedEmail {
+  const first = escapeHtml(firstNameOf(input.name));
+  return {
+    subject: `You've got WorldEye Pro free until ${input.endsOnLabel}`,
+    html: shell(
+      "Pro is on us",
+      `WorldEye Pro is active on your account, free, until ${input.endsOnLabel}.`,
+      `${P(`Hi ${first},`)}
+       ${P(`Good news: we've given your account <strong style="color:#fff;">WorldEye Pro, free, until ${escapeHtml(input.endsOnLabel)}</strong>. It's a gift from the WorldEye team — not a subscription and not a trial you signed up for: there's no card on file, nothing will be charged, and there's nothing to cancel.`)}
+       ${P("Everything Pro unlocks is live on your account right now: unlimited camera opens, camera recording, alerts and the OSINT toolkit. When the free period ends your account simply returns to the free plan, unless you decide to subscribe.")}`,
+      { label: "Open WorldEye", href: appUrl("/") },
+      { why: "You're receiving this because the WorldEye team added free Pro time to your account." },
+    ),
+  };
+}

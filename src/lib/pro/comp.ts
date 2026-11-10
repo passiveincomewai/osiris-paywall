@@ -14,7 +14,7 @@
 import { db } from "@/lib/db";
 import { rankFor, RANKS, type RankDef } from "@/lib/affiliate/ranks";
 
-export type CompSource = "creator" | "visionary" | "invite";
+export type CompSource = "creator" | "visionary" | "invite" | "admin";
 
 export const COMP_PRICE_ID = "comp_free_pro";
 export const COMP_ID_PREFIX = "comp_";
