@@ -1,5 +1,6 @@
 import Link from "next/link";
 import NewsletterForm from "./NewsletterForm";
+import CookieSettingsLink from "./CookieSettingsLink";
 import DonateFooterStrip from "./donate/DonateFooterStrip";
 import FooterAuthButtons from "./FooterAuthButtons";
 import LanguageSelector from "./LanguageSelector";
@@ -144,6 +145,9 @@ export default function SiteFooter({
       <div className="border-t border-white/5">
         <div className="max-w-6xl mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-2 text-xs text-white/50">
           <span>{chrome.copyright}</span>
+          {/* Reopens the cookie consent banner (clears the stored
+              choice); the banner itself is mounted in RootShell. */}
+          <CookieSettingsLink />
           {slug !== undefined ? (
             <LanguageSelector slug={slug} locale={locale} />
           ) : null}

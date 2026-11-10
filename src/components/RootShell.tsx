@@ -4,6 +4,7 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 import SilentBoundary from '@/components/SilentBoundary';
 import AffiliateAttributionSync from '@/components/AffiliateAttributionSync';
 import AnalyticsTracker from '@/components/AnalyticsTracker';
+import CookieConsent from '@/components/CookieConsent';
 import MetaPixel from '@/components/MetaPixel';
 import MicrosoftClarity from '@/components/MicrosoftClarity';
 import TranslateGate from '@/components/translate/TranslateGate';
@@ -211,6 +212,13 @@ export default function RootShell({
         </SilentBoundary>
         <SilentBoundary name="AnalyticsTracker">
           <AnalyticsTracker />
+        </SilentBoundary>
+        {/* Cookie consent (2026-11-10): mounted ahead of the two
+            trackers it governs, so its denied-by-default Clarity
+            signal is queued before they run. Renders the slim bottom
+            banner only while no choice is stored. */}
+        <SilentBoundary name="CookieConsent">
+          <CookieConsent />
         </SilentBoundary>
         <SilentBoundary name="MetaPixel">
           <MetaPixel />

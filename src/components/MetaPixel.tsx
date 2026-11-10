@@ -1,8 +1,13 @@
 "use client";
 
-import { Suspense, useEffect, useRef } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import Script from "next/script";
+import {
+  CONSENT_CHANGED_EVENT,
+  parseConsentCookie,
+  type ConsentChoice,
+} from "@/lib/cookie-consent";
 
 /** Meta (Facebook) Pixel — dataset "WorldEye Website", created in Events
  *  Manager 2026-10-22. Standard base code only: PageView on the initial
@@ -33,6 +38,30 @@ function RouteChangePageView() {
 }
 
 export default function MetaPixel() {
+  // Consent gate (2026-11-10): the pixel loads only for visitors whose
+  // stored cookie choice is "accepted" (lib/cookie-consent, banner in
+  // components/CookieConsent.tsx). No choice yet — or declined — and
+  // fbevents.js never loads. Accepting in the banner starts the pixel
+  // without a reload, via CONSENT_CHANGED_EVENT. (The server-side
+  // Conversions API in lib/meta-capi.ts is NOT gated here — deliberate
+  // for this pass; see the privacy page's advertising section.)
+  const [allowed, setAllowed] = useState(false);
+
+  useEffect(() => {
+    if (parseConsentCookie(document.cookie) === "accepted") {
+      setAllowed(true);
+    }
+    const onChanged = (e: Event) => {
+      if ((e as CustomEvent<ConsentChoice>).detail === "accepted") {
+        setAllowed(true);
+      }
+    };
+    window.addEventListener(CONSENT_CHANGED_EVENT, onChanged);
+    return () => window.removeEventListener(CONSENT_CHANGED_EVENT, onChanged);
+  }, []);
+
+  if (!allowed) return null;
+
   return (
     <>
       <Script id="meta-pixel" strategy="afterInteractive">
