@@ -1,10 +1,12 @@
 "use client";
 
 // Admin actions on the account detail page: send a site template email
-// and grant a free Pro comp. All enforcement is server-side in
+// (or a free-written custom email) and grant a free Pro comp of 7, 10
+// or 30 days. All enforcement is server-side in
 // POST /api/admin/accounts/[userId] (ADMIN_EMAILS check, emailOptOut
-// refusal, comp guards) — this component only presents state and shows
-// the route's answers, including its refusals, verbatim.
+// refusal, comp guards, duration allowlist) — this component only
+// presents state and shows the route's answers, including its
+// refusals, verbatim.
 import { useState } from "react";
 
 export type AccountSubState =
@@ -15,8 +17,13 @@ export type AccountSubState =
 
 type Msg = { ok: boolean; text: string } | null;
 
+const GRANT_DAY_OPTIONS = [7, 10, 30];
+
 const btnCls =
   "inline-flex items-center px-4 py-2.5 rounded-lg border text-sm transition disabled:opacity-40 disabled:pointer-events-none";
+
+const inputCls =
+  "w-full rounded-lg border border-white/15 bg-black/30 px-3 py-2 text-sm text-white/85 placeholder:text-white/25 focus:border-cyan-400/50 focus:outline-none";
 
 export default function AccountActions({
   userId,
@@ -33,6 +40,9 @@ export default function AccountActions({
   const [emailMsg, setEmailMsg] = useState<Msg>(null);
   const [grantMsg, setGrantMsg] = useState<Msg>(null);
   const [needsConfirm, setNeedsConfirm] = useState(false);
+  const [days, setDays] = useState(10);
+  const [customSubject, setCustomSubject] = useState("");
+  const [customBody, setCustomBody] = useState("");
 
   async function post(payload: Record<string, unknown>) {
     const res = await fetch(`/api/admin/accounts/${userId}`, {
@@ -64,11 +74,35 @@ export default function AccountActions({
     }
   }
 
+  async function sendCustom() {
+    setBusy("custom");
+    setEmailMsg(null);
+    try {
+      const { res, data } = await post({
+        action: "send_email",
+        template: "custom",
+        subject: customSubject,
+        body: customBody,
+      });
+      if (res.ok) {
+        setEmailMsg({ ok: true, text: "Custom email sent." });
+        setCustomSubject("");
+        setCustomBody("");
+      } else {
+        setEmailMsg({ ok: false, text: String(data.message ?? data.error ?? "Send failed.") });
+      }
+    } catch {
+      setEmailMsg({ ok: false, text: "Send failed — network error." });
+    } finally {
+      setBusy(null);
+    }
+  }
+
   async function grant(confirm: boolean) {
     setBusy("grant");
     setGrantMsg(null);
     try {
-      const { res, data } = await post({ action: "grant_trial", confirm });
+      const { res, data } = await post({ action: "grant_trial", confirm, days });
       if (res.ok) {
         setNeedsConfirm(false);
         const end = data.currentPeriodEnd
@@ -97,6 +131,7 @@ export default function AccountActions({
   }
 
   const emailDisabled = !hasEmail || emailOptOut || busy !== null;
+  const customDisabled = emailDisabled || customSubject.trim().length === 0 || customBody.trim().length === 0;
 
   return (
     <div className="grid gap-4 md:grid-cols-2 mb-4">
@@ -131,6 +166,38 @@ export default function AccountActions({
             {busy === "checkin" ? "Sending…" : "Send check-in"}
           </button>
         </div>
+        <div className="mt-4 border-t border-white/10 pt-4">
+          <div className="text-xs font-bold text-white/55 mb-2">Or write a custom email</div>
+          <input
+            type="text"
+            value={customSubject}
+            onChange={(e) => setCustomSubject(e.target.value)}
+            placeholder="Subject"
+            maxLength={150}
+            disabled={emailDisabled}
+            className={`${inputCls} mb-2`}
+          />
+          <textarea
+            value={customBody}
+            onChange={(e) => setCustomBody(e.target.value)}
+            placeholder="Message — plain text; blank lines start a new paragraph."
+            rows={5}
+            maxLength={5000}
+            disabled={emailDisabled}
+            className={inputCls}
+          />
+          <div className="flex items-center gap-3 mt-2">
+            <button
+              type="button"
+              disabled={customDisabled}
+              onClick={sendCustom}
+              className={`${btnCls} border-cyan-400/40 text-cyan-200 bg-cyan-400/10 hover:bg-cyan-400/20`}
+            >
+              {busy === "custom" ? "Sending…" : "Send custom email"}
+            </button>
+            <span className="text-[11px] text-white/30">Goes out in the site's email style, logged as admin_custom.</span>
+          </div>
+        </div>
         {emailMsg ? (
           <p className={`text-sm mt-3 ${emailMsg.ok ? "text-emerald-300" : "text-amber-300/90"}`}>{emailMsg.text}</p>
         ) : null}
@@ -144,15 +211,33 @@ export default function AccountActions({
           </p>
         ) : subState.kind === "comp_active" ? (
           <p className="text-sm text-white/50 mb-3">
-            Free Pro (comp) is already running until {subState.periodEndLabel}. Granting adds 10 more days —
-            you'll be asked to confirm.
+            Free Pro (comp) is already running until {subState.periodEndLabel}. Granting adds the days you
+            pick on top — you'll be asked to confirm.
           </p>
         ) : (
           <p className="text-sm text-white/50 mb-3">
-            Grants 10 days of Pro through the comp engine (no card, not a Stripe trial) and automatically
-            emails the user that Pro is on us, with the exact end date.
+            Grants Pro through the comp engine (no card, not a Stripe trial) and automatically emails the
+            user that Pro is on us, with the exact end date.
           </p>
         )}
+        <div className="flex flex-wrap items-center gap-2 mb-3">
+          <span className="text-xs text-white/45">Length:</span>
+          {GRANT_DAY_OPTIONS.map((d) => (
+            <button
+              key={d}
+              type="button"
+              disabled={busy !== null}
+              onClick={() => setDays(d)}
+              className={`px-3 py-1.5 rounded-lg border text-sm transition disabled:opacity-40 ${
+                days === d
+                  ? "border-amber-400/50 text-amber-200 bg-amber-400/10"
+                  : "border-white/15 text-white/60 hover:text-white"
+              }`}
+            >
+              {d} days
+            </button>
+          ))}
+        </div>
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
@@ -160,7 +245,7 @@ export default function AccountActions({
             onClick={() => grant(false)}
             className={`${btnCls} border-amber-400/40 text-amber-200 bg-amber-400/10 hover:bg-amber-400/20`}
           >
-            {busy === "grant" ? "Working…" : "Give 10 days of Pro free"}
+            {busy === "grant" ? "Working…" : `Give ${days} days of Pro free`}
           </button>
           {needsConfirm ? (
             <button
@@ -169,7 +254,7 @@ export default function AccountActions({
               onClick={() => grant(true)}
               className={`${btnCls} border-red-400/40 text-red-200 bg-red-400/10 hover:bg-red-400/20`}
             >
-              Confirm extension (+10 days)
+              Confirm extension (+{days} days)
             </button>
           ) : null}
         </div>

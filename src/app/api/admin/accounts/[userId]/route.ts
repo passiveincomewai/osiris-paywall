@@ -27,6 +27,7 @@ import { appBaseUrl } from "@/lib/app-url";
 import { grantCompProDays, isCompSubscription } from "@/lib/pro/comp";
 import {
   adminCheckinEmail,
+  adminCustomEmail,
   adminTrialGrantEmail,
   adminTrialInviteEmail,
 } from "@/lib/lifecycle/templates";
@@ -34,11 +35,26 @@ import { buildUnsubscribeUrl, unsubscribeSecret } from "@/lib/lifecycle/unsubscr
 
 export const runtime = "nodejs";
 
-/** The standard free-trial length for an admin grant (matches the
- *  monthly/annual trial length in lib/billing/trials). */
+/** Default free-trial length for an admin grant when the request names
+ *  none (matches the monthly/annual trial length in lib/billing/trials).
+ *  The detail page offers 7 / 10 / 30; anything else is refused so a
+ *  malformed request can never mint an arbitrary-length comp. */
 const ADMIN_TRIAL_DAYS = 10;
+const ALLOWED_GRANT_DAYS = [7, 10, 30];
 
-type ActionBody = { action?: string; template?: string; confirm?: boolean };
+/** Caps for the admin custom-email composer — a one-off personal
+ *  message, not a broadcast tool. */
+const CUSTOM_SUBJECT_MAX = 150;
+const CUSTOM_BODY_MAX = 5000;
+
+type ActionBody = {
+  action?: string;
+  template?: string;
+  confirm?: boolean;
+  days?: number;
+  subject?: string;
+  body?: string;
+};
 
 function json(status: number, body: Record<string, unknown>) {
   return NextResponse.json(body, { status });
@@ -100,8 +116,30 @@ export async function POST(
   if (!user) return json(404, { error: "user_not_found" });
 
   if (body.action === "send_email") {
-    if (body.template !== "trial_invite" && body.template !== "checkin") {
+    if (body.template !== "trial_invite" && body.template !== "checkin" && body.template !== "custom") {
       return json(400, { error: "unknown_template" });
+    }
+    // Custom composer: the admin's own subject + body. Both are
+    // required, non-empty after trimming, and length-capped. This is a
+    // marketing send like the templates — the opt-out refusal below
+    // applies to it identically.
+    let custom: { subject: string; bodyText: string } | null = null;
+    if (body.template === "custom") {
+      const subject = typeof body.subject === "string" ? body.subject.trim() : "";
+      const bodyText = typeof body.body === "string" ? body.body.trim() : "";
+      if (!subject) {
+        return json(400, { error: "empty_subject", message: "Write a subject line first — nothing was sent." });
+      }
+      if (!bodyText) {
+        return json(400, { error: "empty_body", message: "Write a message body first — nothing was sent." });
+      }
+      if (subject.length > CUSTOM_SUBJECT_MAX || bodyText.length > CUSTOM_BODY_MAX) {
+        return json(400, {
+          error: "too_long",
+          message: `Too long — subjects are capped at ${CUSTOM_SUBJECT_MAX} characters and bodies at ${CUSTOM_BODY_MAX}. Nothing was sent.`,
+        });
+      }
+      custom = { subject, bodyText };
     }
     if (!user.email) {
       return json(422, { error: "no_email", message: "This account has no email address." });
@@ -113,8 +151,9 @@ export async function POST(
       });
     }
     const unsubscribeUrl = buildUnsubscribeUrl(appBaseUrl(), user.id, unsubscribeSecret());
-    const rendered =
-      body.template === "trial_invite"
+    const rendered = custom
+      ? adminCustomEmail({ name: user.name, subject: custom.subject, bodyText: custom.bodyText, unsubscribeUrl })
+      : body.template === "trial_invite"
         ? adminTrialInviteEmail({ name: user.name, unsubscribeUrl })
         : adminCheckinEmail({ name: user.name, unsubscribeUrl });
     const sent = await sendEmail(user.email, rendered.subject, rendered.html);
@@ -140,6 +179,13 @@ export async function POST(
   // touches a real Stripe row; the guards here exist to answer with a
   // clear refusal (paid) or a confirm step (active comp) instead of a
   // silent no-op.
+  const days = body.days === undefined ? ADMIN_TRIAL_DAYS : body.days;
+  if (typeof days !== "number" || !ALLOWED_GRANT_DAYS.includes(days)) {
+    return json(400, {
+      error: "invalid_days",
+      message: `Grant length must be one of ${ALLOWED_GRANT_DAYS.join(", ")} days — nothing was granted.`,
+    });
+  }
   const existing = user.subscription;
   const now = new Date();
   if (existing && !isCompSubscription(existing)) {
@@ -165,11 +211,11 @@ export async function POST(
       needsConfirm: true,
       currentPeriodEnd: existing.currentPeriodEnd.toISOString(),
       message:
-        `This account already has free Pro (comp) running. Extending adds ${ADMIN_TRIAL_DAYS} more days on top of the current end date — confirm to go ahead.`,
+        `This account already has free Pro (comp) running. Extending adds ${days} more days on top of the current end date — confirm to go ahead.`,
     });
   }
 
-  const res = await grantCompProDays(user.id, "admin", ADMIN_TRIAL_DAYS);
+  const res = await grantCompProDays(user.id, "admin", days);
   if (!res.granted) {
     return json(409, {
       error: "paid_subscription_exists",
@@ -179,7 +225,9 @@ export async function POST(
 
   // The grant is live; the notification email is automatic. It is a
   // service email about the recipient's own account (transactional),
-  // so it is NOT gated on emailOptOut.
+  // so it is NOT gated on emailOptOut. Its end-date label is computed
+  // from the grant result itself, so it always states the actual
+  // granted duration's end date, whatever length was chosen.
   const endsOnLabel = res.currentPeriodEnd.toLocaleDateString("en-US", {
     weekday: "long",
     month: "long",
@@ -204,6 +252,7 @@ export async function POST(
   }
   return json(200, {
     ok: true,
+    days,
     currentPeriodEnd: res.currentPeriodEnd.toISOString(),
     emailSent,
   });

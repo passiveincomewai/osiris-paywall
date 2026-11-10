@@ -9,6 +9,11 @@
      extends through the comp engine with source "admin" / 10 days and
      sends the transactional grant email;
    - happy paths log to LifecycleEmailLog with the admin in contextKey.
+   Round 2 (2026-11-10) adds: the custom-email composer (admin-written
+   subject/body, still marketing — opt-out refusal applies; empty or
+   oversized fields refused 400 before any send) and flexible grant
+   lengths (7 / 10 / 30 days pass through to the comp engine; any
+   other length is refused 400 and the engine is never called).
    DB, auth, Resend and the comp grant are mocked; the templates, the
    unsubscribe helper and the pure comp decision helpers are real. */
 import { describe, it, expect, vi, beforeEach } from "vitest";
@@ -187,6 +192,101 @@ describe("POST /api/admin/accounts/[userId]", () => {
     state.user = null;
     const r = await call({ action: "send_email", template: "checkin" });
     expect(r.status).toBe(404);
+    expect(state.sends).toHaveLength(0);
+  });
+
+  it("sends a custom email with the admin's subject and logs admin_custom as marketing", async () => {
+    const r = await call({
+      action: "send_email",
+      template: "custom",
+      subject: "Your camera request",
+      body: "Good news — the camera you asked about is live now.",
+    });
+    expect(r.status).toBe(200);
+    expect(state.sends).toHaveLength(1);
+    expect(state.sends[0].to).toBe("person@example.com");
+    expect(state.sends[0].subject).toBe("Your camera request");
+    expect(String(state.sends[0].html)).toContain("Good news");
+    expect(state.logs).toHaveLength(1);
+    expect(state.logs[0].template).toBe("admin_custom");
+    expect(state.logs[0].kind).toBe("marketing");
+    expect(state.logs[0].subject).toBe("Your camera request");
+    expect(String(state.logs[0].contextKey)).toMatch(/^admin:admin@example\.com:/);
+  });
+
+  it("escapes the custom body instead of interpreting it as HTML", async () => {
+    const r = await call({
+      action: "send_email",
+      template: "custom",
+      subject: "Hi",
+      body: "<script>alert(1)</script>",
+    });
+    expect(r.status).toBe(200);
+    expect(String(state.sends[0].html)).not.toContain("<script>alert(1)</script>");
+    expect(String(state.sends[0].html)).toContain("&lt;script&gt;");
+  });
+
+  it("refuses a custom email to an opted-out user (422, no send, no log)", async () => {
+    state.user = baseUser({ emailOptOut: true });
+    const r = await call({ action: "send_email", template: "custom", subject: "Hi", body: "Hello." });
+    expect(r.status).toBe(422);
+    expect(r.data.error).toBe("opted_out");
+    expect(state.sends).toHaveLength(0);
+    expect(state.logs).toHaveLength(0);
+  });
+
+  it("refuses a custom email with an empty subject or body (400, no send)", async () => {
+    const r1 = await call({ action: "send_email", template: "custom", subject: "  ", body: "Hello." });
+    expect(r1.status).toBe(400);
+    expect(r1.data.error).toBe("empty_subject");
+    const r2 = await call({ action: "send_email", template: "custom", subject: "Hi", body: "" });
+    expect(r2.status).toBe(400);
+    expect(r2.data.error).toBe("empty_body");
+    const r3 = await call({ action: "send_email", template: "custom" });
+    expect(r3.status).toBe(400);
+    expect(state.sends).toHaveLength(0);
+    expect(state.logs).toHaveLength(0);
+  });
+
+  it("refuses an oversized custom email (400, no send)", async () => {
+    const r = await call({
+      action: "send_email",
+      template: "custom",
+      subject: "Hi",
+      body: "x".repeat(5001),
+    });
+    expect(r.status).toBe(400);
+    expect(r.data.error).toBe("too_long");
+    expect(state.sends).toHaveLength(0);
+  });
+
+  it("passes a chosen 30-day grant length through to the comp engine", async () => {
+    const r = await call({ action: "grant_trial", days: 30 });
+    expect(r.status).toBe(200);
+    expect(r.data.days).toBe(30);
+    expect(state.grants).toEqual([{ userId: "u1", source: "admin", days: 30 }]);
+  });
+
+  it("confirm flow honours the chosen length (7 days) and names it in the confirm prompt", async () => {
+    state.user = baseUser({
+      subscription: { status: "active", stripeSubscriptionId: "comp_invite_u1", currentPeriodEnd: FUTURE },
+    });
+    const r1 = await call({ action: "grant_trial", days: 7 });
+    expect(r1.status).toBe(409);
+    expect(r1.data.needsConfirm).toBe(true);
+    expect(String(r1.data.message)).toContain("7 more days");
+    expect(state.grants).toHaveLength(0);
+
+    const r2 = await call({ action: "grant_trial", days: 7, confirm: true });
+    expect(r2.status).toBe(200);
+    expect(state.grants).toEqual([{ userId: "u1", source: "admin", days: 7 }]);
+  });
+
+  it("refuses a grant length outside 7/10/30 (400, engine untouched)", async () => {
+    const r = await call({ action: "grant_trial", days: 45 });
+    expect(r.status).toBe(400);
+    expect(r.data.error).toBe("invalid_days");
+    expect(state.grants).toHaveLength(0);
     expect(state.sends).toHaveLength(0);
   });
 });

@@ -1133,3 +1133,33 @@ export function adminTrialGrantEmail(input: {
     ),
   };
 }
+
+export function adminCustomEmail(input: {
+  name: string | null;
+  /** Admin-written subject line (already trimmed + length-capped by the route). */
+  subject: string;
+  /** Admin-written plain-text body. Rendered as escaped paragraphs —
+   *  the admin's words, never interpreted as HTML. */
+  bodyText: string;
+  unsubscribeUrl: string | null;
+}): RenderedEmail {
+  const first = escapeHtml(firstNameOf(input.name));
+  const paragraphs = input.bodyText
+    .split(/\n\s*\n/)
+    .map((p) => p.trim())
+    .filter((p) => p.length > 0)
+    .map((p) => P(escapeHtml(p).replace(/\n/g, "<br>")))
+    .join("\n       ");
+  return {
+    subject: input.subject,
+    html: shell(
+      escapeHtml(input.subject),
+      "A message from the WorldEye team.",
+      `${P(`Hi ${first},`)}
+       ${paragraphs}
+       ${unsubscribeLine(input.unsubscribeUrl)}`,
+      { label: "Open WorldEye", href: appUrl("/") },
+      { why: "You're receiving this because the WorldEye team sent you a message." },
+    ),
+  };
+}

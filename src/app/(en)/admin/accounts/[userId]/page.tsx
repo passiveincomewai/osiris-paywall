@@ -8,6 +8,7 @@ import { isCompSubscription } from "@/lib/pro/comp";
 import { discoverySourceLabel } from "@/lib/discovery-sources";
 import AdminNav from "../../AdminNav";
 import AccountActions, { type AccountSubState } from "./AccountActions";
+import CopyButton from "./CopyButton";
 
 export const metadata = { title: "Account detail — Admin" };
 export const dynamic = "force-dynamic";
@@ -592,7 +593,10 @@ export default async function AdminAccountDetailPage({
           <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-2 mt-3">
             <div className="min-w-0">
               <h1 className="text-2xl font-bold text-white break-words">{user.name?.trim() || user.email || "Account"}</h1>
-              <p className="text-sm text-white/60 font-mono break-all mt-0.5">{user.email ?? "—"}</p>
+              <p className="text-sm text-white/60 font-mono break-all mt-0.5">
+                {user.email ?? "—"}
+                {user.email ? <CopyButton value={user.email} label="email address" /> : null}
+              </p>
             </div>
             {user.emailVerified ? (
               <span className="shrink-0 text-[11px] font-bold tracking-wide uppercase rounded-full border border-emerald-400/30 text-emerald-300 px-2.5 py-1">
@@ -604,7 +608,10 @@ export default async function AdminAccountDetailPage({
               </span>
             )}
           </div>
-          <p className="text-xs text-white/35 mt-2">Account ID <span className="font-mono">{user.id}</span> · Times in Denver time.</p>
+          <p className="text-xs text-white/35 mt-2">
+            Account ID <span className="font-mono">{user.id}</span>
+            <CopyButton value={user.id} label="account ID" /> · Times in Denver time.
+          </p>
         </div>
 
         <div className="mb-8">
@@ -678,18 +685,18 @@ export default async function AdminAccountDetailPage({
                 <Row k="Plan" v={planText} />
                 <Row k="Status" v={sub.status.replace(/_/g, " ")} />
                 <Row k="Source" v={sourceText} />
-                <Row k="Price ID" v={<span className="font-mono text-[12px]">{sub.stripePriceId}</span>} />
+                <Row k="Price ID" v={<span className="font-mono text-[12px]">{sub.stripePriceId}<CopyButton value={sub.stripePriceId} label="price ID" /></span>} />
                 <Row
                   k="Stripe subscription ID"
                   v={comp || isGift
                     ? <span className="font-mono text-[12px]">{sub.stripeSubscriptionId} <span className="text-white/35">(synthetic — not a Stripe object)</span></span>
-                    : <span className="font-mono text-[12px]">{sub.stripeSubscriptionId}</span>}
+                    : <span className="font-mono text-[12px]">{sub.stripeSubscriptionId}<CopyButton value={sub.stripeSubscriptionId} label="Stripe subscription ID" /></span>}
                 />
                 <Row
                   k="Stripe customer ID"
                   v={comp || isGift
                     ? <span className="font-mono text-[12px]">{sub.stripeCustomerId} <span className="text-white/35">(synthetic)</span></span>
-                    : <span className="font-mono text-[12px]">{sub.stripeCustomerId}</span>}
+                    : <span className="font-mono text-[12px]">{sub.stripeCustomerId}<CopyButton value={sub.stripeCustomerId} label="Stripe customer ID" /></span>}
                 />
                 <Row k="Period" v={`${fmtDenverDay(sub.currentPeriodStart)} → ${fmtDenverDay(sub.currentPeriodEnd)}`} />
                 {sub.status === "trialing" ? (
