@@ -165,7 +165,7 @@ export default async function AdminAccountsPage({
           {users.map((u) => {
             const sub = u.subscription;
             return (
-              <div key={u.id} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:p-5">
+              <Link key={u.id} href={`/admin/accounts/${u.id}`} className="block rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:p-5 transition hover:border-cyan-400/40 hover:bg-white/[0.05]">
                 <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-1">
                   <div className="min-w-0">
                     <div className="text-white font-semibold truncate">{u.name?.trim() || "—"}</div>
@@ -207,7 +207,8 @@ export default async function AdminAccountsPage({
                 {u.emailOptOut ? (
                   <div className="mt-2 text-xs text-white/40">Opted out of marketing email</div>
                 ) : null}
-              </div>
+                <div className="mt-3 text-xs font-semibold text-cyan-300/80">View account details →</div>
+              </Link>
             );
           })}
           {users.length === 0 && (
