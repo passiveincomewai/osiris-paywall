@@ -9,7 +9,7 @@ import {
 export const metadata: Metadata = {
   title: 'Privacy',
   description:
-    'Privacy at WorldEye, in plain words: the map needs no account, what our own analytics record, the one advertising partner we measure with, and exactly which services hear from us when you use a feature.',
+    'Privacy at WorldEye, in plain words: the map needs no account, what our own analytics record, the advertising partner we measure with, the session-replay tool we learn from, and exactly which services hear from us when you use a feature.',
   alternates: { canonical: '/privacy' },
 };
 
@@ -17,9 +17,12 @@ export const metadata: Metadata = {
  * Every statement on this page is drawn from the code in this repository, not
  * from a template; when a data flow changes, this page changes with it.
  *
- * Reviewed 2026-11-01 against: src/components/AnalyticsTracker + the
+ * Reviewed 2026-11-10 against: src/components/AnalyticsTracker + the
  * PageView model (prisma/schema.prisma), src/lib/analytics/visitor-id.ts,
- * src/components/MetaPixel.tsx + src/lib/meta-capi.ts, src/auth.ts and
+ * src/components/MetaPixel.tsx + src/lib/meta-capi.ts, src/components/
+ * MicrosoftClarity.tsx + src/components/CookieConsent.tsx + src/lib/
+ * cookie-consent.ts (session replay and the cookie consent banner),
+ * src/auth.ts and
  * src/lib/password-auth.ts (accounts, sessions, sign-in records),
  * src/app/api/checkout + the Stripe webhook (subscriptions),
  * src/lib/billing/plans.ts + src/lib/billing/trials.ts (plan matrix and
@@ -34,7 +37,7 @@ export const metadata: Metadata = {
  * localStorage and sessionStorage key in src/.
  */
 
-const REVIEWED = '1 November 2026';
+const REVIEWED = '10 November 2026';
 
 /* ───────────── The pieces ───────────── */
 
@@ -96,6 +99,8 @@ function Flow({ icon, title, summary, services, children }: {
 
 const STORED: { what: string; detail: string }[] = [
   { what: 'A visitor ID (we_vid)', detail: 'A random ID generated in your browser and kept in local storage, so our analytics can tell a returning visitor from a new one. It is not your name or account, and clearing site data removes it.' },
+  { what: 'Clarity’s cookies (_clck and _clsk)', detail: 'Set by Microsoft Clarity (below), and only when you accept cookies: _clck remembers this browser for a year, so separate visits join up into one history; _clsk lasts for the visit itself, so the pages in it join into one recording. If you decline, Clarity runs without them, and any already set are erased.' },
+  { what: 'Your cookie choice (we_cookie_consent)', detail: 'Remembers whether you accepted or declined the pixel and Clarity, for 12 months, so we do not ask on every visit. “Cookie settings” in the footer clears it and asks again.' },
   { what: 'Your AI key for OI', detail: 'Kept for this browser tab only, and gone when you close it, unless you tick “Remember on this device”.' },
   { what: 'Your OI settings and recent predictions', detail: 'Which provider and model you use, whether replies are read aloud, and a list of your last 25 predictions so you can reopen them.' },
   { what: 'Your OI Assist conversation', detail: 'For this tab only, so a reload does not lose it.' },
@@ -106,7 +111,7 @@ const STORED: { what: string; detail: string }[] = [
 
 const PROMISES: { icon: ReactNode; title: string; body: string }[] = [
   { icon: <UserX className="h-4 w-4" />, title: 'No account needed to look', body: 'The map, cameras and live layers work without signing up. An account is optional — it exists so you can save cameras, subscribe, and sync your settings, and creating one is always your choice.' },
-  { icon: <EyeOff className="h-4 w-4" />, title: 'We never sell your data', body: 'Your information is not sold or rented to anyone. We run our own first-party analytics (below) to see which pages and features get used; that record stays ours.' },
+  { icon: <EyeOff className="h-4 w-4" />, title: 'We never sell your data', body: 'Your information is not sold or rented to anyone. We run our own analytics (below) to see which pages and features get used, and that record stays ours. Two outside tools do receive data about your visit — Meta’s pixel, which measures our advertising, and Microsoft Clarity, which records how pages are used so we can fix them — and both are described in the open below.' },
   { icon: <HardDrive className="h-4 w-4" />, title: 'Know what is stored where', body: 'Your preferences live in your browser. If you create an account, what you save — cameras, collections, recordings, alerts, settings — is stored on our servers with your account, and you can delete the account from your settings.' },
   { icon: <KeyRound className="h-4 w-4" />, title: 'AI, built in — keys stay yours', body: 'OI is built in: signed in, it runs on WorldEye’s own OpenAI key within usage limits. If you choose to use your own provider key instead, it is stored only in your browser. When a request uses it, it travels with that request so our server can pass it to your provider — it is used for that request and never stored or logged on our servers.' },
 ];
@@ -146,6 +151,7 @@ export default function PrivacyPage() {
               'Your preferences and history live in your browser. If you create an account, the things you save are stored with your account on our servers instead — the account section below lists them.',
               'Features that use AI run on our own OpenAI key when you are signed in (the built-in WorldEye AI, within usage limits), or — if you choose to bring your own — on the key and provider you select, passed straight through per request.',
               'One advertising partner measures our ads: Meta’s pixel runs on our pages and reports page views, and sign-ups, checkouts, trials and purchases, to Meta (see “Measuring our advertising” below). We do not sell data to anyone.',
+              'One behaviour tool, Microsoft Clarity, records how a page is used — clicks, mouse movements, scrolling and other page interactions — to build session replays and heatmaps we watch to find and fix rough edges. Anything you type into a field is masked before it is recorded. You can switch Clarity and the pixel off, or back on, at any time with “Cookie settings” in the footer (see “Understanding how pages are used” below).',
               'The site is hosted on Vercel, our database is managed Postgres (Neon), and our email is sent through Resend. Those providers process the data described here on our behalf.',
             ].map(t => (
               <li key={t} className="flex gap-3">
@@ -270,6 +276,16 @@ export default function PrivacyPage() {
           </ul>
         </Section>
 
+        <Section id="session-replay" title="Understanding how pages are used"
+          intro="We also watch how the site itself gets used — not what you look up, but where the pages confuse people — with a session-replay tool from Microsoft called Clarity.">
+          <ul className="flex flex-col gap-3 text-sm leading-relaxed text-[var(--text-muted)]">
+            <li><span className="text-[var(--text-primary)]">What Clarity records.</span> Clicks, mouse movements, scrolling, taps and other interactions with the page, together with the page address, your browser and a coarse device type — enough for it to build the session replays and heatmaps we watch to find buttons people rage-click and forms that confuse. Anything you type into a field is masked (shown as asterisks) by Clarity by default, so your words do not appear in a recording; we use what we learn to fix pages, not to identify you.</li>
+            <li><span className="text-[var(--text-primary)]">Its cookies.</span> Clarity sets two cookies, _clck (for a year) and _clsk (for the visit), described in “What stays on your device” above, so the pages in a visit join up into one recording.</li>
+            <li><span className="text-[var(--text-primary)]">Where the recordings go.</span> Clarity is Microsoft’s tool: the recordings are sent to Microsoft and processed under the <a href="https://privacy.microsoft.com/privacystatement" target="_blank" rel="noopener noreferrer" className="text-[var(--text-primary)] hover:underline">Microsoft Privacy Statement</a>.</li>
+            <li><span className="text-[var(--text-primary)]">Your choice.</span> Clarity’s cookies start denied: until you accept in the cookie banner, it runs without them. Declining keeps them denied and erases any Clarity cookies already set. You can change your mind at any time with “Cookie settings” in the footer.</li>
+          </ul>
+        </Section>
+
         <Section id="good-to-know" title="Good to know">
           <div className="grid gap-3 sm:grid-cols-2">
             {[
@@ -288,6 +304,7 @@ export default function PrivacyPage() {
 
         <Section id="choices" title="Your choices">
           <ul className="flex flex-col gap-2.5 text-sm leading-relaxed text-[var(--text-muted)]">
+            <li><span className="text-[var(--text-primary)]">Change your cookie choice</span> with “Cookie settings” in the footer: it clears the choice kept on this device and asks again, so you can switch the Meta pixel and session recording off, or back on, at any time.</li>
             <li><span className="text-[var(--text-primary)]">Clear everything on this device</span> by clearing this site’s data in your browser settings — this removes the visitor ID, your settings and any locally kept AI key.</li>
             <li><span className="text-[var(--text-primary)]">Delete your account</span> from your account settings: deletion is scheduled for the date shown, can be cancelled before then, and removes your account and the data stored with it.</li>
             <li><span className="text-[var(--text-primary)]">Stop marketing email</span> with the unsubscribe link in any email we send; account and billing emails (receipts, resets) still arrive while you have an account, because they are part of the service.</li>
