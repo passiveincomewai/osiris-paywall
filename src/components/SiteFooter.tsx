@@ -154,6 +154,23 @@ export default function SiteFooter({
           <span className="hidden sm:inline">{chrome.liveDataNote}</span>
         </div>
       </div>
+
+      {/* Fazier featured-launch badge — the backlink Fazier's free
+          listing requires; embed code supplied by Jameson 2026-11-14.
+          Kept as the last element in the footer, below the bottom bar. */}
+      <div className="max-w-6xl mx-auto px-6 pb-8 flex justify-center">
+        <a
+          href="https://fazier.com/launches/worldeye.app"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <img
+            src="https://fazier.com/api/v1//public/badges/launch_badges.svg?badge_type=featured&theme=light"
+            width="250"
+            alt="Fazier badge"
+          />
+        </a>
+      </div>
     </footer>
   );
 }
