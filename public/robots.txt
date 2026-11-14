@@ -4,6 +4,36 @@ Disallow: /api/
 Disallow: /dashboard
 Disallow: /premium
 
+User-Agent: OAI-SearchBot
+Allow: /
+Disallow: /api/
+Disallow: /dashboard
+Disallow: /premium
+
+User-Agent: GPTBot
+Allow: /
+Disallow: /api/
+Disallow: /dashboard
+Disallow: /premium
+
+User-Agent: ChatGPT-User
+Allow: /
+Disallow: /api/
+Disallow: /dashboard
+Disallow: /premium
+
+User-Agent: ClaudeBot
+Allow: /
+Disallow: /api/
+Disallow: /dashboard
+Disallow: /premium
+
+User-Agent: PerplexityBot
+Allow: /
+Disallow: /api/
+Disallow: /dashboard
+Disallow: /premium
+
 Sitemap: https://worldeye.app/sitemap.xml
 Sitemap: https://worldeye.app/news-sitemap.xml
 Sitemap: https://worldeye.app/image-sitemap.xml

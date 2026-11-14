@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import SiteFooter from "@/components/SiteFooter";
+import JsonLd from "@/components/JsonLd";
+import { enPricing } from "@/i18n/dictionaries/en/pricing";
+import { buildPricingSoftwareJsonLd } from "@/components/pages/pricing-schema";
 import { publicApiEnabled } from "@/lib/developer/flag";
 import { API_TIER_LIMITS, type ApiTier } from "@/lib/developer/limits";
 
@@ -59,6 +62,7 @@ export default function DevelopersPage() {
   if (!publicApiEnabled()) notFound();
   return (
     <div className="docs-root min-h-screen bg-[#05070d] text-white">
+      <JsonLd data={buildPricingSoftwareJsonLd(enPricing, "en")} />
       <main className="mx-auto w-full max-w-3xl px-4 py-12">
         <p className="text-[11px] font-black tracking-[0.2em] text-[#D4AF37]">
           WORLDEYE FOR DEVELOPERS

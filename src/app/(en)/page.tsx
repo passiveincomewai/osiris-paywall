@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import Dashboard from "@/components/Dashboard";
 import LatestStories from "@/components/home/LatestStories";
+import JsonLd from "@/components/JsonLd";
+import { enPricing } from "@/i18n/dictionaries/en/pricing";
+import { buildPricingSoftwareJsonLd } from "@/components/pages/pricing-schema";
 import { hreflangMapFor } from "@/lib/i18n-seo";
 
 /**
@@ -19,9 +22,15 @@ export const metadata: Metadata = {
   },
 };
 
+// SoftwareApplication schema — the shared builder from the pricing
+// page (offer prices come from the billing module's own plan
+// summaries), so the product's structured data matches /pricing.
+const softwareJsonLd = buildPricingSoftwareJsonLd(enPricing, "en");
+
 export default function Page() {
   return (
     <>
+      <JsonLd data={softwareJsonLd} />
       <Dashboard />
       <LatestStories />
     </>

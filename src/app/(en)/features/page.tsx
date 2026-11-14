@@ -35,6 +35,8 @@ import MicroLabel from "@/components/design/MicroLabel";
 import Button from "@/components/design/Button";
 import JsonLd from "@/components/JsonLd";
 import RelatedLinks from "@/components/RelatedLinks";
+import { enPricing } from "@/i18n/dictionaries/en/pricing";
+import { buildPricingSoftwareJsonLd } from "@/components/pages/pricing-schema";
 
 export const metadata: Metadata = {
   title: "Features: Live 3D Globe, 74,229 Cameras, Flight Tracking & OSINT Tools",
@@ -402,6 +404,7 @@ export default async function FeaturesPage() {
     >
       <JsonLd data={jsonLd} />
       <JsonLd data={faqJsonLd} />
+      <JsonLd data={buildPricingSoftwareJsonLd(enPricing, "en")} />
       <div
         className="relative mx-auto w-full"
         style={{
