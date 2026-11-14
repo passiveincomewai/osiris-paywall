@@ -3395,3 +3395,56 @@ model IgOAuthHandshake {
 
   @@index([expiresAt])
 }
+
+// ── Admin email campaigns (2026-11-14) ─────────────────────────────
+// Owner-run outreach campaigns from the admin panel: bulk-imported
+// recipients (any CSV column lands in CampaignRecipient.meta and is
+// usable as a {{token}}), a global suppression list, and batched
+// sending through /api/campaigns/tick (Resend, outreach domain).
+// Additive only — no existing table is touched.
+
+model EmailCampaign {
+  id        String   @id @default(cuid())
+  name      String
+  subject   String   @default("")
+  bodyText  String   @default("")
+  bodyHtml  String?
+  fromName  String   @default("WorldEye")
+  fromEmail String   @default("hello@outreach.worldeye.app")
+  // draft | sending | paused | stopped | completed
+  status    String   @default("draft")
+  dailyCap  Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  recipients CampaignRecipient[]
+
+  @@index([status])
+}
+
+model CampaignRecipient {
+  id         String    @id @default(cuid())
+  campaignId String
+  email      String
+  // pending | sent | failed | suppressed
+  status     String    @default("pending")
+  meta       Json      @default("{}")
+  resendId   String?
+  error      String?
+  sentAt     DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  campaign EmailCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@unique([campaignId, email])
+  @@index([campaignId, status])
+  @@index([sentAt])
+}
+
+model EmailSuppression {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  reason    String   @default("")
+  createdAt DateTime @default(now())
+}

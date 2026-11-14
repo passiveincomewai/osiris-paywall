@@ -6,7 +6,7 @@ import Link from "next/link";
 // Every admin page renders this so all sections stay reachable from any
 // admin screen — previously each sub-page hand-rolled its own links and
 // some sections (Conversion, Contact) were unreachable from the others.
-export type AdminSection = "dashboard" | "accounts" | "conversion" | "clarity" | "affiliates" | "competitor-seo" | "seo" | "discovery" | "contact" | "partnerships" | "camera-submissions" | "camera-requests" | "demo-studio" | "content-studio" | "fraud-radar";
+export type AdminSection = "dashboard" | "accounts" | "conversion" | "clarity" | "affiliates" | "competitor-seo" | "seo" | "discovery" | "contact" | "partnerships" | "camera-submissions" | "camera-requests" | "demo-studio" | "content-studio" | "campaigns" | "fraud-radar";
 
 const SECTIONS: { key: AdminSection; href: string; label: string }[] = [
   { key: "dashboard", href: "/admin", label: "Dashboard" },
@@ -23,6 +23,7 @@ const SECTIONS: { key: AdminSection; href: string; label: string }[] = [
   { key: "camera-requests", href: "/admin/camera-requests", label: "Camera requests" },
   { key: "demo-studio", href: "/admin/demo-studio", label: "Demo Studio" },
   { key: "content-studio", href: "/admin/content-studio", label: "Content Studio" },
+  { key: "campaigns", href: "/admin/campaigns", label: "Email Campaigns" },
   // Fraud Radar is still dark publicly (FRAUD_RADAR_ENABLED off); this
   // entry is the owner's pre-launch testing door. AdminNav renders only
   // inside admin-gated pages, so the link is visible to admins only,
