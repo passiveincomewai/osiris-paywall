@@ -40,6 +40,1620 @@ export type BlogPost = {
 };
 
 export const POSTS: BlogPost[] = [
+// Blog daily 2026-11-16 — three sourced event stories, news: true, date 2026-11-16.
+// SOURCE-ACCESS DISCLOSURE: browser.open failed all run ("query network grant"
+// errors on three independent requests, not retried per instruction); facts were
+// verified from detailed browser.search excerpts, cross-checked across 2-4
+// independent sources per event including official-source text (IMD cyclone
+// bulletins of Nov 16 quoted verbatim in Jagran Josh / SwapUpdate / The
+// Watchers; RSMC Nadi and MetService tropical cyclone bulletins for Xavier;
+// the Met Office warning and its chief forecaster via PA reporting). Same
+// disclosure pattern as the 2026-11-07, 2026-11-08 and 2026-11-12 to 15 runs.
+  {
+    slug: "cyclone-akvan-forms-landfall-november-20-andhra",
+    title: "Cyclone Akvan Forms Tonight: Third Bay of Bengal Storm Aims at Andhra by Friday",
+    seoTitle: "Cyclone Akvan Forms Tonight | WorldEye Blog",
+    date: "2026-11-16",
+    excerpt:
+      "A third cyclone in under a month is taking shape over the Bay of Bengal. India's weather department says the deep depression off the southeast coast becomes Cyclone Akvan this evening, turns severe on Tuesday, and crosses the Andhra Pradesh coast between Nellore and Tuni around noon on Friday as a very severe storm.",
+    seoDescription:
+      "Cyclone Akvan is forming over the Bay of Bengal today. IMD forecasts a very severe landfall between Nellore and Tuni on November 20 at 120-130 km/h.",
+    tags: ["cyclone", "india", "bay-of-bengal", "andhra-pradesh", "weather"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "The Bay of Bengal is producing its third cyclone of the north-east monsoon season. A deep depression over the southeast and adjoining southwest Bay of Bengal is expected to intensify into a cyclonic storm this evening, Monday, November 16 — at which point it takes the name Akvan — and the India Meteorological Department (IMD) has issued a pre-cyclone watch for the Andhra Pradesh and adjoining south Odisha coasts.",
+          "Akvan follows Arnab, which crossed the coast near Narsapur in late October, and Murasu, which made landfall near Ongole on November 3. Three cyclones threatening India's east coast in under a month is the story of this monsoon season, and the IMD's Monday bulletins trace this one from a Sunday depression to a forecast very severe cyclonic storm by the time it nears the coast on Friday, November 20.",
+        ],
+      },
+      {
+        heading: "Where is the storm right now?",
+        body: [
+          "In its early-Monday bulletin, the IMD placed the deep depression at 5:30 a.m. IST on November 16 near 11.0°N, 86.5°E — about 630 kilometres east-northeast of Trincomalee in Sri Lanka, 680 kilometres west of Sri Vijaya Puram in the Andaman and Nicobar Islands, 720 kilometres east-southeast of Chennai, 820 kilometres south-southeast of Visakhapatnam and 940 kilometres south of Gopalpur in Odisha. It had moved north-northwestwards at about 8 kilometres per hour over the previous six hours.",
+          "By the 8:30 a.m. IST bulletin the centre had edged to 11.2°N, 86.4°E, moving at about 6 kilometres per hour, and later in the morning the IMD's tropical weather outlook put it near 11.7°N, 86.0°E. The U.S. Joint Typhoon Warning Center, which tracks the system as Invest 92B, issued a Tropical Cyclone Formation Alert at 07:21 UTC on Monday and rated the chance of a significant tropical cyclone forming within 24 hours as high.",
+        ],
+      },
+      {
+        heading: "When does it become Cyclone Akvan, and how strong will it get?",
+        body: [
+          "The name arrives with the strength. The IMD expects the system to intensify into a cyclonic storm over the central parts of the south and adjoining west-central Bay of Bengal in the evening of Monday, November 16 — the moment it formally becomes Akvan, a name contributed by Iran under the regional naming system for North Indian Ocean cyclones.",
+          "From there the forecast steepens: a severe cyclonic storm over the west-central Bay of Bengal by the evening of Tuesday, November 17, and then further intensification as it turns northwestwards toward the Andhra coast. By Monday the department was putting sustained winds of 60-70 km/h, gusting to 80 km/h, on the system by Monday evening, rising through the week to the very severe range.",
+        ],
+      },
+      {
+        heading: "Where and when will Akvan make landfall?",
+        body: [
+          "The IMD's Monday forecast has the storm crossing the Andhra Pradesh and Yanam coasts between Nellore and Tuni by noon on Friday, November 20, as a very severe cyclonic storm, with maximum sustained winds of 120-130 km/h gusting to 145 km/h. That stretch — roughly 500 kilometres of coastline, nearly half of Andhra Pradesh's shoreline — is the zone in play until the track firms up, and the department stresses that bulletins issued several times a day may shift the landfall point as the system develops.",
+          "Rain arrives before the centre does. The IMD warns of heavy to very heavy rainfall at a few places, with isolated extremely heavy falls, over coastal Andhra Pradesh and Yanam on Thursday and Friday, heavy rain for parts of Odisha and Tamil Nadu around November 18-19, and rough seas across the Bay. Fishermen have been advised not to venture out from November 18 to 21, and those already at sea have been told to return to the coast.",
+        ],
+      },
+      {
+        heading: "Why is this the third storm in a month?",
+        body: [
+          "The north-east monsoon, which runs from October into December, is the Bay of Bengal's second cyclone season, and this year it has been busy. Arnab opened the sequence with an October 28 landfall near Narsapur; Murasu formed on November 1 and crossed near Ongole two days later; Akvan, if it follows the forecast, completes a run of three landfalling systems on the same coastline in about three and a half weeks.",
+          "Each storm has also reset the ground it falls on: saturated catchments and already-tested flood defences along the coastal districts mean the rain bands of a third system matter as much as its headline wind speed. That is why the pre-cyclone watch, the fishermen's advisory and the rainfall warnings are already out four days before the forecast landfall.",
+        ],
+      },
+      {
+        heading: "How can I track Akvan on WorldEye?",
+        body: [
+          "Follow the system as it organises on WorldEye's [hurricane tracker](/hurricane-tracker) and watch the rain bands approach the coast on the [weather radar](/weather-radar), alongside the site's 74,229 live cameras. Coastal cameras along the Andhra shore are on the [beach webcams](/beach-webcams) page — the same stretch of coast that watched Murasu come ashore earlier this month.",
+          "Official word always comes first: the IMD's cyclone bulletins, issued several times a day, are the source to trust for the landfall point, and they will keep moving until the storm is much closer than it is today.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When will Cyclone Akvan form?",
+        a: "The IMD expects the deep depression over the Bay of Bengal to intensify into a cyclonic storm — and take the name Akvan — in the evening of Monday, November 16, 2026, then become a severe cyclonic storm by the evening of November 17.",
+      },
+      {
+        q: "Where will Cyclone Akvan make landfall?",
+        a: "The IMD's November 16 forecast has Akvan crossing the Andhra Pradesh and Yanam coasts between Nellore and Tuni by noon on Friday, November 20, 2026, as a very severe cyclonic storm with winds of 120-130 km/h gusting to 145 km/h. The exact point may shift in later bulletins.",
+      },
+      {
+        q: "Why is it called Akvan?",
+        a: "Akvan is the next name on the regional list for North Indian Ocean cyclones, contributed by Iran. A system receives its name when it reaches cyclonic storm strength.",
+      },
+      {
+        q: "Is Akvan the third cyclone this season?",
+        a: "Yes. Akvan follows Cyclone Arnab, which made landfall near Narsapur on October 28, and Cyclone Murasu, which crossed near Ongole on November 3 — three Bay of Bengal cyclones threatening the Andhra coast in under a month.",
+      },
+      {
+        q: "What warnings are in force for Akvan?",
+        a: "The IMD has issued a pre-cyclone watch for the Andhra Pradesh and adjoining south Odisha coasts, heavy to extremely heavy rainfall warnings for coastal Andhra Pradesh and Yanam on November 19-20, and an advisory for fishermen to stay off the sea from November 18 to 21.",
+      },
+    ],
+    sources: [
+      {
+        name: "The Watchers — IMD landfall forecast, November 16, 2026",
+        url: "https://watchers.news/2026/11/16/cyclone-akvan-landfall-forecast-nellore-tuni-andhra-pradesh-november-20-india/",
+      },
+      {
+        name: "Jagran Josh — IMD bulletin text, November 16, 2026",
+        url: "https://www.jagranjosh.com/general-knowledge/cyclone-akvan-alert-severe-bay-of-bengal-storm-imd-weather-heavy-rain-warning-in-andhra-pradeshodisha-coastal-states-why-india-is-seeing-3-cyclones-in-28-days-check-landfall-path-1820013846-1",
+      },
+      {
+        name: "The Hindu BusinessLine — third cyclone of the season, November 16, 2026",
+        url: "https://www.thehindubusinessline.com/news/third-strong-cyclone-of-north-east-monsoon-season-takes-aim-at-andhra-coast/article71706925.ece/amp/",
+      },
+    ],
+  },
+  {
+    slug: "tropical-cyclone-xavier-category-2-cook-islands",
+    title: "Tropical Cyclone Xavier Reaches Category 2 Over the Northern Cook Islands",
+    seoTitle: "Cyclone Xavier Hits Category 2 | WorldEye Blog",
+    date: "2026-11-16",
+    excerpt:
+      "The South Pacific has its storm of the season so far. Tropical Cyclone Xavier, named on Sunday night over the Northern Cook Islands, strengthened to Category 2 on Monday with warnings in force for Manihiki and Rakahanga — and forecasters say it may not be done intensifying yet.",
+    seoDescription:
+      "Tropical Cyclone Xavier reached Category 2 over the Northern Cook Islands on Monday, with warnings in force for Manihiki and Rakahanga atolls.",
+    tags: ["cyclone", "cook-islands", "south-pacific", "weather", "fiji"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "Tropical Cyclone Xavier is strengthening over the Northern Cook Islands. Named by the Fiji Meteorological Service — the World Meteorological Organization's Regional Specialised Meteorological Centre in Nadi — on Sunday night, November 15, the system reached Category 2 strength on Monday, with a storm warning in force for the low-lying atolls of Manihiki and Rakahanga.",
+          "Xavier grew out of a disturbance the Fiji service had been monitoring since November 12, when it sat about 1,526 kilometres northeast of Samoa in a favourable environment of low wind shear and strong outflow. On Sunday the U.S. Joint Typhoon Warning Center classified it as Tropical Cyclone 04P, and Nadi upgraded it to a named cyclone that night — an early, organised start to a South Pacific season that officially runs from November 1 to April 30.",
+        ],
+      },
+      {
+        heading: "Where is Cyclone Xavier now?",
+        body: [
+          "The agencies watching Xavier publish slightly different fixes, because they issue at different times and measure winds differently — Fiji's centre uses 10-minute sustained winds, the U.S. centre 1-minute winds. New Zealand's MetService, in a bulletin issued at 12:46 a.m. on Monday, November 16, placed the newly named Category 1 cyclone near 8.8°S, 159.5°W, slow-moving northwest of Penrhyn atoll, with maximum winds near the centre of 35 knots (65 km/h).",
+          "By Monday morning the picture had strengthened. RSMC Nadi's Tropical Disturbance Advisory A07, issued at 07:50 UTC, put Xavier near 8.3°S, 161.2°W at 06:00 UTC — about 230 kilometres north of Manihiki — with a central pressure of 985 hPa and 10-minute sustained winds of 50 knots (95 km/h): Category 2, moving west-southwest at 4 knots. A later Special Weather Bulletin, No. 12 at 11:47 UTC, had it near 8.9°S, 161.2°W at 10:00 UTC, about 170 kilometres north of Manihiki, at 983 hPa with gusts to 130 km/h, drifting south-southwest at about 9 km/h.",
+        ],
+      },
+      {
+        heading: "What warnings are in force for the Cook Islands?",
+        body: [
+          "The Cook Islands Meteorological Service has a storm warning in force for Manihiki and Rakahanga, the two atolls closest to the track; an earlier warning for Penrhyn has been cancelled. Reporting from RNZ Pacific put the expected conditions on the warned atolls at damaging gale-force winds of up to 85 km/h with gusts to 120 km/h, rising to 95 km/h with gusts to 130 km/h later on Monday night.",
+          "RSMC Nadi's Monday bulletins kept a gale warning for the two atolls and flagged the next step: Xavier was considered likely to intensify further, to severe tropical cyclone strength, later on Monday, Cook Islands time. MetService's outlook added heavy rain near the system and large waves through the Cook Islands and Samoa, rising to 5-5.5 metres near the cyclone. No damage, evacuations or disruption in the Cook Islands had been reported in the sources available on Monday.",
+        ],
+      },
+      {
+        heading: "How strong could Xavier get?",
+        body: [
+          "The Joint Typhoon Warning Center's warning No. 3, issued Monday, is the most aggressive of the official forecasts: it takes Xavier to a peak of 95 knots (175 km/h) by 18:00 UTC on Tuesday, November 17, as the storm drifts slowly south, before weakening from November 18. MetService was more measured, expecting a Category 2 system moving slowly west-southwest and away from the Northern Cook Islands over the weekend of November 21-22, possibly weakening north of Samoa — with low confidence in that later track.",
+          "That spread is normal for a slow-moving storm in a weak steering environment. Xavier is barely travelling — a few knots, changing direction between bulletins — which makes its exact path past the atolls harder to pin than its intensity, and makes each new advisory from Nadi worth more than any single forecast track drawn on Monday.",
+        ],
+      },
+      {
+        heading: "How can I track Xavier on WorldEye?",
+        body: [
+          "Xavier is the kind of system WorldEye's [hurricane tracker](/hurricane-tracker) exists for: a named storm, official warnings and a forecast cone, all updating as Nadi and the Joint Typhoon Warning Center issue new advisories. Pair it with the [weather radar](/weather-radar) and the Pacific outlook from the site's 74,229 live cameras, including the [beach webcams](/beach-webcams) around the island Pacific.",
+          "For anyone on Manihiki or Rakahanga, though, the Cook Islands Meteorological Service and RSMC Nadi bulletins are the authoritative word — follow those first, and treat every track map, including ours, as a picture of a forecast that is still moving.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When was Tropical Cyclone Xavier named?",
+        a: "The Fiji Meteorological Service (RSMC Nadi) named Xavier on the night of Sunday, November 15, 2026, upgrading Tropical Depression TD02F over the Northern Cook Islands. The Joint Typhoon Warning Center tracks the same system as 04P.",
+      },
+      {
+        q: "How strong is Cyclone Xavier?",
+        a: "RSMC Nadi classified Xavier as a Category 2 tropical cyclone on Monday, November 16, with 10-minute sustained winds of about 95 km/h, gusts to 130 km/h and a central pressure near 983-985 hPa. The JTWC forecast a peak of 95 knots (175 km/h, 1-minute winds) by November 17.",
+      },
+      {
+        q: "Which islands are under warnings for Xavier?",
+        a: "The Cook Islands Meteorological Service has a storm warning in force for the atolls of Manihiki and Rakahanga. A warning for Penrhyn was cancelled as the track shifted. No damage or evacuations had been reported as of Monday.",
+      },
+      {
+        q: "Where is Cyclone Xavier heading?",
+        a: "Xavier is moving very slowly — west-southwest to south-southwest at only a few knots — over the Northern Cook Islands. MetService expected it to move away from the group over the weekend of November 21-22, possibly weakening north of Samoa, with low confidence in the later track.",
+      },
+    ],
+    sources: [
+      {
+        name: "The Watchers — RSMC Nadi advisories, November 16, 2026",
+        url: "https://watchers.news/2026/11/16/tropical-cyclone-xavier-northern-cook-islands-manihiki-rakahanga-november-2026/",
+      },
+      {
+        name: "MetService — Tropical Cyclone Activity bulletin, November 16, 2026",
+        url: "https://www.metservice.com/warnings/tropical-cyclone-activity",
+      },
+      {
+        name: "Zoom Earth — JTWC warning for Xavier, November 16, 2026",
+        url: "https://zoom.earth/storms/xavier-2027/",
+      },
+    ],
+  },
+  {
+    slug: "uk-snow-warning-november-17-met-office",
+    title: "Snow Warning for Tuesday: Met Office Puts 23 Areas on Alert Overnight",
+    seoTitle: "UK Snow Warning for Tuesday | WorldEye Blog",
+    date: "2026-11-16",
+    excerpt:
+      "Britain's autumn turns wintry tonight. The Met Office has a yellow snow warning in force from midnight to 11 a.m. on Tuesday across northern England and southern Scotland, with up to 15 centimetres possible on the highest ground and travel disruption likely on Tuesday morning.",
+    seoDescription:
+      "The Met Office yellow snow warning runs midnight to 11am Tuesday across 23 UK areas, with 1-5cm widely and up to 15cm on high ground. What to expect.",
+    tags: ["snow", "uk", "met-office", "weather-warning", "winter"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "A band of rain moving north across the United Kingdom tonight will run into colder air and turn to snow — and the Met Office has put a yellow weather warning for snow in force from midnight until 11 a.m. on Tuesday, November 17, covering 23 areas from Staffordshire in the West Midlands to south-west Scotland.",
+          "The warning was updated on Monday morning, at 09:24 GMT, narrowing the area and shortening the window as the forecast firmed up. It is the kind of early-season warning that catches a country mid-autumn: no deep freeze, no blizzard, but enough snow on the higher roads of northern England and southern Scotland on a Tuesday morning to slow the commute and close the margin for error.",
+        ],
+      },
+      {
+        heading: "How much snow is expected, and where?",
+        body: [
+          "The Met Office's chief forecaster, Dan Suri, set out the shape of it: the greatest chance of settling snow will be over ground above 200 metres, with 1-5 centimetres possible in places and potentially 5-15 centimetres above 300-400 metres. Snow is most likely at elevations of 100 metres and higher; lower ground may see little more than a wet, transient covering as the band passes through in the small hours.",
+          "The warned area covers much of Yorkshire, Derbyshire, Northumberland, Greater Manchester, Cumbria and Lancashire, along with parts of the East Midlands, the North East, Strathclyde, the Lothian Borders and Dumfries and Galloway. The full list of 23 areas includes the Scottish Borders, Durham, Newcastle upon Tyne, South Lanarkshire and Stoke-on-Trent. Neither Wales nor Northern Ireland appears in the revised warning.",
+        ],
+      },
+      {
+        heading: "What disruption could the snow cause?",
+        body: [
+          "The Met Office warns that some roads and railways are likely to be affected, with longer journey times, and that there is a small chance of power outages and an impact on mobile phone service. Scottish Borders Council is among the local authorities urging residents to be prepared for travel disruption on Tuesday morning.",
+          "Alongside the snow, the UK Health Security Agency has yellow cold-health alerts in place for the North West, the North East and Yorkshire and the Humber, running until 9 a.m. on Thursday, November 19 — a reminder that the first cold snap of the season lands hardest on the people the health service already worries about. A separate Irish marine gale warning across the Irish Sea over the same midnight-to-11 a.m. window adds rough seas to the night's weather, though no blanket ferry cancellations had been established by the warnings themselves.",
+        ],
+      },
+      {
+        heading: "Why is it snowing in mid-November?",
+        body: [
+          "The mechanism is a classic British one: a band of rain heading northwards through Monday night meets colder air already in place over the north, and the rain changes to snow as it crosses into that air — first on the hills, then more widely where the band is heaviest. Elevations do the sorting: the same band that is rain in the valleys can be several centimetres of settling snow a few hundred metres up, which is why the Pennines, the Cheviots and the Southern Uplands carry the highest numbers in the forecast.",
+          "Early-season snow like this rarely lasts. The warning ends at 11 a.m. on Tuesday as milder air follows the band through, and what settles on Tuesday morning is expected to thaw rather than build. Its significance is timing, not depth: it is the first widespread snow warning of the season for the northern half of the country, arriving before most drivers have thought about winter at all.",
+        ],
+      },
+      {
+        heading: "How can I watch the snow arrive on WorldEye?",
+        body: [
+          "You do not have to wait for the morning traffic reports. WorldEye's [live webcams](/live-webcams) across the United Kingdom — part of the site's 74,229 live cameras — will show the band arriving town by town overnight, and the [weather radar](/weather-radar) tracks the rain-to-snow transition as it pushes north. The [weather tracker](/weather-tracker) keeps the warning areas and conditions in one view.",
+          "If you are travelling on Tuesday morning, the Met Office warning and your local council's updates are the authoritative sources — check them before you set out, and treat the cameras as what they are: a live look at whether the snow in the forecast is the snow on the ground.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When is the UK snow warning in force?",
+        a: "The Met Office yellow warning for snow runs from midnight until 11 a.m. on Tuesday, November 17, 2026. It was updated at 09:24 GMT on Monday, November 16, narrowing the area and shortening the window.",
+      },
+      {
+        q: "How much snow will fall on Tuesday?",
+        a: "The Met Office expects 1-5 cm in places, mainly above 200 metres, with potentially 5-15 cm above 300-400 metres. Snow is most likely at elevations of 100 metres or higher; lower ground may see little settle.",
+      },
+      {
+        q: "Which areas are covered by the snow warning?",
+        a: "Twenty-three areas from Staffordshire to south-west Scotland, including Yorkshire, Derbyshire, Northumberland, Cumbria, Greater Manchester, Lancashire, the Scottish Borders, Dumfries and Galloway and South Lanarkshire. Wales and Northern Ireland are not in the revised warning.",
+      },
+      {
+        q: "Will the snow cause travel disruption?",
+        a: "The Met Office says some roads and railways are likely to be affected with longer journey times, and there is a small chance of power outages and mobile service impacts. Local councils in the warned area are urging people to prepare for a slower Tuesday morning.",
+      },
+    ],
+    sources: [
+      {
+        name: "Gazette & Herald (PA) — Met Office warning and chief forecaster, November 16, 2026",
+        url: "https://www.gazetteherald.co.uk/news/national/26732476.forecasters-warn-disruption-snow-warnings-set-come-force/",
+      },
+      {
+        name: "Hello Rayo — yellow snow warning details, November 16, 2026",
+        url: "https://www.hellorayo.co.uk/greatest-hits/borders/news/yellow-snow-warning-november-17th",
+      },
+      {
+        name: "Travel and Tour World — revised warning area and timings, November 16, 2026",
+        url: "https://www.travelandtourworld.com/news/article/e3w4vjsmblfh/",
+      },
+    ],
+  },
+// Blog daily 2026-11-15 — three sourced event stories, news: true, date 2026-11-15.
+// SOURCE-ACCESS DISCLOSURE: browser.open failed all run (browser-service
+// "query network grant" errors on four independent requests, not retried per
+// instruction); facts were verified from detailed browser.search excerpts,
+// cross-checked across 2-4 independent sources per event including
+// official-source text (Reuters wire reporting on the Starship catch;
+// Sugar Mountain Resort's own Nov 15 snow report and Cataloochee Ski
+// Area's own opening-day announcement; EarthSky / American Meteor Society
+// and timeanddate for the Leonid peak). Same disclosure pattern as the
+// 2026-11-07, 2026-11-08 and 2026-11-12 to 14 runs.
+  {
+    slug: "starship-flight-15-first-ship-catch",
+    title: "Starship Caught From Orbit: SpaceX's Tower Grabs a Returning Ship for the First Time",
+    seoTitle: "Starship Caught From Orbit | WorldEye Blog",
+    date: "2026-11-15",
+    excerpt:
+      "It worked. After 22 and a half hours and 14 orbits, Starship's upper stage fell back through the Texas sky on Saturday afternoon and was caught in mid-air by the launch tower's mechanical arms — the first time a spacecraft has returned from orbit to be caught at the pad it left.",
+    seoDescription:
+      "SpaceX caught Starship's upper stage at the launch tower on Saturday after 14 orbits — the first catch of a ship returning from orbit. What happened.",
+    tags: ["spacex", "starship", "starlink", "launch", "starbase"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "SpaceX has caught a spaceship out of the sky. On Saturday afternoon, November 14, the Starship upper stage from Flight 15 returned to Starbase, Texas, after more than 22 hours in orbit and descended into the grasp of the launch tower's giant mechanical arms — the first time the 52-metre spacecraft has ever been recovered this way, Reuters reported.",
+          "The catch completes the half of Flight 15 that was still open when the mission began. The rocket lifted off on Friday afternoon, the Super Heavy booster failed to make its own return to the pad about ten minutes after liftoff, and the ship flew on alone — reaching orbit, deploying 26 Starlink V3 satellites, and circling Earth 14 times before coming home to the exact spot it left.",
+        ],
+      },
+      {
+        heading: "When was the Starship ship caught?",
+        body: [
+          "The catch came at about 3:20 p.m. Central time on Saturday, November 14 — roughly 22 and a half hours after Friday's liftoff, at the end of a flight plan of 22 hours and 32 minutes. It was the longest Starship flight yet, far beyond Flight 14's roughly three-hour mission in September, which had reached orbit for the first time.",
+          "The return sequence, as SpaceX described it and Reuters reported it, ran in stages: after deploying its 26 Starlink satellites on Friday night while cruising at about 260 kilometres altitude, the ship fired one of its engines on Saturday to begin its atmospheric plunge eastward over the Pacific. It then reignited three engines to flip itself vertical and steer toward the launch tower, where the two mechanical 'chopstick' arms clasped onto the spacecraft as it hovered in place. Elon Musk later shared video of himself inspecting the returned ship, which SpaceX said — heatshield included — had performed as expected.",
+        ],
+      },
+      {
+        heading: "What happened to the Super Heavy booster?",
+        body: [
+          "The booster never made it back. Flight 15 was SpaceX's first planned attempt to catch both stages of the system on a single flight, but about ten minutes after liftoff the booster's onboard systems detected a problem — Reuters reported an onboard navigation issue — and the catch was called off. The booster diverted toward the Gulf of Mexico for a controlled descent over open water and was lost there, while engineers investigate the cause.",
+          "That split outcome is the honest summary of the flight: the double catch the mission set out to attempt did not happen, and SpaceX has yet to recover both Starship stages in a single mission. But the half that failed is the half SpaceX had already done before — the tower has caught Super Heavy boosters on three previous test flights, most recently in March 2025. The half that succeeded on Saturday had never been done by anyone.",
+        ],
+      },
+      {
+        heading: "Why does catching the ship matter?",
+        body: [
+          "Because the ship is the part that actually goes somewhere. The booster lifts Starship off Earth and comes straight back; the upper stage is the vehicle that reaches orbit, carries cargo and — in the version NASA has contracted as a lunar lander for the Artemis programme — is meant to carry astronauts to the surface of the Moon. Catching it at the tower, with no landing legs and no ship recovery fleet, is the mechanical requirement SpaceX has chased for a decade on the way to a fully and rapidly reusable rocket system.",
+          "Saturday's return also proved the full round trip for the first time: a vertically launched spacecraft went to orbit and came back to the very pad it launched from. Every earlier Starship flight ended in the ocean, in pieces or by design. This one ended hanging in the arms of its own launch tower, intact, a day after it left.",
+        ],
+      },
+      {
+        heading: "How can I follow what Flight 15 left in orbit on WorldEye?",
+        body: [
+          "The 26 Starlink V3 satellites Ship 42 deployed on Friday night are now joining the tracked constellation on WorldEye's [satellite tracker](/satellite-tracker), alongside the International Space Station on the [space station tracker](/space-station-tracker) and the site's 74,229 live cameras on the same globe.",
+          "The satellites' job now is the unglamorous part of the story — raising their orbits and taking their places in the constellation — but it is the part you can watch unfold night by night, as each new V3 takes its slot in the train of lights crossing the sky.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Did SpaceX catch the Starship ship on Flight 15?",
+        a: "Yes. At about 3:20 p.m. Central time on Saturday, November 14, 2026, the launch tower's mechanical arms caught the returning Starship upper stage at Starbase, Texas — the first time a ship has been caught after returning from orbit, ending a flight of about 22.5 hours and 14 orbits.",
+      },
+      {
+        q: "Why wasn't the Super Heavy booster caught too?",
+        a: "About ten minutes after Friday's liftoff the booster detected a problem — reported by Reuters as an onboard navigation issue — and its tower return was called off. It diverted to a controlled descent over the Gulf of Mexico and was lost, so the planned first double catch did not happen.",
+      },
+      {
+        q: "How many satellites did Starship Flight 15 deploy?",
+        a: "26 Starlink V3 satellites, deployed in orbit on Friday night at about 260 kilometres altitude before the ship began its roughly 22-hour coast and return.",
+      },
+      {
+        q: "Had a Starship ship ever landed before Flight 15?",
+        a: "Not like this. Earlier ships ended their flights in the ocean. Flight 15 is the first time the upper stage returned from orbit to its launch site and was caught by the tower — SpaceX had previously caught only the Super Heavy booster stage, three times, most recently in March 2025.",
+      },
+    ],
+    sources: [
+      { name: "Reuters: SpaceX's Starship aces first return to Texas (Nov 14)", url: "https://www.reuters.com/business/aerospace-defense/spacexs-starship-aces-first-return-texas-2026-11-14/" },
+      { name: "AAP: SpaceX Starship returns to landing pad from orbit (Nov 15)", url: "https://aapnews.aap.com.au/news/spacex-catches-starship-midair-after-return-from-orbit" },
+      { name: "Reuters: SpaceX's Starship nears end of 15th test flight and return-landing attempt (Nov 14)", url: "https://www.reuters.com/business/aerospace-defense/spacexs-starship-nears-end-15th-test-flight-return-landing-attempt-2026-11-14/" },
+    ],
+  },
+  {
+    slug: "sugar-mountain-cataloochee-open-november-15-2026",
+    title: "North Carolina Opens: Sugar Mountain and Cataloochee Start the Southeast Ski Season Today",
+    seoTitle: "Sugar Mountain & Cataloochee Open | WorldEye Blog",
+    date: "2026-11-15",
+    excerpt:
+      "The Southeast has its first ski day of the winter. Sugar Mountain Resort and Cataloochee Ski Area both open today, Sunday November 15, after a cold snap dropped nine inches of natural snow on Sugar and let snowmaking crews across the North Carolina high country build their opening bases.",
+    seoDescription:
+      "Sugar Mountain and Cataloochee both open today, Nov 15, starting North Carolina's ski season. Trails, lifts, hours and opening-day ticket prices.",
+    tags: ["sugar-mountain", "cataloochee", "north-carolina", "ski-season", "opening-day"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "North Carolina's ski season starts today. Sugar Mountain Resort, in Avery County, and Cataloochee Ski Area, near Maggie Valley about 100 miles to the southwest, both open for the 2026-27 season this morning, Sunday, November 15 — among the first resorts in the eastern United States to open this winter, DCSki reported.",
+          "The openings were made, not scheduled. A burst of cold weather over the past several days brought nine inches of natural snow to Sugar Mountain and gave snowmaking crews at both resorts the temperatures they needed to lay down opening bases — the classic Sugar-versus-Cataloochee race for first-in-the-Southeast honours, settled this year with a tie.",
+        ],
+      },
+      {
+        heading: "What is open at Sugar Mountain on opening day?",
+        body: [
+          "Sugar Mountain opens four trails — Northridge, Switchback, Upper Flying Mile and Lower Flying Mile — served by the high-speed, six-passenger Summit Express chairlift to the mountain's 5,300-foot peak. The resort's own snow report on Sunday morning listed snowmaking in progress, an average base depth of 10 to 30 inches, and the nine-inch snowfall from the storm of November 13, with snowmaking expected to continue through Tuesday.",
+          "Lifts run from 9 a.m. to 4:30 p.m. Opening-day full-day tickets are $80 for adults and $60 for juniors, with half-day tickets from 12:30 p.m. at $60 and $45. The snowsports school, rental and retail shops are all operational; night skiing follows in the coming weeks, the resort's 10,000-square-foot outdoor ice rink is expected by Thanksgiving, and the tubing park is planned for early December. Sugar Mountain is North Carolina's largest snow-sports resort, with 1,200 feet of vertical drop on 125 acres — and mid-November openings are its habit: it opened on November 11 in 2025 and November 9 in 2019.",
+        ],
+      },
+      {
+        heading: "What is new at Cataloochee this season?",
+        body: [
+          "Cataloochee begins its 66th season today. Guest services opened at 7:30 a.m. to issue season passes, with first chair at 8:30 a.m. and lifts running through 4:30 p.m.; the resort's early-season hours from November 15 to December 10 are 9 a.m. to 4:30 p.m., starting at 8:30 a.m. on weekends and holidays. Daily slope passes, rentals and lessons for the entire season went on sale at midnight.",
+          "The offseason brought visible change: new RFID lift-access gates and an updated ticketing system, upgrades to the snowmaking infrastructure, a new covered conveyor lift for the Beginner's Luck learning area opening in the coming weeks, and the return of the Marathon Pass option. Snowguns were still blanketing the slopes in the small hours of Sunday morning as crews finished preparing the mountain, in a photo the resort shared overnight.",
+        ],
+      },
+      {
+        heading: "Which North Carolina resorts open next?",
+        body: [
+          "Two more, within the week, if the weather holds. Appalachian Ski Mountain is targeting Friday, November 20, and Beech Mountain Resort lists Saturday, November 21 as its projected opening date, DCSki reported. That would give North Carolina four open resorts before Thanksgiving — a strong start for a region whose seasons are built as much on snowmaking capacity as on natural snowfall.",
+          "Early-season terrain everywhere is limited and schedules can change quickly with the temperature, so both resorts advise checking their own reports before travelling. This morning, though, the question North Carolina skiers have asked since the first cold night of autumn has its answer: yes, open, today.",
+        ],
+      },
+      {
+        heading: "How can I check Sugar Mountain and Cataloochee on WorldEye?",
+        body: [
+          "WorldEye's [ski webcams](/ski-webcams) are the quickest honest look at opening day before you drive into the high country — Sugar Mountain alone runs nine live streaming webcams across its slopes, and the cameras show the same snowmaking plumes and early-season cover the resorts are reporting. The full map is on the same globe as WorldEye's 74,229 cameras.",
+          "Pair the cameras with the resorts' own snow reports — Sugar's is updated each morning at skisugar.com and Cataloochee's at cataloochee.com — and you have both halves of an opening-day decision: what the resorts say is open, and what the mountain actually looks like.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When do Sugar Mountain and Cataloochee open for the 2026-27 season?",
+        a: "Today, Sunday, November 15, 2026. Sugar Mountain runs lifts from 9 a.m. to 4:30 p.m.; Cataloochee's first chair is at 8:30 a.m. after guest services open at 7:30 a.m., also through 4:30 p.m.",
+      },
+      {
+        q: "How much are Sugar Mountain opening-day lift tickets?",
+        a: "Full-day tickets are $80 for adults and $60 for juniors. Half-day tickets, valid from 12:30 p.m., are $60 for adults and $45 for juniors.",
+      },
+      {
+        q: "What trails are open at Sugar Mountain?",
+        a: "Four trails on opening day — Northridge, Switchback, Upper Flying Mile and Lower Flying Mile — served by the Summit Express six-passenger chairlift to the 5,300-foot summit, on a reported base of 10 to 30 inches with snowmaking continuing.",
+      },
+      {
+        q: "Which North Carolina ski resorts open next?",
+        a: "Appalachian Ski Mountain is targeting Friday, November 20, and Beech Mountain Resort projects Saturday, November 21, which would put four North Carolina resorts open before Thanksgiving.",
+      },
+    ],
+    sources: [
+      { name: "DCSki: North Carolina's Sugar Mountain and Cataloochee to Open November 15, 2026", url: "https://www.dcski.com/articles/1863" },
+      { name: "Sugar Mountain Resort: official snow report, Sunday November 15, 2026 (skisugar.com)", url: "https://skisugar.com/new-homepage/" },
+      { name: "Cataloochee Ski Area: official opening-day announcement (cataloochee.com)", url: "https://cataloochee.com/" },
+      { name: "High Country Radio: Sugar Mountain Ski Resort Set to Open Sunday (Nov 14)", url: "https://www.highcountryradio.net/2026/11/14/sugar-mountain-ski-resort-set-to-open-sunday/" },
+    ],
+  },
+  {
+    slug: "leonid-meteor-shower-peak-november-17-18-2026",
+    title: "Leonid Meteors Peak Tuesday Night: The Fastest Shower of the Year Under a Setting Moon",
+    seoTitle: "Leonid Meteors Peak Nov 17-18 | WorldEye Blog",
+    date: "2026-11-15",
+    excerpt:
+      "The Leonid meteor shower peaks on the night of Tuesday, November 17 into the pre-dawn of Wednesday, November 18 — and this year the first-quarter Moon sets around midnight, leaving the best hours dark for the fastest meteors of the year.",
+    seoDescription:
+      "The Leonid meteor shower peaks Nov 17-18, 2026: 10-15 meteors an hour, the year's fastest at 71 km/s, and a Moon that sets before the best hours.",
+    tags: ["leonids", "meteor-shower", "astronomy", "night-sky", "leo"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "The year's fastest meteor shower reaches its peak this week. The Leonids — debris shed by Comet 55P/Tempel-Tuttle, burning up in Earth's atmosphere at about 71 kilometres per second — are predicted to reach maximum late on Tuesday, November 17, into the pre-dawn hours of Wednesday, November 18, with the predicted peak at about 0 UTC on November 18, according to the American Meteor Society's figures published by EarthSky.",
+          "The shower has been active since November 6 and runs to November 30. This is not a storm year — no repeat of the great Leonid storms of 1966, 1999 or 2001 is predicted — but the ordinary Leonid peak is still one of the reliable sights of the November sky, and this year's Moon cooperates.",
+        ],
+      },
+      {
+        heading: "When is the best time to watch the Leonids?",
+        body: [
+          "The best time is after midnight until dawn, on the mornings of both November 17 and November 18. The radiant — the point in the constellation Leo from which the meteors appear to stream — rises around midnight and stands highest in the sky at dawn, so the hours in between, with Leo climbing and the sky at its darkest, are when rates peak.",
+          "Expect about 10 to 15 meteors an hour under a dark sky at the maximum, the International Meteor Organization's predicted rate for 2026 as reported by timeanddate. Leonids make up in quality some of what they lack in quantity: at roughly 70 kilometres per second they are the fastest meteors of any major shower, frequently bright, and known for leaving glowing trains and the occasional fireball behind them.",
+        ],
+      },
+      {
+        heading: "Will the Moon spoil the Leonid peak?",
+        body: [
+          "No — and that is this year's good fortune. The Moon reaches first quarter at 11:48 UTC on November 17, a little over half lit, but a first-quarter Moon sets around midnight, just as the radiant rises. EarthSky's assessment is blunt: the Moon will not interfere with the Leonids in 2026, because it is gone for the whole of the prime after-midnight viewing window.",
+          "What remains is the ordinary enemy — local cloud and light pollution. The darker your sky, the more of those 10 to 15 hourly meteors you will actually see, and the bright ones with trains are visible even from less-than-perfect sites.",
+        ],
+      },
+      {
+        heading: "What else is in the sky near the Leonids this year?",
+        body: [
+          "Company. Mars and Jupiter appear close together near the radiant point in Leo this week — separated by only about two full-Moon widths around November 16, just as the Leonids peak — so the patch of sky the meteors stream from carries two bright planets as a signpost, EarthSky noted.",
+          "The Leonids' parent, Comet Tempel-Tuttle, orbits the Sun every 33 years, and the shower's famous storms come when Earth crosses fresh, dense trails near the comet's return. No such crossing is on offer in 2026 — the value of this year's peak is the combination that rarely aligns: a respectable rate, the fastest meteors of the year, and a Moon that leaves the stage before the show starts.",
+        ],
+      },
+      {
+        heading: "How can I watch the Leonids on WorldEye?",
+        body: [
+          "If your own sky is clouded over, WorldEye's [dark-sky cameras](/dark-sky-cameras) and [aurora webcams](/aurora-webcams) watch the night from some of the darkest places on the network — the same cameras that catch aurora catch bright meteors, and a Leonid fireball crossing a dark-sky camera's field is a genuine possibility on peak night. All of it sits on the same globe as WorldEye's 74,229 cameras.",
+          "Watch on both mornings if you can. Meteor peaks are broad shoulders, not instants, and the morning of November 17 — a full day before the predicted maximum — is rated worthwhile in its own right this year.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When do the Leonid meteors peak in 2026?",
+        a: "The predicted peak is at about 0 UTC on Wednesday, November 18, 2026 — late Tuesday night into Wednesday morning in the Americas. The best viewing is from midnight to dawn on the mornings of November 17 and November 18.",
+      },
+      {
+        q: "How many Leonid meteors can I see per hour?",
+        a: "About 10 to 15 per hour under a dark sky at the peak, per the International Meteor Organization's 2026 prediction. 2026 is not a meteor-storm year, but Leonids are the fastest meteors of the year at about 71 km/s and often leave bright trains.",
+      },
+      {
+        q: "Will moonlight interfere with the Leonids this year?",
+        a: "No. The Moon reaches first quarter on November 17 and sets around midnight, before the prime viewing hours — leaving the after-midnight sky dark while the radiant in Leo climbs toward dawn.",
+      },
+      {
+        q: "Where do the Leonid meteors come from?",
+        a: "They appear to radiate from the constellation Leo, which rises around midnight and is highest at dawn. The meteors themselves are dust shed by Comet 55P/Tempel-Tuttle, which orbits the Sun every 33 years.",
+      },
+    ],
+    sources: [
+      { name: "EarthSky: Leonid meteor shower — all you need to know in 2026 (updated Nov 13)", url: "https://earthsky.org/astronomy-essentials/earthskys-meteor-shower-guide/" },
+      { name: "timeanddate: Leonid Meteor Shower 2026 — when, where and how to see it", url: "https://www.timeanddate.com/news/astronomy/leonid-meteor-shower-2026" },
+      { name: "Natural History Museum: Leonid meteor shower 2026 — when and how to watch", url: "https://www.nhm.ac.uk/discover/meteor-shower-lyrids-perseids-geminids-leonids-orionids.html" },
+    ],
+  },
+
+// Blog addendum 2026-11-14 — two Jameson-requested stories, news: true,
+// date 2026-11-14, prepended ahead of the Nov 14 daily batch.
+// SOURCE-ACCESS DISCLOSURE: browser.open failed all day (browser-service
+// "expired transient grants" error); facts were verified from detailed
+// browser.search excerpts, cross-checked across 3-4 independent sources
+// per event including official-source text (FAA statements and Secretary
+// Duffy's White House briefing via USA Today / azcentral / Tennessean;
+// AP reporting on the SS United States via Military.com; Okaloosa County
+// statements via USA Today / Pensacola News Journal). Same disclosure
+// pattern as the 2026-11-07, 2026-11-08 and 2026-11-12 to 14 runs.
+  {
+    slug: "faa-nationwide-ground-stop-november-13-2026",
+    title: "When the Planes' Technology Stopped Working: Inside Friday's Nationwide Ground Stop",
+    seoTitle: "Nationwide Ground Stop Nov 13 | WorldEye Blog",
+    date: "2026-11-14",
+    excerpt:
+      "On Friday afternoon the technology that connects America's air traffic control centers began feeding controllers unreliable data — so the FAA did the only safe thing and grounded every departing flight in the country for more than four hours. Here is what broke, minute by minute, and what happens next.",
+    seoDescription:
+      "A failing telecom network forced the FAA to ground every US departure for over four hours on Friday, Nov 13. What broke, and what happens now.",
+    tags: ["faa", "flights", "ground-stop", "air-traffic-control", "aviation"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "For more than four hours on Friday, November 13, the United States simply stopped flying. After communications problems struck the air traffic control network, the Federal Aviation Administration issued a nationwide ground stop — an order that every departing aircraft at every airport in the country remain on the ground until further notice. It was only the second nationwide ground stop since the September 11, 2001 attacks, and the longest since then.",
+          "The stop was cancelled at 8:15 p.m. Eastern time, but by then the damage was done: more than 9,100 flights cancelled and more than 24,500 delayed on Friday alone, according to FlightAware, with thousands more cancelled on Saturday as airlines dug out. Tens of thousands of passengers spent Friday night stranded in terminals, scrambling for rental cars, Amtrak trains and buses. No one was hurt — aircraft already in the air were never ordered down, and more than 3,500 of them landed safely — but the failure has reopened the argument over just how old the technology running American aviation really is.",
+        ],
+      },
+      {
+        heading: "What time did the ground stop start and end?",
+        body: [
+          "The first sign of trouble came at 3:36 p.m. Eastern time, when, in Transportation Secretary Sean Duffy's words, the FAA started identifying “instability for our radar and our communications” at its traffic control centers. Controllers were receiving radar and communications intermittently — not a total blackout, but data the agency could no longer trust.",
+          "Just before 4 p.m. Eastern — the FAA Command Center logged the order at 20:54 UTC, or 3:54 p.m. Eastern — the agency issued the nationwide ground stop, citing “extraordinary circumstances” and safety concerns. Its public message was blunt: “There has been a temporary telecommunications outage — out of an abundance of caution all flights have been halted.” About 11,000 flights had been scheduled to depart U.S. airports after 4 p.m., according to aviation analytics firm Cirium, and every one of them was frozen. More than 3,500 airplanes were already airborne when the order came down; by 8 p.m., fewer than 400 remained in the sky. Exceptions were made for critical medevac, life-saving cargo and law enforcement flights.",
+          "The stop was lifted at 8:15 p.m. Eastern, with Duffy announcing “We've opened up the airspace” and confirming the system was operational; the FAA posted the cancellation on its website at about 8:30 p.m. From first instability to reopening, the failure consumed the entire Friday evening travel peak — roughly four hours and twenty minutes of stopped departures, the longest nationwide halt since 9/11.",
+        ],
+      },
+      {
+        heading: "What technology actually stopped working?",
+        body: [
+          "The failure sat in the telecommunications network that links the FAA's 22 Air Route Traffic Control Centers — the en route centers that control high-altitude traffic between airports. The FAA said a communications issue impacted all of them at once, which is what turned a technology problem into a nationwide shutdown rather than a regional delay programme.",
+          "Duffy's explanation at the White House was unusually specific for a breaking failure. “What we have is an incredibly old air traffic control system,” he said, describing switches and routers in the system's analog technology that got “overloaded” with data. “They started to give us inconsistency in the data from those routers, and because of that we shut the system down.” The underlying technology, he noted, has been in place since the 1980s — and, pointedly, the small number of centers that have already been converted to digital IP systems did not break down.",
+          "Homeland Security Secretary Markwayne Mullin added a detail that sharpened the picture: the system failed while it was being worked on. The FAA “was putting (in) new equipment and new technology,” Mullin said, “and it was overwhelming the older system” — patches being applied to aging infrastructure at the moment it buckled.",
+        ],
+      },
+      {
+        heading: "Was it a cyberattack — and did the new SMART system cause it?",
+        body: [
+          "Officials were emphatic on one point Friday night: there is no evidence of a cyberattack. Mullin said there was “zero evidence” of one — “no chatter, no footprints” — while adding that investigators had not ruled anything out entirely. No official root cause had been announced as of Saturday.",
+          "The most concrete unofficial account comes from CBS News, which reported, citing multiple sources, that an update to the private network connecting air traffic control facilities caused the network to reboot and then crash; the network is operated by contractor L3Harris, and SecurityWeek reported the FBI is probing the software update. That account fits the officials' description of new technology overwhelming old equipment, but it has not been confirmed by the FAA.",
+          "One obvious suspect has been publicly cleared by the administration: the FAA had rolled out SMART — the Strategic Management of Airspace, Routes and Trajectories — across the country only days earlier, and questions about the new system began within hours. Duffy said the disruption was not directly tied to SMART, and Air Space Intelligence, the contractor behind AI scheduling tools for the FAA, said its systems did not cause the interruption.",
+        ],
+      },
+      {
+        heading: "How many flights were cancelled and delayed?",
+        body: [
+          "By FlightAware's count, Friday closed with more than 9,100 flights cancelled and more than 24,500 delayed on services within, into or out of the United States — making it the second-worst cancellation day of 2026, behind only the January 25 snowstorm's 11,607 cancellations. An estimated 1.5 million passengers were affected.",
+          "The bill kept growing after the airspace reopened, because aircraft and crews were in the wrong cities. By 8:17 a.m. Eastern on Saturday, airlines had already cancelled 3,568 of Saturday's flights, with Delta alone cancelling 640 — about 20 percent of its schedule. The disruption also crossed the Atlantic: Eurocontrol suspended U.S.-bound traffic from its member states at the FAA's request, and carriers in Ireland, Britain and mainland Europe were caught in the knock-on effects.",
+        ],
+      },
+      {
+        heading: "What have officials said about fixing the system?",
+        body: [
+          "Friday's failure landed in the middle of a live political fight over modernising air traffic control. President Donald Trump has declared updating the system “a national emergency,” and Duffy used the White House briefing to renew the administration's request that Congress approve $30 billion for a full upgrade — funding Congress has not approved. “It's an old system that went down,” Duffy said.",
+          "Reuters' post-mortem put Friday in a pattern rather than treating it as a freak event: aging air traffic control equipment regularly disrupts U.S. flights. The last nationwide ground stop, in January 2023, was triggered by a different piece of legacy technology — the NOTAM pilot-alert system — failing overnight. Two nationwide shutdowns in under four years, both traced to old systems, is the statistic now driving the funding argument.",
+        ],
+      },
+      {
+        heading: "When will flights be back to normal?",
+        body: [
+          "Not this morning. Duffy warned the disruption would ripple for days — “it's going to take us some time to unwind what's happened this afternoon” — and said he expects everything to be back to normal by Thanksgiving, with airlines resuming operations through the weekend. Delta and United said they were resuming flying, JetBlue planned to restart on Saturday morning, and Southwest resumed a limited operation while waiving rebooking fees.",
+          "If you are flying this weekend, the practical advice from the day is unglamorous: check your flight before leaving for the airport, expect hub airports — Chicago O'Hare, Dallas Fort Worth and Atlanta were among the hardest hit Saturday morning — to stay congested, and remember that a lifted ground stop does not put a single aircraft back where it was supposed to be.",
+        ],
+      },
+      {
+        heading: "How the shutdown looked on the live flight tracker",
+        body: [
+          "Friday's strangest sight was the sky emptying in real time. Anyone watching a flight tracker watched more than 3,500 aircraft over the United States drain away to fewer than 400 by 8 p.m. — the arrivals finishing their journeys, and nothing taking off behind them — and then, after 8:15 p.m., the first departures blinking back into existence airport by airport.",
+          "That recovery is still the story today. WorldEye's [live flight tracker](/live-flight-tracker) shows Saturday's repositioning in real time — which hubs are flowing again and where the gaps still are — on the same live globe as the site's 74,229 cameras, including [airport webcams](/airport-webcams) at fields that spent Friday evening going nowhere.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "What caused the nationwide ground stop on November 13?",
+        a: "A telecommunications outage hit the FAA's Air Route Traffic Control Centers. Transportation Secretary Sean Duffy said switches and routers in the system's analog technology — in place since the 1980s — became overloaded and fed controllers inconsistent radar and communications data, so the FAA shut departures down for safety. CBS News reported an update to the private network linking the centers caused a reboot and crash; the FAA has not announced an official root cause.",
+      },
+      {
+        q: "How long did the FAA ground stop last?",
+        a: "The nationwide ground stop was issued just before 4 p.m. Eastern time on Friday, November 13 and lifted at 8:15 p.m. Eastern — more than four hours, the longest nationwide ground stop since the September 11, 2001 attacks.",
+      },
+      {
+        q: "How many flights were cancelled by the ground stop?",
+        a: "More than 9,100 flights were cancelled and more than 24,500 delayed on Friday, according to FlightAware, and airlines had already cancelled more than 3,500 of Saturday's flights by Saturday morning as the backlog rolled into the weekend.",
+      },
+      {
+        q: "Was the FAA ground stop caused by a cyberattack?",
+        a: "Officials say there is no evidence of one. Homeland Security Secretary Markwayne Mullin said there was “zero evidence” — no chatter and no footprints — though investigators had not ruled anything out entirely. The failure is blamed on aging telecommunications equipment being patched with new technology.",
+      },
+      {
+        q: "When will flights be back to normal after the ground stop?",
+        a: "Secretary Duffy said recovery would take days and warned of disruption through the weekend, but he expects operations to be back to normal by Thanksgiving. Airlines resumed flying Friday night and Saturday morning, with aircraft and crew repositioning the main bottleneck.",
+      },
+    ],
+    sources: [
+      { name: "USA Today: Thousands were stranded at America's airports. What went wrong?", url: "https://www.usatoday.com/story/news/nation/2026/11/13/faa-system-failure-blamed-on-technology-updates/92770720007/" },
+      { name: "USA Today: FAA says it has lifted nationwide ground stop that snarled airports", url: "https://www.usatoday.com/story/news/nation/2026/11/13/faa-orders-nationwide-groundstop-at-us-airports-citing-safety/92765499007/" },
+      { name: "Reuters: Old air traffic control equipment regularly disrupts US flights", url: "https://www.reuters.com/business/aerospace-defense/old-air-traffic-control-equipment-regularly-disrupts-us-flights-2026-11-14/" },
+      { name: "FOX Weather: Thousands of flights canceled as US air travel recovers from historic ground stop", url: "https://www.foxweather.com/weather-news/flights-canceled-delayed-us-ground-stop-november-2026" },
+    ],
+  },
+  {
+    slug: "ss-united-states-sunk-florida-artificial-reef",
+    title: "The Ship That Tipped Over in Florida: SS United States Becomes the World's Largest Artificial Reef",
+    seoTitle: "SS United States Sunk Off Florida | WorldEye Blog",
+    date: "2026-11-14",
+    excerpt:
+      "The video raced around the world this week: a floodlit 990-foot ocean liner slowly listing, rolling onto her side and slipping beneath the Gulf off Florida. The SS United States did tip over on Wednesday night — but she did it on purpose, settling upright on the seabed as the world's largest artificial reef.",
+    seoDescription:
+      "The 990-foot SS United States rolled over and sank off Destin, Florida, on November 11 — on purpose. Here is why, how, and where she now rests.",
+    tags: ["ss-united-states", "florida", "artificial-reef", "ships", "destin"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "It is one of the most striking ship videos ever filmed. On Wednesday night, November 11, aerial cameras over the Gulf of Mexico watched the SS United States — 990 feet of floodlit ocean liner, longer than the Titanic — slowly heel over in the dark about 22 nautical miles southwest of Destin-Fort Walton Beach, Florida. Over long minutes she listed further and further, rolled onto her side, capsized, and slid beneath the surface, leaving a swirl of foam where the fastest ocean liner ever built had been.",
+          "Nothing had gone wrong. The tipping was the finale of a $13.5 million plan by Okaloosa County, Florida, to sink the 74-year-old liner deliberately and turn her into the world's largest artificial reef. And despite the roll captured on camera, the county has since confirmed the ending the engineers wanted: the SS United States settled upright on the seabed, in about 180 feet of water, within feet of her planned position.",
+        ],
+      },
+      {
+        heading: "Why did they sink the SS United States?",
+        body: [
+          "Because the alternative was the scrapyard. Okaloosa County acquired the liner in 2024 specifically to reef her, after decades of failed plans to preserve and redevelop the ship — she had sat docked along the Delaware River in Philadelphia since 1996, outliving hotel, casino and museum schemes one after another. A final legal attempt to save her ended days before the sinking: on November 7, a federal judge in Florida denied an emergency restraining order sought by the SS United States Preservation Foundation to halt the submersion.",
+          "As a reef, the ship starts a second career. Her hull becomes habitat for tuna, marlin and swordfish in a stretch of Gulf that already holds more than 500 artificial reefs, and a landmark dive site: at 990 feet, she takes the “world's largest artificial reef” title from the aircraft carrier USS Oriskany, sunk off Pensacola in 2006. The county's tourism director has said its reefs bring in around $10 million to $12 million a year — the economic engine behind the whole project.",
+        ],
+      },
+      {
+        heading: "How do you sink a 990-foot ship without explosives?",
+        body: [
+          "Slowly, and with plumbing rather than dynamite. Federal environmental and explosives rules barred the county and its contractor, Coleen Marine, from using explosives, so crews prepared the liner to flood in a controlled way: openings were cut into the vessel and more than 400 portholes removed. Flooding began at about 2:40 p.m. Eastern on Wednesday.",
+          "The ship refused to be hurried. The final descent was expected to take roughly 45 minutes once the flooding was under way, according to the Pensacola News Journal — instead, she took 7 hours and 19 minutes to go down. Part of the delay was precision work: crews filled 128 fuel and lubricant tanks aboard with water so the enormous hull would settle evenly on the ocean floor, county spokesperson Nick Tomecek told the Associated Press. In her last moments at the surface she rolled — the capsize in the timelapse — before slipping under at 9:59 p.m. Eastern, and coming to rest upright below.",
+        ],
+      },
+      {
+        heading: "Where is the SS United States now — and can divers visit?",
+        body: [
+          "She rests about 22 nautical miles southwest of Destin-Fort Walton Beach and 32 nautical miles southeast of Pensacola, at 30° 07.148' N, 86° 46.755' W. The seabed there is about 180 feet down, but the ship is so tall that her top deck sits only about 60 feet below the surface — shallow enough, as the county points out, for less experienced divers to reach her most interesting upper decks.",
+          "On Friday, November 13, Okaloosa County confirmed the ship is resting upright, the safety zone around the site has been lifted and diving is permitted. The wreck will be studied as it becomes an ecosystem: the Woods Hole Oceanographic Institution, Dauphin Island Sea Lab and Louisiana State University will monitor how marine life colonises the largest artificial reef ever deployed.",
+        ],
+      },
+      {
+        heading: "The fastest ocean liner ever built",
+        body: [
+          "The ship that went down on Wednesday was not a relic by accident — she was a record-breaker that never lost her record. The SS United States took the transatlantic speed record on her maiden voyage in 1952 and still holds it; no passenger liner has crossed the Atlantic faster since. She crossed more than 800 times in her career and measures about 100 feet longer than the RMS Titanic.",
+          "Her final journey took almost two years: towed out of Philadelphia on February 19, 2025, prepared for over a year in Mobile, Alabama, and towed to the reef site on the morning of November 9. The sinking itself was moved up a day, from November 12 to Veterans Day, because heavy winds and unsafe weather were forecast for Thursday — a last scheduling twist for a ship that, to the end, moved at her own pace.",
+        ],
+      },
+      {
+        heading: "Watching the coast she now rests off",
+        body: [
+          "The sinking happened 22 miles offshore, at night, so no shoreline camera caught the roll itself — the famous footage came from the operation's own aerial cameras. What you can watch is the coast she now belongs to: WorldEye's [beach webcams](/beach-webcams) cover the Destin-Fort Walton Beach and Pensacola shoreline, the same stretch of Gulf now hosting dive boats heading out to the reef, and the [live webcams](/live-webcams) map puts that coast in context alongside 74,229 cameras worldwide.",
+          "The reef site will show its changes slowly — first algae and baitfish, then the game fish the project promises, then, divers hope, a permanent underwater landmark. The ship spent 30 years waiting in Philadelphia for a second life. As of Wednesday night, she has one.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Why was the SS United States sunk?",
+        a: "Deliberately. Okaloosa County, Florida, acquired the liner in 2024 and spent $13.5 million to sink her as an artificial reef and dive attraction, after decades of failed preservation and redevelopment plans in Philadelphia left scrapping as the other option.",
+      },
+      {
+        q: "Did the SS United States really tip over?",
+        a: "Yes — in her final descent on Wednesday night, November 11, the floodlit liner listed, rolled onto her side and capsized at the surface, as seen in the widely shared timelapse. Okaloosa County has since confirmed she settled upright on the seabed, within feet of her planned position.",
+      },
+      {
+        q: "Where did the SS United States sink?",
+        a: "About 22 nautical miles southwest of Destin-Fort Walton Beach, Florida (32 nautical miles southeast of Pensacola), at 30° 07.148' N, 86° 46.755' W. She rests in about 180 feet of water, with her top deck roughly 60 feet below the surface.",
+      },
+      {
+        q: "When can divers visit the SS United States reef?",
+        a: "Now. Okaloosa County confirmed on November 13 that the ship is resting upright, the safety zone has been lifted and diving is permitted. Her upper decks, about 60 feet down, are within reach of less experienced divers.",
+      },
+      {
+        q: "What record does the SS United States still hold?",
+        a: "The transatlantic speed record for a passenger liner, set on her maiden voyage in 1952 and never beaten. The 990-foot ship crossed the Atlantic more than 800 times and is about 100 feet longer than the Titanic.",
+      },
+    ],
+    sources: [
+      { name: "Associated Press via Military.com: The Historic SS United States Is Sunk After a Long Goodbye Off Florida's Coast", url: "https://www.military.com/the-historic-ss-united-states-is-sunk-after-a-long-goodbye-off-floridas-coast" },
+      { name: "USA Today: How the SS United States was sunk to become an artificial reef", url: "https://www.usatoday.com/story/graphics/2026/11/10/ss-united-states-enters-its-final-chapter-an-artificial-reef-in-gulf/85726437007/" },
+      { name: "Pensacola News Journal: SS United States took 4 hours to sink. Here's a recap", url: "https://www.pnj.com/story/news/local/2026/11/12/ss-united-states-officially-sank-recap/92731334007/" },
+      { name: "Bucks County Courier Times: Why did they sink the SS United States?", url: "https://www.phillyburbs.com/story/news/2026/11/12/why-did-they-sink-ss-united-states-philadelphia-artificial-reef/92738952007/" },
+    ],
+  },
+// Blog daily 2026-11-14 — three sourced event stories, news: true, date 2026-11-14.
+// SOURCE-ACCESS DISCLOSURE: browser.open failed all run (browser-service
+// exited, code -1, on four independent requests); facts were verified from
+// detailed browser.search excerpts, cross-checked across 2-4 independent
+// sources per event including official-source text (SpaceX posts via
+// Space.com / Florida Today / Aerospace Global News reporting; Wolf Creek
+// Ski Area's own reopening release via Pagosa Daily Post / MTN Town
+// Magazine and CDOT via SnowBrains reporting; PHIVOLCS' own 24-hour
+// Mayon summary for 13 November 2026). Same disclosure pattern as the
+// 2026-11-07, 2026-11-08, 2026-11-12 and 2026-11-13 runs.
+  {
+    slug: "starship-flight-15-reaches-orbit-ship-catch-today",
+    title: "Starship Flight 15 Reaches Orbit: Booster Catch Aborted, Ship Catch Attempt Comes Today",
+    seoTitle: "Starship Flight 15 Reaches Orbit | WorldEye Blog",
+    date: "2026-11-14",
+    excerpt:
+      "Starship Flight 15 lifted off from Starbase on Friday evening and put its upper stage into orbit for only the second time, deploying 26 Starlink V3 satellites — but the Super Heavy booster was diverted into the Gulf instead of a tower catch, and the ship's own first catch attempt is scheduled for this afternoon.",
+    seoDescription:
+      "Starship Flight 15 reached orbit and deployed 26 Starlink satellites on Friday. The booster catch was aborted; the ship catch attempt is today.",
+    tags: ["spacex", "starship", "starlink", "launch", "starbase"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "SpaceX's 15th Starship test flight is only half finished — and the harder half is still to come. Flight 15 lifted off from Starbase, Texas, at 4:47 p.m. Central time on Friday, November 13 (5:47 p.m. Eastern), reached orbit with its upper stage for only the second time in the programme's history, and deployed 26 Starlink V3 satellites. The Super Heavy booster, however, never came back to the tower: SpaceX aborted its catch attempt minutes after liftoff and diverted the booster to a splashdown in the Gulf of Mexico.",
+          "The mission now continues in orbit. Ship 42 is spending roughly 22 hours circling Earth — about 14 orbits — before a planned return to Starbase this afternoon, Saturday, November 14, for the first-ever attempt to catch a Starship upper stage at the launch tower. SpaceX said on Saturday morning that the ship and its heatshield are healthy, with teams monitoring systems ahead of the return.",
+        ],
+      },
+      {
+        heading: "What happened to the Super Heavy booster?",
+        body: [
+          "The booster was diverted to the Gulf about six and a half minutes after liftoff. The flight began cleanly: Booster 22's 33 Raptor engines lifted the 124-metre stack from Pad 2 at Starbase, and hot staging — the upper stage igniting its engines while still attached — came about two and a half minutes into flight, as planned. The booster then flipped for its return burn toward the launch site.",
+          "Instead of continuing to the tower, flight controllers called off the catch and directed the booster to a designated offshore area, where it came down in the Gulf and erupted in flames on reaching the water. Florida Today reported the abort was due to a guidance, navigation and control issue; SpaceX did not immediately publish a detailed explanation. It was the first catch attempt for a Version 3 Super Heavy booster — the tower has caught Super Heavy three times before, all earlier-generation boosters, and has never caught a ship.",
+        ],
+      },
+      {
+        heading: "Did Starship reach orbit on Flight 15?",
+        body: [
+          "Yes — for the second time ever. After separation, Ship 42 completed its ascent burn just over eight minutes after liftoff, then fired a single engine again for about 20 seconds to insert into an orbit roughly 275 kilometres above Earth. 'We've got a nominal orbit insertion, so Starship now in orbit around Earth for the second time ever,' SpaceX's Dan Huot said on the launch broadcast. The first orbital flight was Flight 14 on September 28.",
+          "The ship then deployed its full payload of 26 Starlink V3 satellites over about 42 minutes, beginning roughly 35 minutes after launch. Those satellites are the operational kind — the large V3 spacecraft the constellation's next phase is built around — and they will join the tracked population once catalogued.",
+        ],
+      },
+      {
+        heading: "When is the Starship ship catch attempt today?",
+        body: [
+          "The catch attempt is scheduled for this afternoon, Saturday, November 14, at about 4:17 p.m. Eastern time — roughly 3:19 p.m. Central at Starbase — about 22 and a half hours after liftoff. A short deorbit burn, about 10 seconds, is planned roughly an hour before the return to set up the descent through the atmosphere.",
+          "SpaceX has been explicit that the attempt is conditional: the ship will only be brought back to the tower if all the systems needed to guide it through re-entry and into the tower's arms are healthy. Reaching orbit does not guarantee the catch goes ahead. If it does, and it works, Flight 15 would deliver the programme's first recovery of a ship from orbit — the missing half of the double catch this mission set out to attempt, after the booster half ended in the Gulf on Friday.",
+        ],
+      },
+      {
+        heading: "How can I follow Flight 15's return on WorldEye?",
+        body: [
+          "The 26 Starlink V3 satellites Ship 42 deployed are exactly the objects WorldEye's [satellite tracker](/satellite-tracker) follows once they are catalogued in orbit, alongside the rest of the Starlink constellation and the [space station tracker](/space-station-tracker)'s view of the International Space Station, on the same live globe as WorldEye's 74,229 cameras.",
+          "For the return itself, SpaceX streams Starship flights on its own channels. The window to watch is this afternoon Eastern time — and the thing to watch for first is whether SpaceX commits to the catch at all, because Friday's booster diversion showed how quickly a recovery plan can become a splashdown.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Did Starship Flight 15 reach orbit?",
+        a: "Yes. Ship 42 inserted into an orbit about 275 kilometres above Earth on Friday, November 13 — only the second time a Starship upper stage has reached orbit, after Flight 14 on September 28 — and deployed 26 Starlink V3 satellites over about 42 minutes.",
+      },
+      {
+        q: "Why was the Starship booster catch aborted?",
+        a: "SpaceX diverted Booster 22 to a splashdown in the Gulf of Mexico about six and a half minutes after liftoff instead of attempting the tower catch. Florida Today reported a guidance, navigation and control issue prompted the abort; SpaceX did not immediately publish a detailed explanation.",
+      },
+      {
+        q: "When is the Starship ship catch attempt?",
+        a: "Saturday, November 14, at about 4:17 p.m. Eastern time (about 3:19 p.m. Central at Starbase), roughly 22.5 hours after liftoff and after about 14 orbits — if SpaceX judges the ship's systems healthy enough to attempt the first-ever tower catch of a returning ship.",
+      },
+      {
+        q: "How many satellites did Flight 15 carry?",
+        a: "26 Starlink V3 satellites, all deployed successfully over about 42 minutes after the ship reached orbit on Friday evening.",
+      },
+    ],
+    sources: [
+      { name: "Florida Today: SpaceX's Starship Flight 15 launches from Texas, reaches orbit but misses booster catch", url: "https://www.floridatoday.com/story/tech/science/space/spacex/2026/11/13/spacexs-starship-flight-15-launches-from-texas-reaches-orbit-but-misses-booster-catch/92758185007/" },
+      { name: "Aerospace Global News: SpaceX aborts Starship booster catch as Flight 15 reaches orbit", url: "https://aerospaceglobalnews.com/news/spacex-aborts-super-heavy-catch-starship-flight-15/" },
+      { name: "The Space Road: Starship Flight 15 launch date and time (SpaceX posts, updated Nov 14)", url: "https://thespaceroad.com/articles/when-is-starship-flight-15/" },
+    ],
+  },
+  {
+    slug: "wolf-creek-reopens-november-14-after-flooding",
+    title: "Wolf Creek Reopens Today: Five Lifts Spin Again After the Floods Closed the Mountain",
+    seoTitle: "Wolf Creek Reopens After Flooding | WorldEye Blog",
+    date: "2026-11-14",
+    excerpt:
+      "Wolf Creek Ski Area reopens today, Saturday November 14, for weekend operations — two weeks after historic flooding closed it a day after its Halloween opening. Five lifts will run from 9 a.m. to 4 p.m. with access to about 54.5% of the terrain, while Wolf Creek Pass reopens for the weekend only.",
+    seoDescription:
+      "Wolf Creek Ski Area reopens today, Nov 14, after flood damage closed it. Five lifts, 54.5% of terrain, and a weekend-only window on Wolf Creek Pass.",
+    tags: ["wolf-creek", "colorado", "ski-season", "opening-day", "flooding"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "Wolf Creek Ski Area is open again. The southern Colorado resort reopens today, Saturday, November 14, and tomorrow, Sunday, November 15, for weekend operations — its first days back since historic flooding in the region forced it to close a day after it opened the season on Halloween, October 31.",
+          "The reopening is a joint product of the ski area and the Colorado Department of Transportation (CDOT): the mountain was ready before the road to it was. Wolf Creek Pass, U.S. 160, reopens to weekend travel at 7 a.m. today, and closes again at 6 a.m. on Monday, November 16, so contractors can complete a week of work aimed at permanently reopening the pass before Thanksgiving.",
+        ],
+      },
+      {
+        heading: "What is open at Wolf Creek this weekend?",
+        body: [
+          "Five lifts — Treasure Stoke, Bonanza, Tumbler, Lynx and Nova — run from 9 a.m. to 4 p.m., giving access to roughly 54.5% of Wolf Creek's terrain. That is by a wide margin the most terrain open at any North American resort this weekend, according to POWDER's weekend roundup, at a moment when most early-season resorts are offering one or two groomed runs.",
+          "Tickets for the reopening weekend are at Local Appreciation rates: $73 for adults, $55 for seniors and $36 for children. The resort's snow report for Thursday, November 12 listed a midway snow depth of 21 inches and 39 inches of snowfall so far this season, with excellent early-season conditions — and the standard early-season warning to expect unmarked obstacles, rocks and possible open water on any trail. POWDER's forecast put another 8 to 10 inches of snow on the mountain across this weekend.",
+        ],
+      },
+      {
+        heading: "How do I drive to Wolf Creek this weekend?",
+        body: [
+          "Slowly, and with time in hand. CDOT is opening the pass to limited traffic between Pagosa Springs and South Fork, with one lane alternating through several work zones — about 15 work zones are active across the flood area. Drivers should allow up to 40 extra minutes, expect signal-controlled stops, construction vehicles entering the roadway and changing lanes, and check COtrip.org before setting out, because conditions can change daily.",
+          "Crews are reconstructing road segments east of the summit and clearing mud and rockslides on the west side, with shoulder stabilisation and rockfall barriers still being finished. A weekend storm is also anticipated to bring winter driving conditions to the pass, with potential safety closures if conditions warrant, the ski area's announcement said. The pass window is strict: open from 7 a.m. Saturday to 6 a.m. Monday, then closed again for the week's work.",
+        ],
+      },
+      {
+        heading: "Why did Wolf Creek close after opening day?",
+        body: [
+          "Wolf Creek opened for the 2026-27 season on Halloween, October 31 — Colorado's third resort to open, after Arapahoe Basin and Keystone — and closed almost immediately when heavy rain and historic flooding hit southwest Colorado. The same flood event produced the record flooding WorldEye covered in the Four Corners region in early November: rivers at or near major flood stage across Arizona, Colorado and New Mexico, a statewide emergency in Arizona, and, in Wolf Creek's case, a damaged access road that no amount of snow on the mountain could fix.",
+          "The closure lasted about two weeks, through some of the best early-season snow stacking of any resort in the state. That is the frustration and the relief of this weekend in one story: the snow never stopped being good — 39 inches so far this season — the road simply had to be rebuilt enough to reach it.",
+        ],
+      },
+      {
+        heading: "How can I check Wolf Creek conditions on WorldEye?",
+        body: [
+          "WorldEye's [ski webcams](/ski-webcams) include Wolf Creek among Colorado's resort cameras, so you can see the midway snow and the weekend storm arriving before you commit to the drive over the pass. With snow forecast across the weekend and the road window closing again on Monday morning, the cameras are the fastest honest check on both halves of the trip — the mountain and the weather moving over it.",
+          "Wolf Creek's own advice stands alongside it: check WolfCreekSki.com and COtrip.org for the latest, because a reopening built on a part-repaired mountain road is a plan that the weather gets a vote on.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When does Wolf Creek Ski Area reopen?",
+        a: "Today, Saturday, November 14, 2026, and Sunday, November 15, for weekend operations — five lifts from 9 a.m. to 4 p.m. The resort had been closed since just after its Halloween opening day by historic flood damage to its access road.",
+      },
+      {
+        q: "How much terrain is open at Wolf Creek?",
+        a: "About 54.5% of the terrain, served by the Treasure Stoke, Bonanza, Tumbler, Lynx and Nova lifts — the most open terrain of any North American resort this weekend, on a 21-inch midway base with 39 inches of snowfall so far this season.",
+      },
+      {
+        q: "Is Wolf Creek Pass open?",
+        a: "For the weekend only: CDOT opens U.S. 160 over Wolf Creek Pass at 7 a.m. Saturday, November 14 and closes it again at 6 a.m. Monday, November 16 for a week of repair work, aiming for a permanent reopening before Thanksgiving. Expect one-lane alternating traffic and up to 40 extra minutes.",
+      },
+      {
+        q: "How much are Wolf Creek lift tickets this weekend?",
+        a: "Local Appreciation rates for the reopening weekend: $73 for adults, $55 for seniors and $36 for children.",
+      },
+    ],
+    sources: [
+      { name: "Pagosa Daily Post: Wolf Creek Ski Area Reopening Tomorrow, Saturday, November 14 (resort announcement)", url: "https://pagosadailypost.com/2026/11/13/wolf-creek-ski-area-reopening-tomorrow-saturday-november-14/" },
+      { name: "MTN Town Magazine: Wolf Creek Ski Area to Reopen (resort release with CDOT pass details)", url: "https://mtntownmagazine.com/wolf-creek-ski-area-to-reopen/" },
+      { name: "POWDER via Yardbarker: The 5 Best Resorts To Ski This Weekend, November 14-15, 2026", url: "https://www.yardbarker.com/skiing/articles/the_5_best_resorts_to_ski_this_weekend_november_14_15_2026/s1_17376_44557453" },
+    ],
+  },
+  {
+    slug: "mayon-new-lava-dome-november-13-alert-level-3",
+    title: "A New Lava Dome Is Growing Inside Mayon's Crater, PHIVOLCS Says",
+    seoTitle: "New Lava Dome Spotted at Mayon | WorldEye Blog",
+    date: "2026-11-14",
+    excerpt:
+      "A new lava dome has been spotted inside the summit crater of Mayon Volcano in the Philippines, the Philippine Institute of Volcanology and Seismology said on Friday, November 13 — a visible new feature at a volcano already held at Alert Level 3 since its October 30 eruption.",
+    seoDescription:
+      "PHIVOLCS spotted a new lava dome inside Mayon's summit crater on Nov 13. Alert Level 3 holds, with Strombolian activity and 8 quakes in 24 hours.",
+    tags: ["mayon", "volcano", "philippines", "phivolcs", "lava-dome"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "Mayon Volcano has a new feature at its summit: a lava dome growing inside its crater. The Philippine Institute of Volcanology and Seismology (PHIVOLCS) reported the dome on Friday, November 13, after it was observed that morning through the close-up camera monitoring system at the Mayon Volcano Observatory in Albay province, the Philippine Daily Inquirer reported.",
+          "The dome is the latest dated development in an unrest episode that has held Mayon at Alert Level 3 — intensified magmatic unrest — since a moderately explosive eruption on October 30 sent an ash plume 3,000 metres above the crater and prompted the evacuation of more than 2,000 people from the danger zone. A dome changes the picture at the summit from gas and ash to fresh lava physically accumulating in the crater.",
+        ],
+      },
+      {
+        heading: "How was the new Mayon lava dome detected?",
+        body: [
+          "Two ways, weeks apart. PHIVOLCS said an international partner had already detected bulging of the crater floor in satellite images taken between November 2 and 4 — the crater floor rising as magma pushed up beneath it. On Friday morning, November 13, the observatory's close-up crater camera confirmed what the satellites had suggested: a new dome of lava visible inside the summit crater.",
+          "That sequence — satellite deformation first, a camera-confirmed dome second — is why the agency treats the dome as significant rather than decorative. It is direct evidence that magma has reached the summit and is building there, which is the condition Alert Level 3 exists to describe.",
+        ],
+      },
+      {
+        heading: "What is Mayon's alert level and latest activity?",
+        body: [
+          "Alert Level 3 remains in force. PHIVOLCS' 24-hour summary for November 13 records minor Strombolian activity at the crater, eight volcanic earthquakes, a sulfur dioxide flux of 2,293 tonnes per day measured on November 12, and a moderate plume drifting west-southwest and southwest. The edifice is inflated overall, with short-term deflation on its northeastern sector.",
+          "The hazards PHIVOLCS lists under the current alert are rockfalls, landslides and avalanches, ballistic fragments, lava flows and lava fountaining, pyroclastic density currents, moderate-sized explosions, and lahars during heavy and prolonged rainfall. Entry into the six-kilometre Permanent Danger Zone is prohibited, and flying aircraft close to the volcano is not allowed.",
+        ],
+      },
+      {
+        heading: "What happened at Mayon before the dome appeared?",
+        body: [
+          "The current episode escalated on October 30, when a moderately explosive eruption at 11:53 a.m. local time produced a 3,000-metre ash plume and PHIVOLCS raised the alert from Level 2 to Level 3, judging that a new phase of magmatic eruption had begun. Seismicity climbed sharply in the days before that eruption, and ash emissions have continued since, including a 1,600-metre plume on November 3 and further minor Strombolian activity through this week.",
+          "Mayon, a 2,462-metre stratovolcano near Legazpi City, is the Philippines' most active volcano. A growing summit dome matters because domes are unstable by nature: growth can feed lava flows and fountaining, and a partial collapse can send pyroclastic density currents down the upper slopes — the hazard the six-kilometre exclusion zone is drawn against.",
+        ],
+      },
+      {
+        heading: "How can I follow Mayon on WorldEye?",
+        body: [
+          "WorldEye's [volcano webcams](/volcano-webcams) bring together live volcano cameras, and the observatory camera view that confirmed Mayon's dome is a reminder of what those cameras are for: the summit is the story, and it changes between bulletins. Mayon's PHIVOLCS summary is published daily, so the dome's growth — or any change in the alert — will show in the official record first.",
+          "Anyone in Albay should follow PHIVOLCS directly and respect the Permanent Danger Zone. The same crater that makes a striking camera image at a distance is, at Alert Level 3, a place the scientists monitoring it are explicitly keeping people away from.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "What is the new lava dome at Mayon Volcano?",
+        a: "A mound of fresh lava now visible inside Mayon's summit crater, confirmed on the morning of Friday, November 13, 2026 by the close-up camera at the Mayon Volcano Observatory. A partner agency had detected the crater floor bulging in satellite images from November 2-4, before the dome itself was seen.",
+      },
+      {
+        q: "What is Mayon's alert level now?",
+        a: "Alert Level 3 — intensified magmatic unrest — held since the October 30 eruption. PHIVOLCS' November 13 summary records minor Strombolian activity, eight volcanic earthquakes and sulfur dioxide flux of 2,293 tonnes per day.",
+      },
+      {
+        q: "Is it safe to visit Mayon now?",
+        a: "Entry into the six-kilometre Permanent Danger Zone is prohibited under Alert Level 3, and aircraft may not fly close to the volcano. PHIVOLCS lists possible hazards including lava flows, pyroclastic density currents, ballistic fragments and lahars in heavy rain.",
+      },
+      {
+        q: "When did Mayon's current eruption episode begin?",
+        a: "It escalated on October 30, 2026, when a moderately explosive eruption sent ash 3,000 metres above the crater and PHIVOLCS raised the alert to Level 3. Ash emissions and Strombolian activity have continued since, and a new lava dome was confirmed in the crater on November 13.",
+      },
+    ],
+    sources: [
+      { name: "PHIVOLCS-LAVA: Mayon Volcano 24-hour activity summary, 13 November 2026 (official)", url: "https://wovodat.phivolcs.dost.gov.ph/bulletin/activity-mvo?bid=15135&lang=en" },
+      { name: "Philippine Daily Inquirer via EIN Presswire: Alert level 3 — new lava dome spotted inside Mayon crater (Nov 13)", url: "https://volcanoes.einnews.com/" },
+      { name: "Ad-hoc News: Mayon Volcano shows new lava dome on 13 November (PHIVOLCS report)", url: "https://www.ad-hoc-news.de/unterhaltung/reisen/mayon-volcano-shows-new-lava-dome-on-13-november/70510779" },
+    ],
+  },
+// Blog daily 2026-11-13 — three sourced event stories, news: true, date 2026-11-13.
+// SOURCE-ACCESS DISCLOSURE: browser.open failed all run (browser-service
+// exited, code -1, on four independent requests); facts were verified from
+// detailed browser.search excerpts, cross-checked across 2-4 independent
+// sources per event including official-source text (ULA's published window
+// via USA Today / Florida Today; SpaceX's Flight 15 plan and the Reuters
+// Nov 13 launch-day report; the resorts' own opening announcements via
+// POWDER / Unofficial Networks; NWS Sacramento and Eureka warning details
+// via WeatherBoy / INEDC / The Weather Channel). Same disclosure pattern
+// as the 2026-11-07, 2026-11-08 and 2026-11-12 runs.
+  {
+    slug: "friday-13th-double-launch-vulcan-starship",
+    title: "Friday the 13th Double Launch: Vulcan Returns to Flight, Starship Flight 15 Follows",
+    seoTitle: "Friday 13th Double Launch Day | WorldEye Blog",
+    date: "2026-11-13",
+    excerpt:
+      "Two of America's biggest rockets are scheduled to fly today, Friday November 13: ULA's Vulcan makes its return to flight from Cape Canaveral with 40 Amazon Leo satellites, and hours later SpaceX targets Starship Flight 15 from Texas and a first-ever double catch.",
+    seoDescription:
+      "ULA's Vulcan returns to flight today with 40 Amazon Leo satellites, hours before SpaceX targets Starship Flight 15 and a first double catch in Texas.",
+    tags: ["ula", "vulcan", "amazon-leo", "spacex", "starship", "launch"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "Friday the 13th is a double launch day in the United States. The United Launch Alliance (ULA) is scheduled to fly its Vulcan rocket from Cape Canaveral this afternoon for the first time in nine months, and this evening SpaceX is targeting the 15th test flight of Starship from Starbase, Texas — the mission that will attempt to catch both stages of the world's largest rocket at the launch tower for the first time.",
+          "The two flights bookend the day. Vulcan's 29-minute window opens at 12:54 p.m. Eastern time at Launch Complex 41 at Cape Canaveral Space Force Station, according to ULA. Starship's 75-minute window opens at 4:45 p.m. Central time (5:45 p.m. Eastern) at Orbital Launch Pad 2 in Starbase, according to SpaceX. USA Today, reporting on both missions this morning, noted that the two companies are plainly not feeling superstitious about the date.",
+        ],
+      },
+      {
+        heading: "What time does the Vulcan rocket launch today?",
+        body: [
+          "Vulcan is scheduled to lift off in a 29-minute window opening at 12:54 p.m. Eastern time on Friday, November 13, from Launch Complex 41 at Cape Canaveral, flying northeast over the Atlantic. ULA will stream the launch live, with coverage beginning about 20 minutes before the window opens, Florida Today reported.",
+          "The mission, designated LV-01, carries 40 satellites for Amazon Leo — the broadband constellation formerly known as Project Kuiper — in a payload fairing on top of the rocket. It is the first time Vulcan has carried Amazon's satellites, and the first time the rocket has flown with the maximum six solid rocket boosters strapped to its side. The 40 satellites would push Amazon Leo's deployed total to 336 since April 2025, on the way to a planned constellation of about 3,200, according to USA Today. Amazon has contracted ULA for 38 future Vulcan missions for the constellation.",
+          "This is Vulcan's fifth flight since its debut in January 2024 — and its first since February, when a flight anomaly grounded it. Sparks were observed coming off the rocket's nosecone area during that February launch, in what ULA confirmed was an anomaly involving a booster, and the rocket has been sidelined for about nine months while the company investigated and cleared the return to flight.",
+        ],
+      },
+      {
+        heading: "What is Starship Flight 15 trying to do tonight?",
+        body: [
+          "Starship Flight 15 is the 15th test flight of SpaceX's 407-foot Starship system since April 2023, flown by Booster 22 and Ship 42, and it is built around a recovery attempt no rocket has made before: catching both stages at the launch site. Reuters, reporting from Brownsville, Texas this morning, described the flight as including SpaceX's first attempt to catch the Starship spacecraft itself at its Texas launch site rather than discarding it in the ocean — a key test of the fully reusable system SpaceX is developing for satellite deployments and, eventually, crewed missions to the Moon and Mars.",
+          "The sequence runs across two days. The Super Heavy booster is scheduled to return to Starbase about six and a half minutes after liftoff for its tower-catch attempt. Ship 42, meanwhile, is due to deploy 26 operational Starlink V3 satellites — the second Starship flight to carry a batch of operational Starlinks, after Flight 14 reached orbit for the first time at the end of September — then coast through about 14 orbits over roughly 22 hours before lining up for its own catch attempt around 2:45 p.m. Central time on Saturday. SpaceX has said the ship's return depends on the vehicle meeting its stated criteria, and three of the satellites aboard have been modified to image Starship's heatshield on the way.",
+          "Ship 42 carries a piece of science-fiction humour into the attempt: the words 'Don't Panic' — the famous advice from The Hitchhiker's Guide to the Galaxy — were spotted on the upper stage after it was transported to the launch pad on November 12.",
+        ],
+      },
+      {
+        heading: "Is Starship cleared to launch today?",
+        body: [
+          "Not yet, as of Friday morning — and that is the live question over the evening half of this double-header. Reuters reported this morning that SpaceX had not yet received a launch licence from the U.S. Federal Aviation Administration for Flight 15. SpaceX's own mission plan, released on November 7 and covered by WorldEye at the time, was explicit that the November 13 target was pending regulatory approval, and the schedule remains dynamic.",
+          "That makes today a study in contrasts. In Florida, Vulcan is go for launch on a return-to-flight mission nine months in the making. In Texas, the largest rocket ever flown sits on its pad with its window set, waiting on a signature. If the licence arrives in time, Friday the 13th delivers two heavy launches about five hours apart; if it does not, the Starship half of the double-header slides — and WorldEye's earlier Flight 15 plan story remains the reference for what the mission will attempt whenever it flies.",
+        ],
+      },
+      {
+        heading: "How can I follow today's launches on WorldEye?",
+        body: [
+          "The satellites these rockets deliver are the ones WorldEye's [satellite tracker](/satellite-tracker) follows in orbit — Amazon Leo's 40 new spacecraft and Starship's 26 Starlink V3 satellites will join the tracked population once they are catalogued after deployment. The [space station tracker](/space-station-tracker) follows the International Space Station on the same live globe, among the 74,229 cameras and tracked objects WorldEye brings together.",
+          "For the launches themselves, ULA's livestream opens about 20 minutes before the 12:54 p.m. Eastern window, and SpaceX streams Starship flights from its own channels. Check the licence status before making plans around the Texas half of the day: as this morning's reporting shows, a rocket on the pad is not the same thing as a rocket cleared to fly.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "What rockets are launching on Friday November 13, 2026?",
+        a: "Two: ULA's Vulcan from Cape Canaveral, Florida, in a window opening at 12:54 p.m. Eastern carrying 40 Amazon Leo satellites, and SpaceX's Starship Flight 15 from Starbase, Texas, in a 75-minute window opening at 4:45 p.m. Central — pending FAA licensing, which had not been issued as of Friday morning.",
+      },
+      {
+        q: "Why is the Vulcan launch a return to flight?",
+        a: "Vulcan has been grounded since its February 2026 flight, when an anomaly was observed — sparks coming off the rocket — and ULA stood the vehicle down for about nine months. Today's LV-01 mission is its first flight since then, its fifth overall, and its first carrying Amazon Leo satellites and flying with six solid rocket boosters.",
+      },
+      {
+        q: "What is the Starship Flight 15 double catch?",
+        a: "SpaceX plans to catch both stages of Starship at the Starbase launch tower: the Super Heavy booster about six and a half minutes after liftoff, and Ship 42 roughly 22 hours later, after about 14 orbits and the deployment of 26 Starlink V3 satellites. No Starship upper stage has been caught at the tower before.",
+      },
+      {
+        q: "Where can I watch the Vulcan and Starship launches?",
+        a: "ULA streams the Vulcan launch on its YouTube channel and website, with coverage starting about 20 minutes before the 12:54 p.m. Eastern window. SpaceX streams Starship flights on its own channels; today's Texas window opens at 4:45 p.m. Central, subject to the FAA licence.",
+      },
+    ],
+    sources: [
+      { name: "USA Today: SpaceX, ULA plan rare double rocket launch on Friday the 13th", url: "https://www.usatoday.com/story/tech/space/2026/11/13/spacex-ula-starship-vulcan-rocket-launch-friday-13th/92739627007/" },
+      { name: "Reuters via Q106: SpaceX to attempt first Starship spacecraft recovery on land in 15th flight", url: "https://q106fm.com/2026/11/13/spacex-to-attempt-first-starship-spacecraft-recovery-on-land-in-15th-flight/" },
+      { name: "Florida Today: Vulcan rocket returns to flight Friday — how to watch", url: "https://www.floridatoday.com/story/tech/science/space/2026/11/13/how-watch-friday-13th-ula-vulcan-rocket-launch-cape-canaveral/92722212007/" },
+      { name: "USA Today: Powerful Vulcan rocket with 6 boosters set to light up East Coast", url: "https://www.usatoday.com/story/tech/space/2026/11/12/ula-vulcan-amazon-cape-canaveral-rocket-launch/92722228007/" },
+    ],
+  },
+  {
+    slug: "vail-winter-park-open-today-november-13-2026",
+    title: "Vail and Winter Park Open Today: Two Colorado Giants Start Their Seasons",
+    seoTitle: "Vail & Winter Park Open Today | WorldEye Blog",
+    date: "2026-11-13",
+    excerpt:
+      "Vail Mountain and Winter Park both open for the 2026-27 season today, Friday November 13, with 9 a.m. first chairs — Vail on its Ramshorn trail with no beginner terrain, Winter Park with its Send'er November perks for early-season skiers.",
+    seoDescription:
+      "Vail Mountain and Winter Park both open for the 2026-27 season today, Nov 13, with 9 a.m. first chairs, limited terrain and November perks at Winter Park.",
+    tags: ["vail", "winter-park", "colorado", "ski-season", "opening-day"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "Colorado's ski season added its two biggest names on the same morning. Vail Mountain and Winter Park Resort both open for the 2026-27 season today, Friday, November 13, each with a first chair at 9 a.m., joining Arapahoe Basin, Keystone, Copper Mountain, Loveland and Breckenridge — which opened on Wednesday — among the Colorado resorts now spinning lifts. At least seven Colorado resorts will be open across this weekend, according to Unofficial Networks.",
+          "Both openings are deliberately small, as November openings are: a handful of lifts and machine-made snow while the natural base builds. What makes today notable is the names, not the acreage — Vail is one of the largest ski resorts in North America, and Winter Park is Denver's own mountain and one of the longest-running in the state.",
+        ],
+      },
+      {
+        heading: "What is open at Vail on opening day?",
+        body: [
+          "Vail opens at 9 a.m. today on Ramshorn, an upper-mountain intermediate trail reached via the Mountaintop Express lift and Gondola One. That is the whole of the skiing: Swingsville, the green trail in the same area, is not ready yet, so there is no beginner terrain at Vail on opening day, the resort said in the social media post announcing the opening on Thursday. A hike-to terrain park is available for skiers and riders who want features, and a DJ at the Express Lift supplies music from 1:30 to 3:30 p.m., with giveaways for skiers in line.",
+          "The resort thanked its snowmakers and mountain teams for making opening day happen — the opening arrives at the tail end of a dry spell for Colorado resorts, after a promising early-season start gave way to a stretch in which the snow largely stopped, prompting Copper Mountain and Breckenridge to delay their openings by several days before both got under way. Forecasters are watching a pattern shift this weekend that is expected to bring snow to resorts from California to Colorado — modest first at Vail, with the chance of bigger totals stacking up behind it.",
+        ],
+      },
+      {
+        heading: "What is open at Winter Park on opening day?",
+        body: [
+          "Winter Park starts its season today with first chair at 9 a.m. 'Winter 26/27 starts Friday, 11/13, at Winter Park! First chair takes off at 9 am!' the resort wrote in its opening announcement. Early-season operations are limited compared with the resort's full winter offering, with a scaled-down set of services running for the first days — a Starbucks, the Derailer bar, select offerings at Moffat Market, rentals, retail and the Tune Shop — and both group lessons and early-season private lessons available, according to Unofficial Networks' report of the resort's announcement.",
+          "The opening-day hook at Winter Park is Send'er November, the resort's early-season programme, which returns with its Rope Drop Club. Skiers and riders who visit at least two days in November earn two Rope Drop days, redeemable after March 1, 2027, for access to the dedicated Rope Drop lanes — separate, shorter lines — at the Super Gauge Express and the Winter Park Gondola. Riding two days in December also unlocks Rope Drop days. The first Send'er November weekend starts tomorrow, Saturday November 14, with a Poker Run and the return of the Pass Holder Lounge.",
+        ],
+      },
+      {
+        heading: "Which Colorado ski resorts are open now?",
+        body: [
+          "Eight Colorado resorts have now opened for 2026-27. Arapahoe Basin was first, on October 28, followed by Keystone on October 30 and Wolf Creek on October 31. Loveland opened on November 7, Copper Mountain on November 8, and Breckenridge on November 11, after a five-day delay. Vail and Winter Park complete the current list today.",
+          "One name on that list comes with a warning: Wolf Creek, in the San Juan Mountains, is temporarily closed because flooding damaged its access road, POWDER reported today. Early-season conditions vary sharply from resort to resort — and, as Wolf Creek shows, the road to the mountain can matter as much as the snow on it. Check each resort's own lift and terrain report before travelling, especially ahead of the busy Thanksgiving period.",
+        ],
+      },
+      {
+        heading: "How can I check conditions at Vail and Winter Park?",
+        body: [
+          "WorldEye's [ski webcams](/ski-webcams) bring together live resort cameras — including Colorado's open resorts — with snow and lift information, so you can see what opening-weekend conditions actually look like before you drive. With the weekend's pattern shift expected to bring fresh snow across the West, the cameras are also the quickest way to watch the base build in real time.",
+          "November skiing rewards exactly the behaviour Winter Park is paying for: show up early in the season, on the days when terrain is thin and the crowds are thinner, and the mountain remembers it in March.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When do Vail and Winter Park open for the 2026-27 season?",
+        a: "Both resorts open today, Friday, November 13, 2026, with first chair at 9 a.m. Vail confirmed its opening on Thursday; Winter Park announced first chair at 9 a.m. for Friday the 13th.",
+      },
+      {
+        q: "What terrain is open at Vail on opening day?",
+        a: "Vail opens on Ramshorn, an upper-mountain intermediate trail served by the Mountaintop Express and Gondola One, plus a hike-to terrain park. There is no beginner terrain on opening day — the green Swingsville trail is not ready yet, the resort said.",
+      },
+      {
+        q: "What is Winter Park's Rope Drop Club?",
+        a: "Part of Winter Park's Send'er November programme: ride at least two days in November (or in December) and you earn two Rope Drop days, redeemable after March 1, 2027, for access to separate, shorter Rope Drop lanes at the Super Gauge Express and the Winter Park Gondola.",
+      },
+      {
+        q: "Which Colorado ski resorts are already open in November 2026?",
+        a: "Arapahoe Basin (Oct 28), Keystone (Oct 30), Wolf Creek (Oct 31, currently temporarily closed after flood damage to its access road), Loveland (Nov 7), Copper Mountain (Nov 8), Breckenridge (Nov 11), and now Vail and Winter Park (Nov 13).",
+      },
+    ],
+    sources: [
+      { name: "POWDER: Vail Mountain, Colorado, Confirms 26/27 Opening Day", url: "https://www.powder.com/news/vail-mountain-confirms-opening-day" },
+      { name: "POWDER: Winter Park Opens for the Season on November 13, 2026", url: "https://www.powder.com/news/winter-park-opening-day-2026" },
+      { name: "Unofficial Networks: Winter Park Resort Announces November 13 Opening Day", url: "https://unofficialnetworks.com/2026/11/12/winter-park-resort-opening-day/" },
+    ],
+  },
+  {
+    slug: "sierra-winter-storm-warning-high-surf-november-13-2026",
+    title: "First Big Sierra Storm: Winter Storm Warning, Two Feet of Snow and 35-Foot Surf",
+    seoTitle: "Sierra Winter Storm Warning Today | WorldEye Blog",
+    date: "2026-11-13",
+    excerpt:
+      "The first in a series of Pacific storms is hitting the West Coast today: a winter storm warning covers the Sierra Nevada with up to two feet of snow on the highest peaks, while high surf warnings post breaking waves of 30 to 35 feet on the North Coast.",
+    seoDescription:
+      "The Sierra's first major storm of the season is under a winter storm warning today, with up to two feet of snow and 35-foot surf on the North Coast.",
+    tags: ["winter-storm", "sierra-nevada", "california", "nws", "high-surf", "weather"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "The West Coast's first real storm sequence of the season has arrived. A quick-hitting series of Pacific storms begins today, Friday November 13, and continues into next week, bringing heavy rain, the Sierra Nevada's first major snowfall of the season, and some of the largest surf of the year to the California and Oregon coasts, The Weather Channel reported this morning.",
+          "The National Weather Service has put warnings behind the forecast. A winter storm warning from the Sacramento office runs from 10 a.m. today to 10 a.m. Saturday for the Sierra Nevada above 6,000 feet, and high surf warnings are in effect along the coast from Oregon to Big Sur, with breaking waves of 30 to 35 feet expected on parts of the North Coast. Forecasters describe it, in the Reno office's words for the Sierra, as the first significant winter storm of the season.",
+        ],
+      },
+      {
+        heading: "How much snow will the Sierra get?",
+        body: [
+          "The National Weather Service expects 6 to 12 inches of snow above 6,000 feet in the Sierra, with up to two feet on the highest peaks, and about two inches possible near 5,000 feet. Snow levels start between about 6,500 and 7,500 feet today before dropping to between 5,500 and 6,500 feet by Saturday morning, with the heaviest snow expected Friday night into Saturday morning.",
+          "The warning covers the main Sierra crossings — Interstate 80, U.S. Highway 50, State Route 4 and State Route 108 — and the southern Cascades including Lassen Volcanic National Park. Winds could gust as high as 60 mph in exposed mountain areas, and the weather service cautions that travel could be very difficult, with high snowfall rates and low visibility making the passes treacherous at the storm's peak. The Weather Channel's broader forecast puts one to two feet of heavy, wet snow on the Sierra peaks from this first storm alone.",
+        ],
+      },
+      {
+        heading: "How big will the waves get on the coast?",
+        body: [
+          "Very big. The Weather Channel counts at least three rounds of increased wave activity through Wednesday of next week, and says the most potent of the systems could bring waves as high as 30 feet in nearshore waters, potentially breaking to 50 feet at favoured spots. The risk of drowning in coastal waters this weekend is very high, and boating is ill-advised.",
+          "The National Weather Service office in Eureka has a high surf warning in effect for breaking waves of 30 to 35 feet along coastal Del Norte and northern Humboldt counties from 1 p.m. today to 4 a.m. Sunday, with southwestern Humboldt and coastal Mendocino counties following from 4 p.m. today; on the southern Oregon coast, the Medford office forecasts breaking waves of 20 to 25 feet today, increasing to 30 to 35 feet late Friday. High tides combined with elevated water levels from El Niño could add multiple feet of coastal flooding during each storm in the sequence.",
+        ],
+      },
+      {
+        heading: "Where else will the storms hit?",
+        body: [
+          "Rainfall totals are expected to reach three to six inches in southern Oregon, far Northern California, the northern Sierra Nevada foothills and Washington's Olympic Peninsula, with more than an inch likely from the Bay Area to western Washington and Oregon. The strongest winds will likely run from southern Oregon into Northern California through Friday morning. Because this is the first stronger storm system of the season, flooding is not expected inland and the rain is expected to be largely beneficial — later systems in the sequence may bring an increasing chance of flooding, The Weather Channel said.",
+          "For the San Francisco Bay Area, the system has been upgraded to a Level 2 storm on ABC7's scale — the region's first moderate storm of the season — and is expected to bring an end to the region's fire season. After a short break, another storm is expected between Sunday and Tuesday, and a third could arrive next week, again with the greatest rain in Northern California.",
+        ],
+      },
+      {
+        heading: "How can I watch the storm arrive on WorldEye?",
+        body: [
+          "WorldEye's [ski webcams](/ski-webcams) cover the Tahoe-area resorts in the storm's path, where the warning's snow is the difference between closed lifts and a season that can grow — Mt. Rose opened last week on a thin early base. The [weather radar](/weather-radar) follows the storm systems as they come ashore, and [beach webcams](/beach-webcams) along the California and Oregon coasts show the surf the warnings are about — from a safe distance, which is the only distance the weather service wants anyone keeping this weekend.",
+          "This is the storm Colorado's ski resorts have been waiting on as well: the same pattern shift is forecast to carry snow inland to the Rockies over the weekend, on the very days Vail and Winter Park open their seasons.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "What does the Sierra winter storm warning cover?",
+        a: "The National Weather Service Sacramento office's winter storm warning runs from 10 a.m. Friday November 13 to 10 a.m. Saturday for the Sierra Nevada above 6,000 feet, including Interstate 80, U.S. Highway 50, State Route 4, State Route 108 and Lassen Volcanic National Park, with 6 to 12 inches of snow, up to two feet on the highest peaks, and gusts to 60 mph.",
+      },
+      {
+        q: "How big will the surf get on the California and Oregon coasts?",
+        a: "High surf warnings post breaking waves of 30 to 35 feet for parts of the North Coast from Friday afternoon into Sunday. The Weather Channel says the most potent system in the sequence could bring 30-foot nearshore waves, breaking to 50 feet at favoured spots, with a very high drowning risk this weekend.",
+      },
+      {
+        q: "Is this the Sierra's first big storm of the season?",
+        a: "Yes. The National Weather Service's Reno office calls it the first significant winter storm of the season for the Sierra, and ABC7 rates it the Bay Area's first moderate (Level 2) storm of the season, expected to end the region's fire season.",
+      },
+      {
+        q: "How long will the West Coast storm pattern last?",
+        a: "The first storm runs Friday into Saturday, with a second expected between Sunday and Tuesday and a possible third next week. The Weather Channel counts at least three rounds of increased wave activity through Wednesday, with the flood risk rising for the later systems.",
+      },
+    ],
+    sources: [
+      { name: "The Weather Channel: Storms to batter West Coast with waves, rain and Sierra snow", url: "https://weather.com/2026/11/13/forecast/regional/series-of-storms-could-bring-50-foot-waves-heavy-rain-to-the-west" },
+      { name: "WeatherBoy: Pacific Storm to Bring Heavy Sierra Snow and 30-Foot Surf to Northern California, Oregon Coasts (NWS Sacramento and Eureka warnings)", url: "https://weatherboy.com/pacific-storm-to-bring-heavy-sierra-snow-and-30-foot-surf-to-northern-california-oregon-coasts/" },
+      { name: "INEDC: Winter Storm Warning Issued for Sierra Nevada, Foothills Face Heavy Rain (NWS Sacramento)", url: "https://inedc.com/26/weather_roads/winter-storm-warning-issued-for-sierra-nevada-foothills-face-heavy-rain/" },
+    ],
+  },
+// Blog daily 2026-11-12 — three sourced event stories, news: true, date 2026-11-12.
+// SOURCE-ACCESS DISCLOSURE: browser.open failed all run (browser-service
+// exited, code -1, on three independent requests); facts were verified from
+// detailed browser.search excerpts, cross-checked across 2-3 independent
+// sources per event including the official products themselves (USGS HVO
+// Nov 11 daily update text; NASA's Nov 10 Voyager announcement via
+// EarthSky / WatchTheStars; Space.com's USSF-627 launch report via two
+// independent syndications). Same disclosure pattern as the 2026-11-07
+// and 2026-11-08 runs.
+  {
+    slug: "spacex-ussf-627-launches-vandenberg-november-11",
+    title: "SpaceX Launches USSF-627: Third Attempt Flies From Vandenberg at Last",
+    seoTitle: "USSF-627 Launches From Vandenberg | WorldEye Blog",
+    date: "2026-11-12",
+    excerpt:
+      "After two postponements, SpaceX's classified USSF-627 mission for the U.S. Space Force lifted off from Vandenberg at 8:36 p.m. Pacific on Wednesday — the 120th Falcon 9 launch of 2026 and the second classified Space Force flight from the base in six days.",
+    seoDescription:
+      "SpaceX launched the classified USSF-627 mission from Vandenberg at 8:36 p.m. PT on Nov 11, the 120th Falcon 9 flight of 2026, booster landing at sea.",
+    tags: ["spacex", "ussf-627", "vandenberg", "space-force", "falcon-9", "launch"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "SpaceX launched the classified USSF-627 mission for the United States Space Force on Wednesday night, November 11, ending a run of two postponements that had pushed the flight back from its original Monday slot. A Falcon 9 lifted off from Space Launch Complex 4 East at Vandenberg Space Force Base in California at 8:36 p.m. local time — 04:36 UTC on Thursday, November 12 — Space.com reported.",
+          "The first stage, booster B1103 on its seventh flight, separated and landed on SpaceX's Of Course I Still Love You droneship in the Pacific Ocean about eight and a half minutes after liftoff. SpaceX ended its webcast shortly after the booster came back to Earth, which is standard practice for classified national-security missions: the public part of this flight was the launch and the landing, not the payload's journey to orbit.",
+          "USSF-627 was the 120th Falcon 9 launch of 2026 and the rocket's 15th national-security flight of the year, according to Space.com. It was also the second classified Space Force mission SpaceX has flown from Vandenberg in six days, following USSF-432 on November 6.",
+        ],
+      },
+      {
+        heading: "When did USSF-627 launch?",
+        body: [
+          "USSF-627 lifted off at 8:36 p.m. Pacific time on Wednesday, November 11 (04:36 UTC on November 12), inside a four-hour window that had opened at 6:35 p.m. Pacific. The launch came on the mission's third attempt: the flight was first scheduled for Monday, November 9, then moved to Tuesday night, then to Wednesday, as WorldEye reported in its earlier stories on this mission.",
+          "Each slip moved the window a little earlier in the evening — Monday's opened at 7:03 p.m. Pacific, Tuesday's at 6:49 p.m. and Wednesday's at 6:35 p.m. — a pattern set by the mission's target orbit rather than by the weather or the rocket. Wednesday's attempt was the one that finally flew.",
+        ],
+      },
+      {
+        heading: "What is the USSF-627 payload?",
+        body: [
+          "That remains classified, and it is worth being precise about what is and is not known. SpaceX and the U.S. Space Force have not publicly confirmed the number or the design of the spacecraft aboard USSF-627, and Space.com noted that the payload and its specific objectives were not disclosed.",
+          "Outside analysts have speculated that the mission could involve satellites built on SpaceX's Starshield bus, because the rocket's stage drop zones closely matched earlier Starlink Group 15 trajectories. That is an inference from the flight path, not a confirmation, and WorldEye labels it as speculation: nothing official has identified the payload.",
+        ],
+      },
+      {
+        heading: "Why did this launch take three attempts?",
+        body: [
+          "Neither SpaceX nor the Space Force published a detailed reason for the two postponements, and this story does not invent one. What the record shows is a schedule that moved twice in two days — Monday to Tuesday to Wednesday — before a clean liftoff on the third attempt, with the booster recovered at sea on its seventh flight.",
+          "Back-to-back classified flights are becoming a rhythm at Vandenberg. USSF-432 flew on November 6 after its own series of slips, and USSF-627 followed six days later. The next classified Vandenberg mission on the public schedule, USSF-317, has already moved once, from Thursday night to Saturday, November 14 — a reminder that dates on this pad are targets until the rocket actually leaves.",
+        ],
+      },
+      {
+        heading: "How can I follow launches and satellites on WorldEye?",
+        body: [
+          "WorldEye's [satellite tracker](/satellite-tracker) follows objects in orbit in real time, and the [space station tracker](/space-station-tracker) tracks the International Space Station's position and passes. Classified payloads like USSF-627's are, by design, the ones you will not find fully catalogued in public trackers — what you can watch is the launch itself, the booster fleet's growing flight history, and the cadence of missions from pads like SLC-4E.",
+          "For the next Vandenberg attempt, check the launch window the same day: as this mission showed twice in 48 hours, an evening window on Monday's schedule can belong to a rocket that flies on Wednesday.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When did the USSF-627 launch take place?",
+        a: "USSF-627 lifted off at 8:36 p.m. Pacific time on Wednesday, November 11, 2026 (04:36 UTC on November 12) from Space Launch Complex 4 East at Vandenberg Space Force Base, California, on its third attempt after two postponements.",
+      },
+      {
+        q: "Did the USSF-627 booster land successfully?",
+        a: "Yes. First stage B1103, flying for the seventh time, landed on SpaceX's Of Course I Still Love You droneship in the Pacific Ocean about eight and a half minutes after liftoff, Space.com reported.",
+      },
+      {
+        q: "What was on board USSF-627?",
+        a: "The payload is classified. SpaceX and the U.S. Space Force have not confirmed its number or design. Analyst speculation about Starshield satellites is based on the flight path and drop zones and remains unconfirmed.",
+      },
+      {
+        q: "How many Falcon 9 launches has SpaceX flown in 2026?",
+        a: "USSF-627 was the 120th Falcon 9 launch of 2026 and the rocket's 15th national-security flight of the year, according to Space.com. It was SpaceX's second classified Space Force launch from Vandenberg in six days.",
+      },
+    ],
+    sources: [
+      { name: "Space.com (syndicated): SpaceX launches 2nd mystery mission for US Space Force in 6-day span", url: "https://www.skepticsociety.co.uk/spacex-launches-2nd-mystery-mission-for-us-space-force-in-6-day-span-photos/" },
+      { name: "World of Now: SpaceX's USSF-627 launch and the classified mission record", url: "https://worldofnow.com/finance/spacex-ussf-627-classified-space-force-falcon-9-launch-november-2026/" },
+      { name: "Launch Library 2 via RealTimeSolarSystem: Falcon 9 Block 5 | USSF-627 launch details", url: "https://realtimesolarsystem.com/en/launches/falcon-9-block-5-ussf-627-6aa7b90b/" },
+    ],
+  },
+  {
+    slug: "kilauea-episode-57-window-november-16-21",
+    title: "Kilauea's Next Lava Fountains Get a Date: Episode 57 Forecast for November 16-21",
+    seoTitle: "Kilauea Episode 57 Window Set | WorldEye Blog",
+    date: "2026-11-12",
+    excerpt:
+      "USGS Hawaiian Volcano Observatory's November 11 update puts a date on Kilauea's next lava fountains: episode 57 is forecast for November 16-21, with the summit steadily reinflating since episode 56 ended on November 5.",
+    seoDescription:
+      "USGS forecasts Kilauea episode 57 lava fountaining for Nov 16-21 in its Nov 11 update, as the summit reinflates after episode 56. Alert stays ADVISORY.",
+    tags: ["kilauea", "volcano", "hawaii", "usgs", "lava-fountains", "eruption"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "Kilauea's next round of lava fountains now has a forecast window. In its daily update issued at 8:25 a.m. HST on Wednesday, November 11, the U.S. Geological Survey's Hawaiian Volcano Observatory (HVO) said the forecast window for episode 57 fountaining is November 16-21.",
+          "The Halema'uma'u eruption remains paused following episode 56, which fountained between 12:10 p.m. and 6:01 p.m. HST on November 5. The summit has been steadily reinflating since that episode ended, HVO said, and another fountaining episode remains likely. Kilauea's volcano alert level stays at ADVISORY and its aviation color code at YELLOW.",
+          "The window is the new development. HVO's November 10 update, a day earlier, said only that the next episode was likely more than a week away and gave no dates. The November 11 update, based on previous episodes and the ongoing tilt trend, converts that open-ended wait into a six-day window opening on Monday.",
+        ],
+      },
+      {
+        heading: "When is Kilauea episode 57 expected?",
+        body: [
+          "Episode 57 is forecast for November 16-21, according to HVO's November 11 daily update. The window is a forecast, not a schedule: HVO derives it from the summit's deformation — tiltmeters recording steady inflation since episode 56 ended — and from how the pauses between earlier episodes in this eruption have behaved.",
+          "The current eruption has been running episodically since December 23, 2024, from two primary vents, north and south, within Halema'uma'u crater at the summit. Episode 56 was the most recent fountaining: HVO's figures put its erupted volume at about 6 million cubic metres (8 million cubic yards) of lava, at an average eruption rate of about 200 cubic metres per second.",
+        ],
+      },
+      {
+        heading: "Is Kilauea erupting right now?",
+        body: [
+          "No — the eruption is paused, and has been since episode 56's fountains stopped at 6:01 p.m. HST on November 5. A pause in this eruption does not mean the volcano has gone quiet: the summit is reinflating, which is the pattern that has preceded each new episode, and HVO states plainly that another fountaining episode remains likely.",
+          "That distinction matters for anyone watching the webcams this week. A dark or still crater view between now and November 16 is the expected state, not a sign the eruption is over. When episode 57 begins, the change is abrupt — episode 56 went from a paused summit to full fountaining in a single afternoon.",
+        ],
+      },
+      {
+        heading: "Where can I watch episode 57 live?",
+        body: [
+          "WorldEye's [volcano webcams](/volcano-webcams) page carries the Kilauea summit cameras alongside the official alert levels, so you can see the crater and the observatory's own status in one place. The USGS webcams linked from HVO's eruption information pages are the primary feeds the observatory itself publishes.",
+          "If the window holds, the most likely fountaining days are the middle of November 16-21, and HVO typically narrows the forecast as tilt data accumulates. Check the daily update each morning Hawaii time — it is the source that will move first if the window shifts, as it did between the November 10 and November 11 updates.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When will Kilauea episode 57 erupt?",
+        a: "USGS Hawaiian Volcano Observatory's November 11, 2026 update forecasts episode 57 fountaining for November 16-21, based on previous episodes and the ongoing summit tilt trend. It is a forecast window, not a fixed date.",
+      },
+      {
+        q: "Is Kilauea erupting today?",
+        a: "No. The Halema'uma'u eruption is paused after episode 56 fountaining ended at 6:01 p.m. HST on November 5, 2026. The summit is steadily reinflating and another episode remains likely, HVO says.",
+      },
+      {
+        q: "What is Kilauea's alert level right now?",
+        a: "ADVISORY, with aviation color code YELLOW, per HVO's November 11 daily update. The eruption is confined to Halema'uma'u crater at the summit, from the north and south vents.",
+      },
+      {
+        q: "How big was Kilauea episode 56?",
+        a: "Episode 56 fountained from 12:10 p.m. to 6:01 p.m. HST on November 5, 2026 — about six hours — and erupted roughly 6 million cubic metres of lava at an average rate near 200 cubic metres per second, per USGS figures.",
+      },
+    ],
+    sources: [
+      { name: "USGS Volcanoes: Hawaiian Volcano Observatory daily update, November 11, 2026", url: "http://volcanoes.usgs.gov/hans-public/api/notice/getNoticesLastDayHTML" },
+      { name: "Hawaii Watch: Kilauea episode 57 forecast, November 16-21 (USGS data)", url: "https://hawaii-watch.com/volcano" },
+      { name: "USGS: Kilauea eruption information", url: "https://www.usgs.gov/volcanoes/kilauea/science/eruption-information" },
+    ],
+  },
+  {
+    slug: "voyager-1-one-light-day-november-18-nasa",
+    title: "Voyager 1 Will Be One Light-Day From Earth on November 18, NASA Says",
+    seoTitle: "Voyager 1 Nears One Light-Day | WorldEye Blog",
+    date: "2026-11-12",
+    excerpt:
+      "NASA announced on November 10 that Voyager 1 will reach one light-day from Earth at 10:16 UTC on November 18 — 25.9 billion kilometres away, where a radio signal takes a full 24 hours to arrive. NASA is marking it with a worldwide torch-flash event on November 17.",
+    seoDescription:
+      "NASA says Voyager 1 reaches one light-day from Earth at 10:16 UTC on Nov 18, 25.9 billion km away, with a Shine Bright public event on Nov 17.",
+    tags: ["voyager-1", "nasa", "deep-space", "space", "milestone", "jpl"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "Voyager 1 is about to cross a distance no human-made object has reached before. NASA announced on November 10 that the spacecraft will be one light-day from Earth at 10:16:07 UTC on Wednesday, November 18 — 5:16:07 a.m. Eastern, 4:16:07 a.m. Central — when it will be about 25.902 billion kilometres (16.094 billion miles) away.",
+          "A light-day is simply the distance light travels in 24 hours. From November 18, a radio command sent to Voyager 1 will take a full day to arrive, and the spacecraft's reply will take another day to come back: a roughly 48-hour round trip for every exchange between Earth and the most distant working explorer humanity has.",
+          "NASA is treating the milestone as a public moment, not just an engineering footnote. Its November 10 announcement invites media and the public to join two activities around the crossing — a worldwide torch-flash on the evening of November 17 and a Jet Propulsion Laboratory discussion on November 19.",
+        ],
+      },
+      {
+        heading: "When exactly does Voyager 1 reach one light-day?",
+        body: [
+          "NASA puts the moment at 10:16:07 UTC on Wednesday, November 18, 2026, at a distance of 25.902 billion kilometres from Earth — about 173.14 astronomical units. NASA also cautions that the exact moment may shift slightly, because both the spacecraft and Earth are moving; the figure is a projection from the mission's tracking, not a finish line the spacecraft crosses in any physical sense.",
+          "Nothing changes aboard Voyager 1 at that instant. It does not enter a new region of space — it crossed the heliopause into interstellar space back in 2012 — and its instruments keep doing what they were doing the minute before. The milestone is a mile marker: the first time any spacecraft has been a full day's light-travel away from home.",
+        ],
+      },
+      {
+        heading: "What is NASA's Shine Bright for Voyager event?",
+        body: [
+          "After local sunset on Tuesday, November 17, NASA invites people around the world to point a torch, phone or other light at the sky and flash V-G-R — Voyager's call sign — in Morse code. NASA has built an automated flasher page that can blink the signal from a phone or tablet browser, so taking part needs no equipment beyond a screen and a clear-ish sky.",
+          "The following day, Thursday, November 19 at noon Eastern (17:00 UTC), NASA's Jet Propulsion Laboratory in California hosts a moderated discussion about the state of both Voyager spacecraft, carried on NASA Live. Between the flash, the crossing and the discussion, the week is the most public attention the 49-year-old mission has had in years.",
+        ],
+      },
+      {
+        heading: "How is Voyager 1 doing after 49 years?",
+        body: [
+          "Voyager 1 launched on September 5, 1977, so it reaches the light-day mark after 49 years, 2 months and 13 days of flight. It still returns scientific data through NASA's Deep Space Network, but its plutonium power supply fades a little every year, and the team conserves energy instrument by instrument: most recently, the low-energy charged particles instrument was switched off on April 17, 2026, with the option of turning it back on later.",
+          "The spacecraft is heading in the direction of the constellation Ophiuchus. Its twin is on the same road, much further back: NASA says Voyager 2 will not reach one light-day from Earth for nine more years, in November 2035.",
+        ],
+      },
+      {
+        heading: "Can I track spacecraft like Voyager on WorldEye?",
+        body: [
+          "WorldEye's [satellite tracker](/satellite-tracker) follows satellites in Earth orbit, and the [space station tracker](/space-station-tracker) tracks the ISS — objects minutes, not days, away by radio. Voyager 1 sits at the opposite extreme of the same picture: everything WorldEye tracks around Earth answers in well under a second, while Voyager's answers now take a day each way.",
+          "That contrast is the real story of November 18. The tracked sky above Earth is crowded and instant; beyond it, one small spacecraft from 1977 is still phoning home — it just takes 24 hours for the call to arrive.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When does Voyager 1 reach one light-day from Earth?",
+        a: "At 10:16:07 UTC on Wednesday, November 18, 2026 (5:16 a.m. Eastern), according to NASA's November 10 announcement, when the spacecraft will be about 25.902 billion km (16.094 billion miles) from Earth. NASA notes the exact moment may shift slightly.",
+      },
+      {
+        q: "How far is one light-day in kilometres?",
+        a: "About 25.9 billion kilometres — the distance light travels in 24 hours — or roughly 173.14 times the Earth-Sun distance. From that range, a radio signal takes a full 24 hours to reach Voyager 1, and about 48 hours for a command and reply.",
+      },
+      {
+        q: "How can I join NASA's Shine Bright for Voyager event?",
+        a: "After your local sunset on Tuesday, November 17, point a torch, phone or other light toward the sky and flash the letters V-G-R in Morse code. NASA provides an automated flasher on its event page. JPL follows with a public discussion on November 19 at noon Eastern on NASA Live.",
+      },
+      {
+        q: "Is Voyager 1 still working?",
+        a: "Yes. Launched September 5, 1977, it still returns data via the Deep Space Network from interstellar space. To save its fading power supply, NASA switched off its low-energy charged particles instrument on April 17, 2026, keeping the remaining instruments running.",
+      },
+      {
+        q: "When will Voyager 2 reach one light-day?",
+        a: "Not for nine more years — NASA puts Voyager 2's one light-day crossing in November 2035.",
+      },
+    ],
+    sources: [
+      { name: "EarthSky: Celebrate as Voyager 1 reaches 1 light-day from Earth (via NASA)", url: "https://earthsky.org/space/voyager-1-1-light-day-from-earth-november-17-18-2026/" },
+      { name: "Watch The Stars: Voyager 1 reaches one light-day from Earth (NASA figures, JPL Horizons check)", url: "https://watchthestars.co.uk/blog/_posts/2026-11-voyager-1-one-light-day-from-earth/" },
+      { name: "Popular Science: Join NASA's worldwide Voyager 1 celebration on November 17", url: "https://www.popsci.com/science/voyager-1-nasa-shine-light-morse-code/" },
+    ],
+  },
+// Blog daily 2026-11-11 — three sourced event stories, news: true, date 2026-11-11.
+// Facts verified from sources actually opened this run (browser.open):
+// Reuters Nov 11 + AEMET red-warning report Nov 11 + Madeira IPMA report for
+// Storm Charles landfall in Portugal; SnowBrains Nov 10 + Unofficial Networks
+// Nov 10 for Breckenridge opening day; Arizona Republic + Ventura County Star
+// + Desert Sun (all USA TODAY Network, updated Nov 11) + 805.life for the
+// USSF-627 second scrub to Wednesday night.
+  {
+    slug: "storm-charles-landfall-portugal-november-11",
+    title: "Storm Charles Makes Landfall in Portugal: 200 Flights Cancelled, Schools Shut",
+    seoTitle: "Storm Charles Hits Portugal | WorldEye Blog",
+    date: "2026-11-11",
+    excerpt:
+      "Storm Charles came ashore in Portugal on Wednesday, cancelling more than 200 flights, closing schools and shutting hundreds of businesses, after first sweeping through Madeira under red warnings. Authorities logged 538 incidents by the time Reuters reported.",
+    seoDescription:
+      "Storm Charles made landfall in Portugal on Nov 11, cancelling 200+ flights and closing schools, with 538 incidents logged and red warnings in Spain.",
+    tags: ["storm-charles", "portugal", "spain", "weather", "madeira", "storm"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "Storm Charles made landfall in Portugal on Wednesday, November 11, bringing heavy downpours and gale-force winds to a country already soaked by days of rain from Storm Bruna. Airlines cancelled more than 200 flights in and out of Portugal, schools closed, and hundreds of supermarkets and businesses shut for the day, Reuters reported.",
+          "The Portuguese government, criticised for its slow response to a succession of storms in January and February, took pre-emptive steps this time: emergency services and army units were put on alert, classes were cancelled, non-essential public services were shut, and people were advised to stay indoors, according to Reuters.",
+          "Portugal's weather service, IPMA, said the eye of the storm had split in two over the Atlantic, diminishing its strength when it arrived via the southern Algarve region. Even weakened, it was expected to reach most of southern Portugal and the Lisbon region through late afternoon.",
+        ],
+      },
+      {
+        heading: "How many incidents has Storm Charles caused in Portugal?",
+        body: [
+          "Civil Protection Commander Mario Silvestre said authorities were maintaining high alert levels for flash floods, wind and rough seas after registering 538 incidents since midnight, Reuters reported.",
+          "Since Sunday, Portugal and neighbouring Spain have been pummelled by heavy rains brought by Storm Bruna, with flooding reported in several areas including road tunnels in Lisbon, which were mostly shut on Wednesday. Charles arrived on ground that was already saturated, which is why flash flooding, rather than wind alone, sat at the top of the alert list.",
+          "In central Spain, authorities maintained the evacuation of more than 3,000 people in Piedralaves, whom they had removed from their homes on Tuesday due to the risk of a local dam overflowing, and warned that rainfall was expected to intensify from midday, Reuters reported.",
+        ],
+      },
+      {
+        heading: "What happened in Madeira before the landfall?",
+        body: [
+          "Before it reached the mainland, Storm Charles had already swept through the Madeira archipelago, causing some flooding and felling trees. Emergency services rescued a man swept away when water flooded his garage on the island of Madeira, but no casualties were reported, according to Reuters.",
+          "IPMA had placed Madeira's south coast, including Funchal, and its mountainous regions under red warnings — the maximum alert level — for torrential overnight rain from 9 p.m. Tuesday to 6 a.m. Wednesday, and for mountain wind gusts up to 140 km/h in the early hours of Wednesday. As the red-warning window opened on Tuesday night, the mountain station at Chao do Areeiro recorded 29.7 mm of rain in a single hour, while Santa Cruz, by Madeira Airport, recorded 16.4 mm in an hour.",
+          "Schools, nurseries and the University of Madeira were closed until 1 p.m. on Wednesday, all classified walking trails were shut for the whole day, both Wednesday ferry sailings to Porto Santo were cancelled, and three cruise ships scheduled to call at Funchal on Wednesday cancelled their stops.",
+        ],
+      },
+      {
+        heading: "Where are Spain's red warnings in force?",
+        body: [
+          "Spain's state meteorological agency, AEMET, kept its most serious warning level in force on November 11 for La Palma, southern Avila and northern Caceres, as Storms Charles and Bruna brought dangerous winds and heavy rainfall across large parts of the country.",
+          "On La Palma, AEMET's red warnings cover the island's mountainous areas and exposed eastern and western sectors, where gusts may reach approximately 130 km/h. In mainland Spain, the highest rainfall warnings affect southern Avila in Castilla y Leon and northern Caceres in Extremadura, where forecast rainfall may reach 120 litres per square metre within 12 hours — the kind of total that raises the risk of flooding, landslides and sudden rises in rivers and streams.",
+          "The new storm was expected to reach southwestern Spain on Wednesday afternoon, with AEMET warning of a serious or very serious impact from heavy rain, strong winds and rough seas that could exacerbate conditions caused by Storm Bruna, Reuters reported. AEMET expects the broader severe weather episode to continue into November 12, although the intensity and timing will vary by region.",
+        ],
+      },
+      {
+        heading: "How can I track Storm Charles?",
+        body: [
+          "This is a fast-moving Atlantic system crossing a coastline dense with cameras. WorldEye's [weather radar](/weather-radar) and [weather tracker](/weather-tracker) follow the rain and wind as Charles moves from Portugal into southwestern Spain, and the site's [live webcams](/live-webcams) include cameras across Portugal, Madeira and Spain among its 74,229 cameras worldwide.",
+          "The flight disruption is the other live picture: with more than 200 Portugal flights cancelled in a single day, WorldEye's [live flight tracker](/live-flight-tracker) shows the air traffic still moving around the storm — and the gaps where services were pulled. Check IPMA and AEMET warnings before travelling, and treat the red warnings as the forecast hazards they are: they describe what is expected, not a guarantee that the maximum gusts or rainfall totals will be recorded at any one place.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When did Storm Charles make landfall in Portugal?",
+        a: "On Wednesday, November 11, 2026. IPMA said the storm's eye had split in two over the Atlantic, diminishing its strength, and it arrived via the southern Algarve, reaching most of southern Portugal and the Lisbon region through late afternoon.",
+      },
+      {
+        q: "How many flights were cancelled by Storm Charles?",
+        a: "Airlines cancelled more than 200 flights in and out of Portugal on Wednesday, Reuters reported. Schools also closed and hundreds of supermarkets and businesses shut for the day.",
+      },
+      {
+        q: "How many incidents has Storm Charles caused?",
+        a: "Portugal's Civil Protection had registered 538 incidents since midnight by the time of Reuters' November 11 report, and was maintaining high alert levels for flash floods, wind and rough seas.",
+      },
+      {
+        q: "Where are the red weather warnings in Spain?",
+        a: "AEMET's red warnings on November 11 covered La Palma, where gusts may reach about 130 km/h, and southern Avila and northern Caceres, where up to 120 litres of rain per square metre may fall within 12 hours.",
+      },
+      {
+        q: "Is Storm Charles still dangerous after Portugal?",
+        a: "Yes. It was expected to reach southwestern Spain on Wednesday afternoon, with AEMET warning of serious or very serious impacts from heavy rain, strong winds and rough seas, on top of flooding already caused by Storm Bruna.",
+      },
+    ],
+    sources: [
+      {
+        name: "Reuters — Portugal cancels 200-plus flights, shuts schools as Storm Charles hits (Nov 11)",
+        url: "https://www.reuters.com/business/environment/portugal-cancels-200-plus-flights-shuts-schools-storm-charles-hits-2026-11-11/",
+      },
+      {
+        name: "Spain red weather warnings for La Palma, Avila and Caceres on November 11 (AEMET)",
+        url: "https://www.rustourismnews.com/2026/11/11/spain-issues-red-weather-warnings-for-la-palma-avila-and-caceres-on-november-11/",
+      },
+      {
+        name: "Storm Charles in Madeira: IPMA red warnings, closures and flight disruption (Nov 10-11)",
+        url: "https://www.webcammadeira.com/en-US/news/madeira-weather-storm-watch-wednesday-november-11-2026",
+      },
+    ],
+  },
+  {
+    slug: "breckenridge-opening-day-november-11-2026",
+    title: "Breckenridge Opens Today: Peak 8 Starts the Season After a Five-Day Delay",
+    seoTitle: "Breckenridge Opens Nov 11 | WorldEye Blog",
+    date: "2026-11-11",
+    excerpt:
+      "Breckenridge finally opens for the 2026-27 season today, Wednesday, November 11 — five days after its planned start. Peak 8's Springmeier run, the Colorado SuperChair and the BreckConnect Gondola carry the first day, with free donuts at the base.",
+    seoDescription:
+      "Breckenridge opens Wednesday, November 11 for 2026-27: Peak 8, Springmeier via Colorado SuperChair, gondola from 8:30 a.m., first chair at 9 a.m.",
+    tags: ["breckenridge", "colorado", "ski-season", "opening-day", "peak-8"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "The wait is over in Breckenridge. After delaying its originally planned opening day, Colorado's Breckenridge Ski Resort opens for the 2026-27 season today, Wednesday, November 11, with first chair on Peak 8 this morning.",
+          "The resort had planned to open on November 6, but postponed the start of its season as warm temperatures made it difficult to build the snow base needed for opening-day operations — temperatures that were not conducive to snowmaking, as SnowBrains put it. A couple of strong snowmaking nights changed the picture.",
+          "Breckenridge Ski Patrol Director Hunter Mortensen announced the new date in a video on the resort's social media channels: he had checked in with the snowmaking team, they had had a couple of great nights of work, and the call was made — it is time to go skiing.",
+        ],
+      },
+      {
+        heading: "What time does Breckenridge open today?",
+        body: [
+          "Skiers and riders can reach Peak 8's base area from the in-town BreckConnect Gondola beginning at 8:30 a.m., with first chair on the mountain going up at 9 a.m. on the Colorado SuperChair.",
+          "Opening day kicks off with free donuts and music from the DJ Cat at the base, along with the traditional first-chair festivities. Peak 8 is a fitting place to start: it is where the resort's founders first opened the ski area in 1961.",
+        ],
+      },
+      {
+        heading: "What terrain is open at Breckenridge on opening day?",
+        body: [
+          "Breckenridge opens with a single intermediate run: Springmeier, a blue run on Peak 8, served by the Colorado SuperChair. There is no beginner terrain in the opening-day offering — the first day is deliberately small.",
+          "The resort plans to continue making snow whenever temperatures allow, with the goal of expanding terrain as conditions improve. The forecast supports that plan: overnight temperatures at Breck are expected to hold steadily in the 20s for the foreseeable future, dipping into the teens, with more snow on the horizon next week, according to the SnowBrains weather forecast.",
+        ],
+      },
+      {
+        heading: "How many Colorado resorts are open now?",
+        body: [
+          "Breckenridge is the sixth ski resort to open in Colorado for 2026-27, though it is one of five currently open in the state, as Wolf Creek has been closed since November 1 due to historic flooding, Unofficial Networks reported.",
+          "With Keystone already operating, Breckenridge becomes the second Epic Pass resort in Colorado to open for the season. It joins Arapahoe Basin, which took first chair on October 28, Keystone, Copper Mountain, which opened on November 8, and Loveland, which opened on November 7 — the I-70 corridor is now skiable end to end for the first time this winter.",
+        ],
+      },
+      {
+        heading: "Where can I watch Breckenridge opening day live?",
+        body: [
+          "WorldEye's [ski webcams](/ski-webcams) carry live views from Breckenridge and the other open Colorado resorts, so you can check Peak 8's base, the lift lines and the weather on the mountain before you drive up — part of the site's 74,229 cameras worldwide.",
+          "If you are choosing between the open resorts today, the [ski season opening dates guide](/blog/ski-season-opening-dates-2026-27) tracks who is open and who is next, and Vail and Eldora are the next fixed Colorado dates on the calendar, both listed for November 13. For Breck itself, today is the day the season stops being a forecast and starts being a lift ride.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When is Breckenridge opening day 2026?",
+        a: "Wednesday, November 11, 2026. The BreckConnect Gondola starts loading at 8:30 a.m. and first chair on the Colorado SuperChair goes up at 9 a.m. on Peak 8.",
+      },
+      {
+        q: "Why was Breckenridge's opening delayed?",
+        a: "The resort originally planned to open on November 6, but warm temperatures were not conducive to snowmaking and made it difficult to build the snow base needed for opening-day operations. A couple of strong snowmaking nights allowed the November 11 start.",
+      },
+      {
+        q: "What runs are open at Breckenridge on opening day?",
+        a: "One run: Springmeier, an intermediate (blue) run on Peak 8, served by the Colorado SuperChair. The resort will expand terrain as snowmaking and conditions allow.",
+      },
+      {
+        q: "How many Colorado ski resorts are open now?",
+        a: "Breckenridge is the sixth Colorado resort to open for 2026-27 and one of five currently operating, as Wolf Creek has been closed since November 1 due to historic flooding. It is the second Epic Pass resort in Colorado to open, after Keystone.",
+      },
+      {
+        q: "Can I watch Breckenridge's opening day on a webcam?",
+        a: "Yes. WorldEye's ski webcams page carries live views from Breckenridge and the other open Colorado resorts, so you can check conditions on Peak 8 before travelling.",
+      },
+    ],
+    sources: [
+      {
+        name: "SnowBrains — Breckenridge Opens for the 2026-27 Season Wednesday (Nov 10)",
+        url: "https://snowbrains.com/breckenridge-opens-for-the-2026-27-season-wednesday/",
+      },
+      {
+        name: "Unofficial Networks — Breckenridge Announces November 11 Opening Day After Delaying Start (Nov 10)",
+        url: "https://unofficialnetworks.com/2026/11/10/breckenridge-ski-resort-announces-opening/",
+      },
+    ],
+  },
+  {
+    slug: "spacex-ussf-627-launch-november-11-third-attempt",
+    title: "SpaceX Tries Again Tonight: USSF-627's Third Attempt From Vandenberg",
+    seoTitle: "USSF-627 Launch Tonight Nov 11 | WorldEye Blog",
+    date: "2026-11-11",
+    excerpt:
+      "Twice postponed, the classified USSF-627 mission gets its third attempt tonight, Wednesday, November 11, with a four-hour window opening at 6:35 p.m. PT from Vandenberg. The Falcon 9 flies southeast and lands its booster on a droneship.",
+    seoDescription:
+      "SpaceX targets Wednesday, Nov 11 at 6:35 p.m. PT for USSF-627 from Vandenberg after two postponements, a classified Space Force Falcon 9 launch.",
+    tags: ["spacex", "falcon-9", "vandenberg", "ussf-627", "space-force", "launch"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "Third time, SpaceX hopes, is the charm. The classified USSF-627 mission is set for its third launch attempt tonight, Wednesday, November 11, with a four-hour window opening at 6:35 p.m. PT and running to 10:35 p.m. PT from Space Launch Complex 4E (SLC-4E) at Vandenberg Space Force Base in California.",
+          "The Desert Sun, in an update to its launch coverage, reported the scrub plainly: the launch has been postponed for a second time, and SpaceX is now targeting liftoff no earlier than the Wednesday window, according to a launch alert. The Arizona Republic and the Ventura County Star, both USA TODAY Network papers, updated their Vandenberg schedules the same way, listing USSF-627 under Wednesday, November 11.",
+          "The mission was first set for Monday, November 9, with a window opening at 7:03 p.m. PT, then moved to Tuesday, November 10 at 6:49 p.m. PT — the move WorldEye reported yesterday. Tuesday did not produce a liftoff either, and the mission has now rolled onto the next reserved slot.",
+        ],
+      },
+      {
+        heading: "When is the USSF-627 launch window tonight?",
+        body: [
+          "The window opens at 6:35 p.m. PT on Wednesday, November 11 (02:35 UTC on Thursday, November 12) and stays open for four hours, until 10:35 p.m. PT. Launch trackers listing the mission from Launch Library data show it as Go for Launch for tonight's attempt.",
+          "If tonight does not work, the Vandenberg schedule does not stay empty for long: the next classified Space Force mission, USSF-317, is listed for Saturday, November 14, with a window opening at 7:55 p.m. PT and running to 11:55 p.m. PT, also from SLC-4E. Together, USSF-627 and USSF-317 would mark the second and third launches of November on the West Coast, after SpaceX's Falcon 9 liftoff on Friday, November 6.",
+        ],
+      },
+      {
+        heading: "What is USSF-627 carrying?",
+        body: [
+          "USSF-627 is a classified satellite deployment mission for the U.S. Space Force, according to SpaceX, and the payload's details have not been disclosed. The Falcon 9 flying it is a two-stage, 230-foot reusable rocket capable of carrying more than 50,000 pounds of cargo to low-Earth orbit, and tonight's flight follows a southeast trajectory out of Vandenberg.",
+          "As with the earlier attempts, outside analysis of the classified payload is speculative. Observers have noted that the locations of the rocket's stage drop zones are an exact match for those used during previous Starlink Group 15 missions, leading to speculation that the payload could be a batch of classified low-Earth orbit satellites based on SpaceX's Starshield satellite bus — SpaceX's government-focused variant of its Starlink platform. No official payload count or further mission details have been released, and that identification remains unconfirmed.",
+        ],
+      },
+      {
+        heading: "Where does the booster land, and will there be sonic booms?",
+        body: [
+          "After stage separation, the Falcon 9's first stage will aim to land on the SpaceX droneship Of Course I Still Love You, stationed in the Pacific Ocean downrange from Vandenberg, so it can be recovered and reused.",
+          "Residents of Santa Barbara County, San Luis Obispo County and Ventura County are the most likely to hear sonic booms connected with the launch, SpaceX has said — brief, thunder-like noises generated as the returning booster passes through supersonic speeds, which can continue for up to 10 minutes after liftoff, according to Vandenberg. Areas local to the base will hear the initial low rumble of take-off.",
+        ],
+      },
+      {
+        heading: "Where can I watch the USSF-627 launch live?",
+        body: [
+          "SpaceX provides a live webcast of its missions, available to stream on the company's website beginning about 10 minutes before liftoff, with updates also posted on X. In person, this is a night launch on a southeast trajectory — the profile that gives spectators across Southern California, and on clear nights in Arizona, a good chance of seeing the rocket streak overhead.",
+          "Once tonight's payload is in orbit and catalogued, it joins the tracked objects followed on WorldEye's [satellite tracker](/satellite-tracker), alongside the [space station tracker](/space-station-tracker) and the site's 74,229 cameras. The [live flight tracker](/live-flight-tracker) tells the other half of tonight's sky story, over a West Coast that is also watching Storm Charles disrupt flights an ocean away — a busy night for anyone who likes their sky watched.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When is the SpaceX USSF-627 launch?",
+        a: "SpaceX is targeting Wednesday, November 11, 2026, with a four-hour window opening at 6:35 p.m. PT (02:35 UTC on November 12) and running to 10:35 p.m. PT, from SLC-4E at Vandenberg Space Force Base.",
+      },
+      {
+        q: "Why has USSF-627 been postponed twice?",
+        a: "The mission was set for Monday, November 9, then moved to Tuesday, November 10, and was postponed for a second time to Wednesday, November 11, according to a launch alert reported by the Desert Sun. No reason for the postponements has been published.",
+      },
+      {
+        q: "What is the USSF-627 payload?",
+        a: "It is a classified U.S. Space Force payload, and its details have not been disclosed. Observers speculate it may be a batch of Starshield-based satellites because the stage drop zones match Starlink Group 15 flights, but that is unconfirmed.",
+      },
+      {
+        q: "How can I watch the USSF-627 launch?",
+        a: "SpaceX streams a live webcast on its website beginning about 10 minutes before liftoff, with updates on X. The night launch flies southeast from Vandenberg, so viewers in Southern California — and on clear nights, Arizona — may see it overhead.",
+      },
+      {
+        q: "Where will the Falcon 9 booster land?",
+        a: "On the droneship Of Course I Still Love You in the Pacific Ocean. Residents of Santa Barbara, San Luis Obispo and Ventura counties may hear sonic booms as the booster returns.",
+      },
+    ],
+    sources: [
+      {
+        name: "Desert Sun (USA TODAY Network) — Vandenberg launch scrub update: postponed for a second time to Nov 11",
+        url: "https://www.desertsun.com/story/news/local/2026/11/09/spacex-livestream-california-rocket-launch-today/92639508007/",
+      },
+      {
+        name: "Arizona Republic (USA TODAY Network) — California rocket launch schedule, updated with Nov 11 window",
+        url: "https://www.azcentral.com/story/news/arizona/2026/11/09/spacex-falcon-9-rocket-launch-today-schedule/92640062007/",
+      },
+      {
+        name: "Ventura County Star (USA TODAY Network) — Vandenberg launch schedule: USSF-627 on Nov 11",
+        url: "https://www.vcstar.com/story/news/local/california/2026/11/09/spacex-california-rocket-launch-schedule/92639416007/",
+      },
+      {
+        name: "805.life — Falcon 9 Set to Launch USSF-627 on November 11 (launch preview, Nov 10)",
+        url: "https://m.elil.net/launches/articles/preview-falcon-9-block-5-ussf-627-2026-11-12-772e9e9e",
+      },
+    ],
+  },
 // Blog daily 2026-11-10 — three sourced event stories, news: true, date 2026-11-10.
 // Facts verified from sources actually opened this run (browser.open):
 // SpaceX official USSF-627 mission page + Arizona Republic (USA TODAY Network,

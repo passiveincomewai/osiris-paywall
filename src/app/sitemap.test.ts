@@ -103,7 +103,7 @@ describe("sitemap URL set", () => {
           !u.startsWith(`${BASE}/wildfires/`),
       )
       .sort();
-    expect(nonTransit.length).toBe(1143);
+    expect(nonTransit.length).toBe(1163);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     // Hash history: 6d75d0de… until the SEO audit fix #3 (2026-10-27)
     // normalised the es homepage entry from /es/ to its final /es
@@ -391,8 +391,21 @@ describe("sitemap URL set", () => {
     // by executing sitemap() on the merged tree (probe):
     // count exactly +3 over the 1,140 pin and all 3 new
     // /blog/ URLs present in the executed set.
+    // The staged blog daily batches of 2026-11-11 to
+    // 2026-11-16 (Storm Charles + Breckenridge + USSF-627
+    // third attempt; USSF-627 launch + Kilauea Ep 57 +
+    // Voyager; Vulcan/Starship double launch + Vail/Winter
+    // Park + Sierra storm; Starship orbit + Wolf Creek +
+    // Mayon dome + the two Jameson-requested stories;
+    // Starship ship catch + Sugar/Cataloochee + Leonids;
+    // Cyclone Akvan + Cyclone Xavier + UK snow warning)
+    // then added their 20 post URLs → 1,163 (e04f8273…).
+    // Delta verified by executing sitemap() on the merged
+    // tree (probe, 2026-11-16): count exactly +20 over the
+    // 1,143 pin and all 20 new /blog/ URLs present in the
+    // executed set (the 3 newest slugs verified explicitly).
     expect(hash).toBe(
-      "3e53bd6a69f1e921d0bac1d4639bfd3fc62aad42dd2dab4e4975868bffee1997",
+      "e04f82731b67ef29c74429eee90e78bc03e02d606b5b399d36093f1f22063d20",
     );
   });
 

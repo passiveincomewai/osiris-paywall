@@ -87,6 +87,26 @@ describe("the launch story (real data, real dates)", () => {
   it("is one of the flagged posts, and every flagged post has sources", () => {
     const flagged = POSTS.filter(isNewsPost);
     expect(flagged.map((p) => p.slug)).toEqual([
+      "cyclone-akvan-forms-landfall-november-20-andhra",
+      "tropical-cyclone-xavier-category-2-cook-islands",
+      "uk-snow-warning-november-17-met-office",
+      "starship-flight-15-first-ship-catch",
+      "sugar-mountain-cataloochee-open-november-15-2026",
+      "leonid-meteor-shower-peak-november-17-18-2026",
+      "faa-nationwide-ground-stop-november-13-2026",
+      "ss-united-states-sunk-florida-artificial-reef",
+      "starship-flight-15-reaches-orbit-ship-catch-today",
+      "wolf-creek-reopens-november-14-after-flooding",
+      "mayon-new-lava-dome-november-13-alert-level-3",
+      "friday-13th-double-launch-vulcan-starship",
+      "vail-winter-park-open-today-november-13-2026",
+      "sierra-winter-storm-warning-high-surf-november-13-2026",
+      "spacex-ussf-627-launches-vandenberg-november-11",
+      "kilauea-episode-57-window-november-16-21",
+      "voyager-1-one-light-day-november-18-nasa",
+      "storm-charles-landfall-portugal-november-11",
+      "breckenridge-opening-day-november-11-2026",
+      "spacex-ussf-627-launch-november-11-third-attempt",
       "spacex-ussf-627-launch-moves-november-10",
       "typhoon-cempaka-becomes-samuel-brief-par-entry",
       "northern-taurid-fireballs-peak-november-11-12",
@@ -132,6 +152,24 @@ describe("the launch story (real data, real dates)", () => {
     }
   });
 
+  it("the Nov 16 event stories are inside the 48-hour window on their publication day", () => {
+    const pubDay = new Date("2026-11-16T15:00:00Z");
+    const fresh = getFreshNewsPosts(POSTS, pubDay).map((p) => p.slug);
+    expect(fresh).toContain("cyclone-akvan-forms-landfall-november-20-andhra");
+    expect(fresh).toContain("tropical-cyclone-xavier-category-2-cook-islands");
+    expect(fresh).toContain("uk-snow-warning-november-17-met-office");
+    expect(fresh).not.toContain(LAUNCH_SLUG);
+  });
+
+  it("the Nov 15 event stories are inside the 48-hour window on their publication day", () => {
+    const pubDay = new Date("2026-11-15T15:00:00Z");
+    const fresh = getFreshNewsPosts(POSTS, pubDay).map((p) => p.slug);
+    expect(fresh).toContain("starship-flight-15-first-ship-catch");
+    expect(fresh).toContain("sugar-mountain-cataloochee-open-november-15-2026");
+    expect(fresh).toContain("leonid-meteor-shower-peak-november-17-18-2026");
+    expect(fresh).not.toContain(LAUNCH_SLUG);
+  });
+
   it("the Nov 4 event stories are inside the 48-hour window on their publication day", () => {
     const pubDay = new Date("2026-11-04T15:00:00Z");
     const fresh = getFreshNewsPosts(POSTS, pubDay).map((p) => p.slug);
@@ -147,6 +185,44 @@ describe("the launch story (real data, real dates)", () => {
     expect(fresh).toContain("spacex-ussf-627-launch-moves-november-10");
     expect(fresh).toContain("typhoon-cempaka-becomes-samuel-brief-par-entry");
     expect(fresh).toContain("northern-taurid-fireballs-peak-november-11-12");
+    expect(fresh).not.toContain(LAUNCH_SLUG);
+  });
+
+  it("the Nov 12 event stories are inside the 48-hour window on their publication day", () => {
+    const pubDay = new Date("2026-11-12T15:00:00Z");
+    const fresh = getFreshNewsPosts(POSTS, pubDay).map((p) => p.slug);
+    expect(fresh).toContain("spacex-ussf-627-launches-vandenberg-november-11");
+    expect(fresh).toContain("kilauea-episode-57-window-november-16-21");
+    expect(fresh).toContain("voyager-1-one-light-day-november-18-nasa");
+    expect(fresh).not.toContain(LAUNCH_SLUG);
+  });
+
+  it("the Nov 13 event stories are inside the 48-hour window on their publication day", () => {
+    const pubDay = new Date("2026-11-13T15:00:00Z");
+    const fresh = getFreshNewsPosts(POSTS, pubDay).map((p) => p.slug);
+    expect(fresh).toContain("friday-13th-double-launch-vulcan-starship");
+    expect(fresh).toContain("vail-winter-park-open-today-november-13-2026");
+    expect(fresh).toContain("sierra-winter-storm-warning-high-surf-november-13-2026");
+    expect(fresh).not.toContain(LAUNCH_SLUG);
+  });
+
+  it("the Nov 14 event stories are inside the 48-hour window on their publication day", () => {
+    const pubDay = new Date("2026-11-14T15:00:00Z");
+    const fresh = getFreshNewsPosts(POSTS, pubDay).map((p) => p.slug);
+    expect(fresh).toContain("faa-nationwide-ground-stop-november-13-2026");
+    expect(fresh).toContain("ss-united-states-sunk-florida-artificial-reef");
+    expect(fresh).toContain("starship-flight-15-reaches-orbit-ship-catch-today");
+    expect(fresh).toContain("wolf-creek-reopens-november-14-after-flooding");
+    expect(fresh).toContain("mayon-new-lava-dome-november-13-alert-level-3");
+    expect(fresh).not.toContain(LAUNCH_SLUG);
+  });
+
+  it("the Nov 11 event stories are inside the 48-hour window on their publication day", () => {
+    const pubDay = new Date("2026-11-11T15:00:00Z");
+    const fresh = getFreshNewsPosts(POSTS, pubDay).map((p) => p.slug);
+    expect(fresh).toContain("storm-charles-landfall-portugal-november-11");
+    expect(fresh).toContain("breckenridge-opening-day-november-11-2026");
+    expect(fresh).toContain("spacex-ussf-627-launch-november-11-third-attempt");
     expect(fresh).not.toContain(LAUNCH_SLUG);
   });
 
