@@ -2,6 +2,7 @@
 // Affiliate admin console: overview, affiliates, payouts, ledger, fraud, settings, audit.
 import { useEffect, useState } from "react";
 import { StatCard, SectionTitle, Pill, EmptyState, fmtCents } from "@/components/affiliate/ui";
+import AffiliateList from "./AffiliateList";
 
 type Tab = "overview" | "affiliates" | "payouts" | "ledger" | "fraud" | "settings" | "audit";
 
@@ -20,13 +21,12 @@ export default function AdminClient() {
   const [tab, setTab] = useState<Tab>("overview");
   const [data, setData] = useState<Record<string, unknown>>({});
   const [loading, setLoading] = useState(true);
-  const [q, setQ] = useState("");
 
-  const load = async (t: Tab = tab, query = q) => {
+  const load = async (t: Tab = tab) => {
     setLoading(true);
     try {
       if (t === "overview") setData({ overview: await api("/api/admin/affiliates/manage?view=overview") });
-      else if (t === "affiliates") setData({ list: await api(`/api/admin/affiliates?q=${encodeURIComponent(query)}&take=50`) });
+      else if (t === "affiliates") setData({}); // AffiliateList fetches itself
       else if (t === "payouts") setData({ payouts: await api("/api/admin/affiliates/payouts") });
       else if (t === "ledger") setData({ ledger: await api("/api/admin/affiliates/manage?view=commissions") });
       else if (t === "fraud") setData({ fraud: await api("/api/admin/affiliates/manage?view=fraud") });
@@ -57,9 +57,7 @@ export default function AdminClient() {
       )}
 
       {!loading && tab === "overview" && <Overview d={(data.overview ?? {}) as Record<string, number>} />}
-      {!loading && tab === "affiliates" && (
-        <Affiliates d={(data.list ?? {}) as { total: number; affiliates: AffiliateRow[] }} q={q} setQ={setQ} reload={() => load("affiliates", q)} />
-      )}
+      {tab === "affiliates" && <AffiliateList />}
       {!loading && tab === "payouts" && <Payouts d={(data.payouts ?? {}) as { payouts: PayoutRow[] }} reload={() => load("payouts")} />}
       {!loading && tab === "ledger" && <Ledger d={(data.ledger ?? {}) as { commissions: CommRow[] }} />}
       {!loading && tab === "fraud" && <Fraud d={(data.fraud ?? {}) as { signals: Signal[] }} />}
@@ -77,64 +75,6 @@ function Overview({ d }: { d: Record<string, number> }) {
       <StatCard label="Commission liability" value={fmtCents(d.commissionLiabilityCents ?? 0)} sub="owed, not yet paid" accent="#fbbf24" />
       <StatCard label="Paid out" value={fmtCents(d.paidOutCents ?? 0)} sub="all time" accent="#34d399" />
       <StatCard label="Pending payouts" value={fmtCents(d.pendingPayoutCents ?? 0)} sub="awaiting approval" accent="#f472b6" />
-    </div>
-  );
-}
-
-/* ── Affiliates ── */
-interface AffiliateRow { id: string; email: string; name: string; referralCode: string; customCode: string | null; status: string; xp: number; createdAt: string; lifetimeCents: number; }
-
-function Affiliates({ d, q, setQ, reload }: { d: { total: number; affiliates: AffiliateRow[] }; q: string; setQ: (s: string) => void; reload: () => void }) {
-  const [xpFor, setXpFor] = useState<string | null>(null);
-  const [xpVal, setXpVal] = useState("");
-  const [xpReason, setXpReason] = useState("");
-
-  const setStatus = async (id: string, status: string) => {
-    if (!confirm(`${status} this affiliate?`)) return;
-    await api(`/api/admin/affiliates/${id}`, { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify({ status }) });
-    reload();
-  };
-  const adjustXp = async (id: string) => {
-    const xp = Number(xpVal);
-    if (!Number.isFinite(xp)) return;
-    await api(`/api/admin/affiliates/${id}`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ xp, reason: xpReason }) });
-    setXpFor(null); setXpVal(""); setXpReason(""); reload();
-  };
-
-  return (
-    <div>
-      <div className="flex gap-2 mb-4">
-        <input className={input} placeholder="Search email, name, code…" value={q} onChange={(e) => setQ(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && reload()} />
-        <button onClick={reload} className={`${btn} border-cyan-400/50 text-cyan-300`}>Search</button>
-      </div>
-      <div className="text-xs text-slate-400 font-mono mb-3">{d.total ?? 0} affiliates</div>
-      <div className="space-y-2">
-        {(d.affiliates ?? []).map((a) => (
-          <div key={a.id} className={card}>
-            <div className="flex flex-wrap items-center gap-3 justify-between">
-              <div className="min-w-0">
-                <div className="text-white font-bold truncate">{a.name || a.email}</div>
-                <div className="text-xs text-slate-400 font-mono">/{a.customCode ?? a.referralCode} · {a.xp} XP · {fmtCents(a.lifetimeCents)} lifetime</div>
-              </div>
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <Pill color={a.status === "active" ? "#34d399" : a.status === "pending" ? "#fbbf24" : "#f87171"}>{a.status}</Pill>
-                {["active", "suspended", "banned"].map((s) => (
-                  <button key={s} onClick={() => setStatus(a.id, s)} className={`${btn} border-white/15 text-slate-300 hover:text-white`}>{s}</button>
-                ))}
-                <button onClick={() => setXpFor(xpFor === a.id ? null : a.id)} className={`${btn} border-violet-400/50 text-violet-300`}>±XP</button>
-              </div>
-            </div>
-            {xpFor === a.id && (
-              <div className="mt-3 flex gap-2 flex-wrap">
-                <input className={input + " !w-28"} placeholder="+/- XP" value={xpVal} onChange={(e) => setXpVal(e.target.value)} />
-                <input className={input + " !w-48"} placeholder="Reason (audit log)" value={xpReason} onChange={(e) => setXpReason(e.target.value)} />
-                <button onClick={() => adjustXp(a.id)} className={`${btn} border-cyan-400/50 text-cyan-300`}>Apply</button>
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
     </div>
   );
 }

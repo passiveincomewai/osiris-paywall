@@ -1134,6 +1134,86 @@ export function adminTrialGrantEmail(input: {
   };
 }
 
+// ── Admin → affiliate one-offs ───────────────────────────────────────
+// Sent from the affiliate detail page (/admin/affiliates/[profileId])
+// through POST /api/admin/affiliates/[id]/actions. All three are
+// marketing sends: the route refuses opted-out users server-side and
+// logs each send in LifecycleEmailLog as admin_affiliate_<template>.
+// Every number in the copy (commission %, available balance) is the
+// affiliate's own real figure, passed in by the caller — never a
+// program-wide claim.
+
+export function adminAffiliateWelcomeEmail(input: {
+  name: string | null;
+  /** The affiliate's own referral link (referralLinkFor). */
+  referralLink: string;
+  /** Their current rank's commission percentage (real, from settings). */
+  commissionPct: number;
+  unsubscribeUrl: string | null;
+}): RenderedEmail {
+  const first = escapeHtml(firstNameOf(input.name));
+  const link = escapeHtml(input.referralLink);
+  return {
+    subject: "Welcome to the WorldEye affiliate program",
+    html: shell(
+      "You're in — welcome aboard",
+      "Your WorldEye affiliate account is ready.",
+      `${P(`Hi ${first},`)}
+       ${P(`Welcome to the WorldEye affiliate program. Your personal referral link is <a href="${link}" style="color:#7dd3fc;">${link}</a> — anyone who signs up through it is attributed to you, and you earn <strong style="color:#fff;">${input.commissionPct}% commission</strong> on the paid plans they buy.`)}
+       ${P("Your affiliate dashboard tracks clicks, signups, commissions and payout requests in real time, and the Marketing Studio there has ready-made posts, banners and videos you can use.")}
+       ${unsubscribeLine(input.unsubscribeUrl)}`,
+      { label: "Open your affiliate dashboard", href: appUrl("/affiliates/dashboard") },
+      { why: "You're receiving this because the WorldEye team sent you a welcome message." },
+    ),
+  };
+}
+
+export function adminAffiliatePayoutEmail(input: {
+  name: string | null;
+  /** Formatted real available balance, e.g. "$25.00" (caller-derived). */
+  availableLabel: string;
+  unsubscribeUrl: string | null;
+}): RenderedEmail {
+  const first = escapeHtml(firstNameOf(input.name));
+  const amount = escapeHtml(input.availableLabel);
+  return {
+    subject: `You have ${input.availableLabel} in WorldEye commissions available`,
+    html: shell(
+      "Commissions ready to pay out",
+      `Your available affiliate balance is ${input.availableLabel}.`,
+      `${P(`Hi ${first},`)}
+       ${P(`Good news: you currently have <strong style="color:#fff;">${amount}</strong> in earned WorldEye affiliate commissions sitting in your available balance — past the holding period and ready to request as a payout.`)}
+       ${P("Open your affiliate dashboard and hit request payout whenever you're ready; the balance and your full commission ledger are there too.")}
+       ${unsubscribeLine(input.unsubscribeUrl)}`,
+      { label: "Open your affiliate dashboard", href: appUrl("/affiliates/dashboard") },
+      { why: "You're receiving this because the WorldEye team sent you a payout reminder." },
+    ),
+  };
+}
+
+export function adminAffiliateCheckinEmail(input: {
+  name: string | null;
+  /** The affiliate's own referral link (referralLinkFor). */
+  referralLink: string;
+  unsubscribeUrl: string | null;
+}): RenderedEmail {
+  const first = escapeHtml(firstNameOf(input.name));
+  const link = escapeHtml(input.referralLink);
+  return {
+    subject: "Checking in from WorldEye",
+    html: shell(
+      "Your link is live",
+      "A quick hello from the WorldEye affiliate team.",
+      `${P(`Hi ${first},`)}
+       ${P(`Just checking in from the WorldEye team. Your referral link — <a href="${link}" style="color:#7dd3fc;">${link}</a> — is live and attributing signups to you around the clock.`)}
+       ${P("If you haven't posted in a while, your dashboard has fresh material in the Marketing Studio, and your clicks, signups and commissions are all tracked there in real time. Anything we can help with, just reply to this email.")}
+       ${unsubscribeLine(input.unsubscribeUrl)}`,
+      { label: "Open your affiliate dashboard", href: appUrl("/affiliates/dashboard") },
+      { why: "You're receiving this because the WorldEye team sent you a personal check-in." },
+    ),
+  };
+}
+
 export function adminCustomEmail(input: {
   name: string | null;
   /** Admin-written subject line (already trimmed + length-capped by the route). */
