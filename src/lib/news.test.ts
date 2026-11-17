@@ -87,6 +87,9 @@ describe("the launch story (real data, real dates)", () => {
   it("is one of the flagged posts, and every flagged post has sources", () => {
     const flagged = POSTS.filter(isNewsPost);
     expect(flagged.map((p) => p.slug)).toEqual([
+      "magnitude-6-6-earthquake-banda-sea-tual-indonesia",
+      "cyclone-akvan-severe-orange-alert-november-17",
+      "killington-opening-day-november-17-2026",
       "cyclone-akvan-forms-landfall-november-20-andhra",
       "tropical-cyclone-xavier-category-2-cook-islands",
       "uk-snow-warning-november-17-met-office",
@@ -150,6 +153,15 @@ describe("the launch story (real data, real dates)", () => {
     for (const p of flagged) {
       expect(p.sources?.length).toBeGreaterThan(0);
     }
+  });
+
+  it("the Nov 17 event stories are inside the 48-hour window on their publication day", () => {
+    const pubDay = new Date("2026-11-17T15:00:00Z");
+    const fresh = getFreshNewsPosts(POSTS, pubDay).map((p) => p.slug);
+    expect(fresh).toContain("magnitude-6-6-earthquake-banda-sea-tual-indonesia");
+    expect(fresh).toContain("cyclone-akvan-severe-orange-alert-november-17");
+    expect(fresh).toContain("killington-opening-day-november-17-2026");
+    expect(fresh).not.toContain(LAUNCH_SLUG);
   });
 
   it("the Nov 16 event stories are inside the 48-hour window on their publication day", () => {

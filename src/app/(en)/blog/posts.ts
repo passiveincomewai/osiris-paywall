@@ -40,6 +40,289 @@ export type BlogPost = {
 };
 
 export const POSTS: BlogPost[] = [
+// Blog daily 2026-11-17 — three sourced event stories, news: true, date 2026-11-17.
+// SOURCE-ACCESS DISCLOSURE: browser.open failed all run (browser-service code -1
+// on four independent requests, not retried per instruction); facts were
+// verified from detailed browser.search excerpts, cross-checked across 2-4
+// independent sources per event including official-source text (USGS event
+// data for the Banda Sea earthquake via the USGS past-day feed; BMKG and
+// Bureau of Meteorology tsunami statements; IMD cyclone bulletins of
+// November 17 via Jagran Josh / Dainik / Hindu BusinessLine; Killington's
+// own mountain report). Same disclosure pattern as the 2026-11-07, 2026-11-08
+// and 2026-11-12 to 16 runs.
+  {
+    slug: "magnitude-6-6-earthquake-banda-sea-tual-indonesia",
+    title: "Magnitude 6.6 Earthquake in the Banda Sea Is Felt Across Darwin",
+    seoTitle: "Magnitude 6.6 Quake Felt in Darwin | WorldEye Blog",
+    date: "2026-11-17",
+    excerpt:
+      "The largest earthquake of the past day struck beneath the Banda Sea on Monday evening UTC — early Tuesday in eastern Indonesia. The U.S. Geological Survey measured it at magnitude 6.6 near Tual; it shook the Maluku Islands, was felt by hundreds of people in Darwin, and brought no tsunami threat and no reports of damage.",
+    seoDescription:
+      "A magnitude 6.6 earthquake struck the Banda Sea late Monday UTC, 148 km from Tual. It was felt in Darwin, with no tsunami threat and no damage reported.",
+    tags: ["earthquake", "indonesia", "banda-sea", "usgs", "darwin"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "A magnitude 6.6 earthquake struck beneath the Banda Sea late on Monday, November 16, UTC — 6:11 a.m. on Tuesday morning in eastern Indonesia — sending residents out of their homes in the Maluku Islands and tremors across northern Australia, where hundreds of people in and around Darwin reported feeling the ground move.",
+          "The U.S. Geological Survey (USGS) placed the epicentre about 148 kilometres west-southwest of Tual, Indonesia, at a depth of 68 kilometres, with an origin time of 21:11 UTC, and marked the solution reviewed. The agency issued a green PAGER alert, indicating a low likelihood of casualties and damage, and in the hours that followed, no casualties or major damage had been reported.",
+        ],
+      },
+      {
+        heading: "Where exactly did it strike?",
+        body: [
+          "The USGS located the earthquake near 6.08°S, 131.49°E, under the Banda Sea between the Maluku Islands and northern Australia. At 68 kilometres down it was an intermediate-depth event — deep enough that its energy spread over a very wide area at moderate strength rather than concentrating destructively at one point on the surface, which is the pattern the felt reports describe.",
+          "Different agencies published different first numbers, as they usually do. Indonesia's Meteorology, Climatology and Geophysical Agency (BMKG) measured the same event at magnitude 7.1 and a depth of 115 kilometres, about 130 kilometres southwest of Southeast Maluku, while Geoscience Australia located it much shallower, about 29 kilometres beneath the Banda Sea. Each network solves the same waves with different stations and models; the USGS reviewed solution — magnitude 6.6 at 68 kilometres — is the reference figure used in this story.",
+        ],
+      },
+      {
+        heading: "Who felt it?",
+        body: [
+          "In Indonesia, the shaking was brief but unmistakable. Indonesia's National Disaster Management Agency (BNPB) reported that residents in Tual felt the earthquake for about three to five seconds, while people in the Tanimbar Islands and Maluku Tenggara experienced roughly ten seconds. BMKG recorded intensity III — weak to light shaking — in Tual, Saumlaki, Tiakur, Dobo, Sorong, Manokwari, South Manokwari, Bintuni, Fakfak and Kaimana.",
+          "The surprise was how far south it carried. Geoscience Australia received more than 460 felt reports, mostly from Darwin and Palmerston and surrounding rural areas, with others from Katherine, Jabiru, Maningrida, Milingimbi and Nhulunbuy, and a couple as far west as Kununurra. Darwin residents generally reported light shaking. A Geoscience Australia seismologist, Tanja Pejic, said the agency had received \"in excess of 450 felt reports so far, mostly coming from Darwin, Katherine and Nhulunbuy.\" By contrast, the USGS's own Did You Feel It system had collected only 10 reports — a reminder that this was a large earthquake in a remote place, felt most where a city happened to sit in its path.",
+        ],
+      },
+      {
+        heading: "Was there a tsunami threat?",
+        body: [
+          "No. BMKG said its modelling showed the earthquake had no tsunami potential, and it described the event as an intermediate-depth earthquake caused by rock deformation within the Banda Sea plate — the kind of deep, in-plate movement that rarely displaces the seafloor in the way a shallow megathrust rupture can. Australia's Bureau of Meteorology separately confirmed that no part of the Australian mainland or its islands faced a tsunami threat.",
+          "The USGS estimated that about 8,100 people were exposed to moderate shaking, with the great majority of the population in the region experiencing light shaking or less — consistent with the green PAGER alert and with the absence of damage reports through Tuesday.",
+        ],
+      },
+      {
+        heading: "How does it compare with the rest of the day's earthquakes?",
+        body: [
+          "It was, by a clear margin, the largest earthquake on the planet in the past day. The USGS summary feed for the 24 hours ending at 11:59 UTC on Tuesday listed 39 earthquakes of magnitude 2.5 and above worldwide; 13 of them reached magnitude 4.5 or more, and the Banda Sea event was the only one at magnitude 6 or above. The next largest in the same window, a magnitude 5.0 near Kirakira in the Solomon Islands early on Tuesday, was more than a full magnitude step smaller.",
+          "The Banda Sea is one of the most seismically complex regions on Earth, where the Australian, Pacific and several smaller plates converge and the crust is folded into a tight arc — a setting that produces frequent moderate earthquakes and, from time to time, one large enough to be felt in two countries at once, as this one was.",
+        ],
+      },
+      {
+        heading: "How can I track earthquakes like this on WorldEye?",
+        body: [
+          "WorldEye's [earthquake tracker](/earthquake-tracker) follows the USGS feed as events are posted and reviewed, so a quake like this one appears with its magnitude, depth and location as the solution firms up. The site's [live webcams](/live-webcams) — part of its 74,229 live cameras — cover cities across Indonesia and northern Australia, including the Darwin area where so many of Tuesday's felt reports originated.",
+          "For the authoritative record of any earthquake, the USGS event page remains the source of record: magnitudes and depths are revised as more data arrives, and the figures in this story are the reviewed values available on Tuesday.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When did the Banda Sea earthquake happen?",
+        a: "The USGS gives an origin time of 21:11 UTC on Monday, November 16, 2026 — 6:11 a.m. on Tuesday, November 17 in eastern Indonesia, and about 6:41 a.m. in Darwin. It struck 148 km west-southwest of Tual, Indonesia, at a depth of 68 km.",
+      },
+      {
+        q: "Was there a tsunami warning after the earthquake?",
+        a: "No. Indonesia's BMKG said its modelling showed the earthquake had no tsunami potential, and Australia's Bureau of Meteorology said there was no tsunami threat to the Australian mainland or its islands.",
+      },
+      {
+        q: "Why did agencies report different magnitudes?",
+        a: "BMKG measured the event at magnitude 7.1 and Geoscience Australia located it much shallower than the USGS did. Agencies use different station networks and models, so early solutions differ; the USGS reviewed solution is magnitude 6.6 at 68 km depth.",
+      },
+      {
+        q: "Was anyone hurt or anything damaged?",
+        a: "No casualties or major damage had been reported in the hours after the earthquake. The USGS issued a green PAGER alert, indicating a low likelihood of casualties and damage, and estimated about 8,100 people were exposed to moderate shaking.",
+      },
+      {
+        q: "How far away was the earthquake felt?",
+        a: "Geoscience Australia received more than 460 felt reports, mostly from Darwin, Palmerston and Katherine, with others from Jabiru, Maningrida, Milingimbi, Nhulunbuy and as far west as Kununurra — hundreds of kilometres from the epicentre.",
+      },
+    ],
+    sources: [
+      {
+        name: "Asia Daily — Banda Sea earthquake report (USGS, BMKG, BNPB), November 17, 2026",
+        url: "https://asiadaily.org/news/18966/",
+      },
+      {
+        name: "QNC News — agencies rule out tsunami, November 17, 2026",
+        url: "https://qncnews.com/2026/11/17/banda-sea-earthquake-of-magnitude-6-6-felt-across-darwin-as-agencies-rule-out-tsunami/",
+      },
+      {
+        name: "USGS past-day earthquake feed summary — largest event of the day, November 17, 2026",
+        url: "https://voyaggora.com/travel-live/today/earthquakes-today/",
+      },
+    ],
+  },
+  {
+    slug: "cyclone-akvan-severe-orange-alert-november-17",
+    title: "Cyclone Akvan Turns Severe Tonight: IMD Issues an Orange Message for Andhra",
+    seoTitle: "Cyclone Akvan Turns Severe | WorldEye Blog",
+    date: "2026-11-17",
+    excerpt:
+      "Cyclone Akvan spent Tuesday slowing over the Bay of Bengal and gathering strength. India's weather department has issued an Orange Message for the Andhra Pradesh and south Odisha coasts, expects a severe cyclone by tonight and a very severe one by Thursday morning, and warns of a 1-2 metre storm surge at landfall on Friday.",
+    seoDescription:
+      "Cyclone Akvan is turning severe tonight over the Bay of Bengal. IMD's Orange Message warns of a very severe landfall near Andhra on November 20.",
+    tags: ["cyclone", "india", "bay-of-bengal", "andhra-pradesh", "imd"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "Cyclone Akvan is no longer just forming — it is intensifying on a schedule. The India Meteorological Department (IMD) said on Tuesday, November 17, that the storm will become a severe cyclonic storm by this evening and a very severe cyclonic storm around Thursday morning, and it has issued an Orange Message for the Andhra Pradesh and adjoining south Odisha coasts ahead of a Friday landfall.",
+          "This is the second day of the Akvan story. The system took its name on Monday evening as it strengthened from a deep depression; Tuesday's bulletins are the ones that attach numbers to the threat — a landfall window, a surge height, named districts and a rainfall map — and they describe a slow-moving storm whose area of influence, the IMD noted on Tuesday evening, covered practically the entire Bay of Bengal as it paused off the Tamil Nadu and Andhra Pradesh coasts.",
+        ],
+      },
+      {
+        heading: "Where is Akvan right now?",
+        body: [
+          "In its 5:30 a.m. IST bulletin on Tuesday, the IMD centred Akvan over the central parts of the south and adjoining west-central Bay of Bengal, about 610 kilometres east of Chennai, 660 kilometres southeast of Machilipatnam and 670 kilometres south-southeast of Visakhapatnam. The department's press release issued at 1:25 p.m. IST put the centre near 12.2°N, 85.7°E at 8:30 a.m. IST.",
+          "The storm is moving slowly north-northwestwards, and is expected to shift slightly to the northwest as it intensifies. Slow movement over warm water is what the intensification forecast rests on: Akvan has days over the Bay before it reaches the coast, and the IMD expects it to use them.",
+        ],
+      },
+      {
+        heading: "When does it become severe, and then very severe?",
+        body: [
+          "The IMD's Tuesday timeline runs in steps. Akvan intensifies into a severe cyclonic storm over the west-central Bay of Bengal by Tuesday evening, November 17. It then continues to strengthen as it turns northwest, becoming a very severe cyclonic storm around the morning of Thursday, November 19 — the category it is expected to hold as it approaches the coast.",
+          "The wind warnings escalate with it. Thunder squalls of 60-70 km/h, gusting to 80 km/h, may sweep coastal Andhra Pradesh and Yanam on Wednesday, rising to 100-110 km/h gusting to 120 km/h on Thursday and Friday on both sides of the landfall timeline. The Orange Message — the IMD's formal cyclone alert for the Andhra and south Odisha coasts — is the signal that preparations, not just monitoring, should now be under way.",
+        ],
+      },
+      {
+        heading: "Where and when will Akvan make landfall?",
+        body: [
+          "The landfall forecast has held steady since Monday: Akvan is expected to cross the Andhra Pradesh and Yanam coasts between Nellore and Tuni around noon on Friday, November 20, as a very severe cyclonic storm with maximum sustained winds of 120-130 km/h gusting to 145 km/h.",
+          "The surge may matter as much as the wind. The IMD warns that a storm surge of 1.0 to 2.0 metres above the astronomical tide may inundate low-lying areas of the Prakasam, Bapatla, Krishna, West Godavari, Konaseema and Kakinada districts during landfall, with the peak surge expected over Bapatla, Krishna and West Godavari from Friday morning into the afternoon before conditions improve gradually.",
+        ],
+      },
+      {
+        heading: "How much rain will Akvan bring?",
+        body: [
+          "The rainfall footprint is wider than the landfall zone. Coastal Andhra Pradesh and Yanam face heavy to very heavy rainfall with isolated extremely heavy falls — 21 centimetres or more in a day — on Thursday and Friday, November 19-20. Tamil Nadu, Puducherry and Karaikal are in line for heavy rain on November 17 and 20 and heavy to very heavy rain on November 18-19, and Telangana for heavy to very heavy rain on November 20-21 as the system moves inland and weakens.",
+          "In all, five states are under alerts of some level for strong winds and heavy rainfall as Akvan approaches. For the coastal districts between Nellore and Tuni, the sequence to plan around is the one the IMD has now published twice: squalls building Wednesday, the worst winds Thursday and Friday, and the surge at the coast around Friday noon.",
+        ],
+      },
+      {
+        heading: "How can I track Akvan on WorldEye?",
+        body: [
+          "Follow Akvan's slow approach on WorldEye's [hurricane tracker](/hurricane-tracker) and watch the outer rain bands reach the coast on the [weather radar](/weather-radar). The Andhra shoreline in the landfall zone is covered by cameras on the site's [beach webcams](/beach-webcams) page, among its 74,229 live cameras — the same coast that took Murasu's landfall near Ongole earlier this month.",
+          "The IMD's bulletins, issued several times a day, remain the authoritative source for the track, the landfall point and the surge warning, and they supersede any forecast — including this one — as the storm gets closer.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Has Cyclone Akvan become a severe cyclonic storm?",
+        a: "The IMD forecast on Tuesday, November 17, has Akvan intensifying into a severe cyclonic storm by Tuesday evening over the west-central Bay of Bengal, and into a very severe cyclonic storm around the morning of Thursday, November 19.",
+      },
+      {
+        q: "What is the Orange Message for Akvan?",
+        a: "It is the IMD's cyclone alert issued on November 17 for the Andhra Pradesh and adjoining south Odisha coasts, signalling that the storm is expected to bring dangerous winds, extremely heavy rain and a storm surge, and that preparations should be under way.",
+      },
+      {
+        q: "When and where will Akvan make landfall?",
+        a: "The IMD expects Akvan to cross the Andhra Pradesh and Yanam coasts between Nellore and Tuni around noon on Friday, November 20, 2026, as a very severe cyclonic storm with winds of 120-130 km/h gusting to 145 km/h.",
+      },
+      {
+        q: "How high is the storm surge forecast?",
+        a: "The IMD warns of a surge of 1.0 to 2.0 metres above the astronomical tide in low-lying areas of Prakasam, Bapatla, Krishna, West Godavari, Konaseema and Kakinada districts, peaking over Bapatla, Krishna and West Godavari around landfall.",
+      },
+      {
+        q: "Is Akvan really the third cyclone in a month?",
+        a: "Yes. Akvan follows Arnab, which crossed near Narsapur in late October, and Murasu, which made landfall near Ongole on November 3 — three north-east monsoon cyclones threatening the Andhra coast in under a month.",
+      },
+    ],
+    sources: [
+      {
+        name: "The Hindu BusinessLine — IMD update: surge and squall warnings, November 17, 2026",
+        url: "https://www.thehindubusinessline.com/news/imd-update-cyclone-akvan-poised-to-intensify-as-very-severe-cyclone/article71710488.ece/amp/",
+      },
+      {
+        name: "Jagran Josh — IMD bulletin: Orange Message and state alerts, November 17, 2026",
+        url: "https://www.jagranjosh.com/general-knowledge/imd-weather-forecast-today-cyclone-akvan-triggers-storm-warning-5-states-on-alert-for-strong-winds-and-heavy-rainfall-check-affected-areas-and-full-weather-advisory-1820013884-1",
+      },
+      {
+        name: "Dainik News Live — IMD 5:45 a.m. position and forecast timeline, November 17, 2026",
+        url: "https://dainiknewslive.in/cyclone-akvan-intensifies-over-bay-of-bengal-which-states-will-see-heavy-rain-and-strong-winds/",
+      },
+    ],
+  },
+  {
+    slug: "killington-opening-day-november-17-2026",
+    title: "Killington Opens Today: New England's Ski Season Starts on North Ridge",
+    seoTitle: "Killington Opens Today | WorldEye Blog",
+    date: "2026-11-17",
+    excerpt:
+      "New England's ski season starts this morning in Vermont. Killington Resort opens today, November 17 — first in the region — with passholders getting first chair on three groomed North Ridge trails, the K-1 Gondola spinning, and the general public following on Wednesday.",
+    seoDescription:
+      "Killington opens the 2026-27 season today for passholders — New England's first resort — with the K-1 Gondola, North Ridge Quad and three groomed trails.",
+    tags: ["skiing", "vermont", "killington", "opening-day", "new-england"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "The New England ski season has a first chair, and it is this morning. Killington Resort, the Vermont giant locals call the Beast of the East, opens for the 2026-27 winter season today, Tuesday, November 17 — the first resort in New England to spin its lifts this season — with opening day reserved for Killington Winter 26/27, Beast 365 and Ikon Pass holders.",
+          "The resort confirmed the date on Monday and used its mountain report to set the morning's terms: a targeted 10:00 a.m. start, with lifts possibly spinning as early as 9:00 a.m. if everything comes together ahead of schedule, and the final time to be confirmed in Tuesday morning's report. Everyone else gets in tomorrow.",
+        ],
+      },
+      {
+        heading: "Who can ski today, and from what time?",
+        body: [
+          "Today is passholders only: holders of the Killington Winter 26/27 pass, the Beast 365 pass and the Ikon Pass. The resort is targeting a 10:00 a.m. first chair and says an earlier, 9:00 a.m. start is possible if the morning's preparations run ahead of schedule — skiers were told to check the mountain report early on Tuesday for the accurate lift-opening time.",
+          "The general public follows on Wednesday, November 18, at 9:00 a.m., when daily operations begin and lift tickets — already on sale — take over from the passholder preview. Splitting the opening across two days is Killington's established pattern: a reward day for passholders first, then the full opening once the early-season operation has a day on it.",
+        ],
+      },
+      {
+        heading: "What terrain is open on day one?",
+        body: [
+          "Two lifts do the work: the K-1 Express Gondola and the North Ridge Quad, serving groomed terrain on three trails in the North Ridge area — Rime, Reason and Upper East Fall. As POWDER's opening preview noted, guests use the Peak Walkway both to reach the open terrain from the gondola and to return, the standard early-season arrangement at Killington while the lower mountain is still being built up.",
+          "There is a park from the first morning, too: the resort's park crew has Reason Park ready with eight features expected for day one. Two limits define the day, and the resort states both plainly — no beginner terrain is available at this time, and uphill travel is still not permitted on the mountain.",
+        ],
+      },
+      {
+        heading: "How did Killington get open this early?",
+        body: [
+          "Snowmaking, mostly, and a timely turn in the weather. The resort's mountain report said its snowmaking team kept around 175 snowguns firing through Monday night across both North Ridge and Superstar — the two pods that matter most in November, one for opening day and one for the race slope that carries the early season.",
+          "It was not a straight line to get here. A warm spell last week melted back the snow Killington had made in the North Ridge pod, and the resort told skiers not to expect a weekend opening while it waited for a longer cold window. The cold arrived, the guns rebuilt the base, and about five inches of natural snow near the peak since Thursday helped — enough, in the end, to put Killington first in New England again.",
+        ],
+      },
+      {
+        heading: "Where does Killington fit in the season so far?",
+        body: [
+          "Killington's opening continues a season that is assembling itself region by region. North Carolina started the East on Sunday, when Sugar Mountain and Cataloochee opened on the same morning; Vermont answers two days later. Elsewhere in northern New England, Jay Peak in Vermont and Sunday River in Maine are both blowing snow and angling to follow, according to POWDER, and Brian Head became Utah's first resort to open on the same Tuesday morning out West.",
+          "For Killington itself, the opening also starts the clock on its best-known early-season test: holding terrain through Thanksgiving week, when the forecast currently offers the Northeast a possible return of precipitation. Early openings are won in November; they are kept, or lost, in the fortnight that follows.",
+        ],
+      },
+      {
+        heading: "How can I watch opening day on WorldEye?",
+        body: [
+          "WorldEye's [ski webcams](/ski-webcams) cover Killington and resorts across New England, so you can check the North Ridge lines, the gondola queue and the weather at the peak before you drive — part of the site's 74,229 live cameras. The [weather radar](/weather-radar) is the companion view for the Thanksgiving-week systems that will decide how fast the open terrain grows.",
+          "For the official word on lifts, trails and that final first-chair time, Killington's own mountain report is the source — it is updated daily, and on an opening morning like this one, it is the page that settles every argument.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When does Killington open to the general public?",
+        a: "Wednesday, November 18, 2026, at 9:00 a.m., when daily operations begin. Tuesday, November 17 is a passholder-only opening for Killington Winter 26/27, Beast 365 and Ikon Pass holders, with first chair targeted for 10:00 a.m. and possibly as early as 9:00 a.m.",
+      },
+      {
+        q: "What lifts and trails are open at Killington?",
+        a: "The K-1 Express Gondola and the North Ridge Quad serve groomed terrain on Rime, Reason and Upper East Fall in the North Ridge area, reached via the Peak Walkway. Reason Park is set up with eight features expected on day one.",
+      },
+      {
+        q: "Is Killington the first resort to open in New England?",
+        a: "Yes. Killington's November 17 opening makes it the first open ski resort in New England for the 2026-27 season, ahead of Jay Peak and Sunday River, which are making snow and preparing to follow.",
+      },
+      {
+        q: "Is there beginner terrain open at Killington?",
+        a: "No. The resort states plainly that no beginner terrain is available for the opening, and uphill travel is still not permitted on the mountain.",
+      },
+      {
+        q: "How did Killington open so early?",
+        a: "Mainly snowmaking: around 175 snowguns ran through Monday night across North Ridge and Superstar after a cold snap rebuilt a base that a warm spell had melted back the previous week, helped by about five inches of natural snow near the peak since Thursday.",
+      },
+    ],
+    sources: [
+      {
+        name: "Killington Resort — official mountain report, November 16-17, 2026",
+        url: "https://killington.com/mountain-report",
+      },
+      {
+        name: "POWDER — Killington confirms 2026-27 opening day, November 16, 2026",
+        url: "https://www.powder.com/news/killington-vermont-confirms-26-27-opening-day",
+      },
+      {
+        name: "Travel and Tour World — Killington official opening position, November 17, 2026",
+        url: "https://www.travelandtourworld.com/news/article/eqlze6pjcegd/",
+      },
+    ],
+  },
 // Blog daily 2026-11-16 — three sourced event stories, news: true, date 2026-11-16.
 // SOURCE-ACCESS DISCLOSURE: browser.open failed all run ("query network grant"
 // errors on three independent requests, not retried per instruction); facts were

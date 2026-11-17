@@ -103,7 +103,7 @@ describe("sitemap URL set", () => {
           !u.startsWith(`${BASE}/wildfires/`),
       )
       .sort();
-    expect(nonTransit.length).toBe(1163);
+    expect(nonTransit.length).toBe(1166);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     // Hash history: 6d75d0de… until the SEO audit fix #3 (2026-10-27)
     // normalised the es homepage entry from /es/ to its final /es
@@ -404,8 +404,15 @@ describe("sitemap URL set", () => {
     // tree (probe, 2026-11-16): count exactly +20 over the
     // 1,143 pin and all 20 new /blog/ URLs present in the
     // executed set (the 3 newest slugs verified explicitly).
+    // The blog daily batch of 2026-11-17 (Banda Sea M6.6
+    // earthquake + Cyclone Akvan severe/Orange Message +
+    // Killington opening day) then added its 3 post URLs
+    // → 1,166 (a217c396…). Delta verified by executing
+    // sitemap() on the merged tree (probe, 2026-11-17):
+    // count exactly +3 over the 1,163 pin and all 3 new
+    // /blog/ URLs present in the executed set.
     expect(hash).toBe(
-      "e04f82731b67ef29c74429eee90e78bc03e02d606b5b399d36093f1f22063d20",
+      "a217c3961c9425d0e38a5bd4ee77b6e850b2e683292026cc27b75c520a014488",
     );
   });
 
