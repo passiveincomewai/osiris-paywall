@@ -57,7 +57,7 @@ export default async function CampaignsAdminPage() {
   }
 
   return (
-    <div className="min-h-screen" style={{ background: "#050810" }}>
+    <div className="docs-root min-h-screen" style={{ background: "#050810" }}>
       <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="flex flex-wrap items-start justify-between gap-4 mb-6">
           <div>
