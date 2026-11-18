@@ -87,6 +87,9 @@ describe("the launch story (real data, real dates)", () => {
   it("is one of the flagged posts, and every flagged post has sources", () => {
     const flagged = POSTS.filter(isNewsPost);
     expect(flagged.map((p) => p.slug)).toEqual([
+      "voyager-1-reaches-one-light-day-november-18",
+      "cyclone-xavier-category-5-cook-islands-november-18",
+      "spacex-ussf-317-launch-moves-november-19",
       "magnitude-6-6-earthquake-banda-sea-tual-indonesia",
       "cyclone-akvan-severe-orange-alert-november-17",
       "killington-opening-day-november-17-2026",
@@ -153,6 +156,15 @@ describe("the launch story (real data, real dates)", () => {
     for (const p of flagged) {
       expect(p.sources?.length).toBeGreaterThan(0);
     }
+  });
+
+  it("the Nov 18 event stories are inside the 48-hour window on their publication day", () => {
+    const pubDay = new Date("2026-11-18T15:00:00Z");
+    const fresh = getFreshNewsPosts(POSTS, pubDay).map((p) => p.slug);
+    expect(fresh).toContain("voyager-1-reaches-one-light-day-november-18");
+    expect(fresh).toContain("cyclone-xavier-category-5-cook-islands-november-18");
+    expect(fresh).toContain("spacex-ussf-317-launch-moves-november-19");
+    expect(fresh).not.toContain(LAUNCH_SLUG);
   });
 
   it("the Nov 17 event stories are inside the 48-hour window on their publication day", () => {

@@ -40,6 +40,297 @@ export type BlogPost = {
 };
 
 export const POSTS: BlogPost[] = [
+// Blog daily 2026-11-18 — three sourced event stories, news: true, date 2026-11-18.
+// Facts verified from sources actually opened this run (browser.open):
+// NASA Science Voyager page (milestone time, Nov 19 discussion, Golden Record);
+// USA TODAY Nov 18 (Voyager reached the milestone, speeds, distances, Gliese 445);
+// ScienceAlert Nov 18 (permanent crossing, 1998 Pioneer 10 record, 2012 heliopause,
+// Spilker quote, power into the 2030s); MetService TC bulletin issued 12:08pm
+// Wed Nov 18 + RSMC Nadi Hurricane Warning 016 Nov 18 07:27 UTC + Orbis Weather
+// Nov 18 daily report (Xavier warnings/impacts via 1News/PMN, JTWC figures);
+// Vandenberg Space Launch Delta 30 launch alert + SpaceX mission briefing via
+// No Earlier Than (Thu Nov 19 target, B1100 11th flight, OCISLY 574 km, backup
+// Nov 20) + Ventura County Star Nov 16 + Seeking Alpha Nov 18 (Thursday target).
+  {
+    slug: "voyager-1-reaches-one-light-day-november-18",
+    title: "Voyager 1 Is One Light-Day From Earth: A First No Spacecraft Has Matched",
+    seoTitle: "Voyager 1 Reaches One Light-Day | WorldEye Blog",
+    date: "2026-11-18",
+    excerpt:
+      "At 5:16 a.m. Eastern this morning, Voyager 1 crossed a line no human-made object had crossed before: one light-day from Earth, about 16 billion miles out. Its radio signals, travelling at the speed of light, now take a full 24 hours to reach home — and from today, that will always be true.",
+    seoDescription:
+      "Voyager 1 reached one light-day from Earth at 5:16 a.m. ET on November 18 — about 16 billion miles out, a first for any human-made object, NASA says.",
+    tags: ["voyager", "nasa", "space", "interstellar", "milestone"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "Voyager 1 has done it. At 5:16:07 a.m. EST on Wednesday, November 18, 2026, NASA's longest-lived spacecraft reached one light-day from Earth — the distance light itself travels in 24 hours, about 16 billion miles (about 26 billion kilometres) — becoming the first human-made object ever to get that far from home.",
+          "WorldEye previewed this moment on November 12, when NASA announced the date. Today is the fulfilment, not a forecast: NASA's own Voyager page now records the milestone in the past tense, and the spacecraft that left Florida in 1977 is, as of this morning, a full day away at the speed of light.",
+        ],
+      },
+      {
+        heading: "What does one light-day actually mean?",
+        body: [
+          "A light-day is a distance, not a duration. It is how far a beam of light — or a radio signal, which travels at the same speed, about 186,000 miles per second — covers in 24 hours. Voyager 1's transmissions now need that entire day to reach Earth, and a command sent from Earth needs another full day to reach the spacecraft, so any exchange with Voyager 1 is now a two-day round trip at minimum.",
+          "The scale is easier to feel against a familiar yardstick. Sunlight reaches Earth in a little over eight minutes, and light crosses the roughly 240,000 miles to the Moon in about 1.3 seconds. Voyager 1, cruising at nearly 38,000 miles per hour, has taken more than 49 years to accumulate a distance light covers in a single day.",
+        ],
+      },
+      {
+        heading: "Why is this crossing permanent?",
+        body: [
+          "Because Earth orbits the Sun, its distance from Voyager 1 rises and falls slightly over the course of a year — there are seasons when our planet is, briefly, moving back toward the spacecraft's direction. Until now, a milestone measured from Earth could in principle be un-crossed by that motion.",
+          "Not this one. Voyager 1 is travelling outward so relentlessly that, as ScienceAlert's reporting on the milestone puts it, even when Earth starts to move back toward it, the spacecraft will remain more than a light-day away. The light-day barrier crossing is permanent: every day from today onward, Voyager 1 is at least a light-day from Earth, and the gap only grows.",
+        ],
+      },
+      {
+        heading: "How did Voyager 1 get here?",
+        body: [
+          "Voyager 1 launched on September 5, 1977, from what is now Cape Canaveral Space Force Station — after its twin. Voyager 2 left first, on August 20, 1977, but Voyager 1 took a faster route, flew past Jupiter in 1979 and Saturn in 1980, and was flung out of the plane of the planets by its close pass of Saturn's moon Titan.",
+          "The records have accumulated ever since. On February 17, 1998, it overtook Pioneer 10 to become the most distant human-made object, a title it has held continuously since. In 2004 it crossed the termination shock, where the solar wind abruptly slows, and on August 25, 2012, at about 18.2 billion kilometres from the Sun, it crossed the heliopause and became the first spacecraft to enter interstellar space. Both Voyagers remain the only spacecraft ever to operate outside the heliosphere, the Sun's protective bubble of particles and magnetic fields.",
+          "Planetary scientist Linda Spilker of NASA's Jet Propulsion Laboratory, who has worked on Voyager since 1977, told ScienceAlert she never expected Voyager 1 to reach one light-day when she first joined the mission. Nearly five decades later, most of the people alive on Earth today were not yet born when it launched.",
+        ],
+      },
+      {
+        heading: "Where is Voyager 1 going, and how long can it last?",
+        body: [
+          "Outward, in the direction of the star Gliese 445 — also catalogued as AC +79 3888 — more than 17 light-years away in the constellation Ursa Minor. If it keeps going, NASA says, it could pass within 1.7 light-years of that star in about 40,000 years. Its twin is on its own long road: Voyager 2 is about 13.4 billion miles from Earth, travelling at about 34,000 miles per hour, and is not expected to reach its own light-day until the mid-2030s.",
+          "Time, not distance, is now the limit. Voyager 1's nuclear power supply loses output every year, and engineers have shut down instruments and conserved power to keep it talking. NASA has forecast that it could retain enough power to keep one instrument operating into the 2030s. Both spacecraft carry the Golden Record — the gold-plated disc of images, sounds, greetings in 55 languages and messages assembled by a committee chaired by Carl Sagan — which will outlast the transmitters by an almost inconceivable margin.",
+          "NASA is marking the week publicly: after inviting people around the world to shine a light skyward after sunset on Tuesday, November 17, the agency hosts a Voyager 1 light-day mission update and conversation on Thursday, November 19, at noon EST, with mission leaders and scientists from headquarters and the Jet Propulsion Laboratory, and a preview of a NASA+ Voyager documentary planned for the mission's 50th anniversary in 2027.",
+        ],
+      },
+      {
+        heading: "How can I follow deep-space missions on WorldEye?",
+        body: [
+          "WorldEye's [satellite tracker](/satellite-tracker) follows the spacecraft in Earth orbit whose signals cross the sky in minutes — the everyday traffic that Voyager 1 left behind half a century ago — and the [space station tracker](/space-station-tracker) follows the International Space Station, the most distant permanently crewed outpost, which is never more than a light-second or so from home. Set against those scales, Voyager 1's new address — one light-day out, among the site's wider view of a planet watched by 74,229 live cameras — is a useful measure of how far one small machine, launched before the internet existed, has actually gone.",
+          "For the authoritative position and status of both Voyagers, NASA's Voyager pages remain the source of record, and they are the sources this story is built on.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When did Voyager 1 reach one light-day from Earth?",
+        a: "At 5:16:07 a.m. EST on Wednesday, November 18, 2026, according to NASA — 10:16 UTC. That is the moment its distance from Earth reached the distance light travels in 24 hours, about 16 billion miles (about 26 billion kilometres).",
+      },
+      {
+        q: "How long do Voyager 1's signals take to reach Earth now?",
+        a: "A full 24 hours, one way. A command from Earth takes another 24 hours to reach the spacecraft, so the minimum round trip for any exchange with Voyager 1 is now two days.",
+      },
+      {
+        q: "How fast is Voyager 1 travelling?",
+        a: "Nearly 38,000 miles per hour — more than 37,800 mph in NASA's figures via USA TODAY. Even at that speed, it has taken more than 49 years since its September 5, 1977 launch to reach one light-day.",
+      },
+      {
+        q: "When will Voyager 2 reach one light-day?",
+        a: "Not until the mid-2030s. Voyager 2 is about 13.4 billion miles from Earth and travelling at about 34,000 miles per hour, well behind its twin, which has been the most distant human-made object since 1998.",
+      },
+      {
+        q: "How long will Voyager 1 keep working?",
+        a: "NASA has forecast that Voyager 1 could retain enough power to keep one instrument operating into the 2030s. Its nuclear power supply loses output each year, and engineers have been shutting down equipment to conserve energy.",
+      },
+    ],
+    sources: [
+      {
+        name: "NASA Science — Voyager 1 light-day page: milestone reached November 18, 2026 at 5:16:07 a.m. EST; November 19 mission update",
+        url: "https://science.nasa.gov/",
+      },
+      {
+        name: "USA TODAY — NASA's Voyager 1 is now a light-day away from Earth, November 18, 2026",
+        url: "https://www.usatoday.com/story/tech/space/2026/11/18/nasa-voyager-1-light-day/92809727007/",
+      },
+      {
+        name: "ScienceAlert — Voyager 1 is the first spacecraft to reach one light-day from Earth, November 18, 2026",
+        url: "https://www.sciencealert.com/its-official-voyager-1-is-the-first-spacecraft-to-reach-one-light-day-from-earth",
+      },
+    ],
+  },
+  {
+    slug: "cyclone-xavier-category-5-cook-islands-november-18",
+    title: "Cyclone Xavier Reaches Category 5 Over the Northern Cook Islands",
+    seoTitle: "Cyclone Xavier Hits Category 5 | WorldEye Blog",
+    date: "2026-11-18",
+    excerpt:
+      "Two days ago Xavier was a Category 2 cyclone north of the Cook Islands. This morning it is a Category 5 — the top of the scale — with winds of 220 km/h near its centre, damaged wharves on Manihiki, schools closed on Pukapuka, and gale warnings across the northern group.",
+    seoDescription:
+      "Severe Tropical Cyclone Xavier reached Category 5 over the Northern Cook Islands on November 18, with 220 km/h winds, per RSMC Nadi and MetService.",
+    tags: ["cyclone", "cook-islands", "south-pacific", "xavier", "weather"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "Severe Tropical Cyclone Xavier has completed a rapid climb to the top of the scale. On Monday, when WorldEye first reported it, Xavier was a Category 2 system at 985 hPa with winds of 95 km/h. In bulletins issued on Wednesday, November 18, both the Fiji Meteorological Service's Regional Specialised Meteorological Centre (RSMC) Nadi and New Zealand's MetService rate it Category 5, with maximum winds near the centre of 120 knots — 220 km/h.",
+          "The centre is staying offshore of the inhabited atolls, which is the single most important fact in the forecast. But a Category 5 cyclone does not need to make landfall to do damage: Manihiki's wharves have already been damaged, Pukapuka has closed its schools, and warnings cover the whole northern Cook Islands group.",
+        ],
+      },
+      {
+        heading: "Where is Xavier right now?",
+        body: [
+          "RSMC Nadi's Hurricane Warning 016, issued at 07:27 UTC on Wednesday, placed Xavier's centre at 925 hPa near 10.1°S, 163.6°W at 06:00 UTC, moving southeast at 4 knots, with sustained winds of 110 knots close to the centre at that hour, expected to ease to 90 knots by 06:00 UTC on Thursday. Its forecast positions carry the centre to 10.6°S, 163.6°W by 18:00 UTC Wednesday and 10.9°S, 163.4°W by Thursday morning.",
+          "MetService's tropical cyclone bulletin, issued at 12:08 p.m. on Wednesday, New Zealand time, put the system at 910 hPa near 9.7°S, 163.6°W at 7 a.m. NZDT — about 280 kilometres northeast of Pukapuka and 300 kilometres north-northwest of Manihiki Atoll — moving slowly southeast, with maximum winds near the centre of 120 knots (220 km/h) and large waves expected across a large area of the Northern Cook Islands. The two centres' pressures and positions differ slightly because they are snapshots taken hours apart of a moving storm; both agree on the category, and the category is the headline.",
+          "The Joint Typhoon Warning Center's figures from Tuesday evening told the same story in the American scale: 150 mph one-minute winds gusting to 184 mph, at 936 mb, drifting south.",
+        ],
+      },
+      {
+        heading: "Which islands are under warnings?",
+        body: [
+          "A gale warning is in force for Pukapuka and Nassau, where gusts to 75 mph (120 km/h) are expected, and a gale alert covers Suwarrow. Manihiki and Rakahanga are under a strong wind warning. Those are the warnings compiled in Wednesday's reporting from the Cook Islands services via 1News and Pacific Media Network, and they match the picture in the official bulletins: the worst of Xavier is passing through the northern group, closest to Pukapuka and Nassau as it moves away from Manihiki and Rakahanga.",
+          "The Fiji Meteorological Service's rating, reported by 1News, put winds near the centre at about 137 mph (220 km/h) with gusts to 196 mph (315 km/h) on the ten-minute scale used in the South Pacific — a different averaging period from the one-minute American figures, which is why the gust numbers differ between reports of the same storm.",
+        ],
+      },
+      {
+        heading: "What damage has Xavier done so far?",
+        body: [
+          "On Manihiki, the atoll that took the cyclone's closest approach in the northern group, the wharves were damaged, according to the reports compiled on Wednesday. On Pukapuka, schools were closed and residents prepared to shelter as the gale warning took effect. No casualties had been reported in the Wednesday morning compilations.",
+          "That toll — infrastructure damage at the water's edge, closures and sheltering, no reported deaths — reflects both the storm's offshore track and the geography it is crossing: low atolls where the wharf is the lifeline to the outside world, and where large waves, which MetService expects to affect a large area of the Northern Cook Islands throughout the forecast period, can do harm well away from the centre.",
+        ],
+      },
+      {
+        heading: "What happens next?",
+        body: [
+          "MetService expects the environment to sustain Xavier's Category 5 intensity for most of Thursday, with winds near the centre still around 120 knots, before weakening begins from late Thursday. Into the weekend the system is expected to continue west-southwest, initially as a Category 3 or 4, then weaken rapidly from late Friday as it moves away from the Northern Cook Islands and tracks toward Samoa.",
+          "Even weakened, it may still matter there. MetService warns that Xavier may bring strong winds, heavy rain and large waves to Samoa from Sunday, while noting that current modelling suggests it will weaken considerably before reaching Samoa and that confidence in the outlook track and intensity is moderate. The National Weather Service in Pago Pago has likewise flagged heavy rain, surf and possibly tropical-storm-force winds for American Samoa from Friday night, at low confidence. RSMC Nadi's next hurricane warnings, issued every few hours while the storm holds this strength, supersede the figures in this story.",
+        ],
+      },
+      {
+        heading: "How can I track Xavier on WorldEye?",
+        body: [
+          "Follow Xavier on WorldEye's [hurricane tracker](/hurricane-tracker), which follows the official advisories as RSMC Nadi and the warning centres update them, and watch conditions around the Pacific island groups on the site's [beach webcams](/beach-webcams) and [live webcams](/live-webcams) — part of its 74,229 live cameras. The [weather radar](/weather-radar) shows the rain field of a system whose centre, unusually, is not the whole story.",
+          "For warnings that require action, the Cook Islands Meteorological Service, RSMC Nadi and MetService bulletins are the authoritative sources, and they are the sources this story is built on.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "How strong is Cyclone Xavier now?",
+        a: "Category 5, the top of the South Pacific scale. MetService's November 18 bulletin gives maximum winds near the centre of 120 knots (220 km/h) at 910 hPa; RSMC Nadi's Hurricane Warning 016 the same morning put the centre at 925 hPa with sustained winds of 110 knots, easing to 90 knots by Thursday morning.",
+      },
+      {
+        q: "Will Cyclone Xavier make landfall in the Cook Islands?",
+        a: "Forecasters expect its centre to stay offshore of the inhabited islands. It is passing through the Northern Cook Islands, closest to Pukapuka and Nassau, after passing Manihiki and Rakahanga — but wharves on Manihiki have already been damaged and large waves are expected across a large area.",
+      },
+      {
+        q: "Which islands are under warnings for Xavier?",
+        a: "A gale warning covers Pukapuka and Nassau, with gusts to 75 mph (120 km/h); a gale alert covers Suwarrow; and a strong wind warning covers Manihiki and Rakahanga, according to Wednesday's Cook Islands reporting via 1News and Pacific Media Network.",
+      },
+      {
+        q: "How much has Xavier strengthened since Monday?",
+        a: "From Category 2 on Monday, November 16 — 985 hPa with winds of 95 km/h in RSMC Nadi's advisories — to Category 5 on Wednesday, November 18, with winds of 220 km/h near the centre. That is a climb of three categories in about two days.",
+      },
+      {
+        q: "Will Xavier reach Samoa?",
+        a: "MetService expects Xavier to weaken rapidly from late Friday and track toward Samoa over the weekend, weakening considerably before it arrives, but still possibly bringing strong winds, heavy rain and large waves from Sunday. Confidence in that outlook is moderate.",
+      },
+    ],
+    sources: [
+      {
+        name: "MetService — Tropical Cyclone Activity bulletin: Xavier Category 5, 910 hPa, issued 12:08 p.m. Wednesday, November 18, 2026",
+        url: "https://www.metservice.com/warnings/tropical-cyclone-activity",
+      },
+      {
+        name: "Fiji Meteorological Service / RSMC Nadi — South West Pacific Marine Bulletin, Hurricane Warning 016, November 18, 2026, 07:27 UTC",
+        url: "http://www.met.gov.fj/fiji-weather/south-west-pacific-marine-bulletin/",
+      },
+      {
+        name: "Orbis Weather — Daily Earthquakes, Storms, Fires & Floods Report, November 18, 2026 (Xavier warnings and impacts via 1News, PMN and JTWC)",
+        url: "https://www.orbisweather.com/daily-earthquakes-storms-fires-floods-report-november-18-2026/",
+      },
+    ],
+  },
+  {
+    slug: "spacex-ussf-317-launch-moves-november-19",
+    title: "SpaceX Moves USSF-317 to Thursday Evening From Vandenberg",
+    seoTitle: "USSF-317 Moves to Thursday | WorldEye Blog",
+    date: "2026-11-18",
+    excerpt:
+      "SpaceX's next classified Space Force launch will not fly tonight. The USSF-317 mission has slipped from Tuesday, then Wednesday, to Thursday, November 19, with a four-hour window opening at 6:46 p.m. Pacific from Vandenberg — and a booster flying for the eleventh time.",
+    seoDescription:
+      "SpaceX now targets Thursday, November 19 at 6:46 p.m. PT for the classified USSF-317 Falcon 9 launch from Vandenberg, with a backup on Friday.",
+    tags: ["spacex", "falcon-9", "vandenberg", "space-force", "launch"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "There will be no Falcon 9 over the California coast tonight after all. SpaceX is now targeting Thursday, November 19, for the launch of USSF-317, a classified mission for the United States Space Force from Space Launch Complex 4E (SLC-4E) at Vandenberg Space Force Base — a four-hour window opening at 6:46 p.m. PT, according to SpaceX's mission briefing, reported on Wednesday, November 18.",
+          "The slip is the second in two days for this mission. Vandenberg's own launch alert, issued for this week, targeted Wednesday, November 18, between 7:00 and 11:00 p.m. PT, and the schedule trackers record the mission as delayed from Tuesday, November 17, and then Wednesday, November 18, to its new Thursday slot. In a week of classified Vandenberg missions, the calendar is proving as movable as ever.",
+        ],
+      },
+      {
+        heading: "When is the USSF-317 launch window?",
+        body: [
+          "The four-hour window opens at 6:46 p.m. PT on Thursday, November 19 — 9:46 p.m. ET, and 02:46 UTC on Friday — and runs to 10:46 p.m. PT. If Thursday does not work, SpaceX lists a backup opportunity on Friday, November 20, at 8:26 p.m. PT.",
+          "A live webcast of the mission will begin about 10 minutes prior to liftoff, SpaceX says, on its mission page and on X. Vandenberg's alert for the original Wednesday attempt noted that residents of Santa Barbara, San Luis Obispo and Ventura counties might hear one or more sonic booms during the launch, with the potential highest in south Santa Barbara and north Ventura counties, depending on weather and other conditions — the standard advisory for an evening departure from SLC-4E, and one that now applies to Thursday evening instead.",
+        ],
+      },
+      {
+        heading: "What is USSF-317 carrying?",
+        body: [
+          "Officially, that is classified — as is typical for Space Force missions from Vandenberg, and as SpaceX and the Space Force describe this one: a classified satellite deployment mission for the U.S. Space Force, bound for low Earth orbit. Neither organisation has said what the rocket carries.",
+          "One widely repeated assessment, carried in the mission's briefing summaries, is that the payload may be a batch of classified satellites based on SpaceX's Starshield bus, inferred from the locations of the rocket stage drop zones matching previous Starlink Group 15 launches. That is an inference from the drop zones, not a confirmation, and this story treats it as exactly that: unconfirmed. What is confirmed is the customer, the destination orbit and the launch site — and, after two slips, the new date.",
+        ],
+      },
+      {
+        heading: "Which booster is flying, and where does it land?",
+        body: [
+          "The first stage is booster B1100, flying for the eleventh time. SpaceX's briefing lists its previous missions as NROL-105, USSF-385 and eight Starlink missions — a résumé split between the same Vandenberg national-security work it is doing this week and the Starlink deployment flights that fill most of the Falcon 9 manifest.",
+          "After stage separation, B1100 will land on the droneship Of Course I Still Love You, stationed in the Pacific Ocean about 574 kilometres downrange. The briefing summaries count this as SpaceX's 128th launch of 2026 — a cadence figure that helps explain why a two-day slip for one classified mission barely dents the week's schedule: NROL-136, for the National Reconnaissance Office, follows from the same pad on Saturday, November 21.",
+        ],
+      },
+      {
+        heading: "Why did the launch move?",
+        body: [
+          "Neither SpaceX nor the Space Force has published a reason for the moves from Tuesday to Wednesday to Thursday, and this story does not invent one. Schedule slips of a day at a time are routine at Vandenberg, where marine weather, range availability and the readiness of a classified payload can each hold a launch, and the public record for USSF-317 consists of the sequence itself: a Tuesday target in the week's first schedules, a Wednesday window in Vandenberg's official alert, and SpaceX's Thursday target in its current briefing, reported Wednesday morning.",
+          "What readers planning to watch should take from the sequence is practical: the authoritative time is now Thursday, November 19, at 6:46 p.m. PT, the webcast starts about ten minutes before liftoff, and the Friday backup exists precisely because a further slip is always possible. Check SpaceX's mission page on the day before travelling to a viewing spot.",
+        ],
+      },
+      {
+        heading: "How can I watch and track the launch on WorldEye?",
+        body: [
+          "WorldEye's [satellite tracker](/satellite-tracker) follows the growing population in low Earth orbit that missions like USSF-317 add to — even when, as here, the new arrivals are classified and their details unpublished — and the [space station tracker](/space-station-tracker) keeps the week's other traffic in view. The launch itself is best watched on SpaceX's live webcast, which begins about ten minutes before the window opens on Thursday evening.",
+          "For the official word on the window, the range and any further slip, SpaceX's USSF-317 mission page and Space Launch Delta 30's launch alerts are the sources of record, and they are the sources this story is built on.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When will USSF-317 launch now?",
+        a: "SpaceX is targeting Thursday, November 19, 2026, with a four-hour window opening at 6:46 p.m. PT (9:46 p.m. ET) from SLC-4E at Vandenberg Space Force Base. The backup opportunity is Friday, November 20, at 8:26 p.m. PT.",
+      },
+      {
+        q: "Why was the USSF-317 launch delayed?",
+        a: "No reason has been published. The mission was targeted for Tuesday, November 17, then Wednesday, November 18 in Vandenberg's official launch alert, before SpaceX's briefing moved it to Thursday, November 19. Day-at-a-time slips are routine at Vandenberg.",
+      },
+      {
+        q: "What is the USSF-317 payload?",
+        a: "It is classified. SpaceX and the Space Force describe USSF-317 only as a classified satellite deployment mission for the U.S. Space Force to low Earth orbit. A suggestion that it may be Starshield-based satellites, inferred from drop-zone locations, is unconfirmed.",
+      },
+      {
+        q: "Which Falcon 9 booster is flying USSF-317?",
+        a: "Booster B1100, on its eleventh flight. SpaceX says it previously launched NROL-105, USSF-385 and eight Starlink missions, and it will land on the droneship Of Course I Still Love You, about 574 km downrange in the Pacific.",
+      },
+      {
+        q: "Where can I watch the USSF-317 launch?",
+        a: "SpaceX will webcast the mission live, beginning about 10 minutes prior to liftoff, on its mission page and on X. Residents of Santa Barbara, San Luis Obispo and Ventura counties may hear sonic booms, Vandenberg's launch alert says.",
+      },
+    ],
+    sources: [
+      {
+        name: "SpaceX — USSF-317 mission briefing (Thursday, November 19 target, 6:46 p.m. PT window, B1100 eleventh flight, backup November 20), via No Earlier Than",
+        url: "https://noearlierthan.com/",
+      },
+      {
+        name: "Space Launch Delta 30, Vandenberg Space Force Base — USSF-317 launch alert (original Wednesday, November 18 window, sonic boom advisory)",
+        url: "https://content.govdelivery.com/accounts/USDODSFVANDENBERGPA/bulletins/43307c8",
+      },
+      {
+        name: "Ventura County Star (USA TODAY Network) — SpaceX targets two rocket launches this week at Vandenberg, November 16, 2026",
+        url: "https://www.vcstar.com/story/news/local/california/2026/11/16/spacex-vandenberg-rocket-launch-schedule-this-week/92756250007/",
+      },
+      {
+        name: "Seeking Alpha — SpaceX targets Thursday for USSF-317 launch from California, November 18, 2026",
+        url: "https://seekingalpha.com/news/4674182-spacex-targets-thursday-for-ussfminus-317-launch-from-california",
+      },
+    ],
+  },
 // Blog daily 2026-11-17 — three sourced event stories, news: true, date 2026-11-17.
 // SOURCE-ACCESS DISCLOSURE: browser.open failed all run (browser-service code -1
 // on four independent requests, not retried per instruction); facts were

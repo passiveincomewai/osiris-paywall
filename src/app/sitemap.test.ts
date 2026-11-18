@@ -103,7 +103,7 @@ describe("sitemap URL set", () => {
           !u.startsWith(`${BASE}/wildfires/`),
       )
       .sort();
-    expect(nonTransit.length).toBe(1166);
+    expect(nonTransit.length).toBe(1169);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     // Hash history: 6d75d0de… until the SEO audit fix #3 (2026-10-27)
     // normalised the es homepage entry from /es/ to its final /es
@@ -411,8 +411,15 @@ describe("sitemap URL set", () => {
     // sitemap() on the merged tree (probe, 2026-11-17):
     // count exactly +3 over the 1,163 pin and all 3 new
     // /blog/ URLs present in the executed set.
+    // The blog daily batch of 2026-11-18 (Voyager 1 one
+    // light-day + Cyclone Xavier Category 5 + USSF-317
+    // moves to November 19) then added its 3 post URLs
+    // → 1,169 (7ffce59b…). Delta verified by executing
+    // sitemap() on the merged tree (probe, 2026-11-18):
+    // count exactly +3 over the 1,166 pin and all 3 new
+    // /blog/ URLs present in the executed set.
     expect(hash).toBe(
-      "a217c3961c9425d0e38a5bd4ee77b6e850b2e683292026cc27b75c520a014488",
+      "7ffce59bfb216c8c864461aa9b78d4a13da4d4901544f13817e98f0afd353621",
     );
   });
 
