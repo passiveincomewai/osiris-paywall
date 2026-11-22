@@ -184,6 +184,32 @@ export default function SiteFooter({
             style={{ width: 195, height: "auto" }}
           />
         </a>
+        {/* Go Publicly featured badge — embed code supplied by Jameson
+            2026-11-18; sits beside the Fazier and LaunchVault badges. */}
+        <a
+          href="https://go-publicly.com/launch/worldeye?utm_source=badge&utm_medium=referral"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <img
+            src="https://go-publicly.com/badges/featured-on-go-publicly-light.png"
+            alt="Featured on Go Publicly"
+            width="250"
+            height="54"
+          />
+        </a>
+        {/* Open Source Alternatives badge — embed code supplied by Jameson
+            2026-11-22; sits beside the other featured badges. */}
+        <a
+          href="https://www.opensourcealternatives.to"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <img
+            src="https://www.opensourcealternatives.to/badge-osa.svg"
+            alt="As seen on Open Source Alternatives"
+          />
+        </a>
       </div>
     </footer>
   );
