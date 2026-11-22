@@ -87,6 +87,18 @@ describe("the launch story (real data, real dates)", () => {
   it("is one of the flagged posts, and every flagged post has sources", () => {
     const flagged = POSTS.filter(isNewsPost);
     expect(flagged.map((p) => p.slug)).toEqual([
+      "kilauea-episode-57-precursory-activity-november-22",
+      "spacex-nrol-136-launch-record-turnaround-november-22",
+      "sugar-bowl-opening-day-november-22-2026",
+      "magnitude-6-8-earthquake-lospalos-timor-leste-november-21",
+      "magnitude-6-7-earthquake-carhuamayo-peru-november-21",
+      "palisades-tahoe-opening-day-november-21-2026",
+      "cyclone-akvan-landfall-gopalpur-november-20",
+      "florida-space-coast-record-flooding-november-20",
+      "dragon-crs-35-undocks-iss-november-20",
+      "cyclone-akvan-veers-north-odisha-evacuations-november-19",
+      "snowbowl-solitude-open-early-november-19-2026",
+      "cyclone-xavier-weakens-category-4-cook-islands-november-19",
       "voyager-1-reaches-one-light-day-november-18",
       "cyclone-xavier-category-5-cook-islands-november-18",
       "spacex-ussf-317-launch-moves-november-19",
@@ -156,6 +168,42 @@ describe("the launch story (real data, real dates)", () => {
     for (const p of flagged) {
       expect(p.sources?.length).toBeGreaterThan(0);
     }
+  });
+
+  it("the Nov 22 event stories are inside the 48-hour window on their publication day", () => {
+    const pubDay = new Date("2026-11-22T15:00:00Z");
+    const fresh = getFreshNewsPosts(POSTS, pubDay).map((p) => p.slug);
+    expect(fresh).toContain("kilauea-episode-57-precursory-activity-november-22");
+    expect(fresh).toContain("spacex-nrol-136-launch-record-turnaround-november-22");
+    expect(fresh).toContain("sugar-bowl-opening-day-november-22-2026");
+    expect(fresh).not.toContain(LAUNCH_SLUG);
+  });
+
+  it("the Nov 21 event stories are inside the 48-hour window on their publication day", () => {
+    const pubDay = new Date("2026-11-21T15:00:00Z");
+    const fresh = getFreshNewsPosts(POSTS, pubDay).map((p) => p.slug);
+    expect(fresh).toContain("magnitude-6-8-earthquake-lospalos-timor-leste-november-21");
+    expect(fresh).toContain("magnitude-6-7-earthquake-carhuamayo-peru-november-21");
+    expect(fresh).toContain("palisades-tahoe-opening-day-november-21-2026");
+    expect(fresh).not.toContain(LAUNCH_SLUG);
+  });
+
+  it("the Nov 20 event stories are inside the 48-hour window on their publication day", () => {
+    const pubDay = new Date("2026-11-20T15:00:00Z");
+    const fresh = getFreshNewsPosts(POSTS, pubDay).map((p) => p.slug);
+    expect(fresh).toContain("cyclone-akvan-landfall-gopalpur-november-20");
+    expect(fresh).toContain("florida-space-coast-record-flooding-november-20");
+    expect(fresh).toContain("dragon-crs-35-undocks-iss-november-20");
+    expect(fresh).not.toContain(LAUNCH_SLUG);
+  });
+
+  it("the Nov 19 event stories are inside the 48-hour window on their publication day", () => {
+    const pubDay = new Date("2026-11-19T15:00:00Z");
+    const fresh = getFreshNewsPosts(POSTS, pubDay).map((p) => p.slug);
+    expect(fresh).toContain("cyclone-akvan-veers-north-odisha-evacuations-november-19");
+    expect(fresh).toContain("snowbowl-solitude-open-early-november-19-2026");
+    expect(fresh).toContain("cyclone-xavier-weakens-category-4-cook-islands-november-19");
+    expect(fresh).not.toContain(LAUNCH_SLUG);
   });
 
   it("the Nov 18 event stories are inside the 48-hour window on their publication day", () => {

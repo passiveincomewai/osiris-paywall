@@ -40,6 +40,1079 @@ export type BlogPost = {
 };
 
 export const POSTS: BlogPost[] = [
+// Blog daily 2026-11-22 — three sourced event stories, news: true, date 2026-11-22.
+// SOURCE-ACCESS DISCLOSURE: browser.open failed this run (browser-service
+// code -1, two requests, not retried per instruction); facts verified from
+// detailed browser.search excerpts cross-checked across 2-4 sources per
+// event incl. official-source text (USGS HVO notices, Spaceflight Now
+// launch reporting, resort announcements) — same pattern as Nov 7/8/12-21.
+  {
+    slug: "kilauea-episode-57-precursory-activity-november-22",
+    title: "Kilauea Stirs Before Episode 57: Precursory Activity Begins as the Forecast Window Opens",
+    seoTitle: "Kilauea Episode 57 Precursors | WorldEye Blog",
+    date: "2026-11-22",
+    excerpt:
+      "Precursory low-level eruptive activity before Kilauea's episode 57 began in the early hours of Sunday, November 22, as the USGS forecast window of November 22-26 opened, and the Hawaiian Volcano Observatory raised the volcano to WATCH with an ORANGE aviation code.",
+    seoDescription:
+      "Precursory activity before Kilauea episode 57 began around 1:21 a.m. HST on November 22, 2026, as the USGS November 22-26 forecast window opened.",
+    tags: ["kilauea", "volcano", "hawaii", "usgs", "eruption"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "Kilauea has started to stir. Precursory low-level eruptive activity ahead of episode 57 of the ongoing Halema'uma'u eruption began around 1:21 a.m. HST on Sunday, November 22, according to the U.S. Geological Survey's Hawaiian Volcano Observatory (HVO), and the observatory raised the volcano's alert level to WATCH with an aviation colour code of ORANGE — the same posture it adopted when precursory activity preceded episode 56 at the start of November.",
+          "The timing is exact: Sunday is the first day of the forecast window HVO set for episode 57 fountaining, November 22-26. The eruption has been paused since episode 56 ended on November 5, and the precursory activity — the low-level vent behaviour that has preceded each recent fountaining episode — is the clearest sign yet that the pause is ending. Whether it builds into full lava fountaining today or simmers for days first is the question the summit cameras will answer.",
+        ],
+      },
+      {
+        heading: "What happened overnight at the summit?",
+        body: [
+          "The precursory activity began around 1:21 a.m. HST on Sunday, November 22, in the vents inside Halema'uma'u crater, and HVO's notice raised Kilauea to WATCH/ORANGE. That combination — a Volcano Alert Level of WATCH and an ORANGE aviation code — is the observatory's standard posture once an eruption is under way or clearly imminent, and it matches the escalation that preceded episode 56's precursory phase on November 2.",
+          "The groundwork was visible all week. HVO's daily update on Saturday morning, November 21, reported strong to moderate glow from both the north and southwest vents overnight, with the summit livestream camera showing nearly continuous flames and minor spattering. A helicopter overflight on November 18 had confirmed a large lava pond inside the southwest vent, occasionally spattering and overturning, while the north vent — largely crusted over, with two small openings, or pukas, venting flames and spatter — is the vent that produced episode 56's fountaining.",
+        ],
+      },
+      {
+        heading: "When is episode 57 expected?",
+        body: [
+          "The forecast window is November 22-26, and it opened today. HVO builds the window from summit tilt: the Uekahuna tiltmeter recorded nearly continuous inflation after episode 56 ended, reaching about 14.7 microradians of inflationary tilt by Saturday morning, but the tilt flattened from about 11:30 p.m. on November 20 — the stall that pushed the window from November 21-25 out to November 22-26 in the first place.",
+          "HVO's own guidance cuts both ways, and Sunday's precursory start sits inside it: if inflation stays stalled or slow, episode 57 is most likely late in the window; if the inflation rate increases, it can start earlier. Precursory activity does not guarantee fountaining on any particular day — before episode 56, precursors ran for roughly a day before fountaining began — but in this eruption's rhythm, precursors have been the final step before the fountains. Episodes in this sequence, running since December 23, 2024, generally last less than 12 hours and are separated by pauses of two or more weeks; the current pause, since November 5, is 17 days old.",
+        ],
+      },
+      {
+        heading: "What did episode 56 look like?",
+        body: [
+          "Episode 56 fountained between 12:10 p.m. and 6:01 p.m. HST on November 5 — just under six hours — with maximum fountain heights of about 660 feet (200 metres), produced only by the north vent. It was the 56th fountaining episode since the summit eruption began in December 2024, and its lava, like every episode in this sequence, stayed confined to Halema'uma'u crater.",
+          "The pattern since then has been a textbook recovery: tiltmeters swung from deflation to inflation the moment fountaining stopped, seismic tremor stayed continuous, and glow returned to both vents. HVO recorded no earthquakes beneath the summit in the day before Saturday's update, and the sulfur dioxide emission rate on November 19 was about 2,400 tonnes per day, with trade winds carrying volcanic gas to the southwest.",
+        ],
+      },
+      {
+        heading: "Where can I watch episode 57 live?",
+        body: [
+          "On the summit cameras. HVO's webcams watch Halema'uma'u around the clock, and the glow, spatter and — if it comes — fountaining are all visible on the livestream views, especially after dark in Hawaii. WorldEye's [volcano webcams](/volcano-webcams) page gathers the Kilauea summit views alongside the world's other monitored volcanoes, and the [live webcams](/live-webcams) network carries the wider Hawaii feeds.",
+          "A caution that applies to every episode: precursory activity can wax, wane and drain back before fountaining starts, and HVO can extend the window if the summit switches back from inflation to deflation. The honest way to follow episode 57 is the way the observatory does — watch the vents, watch the tilt, and let the mountain set the schedule.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Has Kilauea episode 57 started?",
+        a: "Precursory low-level eruptive activity before episode 57 began around 1:21 a.m. HST on Sunday, November 22, 2026, and the USGS Hawaiian Volcano Observatory raised Kilauea to WATCH with an ORANGE aviation code. Full lava fountaining — the episode itself — had not been reported as under way in the first notice; precursors preceded episode 56's fountaining by about a day.",
+      },
+      {
+        q: "When is the forecast window for episode 57?",
+        a: "November 22-26, 2026, according to the USGS Hawaiian Volcano Observatory. The window is modelled from summit tilt, glow and spatter in the vents, and it can be extended if summit inflation stalls or turns to deflation.",
+      },
+      {
+        q: "What is Kilauea's current alert level?",
+        a: "WATCH, with an aviation colour code of ORANGE, raised from ADVISORY/YELLOW when the precursory activity before episode 57 began on November 22. WATCH/ORANGE is the same posture HVO used during episode 56's precursory phase and fountaining.",
+      },
+      {
+        q: "How long did episode 56 last, and how tall were its fountains?",
+        a: "Episode 56 fountained from 12:10 p.m. to 6:01 p.m. HST on November 5, 2026 — just under six hours — with maximum fountain heights of about 660 feet (200 metres) from the north vent only.",
+      },
+      {
+        q: "Where can I watch the Kilauea eruption live?",
+        a: "On the USGS summit webcams watching Halema'uma'u crater, gathered on WorldEye's volcano webcams page. The glow and spatter from the north and southwest vents are most visible after dark in Hawaii.",
+      },
+    ],
+    sources: [
+      {
+        name: "USGS Hawaiian Volcano Observatory — Kilauea volcano updates (precursory low-level eruptive activity before episode 57 began around 1:21 a.m. HST on November 22, 2026; alert raised to WATCH, aviation code ORANGE; daily update of November 21: forecast window November 22-26, glow and spatter in both vents, about 14.7 microradians of inflation since episode 56)",
+        url: "https://www.usgs.gov/volcanoes/kilauea/volcano-updates",
+      },
+      {
+        name: "USGS Volcano Notice DOI-USGS-HVO-2026-11-21T18:23:37+00:00 — HVO daily update, Saturday, November 21, 2026, 8:48 a.m. HST (eruption paused after episode 56 fountaining on November 5, 12:10-6:01 p.m., fountains about 660 feet; summit inflation stalled late November 20, moving the episode 57 window to November 22-26)",
+        url: "https://volcanoes.usgs.gov/hans-public/notice/DOI-USGS-HVO-2026-11-21T18:23:37+00:00",
+      },
+      {
+        name: "Hawaii Watch — Kilauea Episode 57 forecast November 22-26: eruption paused (live USGS HVO tracker: window open November 22, stalled inflation could extend it, glow and minor spatter in the vents, episode 56 summary)",
+        url: "https://hawaii-watch.com/volcano",
+      },
+    ],
+  },
+  {
+    slug: "spacex-nrol-136-launch-record-turnaround-november-22",
+    title: "SpaceX Smashes Its Own Pad Record: NROL-136 Lifts Off 32 Hours After Vandenberg's Last Launch",
+    seoTitle: "NROL-136 Launch Sets Record | WorldEye Blog",
+    date: "2026-11-22",
+    excerpt:
+      "A Falcon 9 carrying the classified NROL-136 mission for the National Reconnaissance Office lifted off from Vandenberg at 4:23 a.m. PT on Sunday — just 32 hours after the previous launch from the same pad, smashing SpaceX's pad turnaround record by more than 23 hours.",
+    seoDescription:
+      "SpaceX launched NROL-136 from Vandenberg at 4:23 a.m. PT on November 22, 2026, 32 hours after the pad's last launch, a new turnaround record.",
+    tags: ["spacex", "falcon-9", "nro", "vandenberg", "launch"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "SpaceX has turned a California launch pad around faster than any pad in its history. A Falcon 9 carrying the NROL-136 mission for the National Reconnaissance Office lifted off from Space Launch Complex 4E (SLC-4E) at Vandenberg Space Force Base at 4:23 a.m. PST on Sunday, November 22 (12:23 UTC) — 32 hours, 3 minutes and 21 seconds after the previous launch from the same pad, according to Spaceflight Now.",
+          "That interval smashes the site's previous turnaround record of 55 hours, 48 minutes and 21 seconds, set in June, by more than 23 hours — and it also beats SpaceX's previous company-wide pad record of 45 hours, set by back-to-back Starlink flights from Cape Canaveral in January. The booster, B1097 on its 14th flight, then flew back and landed at Landing Zone 4 beside the pad about seven and a half minutes after liftoff.",
+        ],
+      },
+      {
+        heading: "When did NROL-136 launch, and what is the mission?",
+        body: [
+          "At 4:23 a.m. PST on Sunday, November 22, inside a 30-minute window, on a southeasterly trajectory out over the Pacific. NROL-136 adds an undisclosed number of satellites to the NRO's proliferated architecture — the agency's constellation of small reconnaissance satellites in low Earth orbit, built to provide imaging and other reconnaissance — and it is the 15th launch supporting that architecture and the fourth such launch this year.",
+          "The flight it followed was USSF-317, a U.S. Space Force mission that lifted off from the same pad at 8:20 p.m. PT on Friday, November 20 — the mission whose own schedule WorldEye tracked through the week. Two classified government missions, two different boosters, one pad, 32 hours apart: the record is about the ground crews and the pad, not about any single rocket flying twice.",
+        ],
+      },
+      {
+        heading: "How fast is a 32-hour pad turnaround, in context?",
+        body: [
+          "Very fast — by SpaceX's own standards, unprecedented. The previous best at SLC-4E was the 55-hour, 48-minute turnaround set in June; Sunday's 32 hours, 3 minutes and 21 seconds cut that by more than 23 hours. It also undercut the 45-hour company record from Cape Canaveral's SLC-40 in January by roughly 13 hours, making SLC-4E, for now, the fastest-turning orbital launch pad SpaceX operates.",
+          "Turnaround time is the quiet metric of the reusable-rocket era: it measures how quickly a pad can be inspected, safed, reconfigured and loaded with a new rocket and payload. A 32-hour cycle at a pad flying classified national-security payloads — not just the company's own Starlink batches — is a statement about how routine that work has become at Vandenberg.",
+        ],
+      },
+      {
+        heading: "What happened to the booster?",
+        body: [
+          "It came home. About seven and a half minutes after liftoff, booster B1097 touched down at Landing Zone 4, the concrete pad adjacent to SLC-4E — the 38th landing at that site and the 680th Falcon booster landing overall, according to Spaceflight Now. A return-to-launch-site landing like this one is also what produces the sonic boom that residents around Vandenberg hear on these early-morning flights.",
+          "B1097 was flying for the 14th time. Its earlier missions include NROL-172, USSF-259, Transporter-17, Twilight and Sentinel-6B, plus eight Starlink launches — a résumé that spans exactly the mix of national-security, science and commercial work now sharing the Vandenberg pad. Friday's USSF-317 booster, by contrast, landed on a droneship in the Pacific after its 11th flight.",
+        ],
+      },
+      {
+        heading: "Where can I track the satellites from this launch?",
+        body: [
+          "The NRO does not publish how many satellites NROL-136 carried, and classified payloads appear in public catalogues only after the fact, as trackers work out the deployments from the catalogued objects. What can be followed publicly is the traffic the launch joins: WorldEye's [satellite tracker](/satellite-tracker) maps the objects already in orbit, and the [space station tracker](/space-station-tracker) follows the crewed station that two other Vandenberg-linked missions this month have served.",
+          "For the pad itself, the next test of the new tempo is already on the board: another Falcon 9 mission from SLC-4E is scheduled within days. Whether 32 hours becomes the new normal or stays a record will be visible in the launch cadence — and in how quickly the catalogues fill in above it.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When did the NROL-136 mission launch?",
+        a: "At 4:23 a.m. PST (12:23 UTC) on Sunday, November 22, 2026, from Space Launch Complex 4E at Vandenberg Space Force Base in California, inside a 30-minute launch window.",
+      },
+      {
+        q: "What pad turnaround record did SpaceX set?",
+        a: "32 hours, 3 minutes and 21 seconds between the USSF-317 launch on November 20 and NROL-136 on November 22 from the same pad, SLC-4E — beating the site's previous record of 55 hours, 48 minutes by more than 23 hours, and SpaceX's previous company-wide record of 45 hours from Cape Canaveral.",
+      },
+      {
+        q: "What is NROL-136 carrying?",
+        a: "An undisclosed number of satellites for the National Reconnaissance Office's proliferated architecture, its constellation of small reconnaissance satellites in low Earth orbit. It is the 15th launch supporting that architecture and the fourth this year.",
+      },
+      {
+        q: "Did the Falcon 9 booster land?",
+        a: "Yes. Booster B1097, on its 14th flight, landed at Landing Zone 4 beside the launch pad about seven and a half minutes after liftoff — the 38th landing at LZ-4 and the 680th Falcon booster landing overall.",
+      },
+      {
+        q: "Was it the same rocket that launched 32 hours earlier?",
+        a: "No. USSF-317 and NROL-136 used different boosters; the record belongs to the launch pad and its ground crews, who turned SLC-4E around between the two missions.",
+      },
+    ],
+    sources: [
+      {
+        name: "Spaceflight Now — SpaceX launches intelligence-gathering satellites for the National Reconnaissance Office, updated November 22, 2026 (liftoff 4:23 a.m. PST from SLC-4E; 32 hours, 3 minutes, 21 seconds after USSF-317; previous site record 55 hours, 48 minutes, 21 seconds from June; previous company record 45 hours from Cape Canaveral in January; B1097 landed at Landing Zone 4 about 7.5 minutes after liftoff, the 38th LZ-4 landing and 680th Falcon booster landing; 15th proliferated-architecture launch)",
+        url: "https://spaceflightnow.com/2026/11/21/live-coverage-spacex-to-launch-intelligence-gathering-satellites-for-the-national-reconnaissance-office-3/",
+      },
+      {
+        name: "Ventura County Star (USA TODAY Network) — Track early-morning Vandenberg rocket launch with booster return, November 21, 2026 (Sunday, November 22 window 4:16-4:46 a.m. PT from SLC-4E; NROL-136 as the 15th NRO proliferated-architecture launch; booster to return to Landing Zone 4; SpaceX webcast about 10 minutes before liftoff)",
+        url: "https://www.vcstar.com/story/news/local/california/2026/11/21/track-weather-liftoff-spacex-california-rocket-launch/92842861007/",
+      },
+      {
+        name: "TeslaNorth — SpaceX Launches Twice From the Same California Pad in 32 Hours, November 22, 2026 (NROL-136 lifted off about 4:23 a.m. PT on November 22; USSF-317 from the same pad at 8:20 p.m. PT on November 20; B1097's 14th flight, landed at Landing Zone 4; the two missions used different boosters)",
+        url: "https://teslanorth.com/2026/11/22/spacex-nrol-136-vandenberg-32-hours/",
+      },
+    ],
+  },
+  {
+    slug: "sugar-bowl-opening-day-november-22-2026",
+    title: "Sugar Bowl Opens Five Days Early Today: Passholders Get First Tracks After a Week of Sierra Storms",
+    seoTitle: "Sugar Bowl Opens Early Nov 22 | WorldEye Blog",
+    date: "2026-11-22",
+    excerpt:
+      "Sugar Bowl opens its 2026-27 season today, Sunday, November 22 — five days early — after a week of Sierra storms buried Donner Summit. The first five days are reserved for season passholders, with the public opening following on Friday, November 27.",
+    seoDescription:
+      "Sugar Bowl opens five days early on Sunday, November 22, 2026, for season passholders after a week of Sierra storms, with public opening November 27.",
+    tags: ["ski", "sugar-bowl", "lake-tahoe", "california", "opening-day"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "Sugar Bowl's season starts today. The Donner Summit resort opens for 2026-27 on Sunday, November 22 — five days ahead of its scheduled November 27 public opening — after a week of Sierra Nevada storms stacked up snow faster than the calendar expected. For the first five days, through Thursday, November 26, the lifts are reserved for season passholders only; everyone else joins from Friday, November 27.",
+          "The resort's cross-country sibling moved first: Royal Gorge Cross Country opened on Saturday, November 21, also for passholders. Sugar Bowl announced the early opening as the storm cycle was still running, citing 45 inches of snow in the previous seven days with about another four feet in the five-day forecast — and the snow kept coming after the announcement was made.",
+        ],
+      },
+      {
+        heading: "When does Sugar Bowl open, and who can ski today?",
+        body: [
+          "Today, Sunday, November 22 — but only with a season pass. Sugar Bowl is open to season passholders from November 22 through November 26, with lifts running 9 a.m. to 4 p.m. during the preview period, and the general public opening follows on Friday, November 27. Day tickets and rentals are not part of the passholder preview; this is a thank-you week for the people who committed to the season before the snow did.",
+          "The resort said during the announcement that it would publish the opening trails and lifts as the storm eased and patrol and grooming crews could safely prepare the mountain — the standard early-season caveat, and a real one after a storm this size, when avalanche mitigation and lift de-icing set the pace as much as snow depth does.",
+        ],
+      },
+      {
+        heading: "How much snow fell on Donner Summit this week?",
+        body: [
+          "A lot, and it arrived in layers. When Sugar Bowl announced the early opening, it counted 45 inches in seven days, with OpenSnow forecasting roughly another four feet — about 51 inches — across the following five days. By Thursday, November 19, the Reno Gazette Journal's Tahoe roundup had the resort at 34 inches in 24 hours, 79 inches over the past week at the summit and 95 inches of snowfall for the season so far at the summit, against 63 inches at the base.",
+          "The neighbouring measurements tell the same story: UC Berkeley's Central Sierra Snow Lab at Soda Springs, on the same pass, recorded about 30 inches of fresh snow in the 24 hours through Thursday morning and roughly a metre in 48 hours. It is the same storm cycle that pushed Palisades Tahoe to open four days early on Saturday and has Kirkwood opening early on Monday — a Sierra-wide head start, with Sugar Bowl's Sunday slot in the middle of it.",
+        ],
+      },
+      {
+        heading: "Why open early, and why passholders first?",
+        body: [
+          "Early openings are partly logistics and partly loyalty. A storm this size lets a resort open terrain it expected to be building with snowmaking well into December, but five days is not enough time to staff, stock and open every service — so the preview runs lean: lifts and prepared terrain for passholders, with rentals and day-ticket operations waiting for the full public opening on November 27.",
+          "Sugar Bowl's chief executive, Bridget Legnavsky, framed the week the same way in the resort's announcement, saying crews would do everything they could to get Sugar Bowl and Royal Gorge open for the weekend as the storm worked through Wednesday and Thursday and eased on Friday. The passholder-first structure also spreads the first-weekend rush: the most committed skiers get a quieter mountain, and the resort gets a soft opening before the Thanksgiving-weekend crowds.",
+        ],
+      },
+      {
+        heading: "Where can I check conditions before driving up?",
+        body: [
+          "On the cameras and the snow reports. Sugar Bowl sits on Donner Summit above Interstate 80, where a storm week means chain controls and slow traffic are as much a part of opening day as the skiing. WorldEye's [ski webcams](/ski-webcams) gather the Tahoe-region resort cameras, and the [live webcams](/live-webcams) network carries the highway and summit views for the drive up.",
+          "Thanksgiving week now has a full Tahoe board: Boreal, Soda Springs, Heavenly and Northstar opened November 20, Palisades Tahoe, China Peak, Bear Valley and Dodge Ridge on November 21, Sugar Bowl today, and Kirkwood — 12 days early — on Monday. For a resort whose typical opening is early December, a November 22 start is the storm's signature; the passholders lapping it today are skiing the proof.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When does Sugar Bowl open for the 2026-27 season?",
+        a: "Sunday, November 22, 2026 — five days ahead of schedule — for season passholders only. The opening to the general public follows on Friday, November 27, 2026.",
+      },
+      {
+        q: "Can I buy a day ticket for Sugar Bowl's opening day?",
+        a: "No. The November 22-26 preview is reserved for season passholders, with lifts running 9 a.m. to 4 p.m.; day tickets and rentals begin with the public opening on Friday, November 27.",
+      },
+      {
+        q: "How much snow did Sugar Bowl get before opening?",
+        a: "The resort cited 45 inches in seven days when it announced the early opening, with about four more feet forecast. By November 19 the resort had reported 79 inches in a week at the summit and 95 inches for the season, after 34 inches fell in a single 24-hour period.",
+      },
+      {
+        q: "When did Royal Gorge Cross Country open?",
+        a: "Saturday, November 21, 2026, also for season passholders, one day ahead of Sugar Bowl's alpine opening. Both areas open to the public on Friday, November 27.",
+      },
+      {
+        q: "Where can I watch Sugar Bowl and Donner Summit conditions live?",
+        a: "On WorldEye's ski webcams page, which gathers the Tahoe-region resort cameras, and on the live webcams network for Interstate 80 and Donner Summit road conditions.",
+      },
+    ],
+    sources: [
+      {
+        name: "POWDER — Sugar Bowl, California To Open Early (resort announcement: opening Sunday, November 22, 2026 for passholders, 45 inches of snow in the past seven days and about four feet in the five-day forecast per OpenSnow; Royal Gorge Cross Country opening Saturday, November 21; both open to the public Friday, November 27; CEO Bridget Legnavsky on preparing through the storm)",
+        url: "https://www.powder.com/news/sugar-bowl-to-open-early",
+      },
+      {
+        name: "Reno Gazette Journal — Loads of fresh snow await Lake Tahoe skiers on Thanksgiving week, November 19, 2026 (Sugar Bowl: 22 inches overnight at the summit, 34 inches in 24 hours, 79 inches in the past week at the summit, 95 inches season-to-date at the summit and 63 inches at the base; passholder opening November 22-26, Royal Gorge November 21-26, public opening November 27)",
+        url: "https://www.rgj.com/story/weather/2026/11/19/lake-tahoe-ski-resorts-open-thanksgiving/92865733007/",
+      },
+      {
+        name: "The Weather Channel — Atmospheric river brings winter wonderland to California's ski resorts, November 19, 2026 (Sugar Bowl moved its opening up to a passholders-only start on Sunday, November 22, with the public opening scheduled for Friday, November 27; Mammoth Mountain up to 32 inches in 24 hours in the same storm cycle)",
+        url: "https://weather.com/2026/11/19/sports-recreation/ski/atmospheric-river-brings-winter-wonderland-to-californias-ski-resorts-photos",
+      },
+    ],
+  },
+// Blog daily 2026-11-21 — three sourced event stories, news: true, date 2026-11-21.
+// SOURCE-ACCESS DISCLOSURE: browser.open failed this run (browser-service
+// code -1, two requests, not retried per instruction); facts verified from
+// detailed browser.search excerpts cross-checked across 2-4 sources per
+// event incl. official-source text (USGS event data, AFP wire, resort
+// release) — same pattern as Nov 7/8/12-19.
+  {
+    slug: "magnitude-6-8-earthquake-lospalos-timor-leste-november-21",
+    title: "Magnitude 6.8 Earthquake Strikes Near Timor-Leste: No Tsunami Threat",
+    seoTitle: "M6.8 Quake Near Timor-Leste | WorldEye Blog",
+    date: "2026-11-21",
+    excerpt:
+      "A magnitude 6.8 earthquake struck beneath the Banda Sea northeast of Lospalos, Timor-Leste, on Saturday morning UTC. It was deep enough that shaking at the surface stayed moderate, the USGS issued a green alert, and there is no tsunami threat.",
+    seoDescription:
+      "A magnitude 6.8 earthquake struck 103 km northeast of Lospalos, Timor-Leste, at 09:42 UTC on November 21, 143 km deep, with no tsunami threat.",
+    tags: ["earthquake", "timor-leste", "indonesia", "banda-sea", "usgs"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "A strong earthquake struck beneath the Banda Sea on Saturday, November 21. The U.S. Geological Survey (USGS) registered it at magnitude 6.8, at 09:42:10 UTC, with an epicentre about 103 kilometres northeast of Lospalos, Timor-Leste, in Indonesia's Kepulauan Barat Daya region, at a depth of 143.4 kilometres.",
+          "It was the second magnitude-6-plus earthquake of the day worldwide, after the magnitude 6.7 in central Peru a few hours earlier, and the larger of the two. Because it struck deep and offshore, its effects at the surface were limited: the USGS issued a green PAGER alert — its lowest level, indicating a low likelihood of casualties and damage — and there is no tsunami threat from this earthquake.",
+        ],
+      },
+      {
+        heading: "When and where did the Timor-Leste earthquake strike?",
+        body: [
+          "At 09:42:10 UTC on Saturday, November 21 — 18:42 in the evening local time in Dili. The USGS placed the epicentre 103 kilometres northeast of Lospalos, the main town of Timor-Leste's Lautém municipality, at a depth of 143.4 kilometres; Europe's EMSC network reported the same magnitude, 6.8, at a very similar depth of 144 kilometres, locating the event in Kepulauan Barat Daya, Indonesia.",
+          "Measured from the epicentre, Lospalos (population about 17,186) was the nearest town, followed by Baukau about 144 kilometres away, Venilale about 162 kilometres away, and the capital, Dili, about 235 kilometres to the west-southwest. The quake sits in the same restless Banda Sea arc system that produced Monday's magnitude 6.6 near Tual, which WorldEye reported on November 17 after it was felt across Darwin.",
+        ],
+      },
+      {
+        heading: "How strong was the shaking, and who felt it?",
+        body: [
+          "Moderate at most, according to the USGS impact models. PAGER estimated that about 64,000 people experienced moderate shaking and about 86,000 experienced light shaking, with no population estimated to have been exposed to strong or higher shaking — a direct consequence of the quake's 143-kilometre depth, which spreads seismic energy over a wide area instead of concentrating it at the surface.",
+          "Dozens of people filed felt reports with the USGS in the hours after the quake — 37 to 38 reports in the first tallies — and the event's USGS significance index stood at 725 out of 1,000, reflecting its size and felt reach rather than any damage. No casualties or damage had been reported in the initial coverage.",
+        ],
+      },
+      {
+        heading: "Is there a tsunami threat?",
+        body: [
+          "No. The Watchers, reporting the USGS and EMSC solutions, stated plainly that there is no tsunami threat from this earthquake, and the deep, intermediate-depth source — well below the seafloor and not a shallow rupture capable of displacing a large volume of water — is consistent with that assessment.",
+          "That answer matters in this region more than most: the Banda Sea and the Indonesian archipelago sit among the most tsunami-aware coastlines on Earth, and a magnitude 6.8 offshore event is exactly the kind that triggers urgent checking. On Saturday, the check came back clear.",
+        ],
+      },
+      {
+        heading: "Why do deep earthquakes feel so different?",
+        body: [
+          "Depth is the quiet variable in almost every earthquake headline. A magnitude 6.8 at 10 kilometres deep, directly under a town, can be devastating; the same energy released 143 kilometres down arrives at the surface attenuated and spread out, felt as a long, rolling motion over hundreds of kilometres rather than a violent jolt in one place.",
+          "Saturday's pair of large quakes made the point twice in one day: both the Timor-Leste event and the earlier Peru event were intermediate-depth earthquakes inside sinking tectonic slabs, and both earned green alerts despite magnitudes that, at shallow depth, would have meant a very different morning. The [earthquake tracker](/earthquake-tracker) shows both events on the live map alongside the rest of the day's seismicity, and the [live webcams](/live-webcams) network is the place to watch conditions in the region as any aftershock sequence develops.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "What magnitude was the earthquake near Timor-Leste on November 21?",
+        a: "Magnitude 6.8, according to the USGS, which EMSC matched. It struck at 09:42:10 UTC on Saturday, November 21, 2026, about 103 km northeast of Lospalos, Timor-Leste, at a depth of 143.4 km.",
+      },
+      {
+        q: "Is there a tsunami threat from the Timor-Leste earthquake?",
+        a: "No. Reporting based on the USGS and EMSC solutions states there is no tsunami threat from this earthquake, and its intermediate depth of about 143 km is consistent with that assessment.",
+      },
+      {
+        q: "Was anyone hurt in the Timor-Leste earthquake?",
+        a: "No casualties or damage had been reported in the initial coverage. The USGS issued a green PAGER alert, indicating a low likelihood of casualties and damage, with an estimated 64,000 people exposed to moderate shaking and 86,000 to light shaking.",
+      },
+      {
+        q: "How deep was the earthquake, and why does it matter?",
+        a: "About 143 km deep — an intermediate-depth event. Depth spreads the shaking over a wide area at moderate strength instead of concentrating it at the surface, which is why a magnitude 6.8 produced no reports of damage.",
+      },
+      {
+        q: "Where can I track this earthquake and any aftershocks?",
+        a: "On WorldEye's earthquake tracker, which maps the day's USGS seismicity worldwide, and via the USGS event record for the quake northeast of Lospalos.",
+      },
+    ],
+    sources: [
+      {
+        name: "The Watchers — Strong M6.8 earthquake hits Kepulauan Barat Daya, Indonesia, near Timor-Leste, November 21, 2026 (USGS: M6.8 at 09:42:10 UTC, 103 km NE of Lospalos, 143.4 km deep; EMSC M6.8 at 144 km; no tsunami threat; PAGER green, 64,000 moderate and 86,000 light shaking exposure)",
+        url: "https://watchers.news/2026/11/21/strong-m6-8-earthquake-hits-kepulauan-barat-daya-indonesia-near-timor-leste/",
+      },
+      {
+        name: "The Watchers (watchers.live) — Strong M6.8 earthquake strikes near Lospalos, Timor Leste on November 21, 2026 (updated USGS solution, green alert, maximum estimated intensity V, 37 felt reports, significance 725, no tsunami threat)",
+        url: "https://watchers.live/2026/11/21/strong-m6-8-earthquake-strikes-near-lospalos-timor-leste-on-november-21-2026/",
+      },
+      {
+        name: "Seoul Economic Daily — Magnitude 6.8 earthquake strikes sea off East Timor, November 21, 2026 (USGS: detected about 103 km northeast of Lospalos at about 143 km depth)",
+        url: "https://en.sedaily.com/society/2026/11/21/magnitude-68-earthquake-strikes-sea-off-east-timor",
+      },
+    ],
+  },
+  {
+    slug: "magnitude-6-7-earthquake-carhuamayo-peru-november-21",
+    title: "Magnitude 6.7 Earthquake Shakes Central Peru and Is Felt in Lima",
+    seoTitle: "M6.7 Quake Shakes Peru | WorldEye Blog",
+    date: "2026-11-21",
+    excerpt:
+      "A magnitude 6.7 earthquake struck deep beneath the Andes of central Peru on Friday evening local time, shaking the Junín region and rattling Lima. Preliminary reports indicate minor damage and no fatalities, and the USGS alert is green.",
+    seoDescription:
+      "A magnitude 6.7 earthquake struck 9 km northeast of Carhuamayo, Peru, at 00:09 UTC on November 21, 108 km deep, felt in Lima, with no fatalities reported.",
+    tags: ["earthquake", "peru", "andes", "usgs", "lima"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "A magnitude 6.7 earthquake struck central Peru on Friday evening, November 20, local time — 00:09 UTC on Saturday, November 21 — deep beneath the Andes of the Junín region. Peru's Defense Ministry said preliminary reports indicated minor damage and no fatalities, according to AFP, and the tremor was felt in the capital, Lima, where residents rushed out of their homes into the streets.",
+          "The U.S. Geological Survey (USGS) placed the epicentre about 9 kilometres northeast of Carhuamayo at a depth of 108 kilometres. Peru's Geophysical Institute (IGP) put it about 30 kilometres northwest of the town of Junín at a depth of 129 kilometres — a routine difference between two networks solving the same deep event — and also reported no immediate injuries or damage.",
+        ],
+      },
+      {
+        heading: "When and where did the Peru earthquake strike?",
+        body: [
+          "At 7:09 p.m. local time on Friday, November 20 (00:09 UTC on November 21). The USGS epicentre, at 10.855°S, 75.978°W, sits in the high Andes of Junín region northeast of Carhuamayo, and the solution has been reviewed by a seismologist.",
+          "Abdel Vega, the mayor of Carhuamayo, the town nearest the USGS epicentre, told a local television channel — in remarks carried by the Associated Press — that no victims or material damage had been reported there. Peru's National Emergency Operation Center (COEN) said the quake was felt with moderate to strong intensity and that monitoring of vulnerable areas was continuing.",
+        ],
+      },
+      {
+        heading: "How widely was it felt?",
+        body: [
+          "Very widely, as deep Andean quakes usually are. Reports described shaking across Junín and in Lima, Callao, Huánuco, Ancash, Ica, Ucayali and Cerro de Pasco. The USGS Did You Feel It system had collected 107 reports, and its ShakeMap modelled maximum shaking at intensity VI (strong), with about 5,000 people in the VI zone, some 366,000 at intensity V and about 406,000 at intensity IV.",
+          "The USGS PAGER system issued a green alert — a low likelihood of casualties and damage — and Peru's IGP said there was no tsunami threat, as the U.S. tsunami warning system also assessed. The head of the IGP said the intense ground shaking triggered landslides and rockfalls on hillsides, the most common secondary hazard after high-Andes earthquakes, and reporting also described power outages and highway restrictions among the preliminary effects.",
+        ],
+      },
+      {
+        heading: "Was there an aftershock?",
+        body: [
+          "Yes — a magnitude 5.0 earthquake struck at 05:12 UTC on November 21, located by the USGS essentially at Carhuamayo (0 km northeast) at a depth of about 111 kilometres, in the same deep slab volume as the mainshock. It drew a handful of felt reports and a maximum reported intensity of light (MMI 3.8).",
+          "Aftershocks at this depth tend to be felt as brief, sharp reminders rather than damaging events in their own right, but Peruvian authorities' monitoring continues, and any further sequence will show first in the USGS catalogue. You can follow it on the [earthquake tracker](/earthquake-tracker), which maps each new event as it is located.",
+        ],
+      },
+      {
+        heading: "Why did a quake this deep shake Lima?",
+        body: [
+          "Central Peru sits above the Nazca plate as it sinks eastward beneath South America. Friday's earthquake happened inside that descending slab, more than 100 kilometres below the Andes — an intermediate-depth event. Seismic waves from a source that deep travel outward through the slab and arrive over a huge area at once, which is why a quake centred in Junín could rattle a capital of roughly 10 million people well over 150 kilometres away while leaving the town nearest its epicentre reporting no material damage.",
+          "It was the first of two large deep earthquakes on Saturday: about nine and a half hours later, a magnitude 6.8 struck at similar depth beneath the Banda Sea near Timor-Leste. Both are on the [earthquake tracker](/earthquake-tracker) today, and the region's [live webcams](/live-webcams) remain the quickest visual check on conditions in the affected areas.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "What magnitude was the earthquake in Peru on November 20–21?",
+        a: "Magnitude 6.7 according to the USGS. It struck at 7:09 p.m. local time on Friday, November 20, 2026 (00:09 UTC on November 21), about 9 km northeast of Carhuamayo in the Junín region, at a depth of 108 km. Peru's IGP reported a depth of 129 km and a location about 30 km northwest of Junín.",
+      },
+      {
+        q: "Was anyone killed or hurt in the Peru earthquake?",
+        a: "No fatalities had been reported. Peru's Defense Ministry said preliminary reports indicated minor damage and no fatalities, and the mayor of Carhuamayo told local television that no victims or material damage had been reported in his town.",
+      },
+      {
+        q: "Was the earthquake felt in Lima?",
+        a: "Yes. The tremor was felt in Lima, where residents rushed out of their homes, and also in Callao, Huánuco, Ancash, Ica, Ucayali and Cerro de Pasco. The USGS collected 107 felt reports and modelled maximum shaking of intensity VI.",
+      },
+      {
+        q: "Is there a tsunami risk from the Peru earthquake?",
+        a: "No. Peru's Geophysical Institute said there was no tsunami threat, and the U.S. tsunami warning system likewise assessed that the deep, inland quake posed no tsunami threat.",
+      },
+      {
+        q: "Has there been an aftershock?",
+        a: "Yes. A magnitude 5.0 earthquake struck at 05:12 UTC on November 21 near Carhuamayo at about 111 km depth, in the same deep slab volume as the mainshock.",
+      },
+    ],
+    sources: [
+      {
+        name: "AFP via NAMPA — 6.7 magnitude earthquake hits central Peru, November 21, 2026 (Peru Defense Ministry: quake at 7:09 p.m., 30 km northwest of Junín; USGS magnitude 6.7; preliminary reports of minor damage and no fatalities)",
+        url: "https://www.nampa.org/text/23071895",
+      },
+      {
+        name: "The Business Standard — Magnitude 6.7 earthquake hits Peru's Andes, no immediate reports of casualties or damage, November 21, 2026 (USGS epicentre and 108 km depth; IGP no immediate injuries or damage; Carhuamayo mayor via AP; felt in Lima)",
+        url: "https://www.tbsnews.net/world/magnitude-67-earthquake-hits-perus-andes-no-immediate-reports-casualties-or-damage-1609216",
+      },
+      {
+        name: "USGS event data via ZenitMap — Earthquake Peru M6.7, November 21, 2026 (00:09 UTC, 9 km NE of Carhuamayo, 108 km deep, green PAGER alert, 107 felt reports; M5.0 near Carhuamayo at 05:12 UTC)",
+        url: "https://zenitmap.com/en/earthquakes/peru-m6-7-2026-11-21-us6000ucfm/",
+      },
+    ],
+  },
+  {
+    slug: "palisades-tahoe-opening-day-november-21-2026",
+    title: "Palisades Tahoe Opens Four Days Early Today After a Six-Foot Storm Cycle",
+    seoTitle: "Palisades Tahoe Opens Early | WorldEye Blog",
+    date: "2026-11-21",
+    excerpt:
+      "Palisades Tahoe opens the 2026-27 season today, Saturday, November 21 — four days ahead of schedule — after early-season storms buried its upper mountain. Lifts run 9 a.m. to 4 p.m., and $99 tickets run through Tuesday.",
+    seoDescription:
+      "Palisades Tahoe opens the 2026-27 season early on November 21, four days ahead of schedule, after 70-plus inches of snow, with $99 tickets through November 24.",
+    tags: ["ski", "palisades-tahoe", "lake-tahoe", "california", "opening-day"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "Lake Tahoe's largest ski resort is open. Palisades Tahoe begins its 2026-27 season today, Saturday, November 21 — four days ahead of its planned Wednesday, November 25 opening — after a run of early-season Sierra storms delivered the snow the resort needed to move the date up.",
+          "\"We had November 25 circled on the calendar, but Mother Nature had a little surprise in store,\" the resort said in its announcement. \"Thanks to recent snowfall and a promising stretch of winter weather, we're kicking off the 2026/27 season four days ahead of schedule.\" Palisades Tahoe president and COO Amy Ohran added: \"This is the kind of start to winter we all hope for.\"",
+        ],
+      },
+      {
+        heading: "When does Palisades Tahoe open, and what are the hours?",
+        body: [
+          "Today, Saturday, November 21. Lifts open at 9 a.m. and operate until 4 p.m. starting this Saturday, according to the resort's opening-weekend details. The resort said it would share the opening-day lifts, terrain and operational plan on its website, social media channels and operations blog ahead of opening day.",
+          "Palisades is the biggest ski area in the Lake Tahoe Basin — about 6,000 skiable acres across two mountains and eight peaks, with 288 trails, roughly 45 miles west of Reno — and it averages around 400 inches of snowfall a season. Its early opening caps a Tahoe-wide opening week: Heavenly, Northstar and Boreal opened on Friday, November 20, and Mt. Rose has been open since November 6.",
+        ],
+      },
+      {
+        heading: "How much snow has Palisades Tahoe received?",
+        body: [
+          "Enough to rewrite the calendar. The resort reported 26 inches of new snow above 7,000 feet by Monday, November 16, when it announced the early opening — and the storms kept coming: Tahoe Ski World reported the resort received 43 inches over a two-day period this week and opens Saturday with more than 70 inches at its highest peak.",
+          "The forecasts behind the decision were aggressive. At announcement time, OpenSnow projections suggested as much as 80 additional inches could fall over the following 10 days, and SnowBrains' forecast put up to 50 more inches in the next week — raising the possibility, if the most aggressive numbers verify, of the resort approaching the 100-inch mark before Thanksgiving. For context, Palisades finished the 2025-26 season with 363 inches at its 8,000-foot snow plot, below its roughly 400-inch average.",
+        ],
+      },
+      {
+        heading: "How much are lift tickets for opening weekend?",
+        body: [
+          "$99 per day from Saturday, November 21 through Tuesday, November 24 — the four early days the storm bought, priced as a celebration rate before the originally scheduled opening. Tickets are sold through the resort's own website.",
+          "The deal is part of a Tahoe-wide pattern this weekend, as resorts that opened into the storm cycle compete for the first turns of the season. Boreal, which opened Friday, is running its Play Forever Friday tickets at $35 on select Fridays, per Tahoe opening coverage.",
+        ],
+      },
+      {
+        heading: "Where can I watch conditions before I go?",
+        body: [
+          "On the mountain itself, before you drive up. WorldEye's [ski webcams](/ski-webcams) carry live views from Tahoe-area resorts, so you can check the base areas, the lift lines and the weather at the summit in real time, and the [weather radar](/weather-radar) shows the next Sierra storm band as it approaches — useful this week, when the forecast that justified the early opening still has more snow in it.",
+          "Palisades' opening also completes a remarkable early-season map for California: Mammoth Mountain opened on November 5, eight days early, and the Tahoe resorts have followed in a rush. If the 10-day forecast verifies, this will be remembered as the November the Sierra season started all at once.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When does Palisades Tahoe open for the 2026-27 season?",
+        a: "Saturday, November 21, 2026 — four days ahead of its originally planned November 25 opening — after early-season storms delivered heavy snow to its upper mountain. Lifts run 9 a.m. to 4 p.m. starting opening day.",
+      },
+      {
+        q: "Why did Palisades Tahoe open early?",
+        a: "Snow. The resort had received 26 inches above 7,000 feet by November 16, then 43 inches over a two-day period in opening week, with more than 70 inches at its highest peak by opening day and forecasts calling for much more.",
+      },
+      {
+        q: "How much are Palisades Tahoe lift tickets on opening weekend?",
+        a: "$99 per day from November 21 through November 24, 2026, sold through the resort's website.",
+      },
+      {
+        q: "Which other Tahoe resorts are already open?",
+        a: "Heavenly, Northstar and Boreal opened on Friday, November 20, and Mt. Rose Ski Tahoe opened on November 6, with nearly all trails served from its main lodge open by its November 20 snow report.",
+      },
+      {
+        q: "Where can I check Palisades Tahoe conditions live?",
+        a: "WorldEye's ski webcams show live views from Tahoe-area resorts, and the weather radar tracks the next Sierra storm as it approaches.",
+      },
+    ],
+    sources: [
+      {
+        name: "SnowBrains — Palisades Tahoe Announces It Will Open This Saturday, November 16, 2026 (opening moved to Saturday, November 21, four days early; 26 inches above 7,000 feet; up to 50 more inches forecast; $99 tickets November 21-24; Amy Ohran quote; 363-inch 2025-26 season total)",
+        url: "https://snowbrains.com/palisades-tahoe-opening-early/",
+      },
+      {
+        name: "Reno Gazette Journal — Palisades to open early after massive Tahoe storm; get $99 ticket, November 17, 2026 (opens Saturday, November 21, four days ahead of schedule; $99 through November 24; 6,000 skiable acres, 288 trails, ~400-inch average snowfall; resort to post lift and terrain plans)",
+        url: "https://www.rgj.com/story/news/nevada/2026/11/17/tahoe-area-ski-resorts-opening-dates/92826183007/",
+      },
+      {
+        name: "Tahoe Ski World — Amazingly high snow totals for Tahoe ski resort openers, November 21, 2026 (43 inches over two days this week; more than 70 inches at the highest peak; $99 tickets November 21-24; Heavenly, Northstar and Boreal opened November 20)",
+        url: "https://www.tahoeskiworld.com/amazing-high-snow-totals-tahoe-ski-resort-openers/",
+      },
+    ],
+  },
+// Blog daily 2026-11-20 — three sourced event stories, news: true, date 2026-11-20.
+// Sources OPENED this run via browser.open: The Hindu BusinessLine Akvan live
+// blog (Nov 20, IMD bulletins) + Reuters (Nov 20) for Akvan; FOX Weather
+// (Nov 19-20, NOAA WPC) + Florida Today live updates (Nov 20, NWS Melbourne)
+// + The Watchers (Nov 20, WPC/NWS products) for the Florida flood; NASA's
+// official CRS-35 departure advisory (updated Nov 19) + TechTimes (Nov 19,
+// NASA station blog) for Dragon.
+  {
+    slug: "cyclone-akvan-landfall-gopalpur-november-20",
+    title: "Cyclone Akvan Crosses Near Gopalpur: Landfall Complete, No Major Damage Reported",
+    seoTitle: "Cyclone Akvan Makes Landfall | WorldEye Blog",
+    date: "2026-11-20",
+    excerpt:
+      "Cyclone Akvan is ashore. The storm crossed the north Andhra Pradesh and south Odisha coasts close to Gopalpur on Friday morning at 70–80 km/h gusting to 90, completed its landfall by late morning, and weakened into a deep depression — with no major damage or loss of life reported in Odisha.",
+    seoDescription:
+      "Cyclone Akvan crossed near Gopalpur on November 20 at 70–80 km/h gusting to 90, completed landfall by 11:20 a.m. IST, and weakened into a deep depression.",
+    tags: ["cyclone", "akvan", "india", "odisha", "andhra-pradesh", "weather"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "Cyclone Akvan has made landfall. The India Meteorological Department (IMD) said the cyclonic storm crossed the north Andhra Pradesh and south Odisha coasts close to Gopalpur on Friday morning, November 20, with wind speeds of 70–80 km/h gusting to 90 km/h between 7:30 a.m. and 8:30 a.m. IST, and that the landfall process — which began around 8 a.m. — was complete by 11:20 a.m.",
+          "WorldEye has followed Akvan since it formed on Monday, through Tuesday's severe-storm orange message and Thursday's northward veer that sent Odisha into a mass evacuation. Friday's crossing is the event those stories were building toward, and it arrived weaker and earlier than the week's forecasts feared: a storm once expected to cross as a very severe cyclone at 120–130 km/h instead came ashore as a cyclonic storm, racing to the coast a few hours ahead of the midday timing in Thursday's bulletins.",
+        ],
+      },
+      {
+        heading: "When and where did Cyclone Akvan make landfall?",
+        body: [
+          "Close to Gopalpur, on the south Odisha coast, on Friday morning. The IMD's 11:20 a.m. bulletin put the crossing between 7:30 a.m. and 8:30 a.m. IST at 70–80 km/h gusting to 90 km/h, with the wider landfall process running from around 8 a.m. to 11:20 a.m. as the sheared cloud mass moved inland over north Andhra Pradesh and south Odisha.",
+          "By the IMD's 10:30 a.m. bulletin the system was centred about 110 kilometres from Puri and 130 kilometres from Kalingapatnam, moving north-northwestwards at 26 km/h with winds already easing to 60–70 km/h gusting to 80. By the 1 p.m. bulletin it had weakened into a deep depression over south coastal Odisha, at 55–65 km/h gusting to 75, and the department expected it to move north-northeastwards, weaken into a depression within six hours and into a well-marked low-pressure area in the six hours after that.",
+        ],
+      },
+      {
+        heading: "How many people were evacuated, and was there damage?",
+        body: [
+          "Odisha evacuated 3.7 lakh people — about 370,000 — ahead of the crossing, Chief Secretary Anu Garg said, with 423 rescue teams deployed in vulnerable areas and 9,341 cyclone shelters set up. That is a far larger movement than the 80,000 reported evacuated by Thursday in this site's previous story, reflecting the full scale of the operation as the landfall point settled on the Gopalpur–Puri coast.",
+          "The first official assessments were reassuring. Odisha's Disaster Management Minister Suresh Pujari said no major damage or loss of life had been reported in the state, a line the state's Special Relief Commissioner Rajesh Prabhakar Patil also gave Reuters: no damage or untoward incident reported so far. Andhra Pradesh, which took the southern side of the crossing, also saw minimal impact, disaster management official Prakhar Jain told Reuters. The Odisha Assembly nonetheless adjourned until Monday morning, November 23, so legislators could work in their constituencies, and primary classes were suspended in parts of neighbouring Jharkhand as the remnant's rain arrived there.",
+        ],
+      },
+      {
+        heading: "How much rain did Akvan bring?",
+        body: [
+          "The rain, more than the wind, was Akvan's main impact in Odisha. Ganjam district — the district containing Gopalpur — recorded the state's highest totals: Patrapur received 209 mm, Hinjili 207 mm, Chikiti 199 mm, Gopalpur itself 190 mm and Chhatrapur 139 mm, figures reported from IMD data on Friday.",
+          "Further north, Kolkata received 19.2 mm in the 24 hours to 8:30 a.m. Friday, with Medinipur recording West Bengal's highest total at 47 mm, and the IMD forecast very heavy rain over the coastal districts of South 24 Parganas and Purba Medinipur until Saturday, with light to moderate rain and one or two heavy spells in Kolkata on Friday. The department also forecast isolated heavy rainfall spreading inland and northeast over the weekend — over south-east Bihar, West Bengal, Odisha, Jharkhand and Assam and Meghalaya on Saturday, and over Chhattisgarh and the north-eastern states on Friday and Saturday — as the remnant moves inland. Fishermen were advised not to venture into the sea along and off the West Bengal coast until Saturday, with rough conditions continuing.",
+        ],
+      },
+      {
+        heading: "Why did Akvan weaken before landfall?",
+        body: [
+          "Akvan spent longer over the Bay of Bengal than its early forecasts assumed. Reporting in The Hindu BusinessLine on Friday described the storm as having been caught in a wedge between two high-pressure ridges and forced to wait over the bay, weakening after having earlier been flagged down two rungs from the very severe cyclone it was once expected to become. Reuters likewise noted the storm weakened overnight into a cyclonic storm before crossing.",
+          "The result is a familiar pattern in this remarkable season. Akvan is the third Bay of Bengal cyclone to hit India's eastern coast in less than a month, after Arnab last month — which killed six people and disrupted power — and Murasu a fortnight ago, which also forced evacuations and uprooted trees and poles. Reuters reported a government weather expert drawing a parallel with 1987, when multiple post-monsoon cyclones struck the bay in quick succession, a pattern the expert associated with El Niño years. Three landfalls in under a month is why Odisha's shelter and evacuation machinery was so well rehearsed by Friday.",
+        ],
+      },
+      {
+        heading: "How can I track Akvan's remnant on WorldEye?",
+        body: [
+          "Follow the remnant low on WorldEye's [hurricane tracker](/hurricane-tracker) as the IMD issues its remaining bulletins, and watch the rain bands move inland on the [weather radar](/weather-radar) and through the site's [live webcams](/live-webcams) — part of its 74,229 live cameras — along the Odisha and West Bengal coasts.",
+          "For warnings that require action, the IMD's bulletins and the Odisha and Andhra Pradesh disaster management authorities remain the authoritative sources, and they are the sources this story is built on.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When did Cyclone Akvan make landfall?",
+        a: "On Friday morning, November 20, 2026. The IMD said Akvan crossed the north Andhra Pradesh and south Odisha coasts close to Gopalpur between 7:30 a.m. and 8:30 a.m. IST at 70–80 km/h gusting to 90 km/h, and the landfall process was complete by 11:20 a.m.",
+      },
+      {
+        q: "How many people were evacuated for Cyclone Akvan?",
+        a: "About 370,000 people (3.7 lakh) in Odisha, Chief Secretary Anu Garg said, with 423 rescue teams deployed and 9,341 cyclone shelters set up ahead of the Friday crossing.",
+      },
+      {
+        q: "Was there major damage from Cyclone Akvan?",
+        a: "No major damage or loss of life had been reported in Odisha as of Friday afternoon, according to the state's disaster management minister and its Special Relief Commissioner, and Andhra Pradesh reported minimal impact. The main impact was rain, including 209 mm at Patrapur in Ganjam district.",
+      },
+      {
+        q: "What happens to Akvan after landfall?",
+        a: "The IMD said Akvan weakened into a deep depression over south coastal Odisha by Friday afternoon (55–65 km/h gusting to 75) and would move north-northeastwards, weakening into a depression and then a well-marked low, while spreading heavy rain over West Bengal, Jharkhand, Bihar and the north-east into Saturday.",
+      },
+      {
+        q: "Is Akvan the only cyclone to hit India this month?",
+        a: "No. Akvan is the third Bay of Bengal cyclone to hit India's eastern coast in less than a month, after Arnab in October and Murasu about a fortnight earlier, a quick succession Reuters noted a government weather expert compared with 1987.",
+      },
+    ],
+    sources: [
+      {
+        name: "The Hindu BusinessLine — Cyclone Akvan live updates, November 20, 2026 (IMD bulletins: crossing 7:30–8:30 a.m. close to Gopalpur at 70–80 km/h gusting to 90, landfall complete by 11:20 a.m., deep depression by 1 p.m.; rainfall totals; evacuation figures)",
+        url: "https://www.thehindubusinessline.com/news/national/cylone-akvan-live-news-updates-november-20-2026/article71723082.ece",
+      },
+      {
+        name: "Reuters — India's eastern coast hit by third cyclone within a month, November 20, 2026 (IMD crossing winds; no damage reported in Odisha; minimal impact in Andhra Pradesh; Arnab and Murasu context)",
+        url: "https://www.reuters.com/business/environment/indias-eastern-coast-hit-by-third-cyclone-within-month-2026-11-20/",
+      },
+    ],
+  },
+  {
+    slug: "florida-space-coast-record-flooding-november-20",
+    title: "Record Flood on Florida's Space Coast: St. Johns River Tops Its 1953 Mark",
+    seoTitle: "Space Coast Record Flood | WorldEye Blog",
+    date: "2026-11-20",
+    excerpt:
+      "Florida's Space Coast is under the highest flash flood risk there is. The St. Johns River near Cocoa hit a record 18.66 feet on Friday morning, a foot above its 1953 mark, after more than a foot of rain since Tuesday — and NOAA's forecasters warn the worst rain may still fall today.",
+    seoDescription:
+      "The St. Johns River near Cocoa hit a record 18.66 feet on November 20 as NOAA issued a Level 4 of 4 flash flood risk for Florida's Space Coast.",
+    tags: ["flooding", "florida", "space-coast", "brevard-county", "weather", "nws"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "The St. Johns River has never been this high at Cocoa. The river reached 18.66 feet at 6:15 a.m. on Friday, November 20, Florida Today reported — a full foot above the previous record of 17.6 feet, set in 1953 — after overnight rain drenched a Brevard County that was already waterlogged, and it has spilled over its banks into surrounding neighbourhoods.",
+          "The record arrives on the most serious flood day of a four-day deluge. NOAA's Weather Prediction Center (WPC) has placed the coast from the Daytona Beach area southward to Rockledge under a Level 4 out of 4 — High — risk of excessive rainfall for Friday, its highest category, and flood alerts cover much of Florida's Atlantic coast through Saturday, including Miami. More than a foot of rain has fallen across parts of the coast since Tuesday, and forecasters warn local totals could exceed two feet by Saturday.",
+        ],
+      },
+      {
+        heading: "Why is the flash flood risk at Level 4 today?",
+        body: [
+          "A Level 4 High Risk is the WPC's rarest and most serious excessive-rainfall category, and Friday's was issued because the rain is falling on ground that cannot take any more. National Weather Service meteorologist Melissa Watson at the Melbourne office put it plainly on Friday morning: the soils are completely saturated, so additional rain has nowhere to go, which will exacerbate the flooding already ongoing.",
+          "The WPC's Friday discussion, issued at 08:27 UTC, centred the greatest concern on central and northern Brevard County, where a band of heavy rain was expected to persist into Friday morning before shifting slowly toward southern Volusia County. Rainfall rates may exceed 3 inches per hour, the centre said, with a signal for an additional 4–8 inches in the affected area through Saturday morning. FOX Weather reported FOX 35 Orlando meteorologist Noah Bergren's warning that parts of Volusia and Brevard counties could see between 12 and 20 inches of rain on Friday alone, in slow-moving, training bands — a scenario he described as life-threatening flooding wherever it sets up.",
+        ],
+      },
+      {
+        heading: "What is the St. Johns River doing?",
+        body: [
+          "The St. Johns is one of the slowest-draining rivers in the region, and it came into this week already at major flood stage from the historic rain event earlier this month. A National Weather Service flood statement issued Friday morning put the river near Cocoa at 18.6 feet at 07:15 UTC — well above its 17.0-foot major flood stage — and forecast a crest near 18.7 feet.",
+          "River flood warnings on Friday also covered the St. Johns at Geneva, Astor, DeLand and Sanford, with Geneva also in major flood stage and further rises forecast at several points, the NWS Melbourne office said. On Thursday the St. Johns River Water Management District opened the S-96 levee structure to release water east through the C-54 canal toward the Indian River Lagoon — the first such release since widespread flooding in 2017 — and state officials said more than 64 pumps and over a mile and a half of flood-control devices had been deployed and staged in the affected area.",
+        ],
+      },
+      {
+        heading: "How many people have been rescued or evacuated?",
+        body: [
+          "First responders rescued more than 100 people on Thursday, Florida Today reported, and about 65 homes in Palm Bay Estates were under mandatory evacuation, with the City of Palm Bay ordering residents west of the canal and east of the railroad tracks to leave. Brevard County shelters are open in Cocoa and Melbourne, Melbourne's city facilities stayed closed on Friday, and Brevard government offices remained closed to the public.",
+          "The state response escalated on Thursday. Governor Ron DeSantis announced that hundreds of National Guard members and other state first responders had been mobilised, along with 50 high-water vehicles, several airboats and swamp buggies. The Florida Fish and Wildlife Conservation Commission reported about 235 emergency responders deployed on Thursday, who helped rescue more than 90 residents at a flooded apartment complex in Broward County, in the South Florida flooding that began the event on Tuesday night. Cocoa Beach and Merritt Island have both recorded more than 14 inches of rain since Tuesday. The flooding has also forced the cancellation of the long-running Space Coast Marathon, because Cocoa and Rockledge cannot spare the police and fire personnel the race needs.",
+        ],
+      },
+      {
+        heading: "Which roads are closed, and is Kennedy Space Center affected?",
+        body: [
+          "Flooding closed stretches of major roads across Brevard on Friday morning, Florida Today reported from the state's 511 system, including U.S. 1 at Barnes Boulevard, State Road A1A in several places in Satellite Beach, State Road 520, Clearlake Road and State Road 513 at Shearwater Parkway, with State Road 46 also closed between Mims and Sanford as the St. Johns rose. A flash flood warning from the National Weather Service covered northernmost Brevard County, and parts of Volusia and Seminole counties, until 12:30 p.m. Friday, with another 2–4 inches of rain possible in that zone.",
+          "The space coast's space infrastructure is inside the flood zone. Kennedy Space Center closed its north and south gates on State Road 3 on Friday morning because of flooding, closed Beach Road from Titusville toward the former shuttle landing strip and Space Commerce Way on northern Merritt Island, and at about 7:25 a.m. the Space Force's 45th Weather Squadron issued a tornado warning for the centre. Persistent onshore winds are also expected to produce rough surf and dangerous rip currents along the Atlantic coast, with gusts up to 60 mph possible Friday night in the rain bands.",
+        ],
+      },
+      {
+        heading: "What happens next, and how can I watch it on WorldEye?",
+        body: [
+          "More rain is forecast through Saturday before the pattern eases. The NWS Melbourne office allowed another 2–4 inches across much of its area through Saturday, with 4–6 inches along the Brevard and Volusia coasts, and the WPC placed coastal sections of the Southeast under a Slight Risk for Saturday into Sunday as the broad low near south-eastern Florida and the north-western Bahamas moves north or north-east. This is also the second historic flood in Brevard in under three weeks: the November 1–2 rain event, described locally as a 1-in-1,000-year event, left two people dead and led to more than 150 rescues in South Brevard.",
+          "You can follow the Space Coast's conditions on WorldEye's [live webcams](/live-webcams) — part of its 74,229 live cameras — including [beach webcams](/beach-webcams) along the Brevard and Volusia coasts, and track the rain bands on the [weather radar](/weather-radar). For warnings that require action, the National Weather Service Melbourne office and Brevard County Emergency Management are the authoritative sources, and they are the sources this story is built on.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "What record did the St. Johns River set on November 20?",
+        a: "The St. Johns River near Cocoa reached 18.66 feet at 6:15 a.m. on Friday, November 20, 2026 — one foot above the previous record of 17.6 feet set in 1953, according to Florida Today. Major flood stage there is 17.0 feet.",
+      },
+      {
+        q: "What does a Level 4 out of 4 flash flood risk mean?",
+        a: "It is the NOAA Weather Prediction Center's highest excessive-rainfall category, issued for Friday, November 20 for the coast from Daytona Beach to Rockledge. It means flash flooding is expected, not just possible, with rainfall rates that may exceed 3 inches per hour on already saturated ground.",
+      },
+      {
+        q: "How much rain has fallen on Florida's Space Coast this week?",
+        a: "More than a foot across parts of the Atlantic coast since Tuesday, November 17, with Cocoa Beach and Merritt Island both over 14 inches, and forecasters warning local totals could exceed two feet by Saturday.",
+      },
+      {
+        q: "How many people have been rescued in the Florida flooding?",
+        a: "First responders rescued more than 100 people in Brevard County on Thursday, November 19, and Florida Fish and Wildlife officers helped rescue more than 90 residents at a flooded Broward County apartment complex the same day. About 65 homes in Palm Bay Estates were under mandatory evacuation.",
+      },
+      {
+        q: "Is Kennedy Space Center affected by the flooding?",
+        a: "Yes. Kennedy Space Center closed its north and south gates on State Road 3 on Friday morning due to flooding, along with Beach Road and Space Commerce Way on northern Merritt Island, and the 45th Weather Squadron issued a tornado warning for the centre at about 7:25 a.m. on November 20.",
+      },
+    ],
+    sources: [
+      {
+        name: "FOX Weather — Life-threatening flooding impacts parts of Florida as heavy rain drenches state, November 19–20, 2026 (NOAA WPC Level 4 of 4 High Risk, Daytona Beach to Rockledge; 14+ inches at Cocoa Beach and Merritt Island; National Guard mobilisation)",
+        url: "https://www.foxweather.com/weather-news/florida-rare-flood-threat-heavy-rain-slams-region",
+      },
+      {
+        name: "Florida Today — Live updates: Brevard faces more flooding, St. Johns River rises, November 20, 2026 (record 18.66 feet at 6:15 a.m. vs 17.6 feet in 1953; 100+ rescues; road closures; Kennedy Space Center gates and tornado warning; NWS Melbourne forecasts)",
+        url: "https://www.floridatoday.com/story/news/local/2026/11/20/live-updates-brevard-faces-more-flooding-as-florida-rains-continue--live/92874308007/",
+      },
+      {
+        name: "The Watchers — High Risk of excessive rainfall covers Florida's Space Coast as St. Johns River near Cocoa reaches 5.67 m, November 20, 2026 (WPC Excessive Rainfall Discussion 08:27 UTC Nov 20; NWS Melbourne flood statement 08:10 UTC Nov 20)",
+        url: "https://watchers.news/2026/11/20/high-risk-of-excessive-rainfall-covers-floridas-space-coast-as-st-johns-river-near-cocoa-reaches-5-67-m/",
+      },
+    ],
+  },
+  {
+    slug: "dragon-crs-35-undocks-iss-november-20",
+    title: "Dragon Heads Home: SpaceX's CRS-35 Capsule Undocks From the Station Today",
+    seoTitle: "Dragon CRS-35 Undocks Today | WorldEye Blog",
+    date: "2026-11-20",
+    excerpt:
+      "After two weather stand-downs, SpaceX's cargo Dragon is finally leaving the International Space Station today. Undocking is set for 12:05 p.m. EST on Friday, splashdown off California on Saturday — and riding home inside is a failed joint from the station's own robotic arm.",
+    seoDescription:
+      "SpaceX's CRS-35 Dragon undocks from the ISS at 12:05 p.m. EST on November 20 after weather delays, carrying research and a failed Canadarm2 joint home.",
+    tags: ["spacex", "dragon", "iss", "nasa", "space-station", "crs-35"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "A cargo ship is coming home today. NASA says SpaceX's Dragon spacecraft on the CRS-35 resupply mission will undock from the International Space Station no earlier than 12:05 p.m. EST on Friday, November 20, departing the Harmony module's space-facing port after a command sent by ground controllers at SpaceX's facility in Hawthorne, California. NASA's live coverage of the undocking and departure begins at 11:45 a.m. EST.",
+          "The departure has been waiting on the weather — not at the station, but off California. NASA and SpaceX stood down from a Wednesday attempt because of unfavourable weather at the splashdown sites, a Thursday opportunity also passed without an undocking, and NASA's advisory, updated on Thursday, November 19, now targets Friday's departure and a splashdown on Saturday afternoon. Dragon is the only station visiting vehicle able to return significant cargo and experiment samples to Earth, which is why what is packed inside it matters.",
+        ],
+      },
+      {
+        heading: "When does Dragon undock, and where can I watch it?",
+        body: [
+          "Undocking is targeted for 12:05 p.m. EST (17:05 UTC) today, Friday, November 20, pending weather conditions, and NASA's live coverage begins 20 minutes earlier, at 11:45 a.m. EST, streaming through NASA's platforms. The spacecraft arrived at the station on October 15, two days after launching on a Falcon 9 rocket from Space Launch Complex 40 at Cape Canaveral Space Force Station in Florida, carrying more than 6,300 pounds of crew supplies, science investigations and equipment — so by Friday it will have been docked for about 36 days.",
+          "Splashdown is targeted for approximately 4:55 p.m. EST (1:55 p.m. PST) on Saturday, November 21, off the California coast — about 28 hours and 50 minutes after undocking, in daylight. NASA will not stream the splashdown; it will post updates on its space station blog, and the timing can still move with conditions in the recovery area.",
+        ],
+      },
+      {
+        heading: "Why was Dragon's departure delayed?",
+        body: [
+          "Because of the sea, not the spacecraft. NASA's earlier plan had Dragon undock on Wednesday, November 18, but the agency posted a stand-down notice in the early hours of that day citing unfavourable weather at the California splashdown sites, and a second post that afternoon gave no new departure that stuck. The Thursday slot passed without an undocking, and the updated advisory moved the attempt to Friday.",
+          "The logic is built into how Dragon returns: it lands in the ocean under parachutes, where recovery ships and helicopters must be able to reach it safely, so the forecast at the landing zone decides when the capsule may leave the station at all. NASA has not said which specific factor — wind, sea state or cloud cover — triggered Wednesday's stand-down. The revised plan also changed the shape of the return, stretching the time from undocking to splashdown from under 15 hours, landing at night in California, to nearly 29 hours, landing in daylight on Saturday.",
+        ],
+      },
+      {
+        heading: "What is Dragon bringing home?",
+        body: [
+          "Thousands of pounds of research and hardware, headlined by the samples scientists have been waiting on. NASA's advisory lists a 3D-bioprinted blood vessel construct used to study vascular ageing and cardiovascular disease in space and on Earth; frozen tumour organoids treated aboard the station, returning to help researchers improve cancer treatments and personalised medicine; frozen microbial samples for studying how antibiotic-resistant bacteria survive, adapt and evolve in space; and a lighting system returning after more than three years aboard, where it was tested for supporting astronauts' sleep and well-being on long missions.",
+          "NASA's station blog adds crew blood samples collected by flight engineers Jessica Watkins and Luke Delaney, protein crystal samples for a Japanese pharmaceutical study prepared by Canadian astronaut Joshua Kutryk, cargo moved from the Kibo laboratory module, and a spacesuit returning for refurbishment. Dragon delivered the station's cargo in October; its return load is the mission's scientific payoff, because none of these samples can be downloaded — they have to be flown home and opened in laboratories on Earth.",
+        ],
+      },
+      {
+        heading: "Why is a broken robot-arm joint riding home?",
+        body: [
+          "The most unusual item in the hold is a piece of the station itself. Packed in protective covers aboard Dragon is the wrist joint from Canadarm2, the station's 17.6-metre robotic arm, which drew elevated motor current and did not move as expected during routine operations on May 27. Astronauts Chris Williams and Jessica Meir replaced it on June 30 in a 7-hour, 20-minute spacewalk, and flight engineer Jessica Watkins packed the failed unit for this flight.",
+          "NASA says the joint will be analysed on the ground, and said in June it would be refurbished for possible future use as a backup if needed. The Canadian Space Agency said in June that the cause of the failure had not been identified, and that it was working with partners and the arm's builder, MDA Space, to determine it. Examining the failed part itself is the most direct route to an answer for an arm that is a decade beyond its original design life and must keep working until the station programme ends.",
+        ],
+      },
+      {
+        heading: "How can I track the station and Dragon on WorldEye?",
+        body: [
+          "Follow the station's path on WorldEye's [space station tracker](/space-station-tracker) as Dragon departs and begins its day-long journey home, and keep an eye on the wider traffic in orbit with the [satellite tracker](/satellite-tracker). WorldEye's [live webcams](/live-webcams), part of its 74,229 live cameras, include views along the California coast near Saturday's splashdown zone.",
+          "For the authoritative timeline — undocking confirmation, any splashdown timing changes and recovery updates — NASA's live coverage and its space station blog are the sources of record, and they are the sources this story is built on.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When does the SpaceX Dragon undock from the ISS?",
+        a: "No earlier than 12:05 p.m. EST on Friday, November 20, 2026, from the Harmony module's space-facing port, pending weather. NASA's live coverage begins at 11:45 a.m. EST, and SpaceX ground controllers in Hawthorne, California send the undocking command.",
+      },
+      {
+        q: "When and where will Dragon splash down?",
+        a: "NASA and SpaceX are targeting splashdown off the California coast at approximately 4:55 p.m. EST (1:55 p.m. PST) on Saturday, November 21, 2026. NASA will not stream the splashdown and will post updates on its space station blog.",
+      },
+      {
+        q: "Why was Dragon's return delayed this week?",
+        a: "Weather at the California splashdown sites. NASA stood down from the Wednesday, November 18 attempt and the Thursday opportunity also passed; because Dragon lands in the ocean under parachutes, recovery conditions at the landing zone must be acceptable before it can leave the station.",
+      },
+      {
+        q: "What cargo is Dragon bringing back from the station?",
+        a: "Research samples and hardware including a 3D-bioprinted blood vessel construct, frozen tumour organoids, frozen microbial samples from antibiotic-resistance research, a lighting system returning after more than three years aboard, crew blood and protein crystal samples — and a failed Canadarm2 wrist joint packed for ground analysis.",
+      },
+      {
+        q: "How long was Dragon docked to the space station?",
+        a: "About 36 days. The CRS-35 Dragon launched on October 13, 2026 from Cape Canaveral and arrived at the station on October 15 with more than 6,300 pounds of supplies, science and equipment.",
+      },
+    ],
+    sources: [
+      {
+        name: "NASA — NASA to Cover 35th SpaceX Resupply Mission Space Station Departure, advisory updated November 19, 2026 (undocking 12:05 p.m. EST Nov 20 from Harmony, coverage from 11:45 a.m., splashdown ~4:55 p.m. EST Nov 21 off California, returning research list, October 15 arrival)",
+        url: "https://www.nasa.gov/news-release/nasa-to-cover-35th-spacex-resupply-mission-space-station-departure/",
+      },
+      {
+        name: "TechTimes — SpaceX Dragon Undocking Now Targets Friday: Failed Canadarm2 Joint Is Packed for Ground Analysis, November 19, 2026 (Wednesday stand-down over splashdown weather, Canadarm2 joint failure May 27 and June 30 replacement spacewalk, station blog cargo details)",
+        url: "https://www.techtimes.com/articles/331154/20261119/spacex-dragon-undocking-now-targets-friday-failed-canadarm2-joint-packed-ground-analysis.htm",
+      },
+    ],
+  },
+
+// Blog daily 2026-11-19 — three sourced event stories, news: true, date 2026-11-19.
+// SOURCE-ACCESS DISCLOSURE: browser.open failed all run (browser-service
+// code -1 / timeouts, not retried per instruction). Facts verified from
+// detailed browser.search excerpts, cross-checked across 2-4 sources per
+// event including official products' text — same pattern as Nov 7/8/12-18:
+// IMD bulletins of Nov 19 via The Hindu BusinessLine (x2, Nov 19) + ANI via
+// APNA MA TV (Nov 19) + IANS (Nov 19) for Akvan; Arizona Snowbowl's official
+// opening announcement + The Weather Channel (Nov 18) + State Wonderer for
+// Snowbowl, POWDER (Nov 18) for Solitude; MetService TC bulletin issued
+// 12:38 p.m. Thu Nov 19 + RSMC Nadi Special Weather Bulletin 35 (Nov 19
+// 08:41 UTC) + RNZ/1News compilations (Nov 19) for Xavier.
+  {
+    slug: "cyclone-akvan-veers-north-odisha-evacuations-november-19",
+    title: "Cyclone Akvan Veers North: Odisha Moves 80,000 People as Landfall Nears",
+    seoTitle: "Cyclone Akvan Veers North | WorldEye Blog",
+    date: "2026-11-19",
+    excerpt:
+      "Cyclone Akvan has changed its mind about where to land. The India Meteorological Department's Thursday bulletins shifted the crossing north to near Gopalpur, Odisha has moved more than 80,000 people to safety, and the storm is now less than a day from the coast.",
+    seoDescription:
+      "IMD shifted Cyclone Akvan's landfall north to near Gopalpur for noon on November 20; Odisha has evacuated over 80,000 people and deployed 74 rescue teams.",
+    tags: ["cyclone", "akvan", "india", "odisha", "andhra-pradesh", "weather"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "Severe Cyclonic Storm Akvan is giving the southern Andhra Pradesh coast a miss and aiming further north instead. In its bulletins on Thursday, November 19, the India Meteorological Department (IMD) moved the forecast crossing to the north Andhra Pradesh and Yanam and south Odisha coasts between Narsapur and Puri, close to and east of Gopalpur, by noon on Friday, November 20 — and Odisha spent Thursday moving people out of the way, evacuating more than 80,000 residents and deploying 74 rescue teams.",
+          "WorldEye has followed Akvan since it formed on Monday. This is a genuinely new chapter, not a repeat: the track has veered, the expected peak winds at landfall have come down, and the response on the ground — mass evacuation, closed schools, red warnings across six Odisha districts — is happening today.",
+        ],
+      },
+      {
+        heading: "Where is Cyclone Akvan right now?",
+        body: [
+          "The IMD's morning bulletin put the severe cyclonic storm over the west-central Bay of Bengal, moving northwards at 12 km/h over the previous six hours and centred at 5:30 a.m. IST on Thursday near 14.5°N, 85.3°E — about 440 kilometres east-southeast of Narsapur and 440 kilometres south-southeast of Kalingapatnam in Andhra Pradesh, 530 kilometres south of Gopalpur and 590 kilometres south of Puri in Odisha, and 580 kilometres east-northeast of Chennai.",
+          "By the IMD's later Thursday assessment, reported on Thursday evening, Akvan had gathered lateral speed to 17 km/h and closed further on the coast: about 390 kilometres east-southeast of Narsapur, 350 kilometres south-southeast of Kalingapatnam, 430 kilometres south of Gopalpur and 490 kilometres south of Puri. The storm is roughly a day from landfall and still over open water, which is why the evacuation window on Thursday mattered.",
+        ],
+      },
+      {
+        heading: "When and where will Akvan make landfall?",
+        body: [
+          "By noon on Friday, November 20, between Narsapur in Andhra Pradesh and Puri in Odisha, close to and east of Gopalpur, according to the IMD's Thursday bulletins. The department expects maximum sustained winds of 90–100 km/h gusting to 110 km/h at the crossing.",
+          "That is a materially different landfall from the one in Monday's and Tuesday's forecasts. When Akvan formed on November 16, the IMD expected it to intensify into a very severe cyclonic storm and cross between Nellore and Tuni by Friday noon at 120–130 km/h gusting to 145. Tuesday's Orange Message held that southern track. Thursday's bulletins moved the crossing well over a hundred kilometres further north-east and lowered the landfall winds — and the Andhra Pradesh State Disaster Management Authority said on Thursday that the system is expected to weaken before landfall, with the main impact now expected over north Andhra Pradesh rather than the central and southern districts.",
+        ],
+      },
+      {
+        heading: "How many people have been evacuated?",
+        body: [
+          "More than 80,000 people in Odisha had been evacuated to safety by Thursday, officials said, with 74 rescue teams deployed and educational institutions closed in several districts as a precaution. Chief Minister Mohan Charan Majhi chaired a high-level review at the Special Relief Commissioner's control room in Bhubaneswar on Thursday; officials briefing during the day put the evacuated count at around 50,000 earlier before the total passed 80,000.",
+          "The IMD issued a red warning for six Odisha districts — Kendrapara, Jagatsinghpur, Puri, Ganjam, Gajapati and Kandhamal — forecasting heavy to very heavy rainfall on Thursday, and warned of isolated extremely heavy rainfall over coastal Andhra Pradesh and Yanam on Thursday and Friday as Akvan closes in. Squally winds of 40–50 km/h gusting to 60 km/h were already prevailing along the south Odisha coast on Thursday, the department said — the outer weather of a storm whose centre is still a day away.",
+        ],
+      },
+      {
+        heading: "Why does the track shift matter?",
+        body: [
+          "A cyclone's landfall point decides which districts take the strongest winds, the heaviest rain and the storm surge — and Akvan's shift moves that burden from the Nellore–Tuni coast, which has been preparing since Monday, to the Gopalpur–Puri stretch, which had less time under the bullseye. Evacuation, school closures and rescue deployment all have to follow the forecast, which is why Thursday's IMD morning bulletin — the one that cleared the uncertainty over the landfall location, in the department's own framing — triggered the day's large-scale movement in Odisha.",
+          "Akvan is the third Bay of Bengal cyclone of this north-east monsoon, after Arnab, which crossed near Narsapur on October 28, and Murasu, which crossed near Ongole on November 3. Three landfalling systems in under a month is the context for the scale of Thursday's precautions: the same coastline is being asked to evacuate, shelter and reopen for the third time this season.",
+        ],
+      },
+      {
+        heading: "How can I track Akvan on WorldEye?",
+        body: [
+          "Follow Akvan on WorldEye's [hurricane tracker](/hurricane-tracker), which follows the official advisories as the IMD issues them, and watch the rain arrive on the [weather radar](/weather-radar) and through the site's [live webcams](/live-webcams) — part of its 74,229 live cameras — as the outer bands reach the Andhra and Odisha coasts on Thursday night and Friday.",
+          "For warnings that require action, the IMD's cyclone bulletins and the Odisha and Andhra Pradesh disaster management authorities are the authoritative sources, and they are the sources this story is built on. The next IMD bulletin supersedes the positions in this story.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When will Cyclone Akvan make landfall?",
+        a: "The IMD expects Akvan to cross the north Andhra Pradesh and Yanam and south Odisha coasts between Narsapur and Puri, close to east of Gopalpur, by noon on Friday, November 20, 2026, with maximum sustained winds of 90–100 km/h gusting to 110 km/h.",
+      },
+      {
+        q: "How many people have been evacuated for Cyclone Akvan?",
+        a: "More than 80,000 people in Odisha had been evacuated to safety by Thursday, November 19, officials said, with 74 rescue teams deployed and schools closed in several districts.",
+      },
+      {
+        q: "Where is Cyclone Akvan now?",
+        a: "At 5:30 a.m. IST on Thursday, November 19, the IMD centred Akvan near 14.5°N, 85.3°E over the west-central Bay of Bengal — about 440 km east-southeast of Narsapur and 530 km south of Gopalpur. By Thursday evening it had sped up to 17 km/h and closed to about 430 km south of Gopalpur.",
+      },
+      {
+        q: "Has Akvan's forecast changed since it formed?",
+        a: "Yes. On November 16–17 the IMD expected a very severe storm crossing between Nellore and Tuni at 120–130 km/h gusting to 145. Thursday's bulletins shifted the crossing north to near Gopalpur and lowered landfall winds to 90–100 km/h gusting to 110, and Andhra Pradesh's disaster authority expects weakening before landfall.",
+      },
+      {
+        q: "Which districts are under a red warning for Akvan?",
+        a: "The IMD issued a red warning for Kendrapara, Jagatsinghpur, Puri, Ganjam, Gajapati and Kandhamal districts in Odisha for Thursday, forecasting heavy to very heavy rainfall, with isolated extremely heavy rainfall expected over coastal Andhra Pradesh and Yanam on Thursday and Friday.",
+      },
+    ],
+    sources: [
+      {
+        name: "The Hindu BusinessLine — Odisha evacuates over 80,000 people, deploys 74 rescue teams in view of Cyclone Akvan, November 19, 2026 (IMD morning bulletin)",
+        url: "https://www.thehindubusinessline.com/news/national/odisha-evacuates-over-80000-people-deploys-74-rescue-teams-in-view-of-cyclone-akvan/article71719071.ece/amp/",
+      },
+      {
+        name: "The Hindu BusinessLine — Cyclone Akvan: storm moves away from south Andhra Pradesh coast, updated November 19, 2026 (IMD track shift to Gopalpur)",
+        url: "https://www.thehindubusinessline.com/news/cyclone-akvan-gathers-speed-veers-away-from-south-andhra-coast/article71718873.ece/amp/",
+      },
+      {
+        name: "ANI via APNA MA TV — Cyclone Akvan to cross Andhra Pradesh–Odisha coasts by November 20, winds likely to reach 110 kmph, November 19, 2026 (IMD 5:30 a.m. bulletin)",
+        url: "https://apnamatvchannel.com/india/cyclone-akvan-to-cross-andhra-pradesh-odisha-coasts-by-november-20-winds-likely-to-reach-110-kmph/",
+      },
+    ],
+  },
+  {
+    slug: "snowbowl-solitude-open-early-november-19-2026",
+    title: "Snowbowl and Solitude Open Early Today: Two Resorts Start the Season on a Storm",
+    seoTitle: "Snowbowl and Solitude Open Early | WorldEye Blog",
+    date: "2026-11-19",
+    excerpt:
+      "Neither resort was supposed to open today. Then the preseason storms arrived — 17 inches at Arizona Snowbowl, 16 inches at Utah's Solitude — and both mountains moved opening day up to Thursday, November 19, with first chairs at 9 a.m.",
+    seoDescription:
+      "Arizona Snowbowl and Utah's Solitude both open early today, November 19, after preseason storms dropped 17 and 16 inches of snow on the two resorts.",
+    tags: ["skiing", "arizona-snowbowl", "solitude", "utah", "arizona", "opening-day"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "Thursday, November 19, was not on either resort's opening-day calendar a week ago. Arizona Snowbowl, north of Flagstaff in the San Francisco Peaks, moved its opening up a full day to this morning at 9 a.m., crediting 17 inches of preseason snowfall. Solitude Mountain Resort in Utah's Big Cottonwood Canyon went further: it announced on Wednesday, in capitals, that it was opening a day early too — 'SURPRISE! We're opening TOMORROW, November 19, at 9:00 a.m. for the 26/27 winter season!' — after a storm dumped 16 inches on the mountain.",
+          "Two early openings on the same morning, in two different states, driven by the same early-season pattern: that is today's ski story. Both resorts open with limited, upper-mountain terrain, both are explicit that more will follow as conditions allow, and both beat larger neighbours that are still waiting.",
+        ],
+      },
+      {
+        heading: "What is open at Arizona Snowbowl today?",
+        body: [
+          "Snowbowl opens at 9 a.m. today, Thursday, November 19, from Agassiz Lodge, with skiing and riding via the Arizona Gondola and advanced terrain only — there is no beginner terrain on opening day. The resort's own announcement lists the opening route as a linked top-to-bottom path: Spur Catwalk, Frontier, Lower Bowl, Log Jam, Wild Turkey and Round Up.",
+          "The resort frames the early start plainly: 'Thanks to the incredible efforts of our mountain operations teams and 17 inches of preseason snowfall, we're opening 24 hours early for skiing & riding.' A first-chair celebration was scheduled at Agassiz Lodge from 8 a.m., the first 100 early arrivals were promised a free Snowbowl neck gaiter, and the opening rolls straight into First Chair Fest, the resort's season-opening weekend celebration on Saturday and Sunday, November 21–22, with live music, local vendors and prizes. Snowbowl says additional terrain and lifts will open as weather and snow conditions allow, and it directs skiers to its snow report for the latest lift and trail status.",
+        ],
+      },
+      {
+        heading: "What is open at Solitude today?",
+        body: [
+          "Solitude opens at 9 a.m. today as the second ski resort operating in Utah this season, following Brian Head, which opened on Tuesday, November 17. The early opening follows a storm that left 16 inches of new snow on the mountain — enough, the resort decided on Wednesday, to start the 2026–27 season ahead of schedule rather than hold to its planned date.",
+          "Solitude is an Ikon Pass resort, but the opening weekend is priced for day skiers too: lift tickets are $29 this weekend for non-passholders, and parking — which requires a reservation on weekends and holidays — is free. POWDER, reporting the surprise announcement on Wednesday, noted the contrast inside the same canyon corridor: while Solitude moved up, Alta Ski Area pushed its opening day back from Friday, November 20, to Wednesday, November 25. Early season is rewarding the resorts the storms actually hit.",
+        ],
+      },
+      {
+        heading: "Why are resorts opening early this week?",
+        body: [
+          "Snow, in a word — and where it fell. The same storm cycle that buried parts of the Sierra and the southern Rockies this week (a Winter Storm Warning runs over Lake Tahoe through early Friday, with school closures and delays across the Reno–Tahoe area on Thursday) delivered double-digit preseason totals to the San Francisco Peaks and Big Cottonwood Canyon. Snowbowl's 17 inches and Solitude's 16 inches are the two numbers behind today's two announcements.",
+          "Early openings are also a race resorts take seriously. Solitude becomes Utah's second open mountain; Snowbowl starts Arizona's season a day ahead of its own schedule and ahead of its First Chair Fest weekend. In Tahoe, the storm has resorts moving dates up as well — Palisades Tahoe has brought its opening forward to Saturday, November 21, and Sugar Bowl plans a passholder opening on Sunday, November 22 — but Snowbowl and Solitude are the two that made it to today.",
+        ],
+      },
+      {
+        heading: "What should skiers expect on opening day?",
+        body: [
+          "Early-season conditions, honestly labelled. Snowbowl is explicit that opening day is advanced terrain only, on a single gondola-served route — anyone picturing the full mountain should read the snow report first. Solitude's opening is likewise a first slice of the mountain, with terrain and lifts to expand as the season builds. Both resorts will add terrain as snowmaking and natural snowfall allow.",
+          "The practical details differ by resort: at Snowbowl, season passholders and ticket holders can pick up passes at Fort Valley Lodge, and opening-day tickets are best bought online in advance; at Solitude, the $29 weekend ticket price and free parking are the opening-weekend offers. In both cases the resorts' own snow reports, updated each morning, are the authoritative word on what is actually spinning.",
+        ],
+      },
+      {
+        heading: "How can I watch opening day on WorldEye?",
+        body: [
+          "WorldEye's [ski webcams](/ski-webcams) carry live views from resort mountains across the West, so you can check the queues, the weather and the snow surface at Snowbowl, Solitude and their neighbours before you drive — and the wider [live webcams](/live-webcams) network, part of the site's 74,229 live cameras, shows the storm still working over the Sierra and the Rockies today.",
+          "For lift status, open terrain and ticket details, the resorts' own snow reports are the sources of record, and they are the sources this story is built on.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When does Arizona Snowbowl open for the 2026–27 season?",
+        a: "Today — Thursday, November 19, 2026, at 9 a.m. from Agassiz Lodge, a day earlier than planned, after 17 inches of preseason snowfall. Opening terrain is advanced-only, served by the Arizona Gondola: Spur Catwalk, Frontier, Lower Bowl, Log Jam, Wild Turkey and Round Up.",
+      },
+      {
+        q: "When does Solitude Mountain Resort open this season?",
+        a: "Today, Thursday, November 19, 2026, at 9 a.m. Solitude announced the surprise early opening on Wednesday, November 18, after a storm dumped 16 inches of snow. It is the second Utah resort to open, after Brian Head on November 17.",
+      },
+      {
+        q: "How much are Solitude lift tickets on opening weekend?",
+        a: "$29 for non-passholders this weekend, according to the resort's announcement reported by POWDER, and parking is free. Solitude is on the Ikon Pass.",
+      },
+      {
+        q: "Is there beginner terrain open at Snowbowl?",
+        a: "No. Snowbowl states opening day is advanced terrain only, via the Arizona Gondola, with more terrain and lifts to open as conditions allow.",
+      },
+      {
+        q: "Why did Alta delay its opening while Solitude opened early?",
+        a: "The early-season storms have been uneven. Solitude received 16 inches and moved its opening up to November 19, while Alta pushed its opening day from Friday, November 20, to Wednesday, November 25, 2026.",
+      },
+    ],
+    sources: [
+      {
+        name: "Arizona Snowbowl — 'Surprise! We're Opening Early for the 2026/27 Season!' official resort announcement (November 19, 9 a.m., Arizona Gondola, advanced terrain)",
+        url: "https://www.snowbowl.ski/surprise-were-opening-early-for-the-2026-27-season/",
+      },
+      {
+        name: "The Weather Channel — Arizona ski resort to open early after more than a foot of early season snow, November 18, 2026 (17 inches, opening trails, neck gaiter, First Chair Fest)",
+        url: "https://weather.com/2026/11/17/sports-recreation/ski/arizona-ski-resort-to-open-early-after-more-than-a-foot-of-early-season-snow",
+      },
+      {
+        name: "POWDER — Solitude Mountain Resort to start winter 26/27 season early, November 18, 2026 (November 19 opening, 16 inches, $29 tickets, Brian Head and Alta context)",
+        url: "https://www.powder.com/news/solitude-opening-early-utah-ski",
+      },
+    ],
+  },
+  {
+    slug: "cyclone-xavier-weakens-category-4-cook-islands-november-19",
+    title: "Cyclone Xavier Weakens to Category 4, but the Northern Cooks Stay on Alert",
+    seoTitle: "Cyclone Xavier Eases to Cat 4 | WorldEye Blog",
+    date: "2026-11-19",
+    excerpt:
+      "A day after reaching Category 5, Severe Tropical Cyclone Xavier has eased to Category 4 over the Northern Cook Islands. It is still a slow, powerful storm: gale warnings hold for Pukapuka and Nassau, more than 300 people sheltered on Pukapuka, and New Zealand responders are on the ground.",
+    seoDescription:
+      "Cyclone Xavier weakened from Category 5 to Category 4 over the Northern Cook Islands on November 19, at 945 hPa, per MetService and RSMC Nadi bulletins.",
+    tags: ["cyclone", "xavier", "cook-islands", "south-pacific", "weather"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "Severe Tropical Cyclone Xavier has come off its peak — but only one step. In bulletins issued on Thursday, November 19, both New Zealand's MetService and the Fiji Meteorological Service's Regional Specialised Meteorological Centre (RSMC) Nadi rate Xavier a Category 4 cyclone at 945 hPa over the Northern Cook Islands, a day after it reached Category 5 with gusts reported up to 315 km/h.",
+          "WorldEye reported Xavier at Category 2 on Monday and at Category 5 on Wednesday. Today's story is the turn: the storm is weakening, slowly, and still sitting over the northern group — which means the warnings, the sheltering and the response all continue even as the category falls.",
+        ],
+      },
+      {
+        heading: "Where is Xavier right now?",
+        body: [
+          "MetService's tropical cyclone bulletin, issued at 12:38 p.m. on Thursday, New Zealand time, placed Severe Tropical Cyclone Xavier near 10.5°S, 163.8°W at 7 a.m. NZDT — about 240 kilometres northeast of Pukapuka and 325 kilometres west of Manihiki Atoll — moving slowly south, with maximum winds near the centre of 90 knots (165 km/h) and large waves expected to affect a large area of the Northern Cook Islands throughout the forecast period.",
+          "RSMC Nadi's Special Weather Bulletin Number Thirty-Five for the Northern Cooks, issued at 08:41 UTC on Thursday, put the centre at the same 945 hPa near 10.6°S, 163.2°W at 06:00 UTC — about 280 kilometres east-northeast of Nassau — with maximum sustained winds of about 185 km/h close to the centre, gusting to 260 km/h, moving east-southeast at about 6 km/h. The two centres' positions and wind figures differ because they are snapshots taken hours apart, on different averaging conventions, of a storm that is barely moving; both agree it is Category 4, slow, and still inside the northern group.",
+        ],
+      },
+      {
+        heading: "Which islands are under warnings?",
+        body: [
+          "A gale warning remains in force for Pukapuka and Nassau, and a gale alert remains in force for Nassau, Suwarrow and Pukapuka in RSMC Nadi's Thursday bulletin, with a strong wind warning in force for Manihiki and Rakahanga. Emergency Management Cook Islands has urged communities across the north to stay on high alert, and Thursday's travel reporting notes gale conditions still expected across the northern islands as the system moves slowly south.",
+          "That warning map is the practical meaning of 'weakening' at Category 4: the centre's peak winds have fallen from Wednesday's 220 km/h, but islands that have already taken days of Xavier's weather — Manihiki's wharves were damaged at the storm's closest approach — are not out of it yet.",
+        ],
+      },
+      {
+        heading: "What is the response on the ground?",
+        body: [
+          "More than 300 people were evacuated to the cyclone shelter on Pukapuka earlier in the storm, and Pukapuka and Nassau remain under their gale warning today. The Cook Islands government has accepted New Zealand's offer of help: two rapid response team personnel from New Zealand arrived in the Cook Islands to assist with humanitarian coordination and emergency operations, Cook Islands News reported in its Wednesday edition.",
+          "So far, the toll remains limited for a storm of this strength: no casualties or major damage had been reported in the compilations through Wednesday morning, and Thursday's travel watch lists reported no flight or shipping disruption so far. The risk that remains is the slow one — large waves and coastal inundation around low atolls, heavy rain, and damaging gusts under the gale warning, for as long as Xavier lingers.",
+        ],
+      },
+      {
+        heading: "What happens next?",
+        body: [
+          "MetService expects Xavier to continue moving slowly southwards today, Thursday, then take a southwest track later on Friday and into the weekend and early next week, weakening as it goes. RSMC Nadi's Thursday bulletin likewise expects the system to gradually weaken on its forecast track east of Nassau and then north of Suwarrow into Friday.",
+          "Gradual is the operative word. A storm moving at about 6 km/h does not clear an island group quickly, and both centres keep large waves affecting the Northern Cook Islands throughout the forecast period. RSMC Nadi's next special weather bulletin was due at or before 15:00 UTC on Thursday, and those bulletins — issued every few hours while Xavier holds this strength — supersede the positions in this story.",
+        ],
+      },
+      {
+        heading: "How can I track Xavier on WorldEye?",
+        body: [
+          "Follow Xavier on WorldEye's [hurricane tracker](/hurricane-tracker), which follows the official advisories as RSMC Nadi and MetService update them, and watch Pacific conditions on the site's [beach webcams](/beach-webcams) and [live webcams](/live-webcams) — part of its 74,229 live cameras. The [weather radar](/weather-radar) shows the rain field of a storm whose slow movement, as much as its peak winds, is now the story.",
+          "For warnings that require action, the Cook Islands Meteorological Service, RSMC Nadi and MetService bulletins are the authoritative sources, and they are the sources this story is built on.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "How strong is Cyclone Xavier now?",
+        a: "Category 4. MetService's bulletin issued at 12:38 p.m. on Thursday, November 19, rates Xavier at 945 hPa with maximum winds near the centre of 90 knots (165 km/h); RSMC Nadi's Thursday bulletin gives sustained winds of about 185 km/h gusting to 260 km/h at the same central pressure.",
+      },
+      {
+        q: "Has Cyclone Xavier weakened?",
+        a: "Yes — from Category 5 on Wednesday, November 18, when winds near the centre reached 220 km/h with gusts reported up to 315 km/h, to Category 4 on Thursday, November 19. Both MetService and RSMC Nadi expect gradual further weakening, but the storm is moving slowly, at about 6 km/h.",
+      },
+      {
+        q: "Which islands are under warnings for Xavier?",
+        a: "A gale warning covers Pukapuka and Nassau; a gale alert covers Nassau, Suwarrow and Pukapuka; and a strong wind warning covers Manihiki and Rakahanga, according to RSMC Nadi's Special Weather Bulletin 35 issued on November 19.",
+      },
+      {
+        q: "How many people have sheltered from Xavier?",
+        a: "More than 300 people were evacuated to the cyclone shelter on Pukapuka earlier in the storm, and two New Zealand rapid response personnel have arrived in the Cook Islands to assist with humanitarian coordination and emergency operations. No casualties or major damage had been reported in compilations through Wednesday.",
+      },
+      {
+        q: "Where is Xavier heading next?",
+        a: "Slowly south on Thursday, then southwest later on Friday and into the weekend, gradually weakening, according to MetService. Large waves are expected to affect a large area of the Northern Cook Islands throughout the forecast period.",
+      },
+    ],
+    sources: [
+      {
+        name: "MetService — Tropical Cyclone Activity bulletin: Xavier Category 4, 945 hPa, issued 12:38 p.m. Thursday, November 19, 2026",
+        url: "https://www.metservice.com/warnings/tropical-cyclone-activity",
+      },
+      {
+        name: "Fiji Meteorological Service / RSMC Nadi — Special Weather Bulletin Number Thirty-Five for Northern Cooks on Severe Tropical Cyclone Xavier, issued November 19, 2026, 08:41 UTC",
+        url: "http://www.met.gov.fj/warnings/",
+      },
+      {
+        name: "I-Journey — A Category 5 cyclone just tore through the Cook Islands' remote north, November 19, 2026 (RNZ via Stuff and 1News: eased to Category 4, gale warnings, Emergency Management Cook Islands)",
+        url: "https://i-journey.com/2026/11/19/cyclone-xavier-northern-cook-islands-manihiki-pukapuka-travel/",
+      },
+    ],
+  },
 // Blog daily 2026-11-18 — three sourced event stories, news: true, date 2026-11-18.
 // Facts verified from sources actually opened this run (browser.open):
 // NASA Science Voyager page (milestone time, Nov 19 discussion, Golden Record);

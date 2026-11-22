@@ -103,7 +103,7 @@ describe("sitemap URL set", () => {
           !u.startsWith(`${BASE}/wildfires/`),
       )
       .sort();
-    expect(nonTransit.length).toBe(1169);
+    expect(nonTransit.length).toBe(1181);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     // Hash history: 6d75d0de… until the SEO audit fix #3 (2026-10-27)
     // normalised the es homepage entry from /es/ to its final /es
@@ -418,8 +418,36 @@ describe("sitemap URL set", () => {
     // sitemap() on the merged tree (probe, 2026-11-18):
     // count exactly +3 over the 1,166 pin and all 3 new
     // /blog/ URLs present in the executed set.
+    // The blog daily batch of 2026-11-19 (Cyclone Akvan
+    // veers north + Snowbowl and Solitude open early +
+    // Cyclone Xavier weakens to Category 4) then added
+    // its 3 post URLs → 1,172 (e374f73e…). Delta verified
+    // by executing sitemap() on the merged tree (probe,
+    // 2026-11-19): count exactly +3 over the 1,169 pin
+    // and all 3 new /blog/ URLs present in the executed set.
+    // The blog daily batch of 2026-11-20 (Cyclone Akvan
+    // landfall at Gopalpur + Florida Space Coast record
+    // flooding + Dragon CRS-35 undocking) then added
+    // its 3 post URLs → 1,175 (09693559…). Delta verified
+    // by executing sitemap() on the merged tree (probe,
+    // 2026-11-20): count exactly +3 over the 1,172 pin
+    // and all 3 new /blog/ URLs present in the executed set.
+    // The blog daily batch of 2026-11-21 (M6.8 earthquake
+    // near Timor-Leste + M6.7 earthquake in central Peru +
+    // Palisades Tahoe opening day) then added its 3 post
+    // URLs → 1,178 (ea500310…). Delta verified by executing
+    // sitemap() on the merged tree (probe, 2026-11-21):
+    // count exactly +3 over the 1,175 pin and all 3 new
+    // /blog/ URLs present in the executed set.
+    // The blog daily batch of 2026-11-22 (Kilauea episode
+    // 57 precursory activity + SpaceX NROL-136 record
+    // pad turnaround + Sugar Bowl opening day) then added
+    // its 3 post URLs → 1,181 (1d00d880…). Delta verified
+    // by executing sitemap() on the merged tree (probe,
+    // 2026-11-22): count exactly +3 over the 1,178 pin
+    // and all 3 new /blog/ URLs present in the executed set.
     expect(hash).toBe(
-      "7ffce59bfb216c8c864461aa9b78d4a13da4d4901544f13817e98f0afd353621",
+      "1d00d880507ad32dde90e4e2070744b91dc88bcdb635c022c76d7476c1541644",
     );
   });
 
