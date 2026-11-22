@@ -210,6 +210,20 @@ export default function SiteFooter({
             alt="As seen on Open Source Alternatives"
           />
         </a>
+        {/* Twelve Tools featured badge — embed code supplied by Jameson
+            2026-11-18; sits beside the other featured badges. */}
+        <a
+          href="https://twelve.tools"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <img
+            src="https://twelve.tools/badge3-white.svg"
+            alt="Featured on Twelve Tools"
+            width="148"
+            height="40"
+          />
+        </a>
       </div>
     </footer>
   );
