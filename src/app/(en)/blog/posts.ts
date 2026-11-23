@@ -40,6 +40,263 @@ export type BlogPost = {
 };
 
 export const POSTS: BlogPost[] = [
+// Blog daily 2026-11-23 — three sourced event stories, news: true, date 2026-11-23.
+// Sources OPENED this run: USGS HVO daily update Nov 22 (official notice),
+// Hawaii Watch reproducing the USGS Ep 57 VAN verbatim, Tremr (USGS event
+// us6000ucvm) + Truth Observatory USGS snapshot for the Vanuatu quake,
+// POWDER Nov 20 (Vail Resorts release) for Kirkwood.
+  {
+    slug: "kilauea-episode-57-erupts-650-foot-fountains-november-23",
+    title: "Kilauea Episode 57 Erupts: 650-Foot Lava Fountains Light Up Halemaumau",
+    seoTitle: "Kilauea Episode 57 Erupts | WorldEye Blog",
+    date: "2026-11-23",
+    excerpt:
+      "Episode 57 of Kilauea's Halemaumau eruption began at 12:15 a.m. HST on Monday, November 23, with lava fountains reaching 650 feet by 1:30 a.m. and a plume rising to 16,500 feet, the USGS Hawaiian Volcano Observatory reports — one day after precursory overflows opened the forecast window.",
+    seoDescription:
+      "Kilauea episode 57 began at 12:15 a.m. HST on Monday, November 23, 2026, with 650-foot lava fountains and a 16,500-foot plume, USGS reports.",
+    tags: ["kilauea", "volcano", "hawaii", "usgs", "eruption"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "The fountains are back. Episode 57 of the ongoing Halema'uma'u eruption at Kilauea began at 12:15 a.m. HST on Monday, November 23, according to the U.S. Geological Survey's Hawaiian Volcano Observatory (HVO), and by 1:30 a.m. the lava fountains had reached a peak height of 650 feet (200 metres) above ground level, with the episode still continuing as the observatory's notice was issued.",
+          "The start lands on the second day of the November 22-26 forecast window HVO set for episode 57 — and squarely inside the Monday-to-Wednesday stretch the observatory called most likely. It follows a day of precursory overflows from both summit vents on Sunday, the pattern that has preceded each recent fountaining episode in this eruption, which has run episodically since December 23, 2024.",
+        ],
+      },
+      {
+        heading: "When did episode 57 start, and how tall are the fountains?",
+        body: [
+          "Episode 57 began at 12:15 a.m. HST on Monday, November 23, 2026, and the fountains reached 650 feet (200 metres) by 1:30 a.m., HVO reports. The National Weather Service puts the eruptive plume at 16,500 feet (5,000 metres) above sea level.",
+          "That fountain height matches the scale of episode 56, which peaked at about 660 feet on November 5. Most fountaining episodes since this eruption began in December 2024 have continued for a day or less, HVO notes — episode 56 lasted just under six hours — so the summit cameras, not the clock, will say how long episode 57 runs.",
+        ],
+      },
+      {
+        heading: "What led up to the eruption?",
+        body: [
+          "A textbook build-up. Precursory overflows began from the north vent at 1:21 a.m. HST on Sunday, November 22 — three overflows from the north vent and two from the southwest vent through the morning, each pushing lava several hundred yards across the crater floor — and HVO raised Kilauea to alert level WATCH with an aviation colour code of ORANGE in response.",
+          "Underneath the vents, the summit was inflating the whole time. HVO's November 22 daily update recorded about 15.6 microradians of inflationary tilt at the Uekahuna tiltmeter since episode 56 ended on November 5, with continuous seismic tremor and strong glow and spattering from both vents overnight. The observatory's modelling, built on that tilt trend plus the overflows, put the fountaining window at November 22-26 — and the mountain used the early part of it.",
+        ],
+      },
+      {
+        heading: "Where is the lava going, and what are the hazards?",
+        body: [
+          "Nowhere beyond the crater. All eruptive vents and lava flows are confined to Halema'uma'u crater within Hawai'i Volcanoes National Park, HVO says, and the summit caldera rim around the crater has been closed to the public since late 2007.",
+          "The hazards are the familiar ones for this eruption. Light winds at ground level were blowing from the northeast as the episode began, which carries volcanic gas and material toward the southwest of Halema'uma'u, with light tephra possible around the summit; tephra fall is greatest within about 3 miles (5 kilometres) of the vents, and lighter ash and Pele's hair can travel much farther. Sulfur dioxide in the plume reacts downwind to form vog, the volcanic haze that can cause respiratory problems, and HVO had presumed emission rates of 2,000 to 3,000 tonnes of SO2 per day in the days before the episode.",
+        ],
+      },
+      {
+        heading: "Where can I watch episode 57 live?",
+        body: [
+          "On the summit cameras. HVO runs three Kilauea summit livestreams plus a set of still webcams watching Halema'uma'u, and a 650-foot fountain is unmistakable on them, especially in the dark hours in Hawaii. WorldEye's [volcano webcams](/volcano-webcams) page gathers the Kilauea summit views alongside the world's other monitored volcanoes, and the [live webcams](/live-webcams) network carries the wider Hawaii feeds.",
+          "If episode 57 follows the recent pattern, it will end as abruptly as it began — episode 56 stopped after about six hours — and the summit will swing back to inflation while the observatory starts the clock on episode 58. HVO says it will issue additional notices as needed, with its regular daily updates posted each morning Hawaii time.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Has Kilauea episode 57 started?",
+        a: "Yes. Episode 57 of the Halema'uma'u eruption began at 12:15 a.m. HST on Monday, November 23, 2026, according to the USGS Hawaiian Volcano Observatory, and was continuing at 1:30 a.m. with fountains up to 650 feet.",
+      },
+      {
+        q: "How tall are the episode 57 lava fountains?",
+        a: "650 feet (200 metres) above ground level at their 1:30 a.m. HST peak on November 23, HVO reports — about the same height as episode 56's roughly 660-foot fountains on November 5. The eruptive plume reached 16,500 feet above sea level.",
+      },
+      {
+        q: "What is Kilauea's current alert level?",
+        a: "WATCH, with an aviation colour code of ORANGE. HVO raised the alert from ADVISORY/YELLOW on November 22 when precursory overflows began, and it remains at WATCH/ORANGE during episode 57.",
+      },
+      {
+        q: "How long will episode 57 last?",
+        a: "Nobody can say in advance. Most fountaining episodes since December 23, 2024 have continued for a day or less — episode 56 lasted just under six hours — and HVO issues notices as each episode progresses and ends.",
+      },
+      {
+        q: "Where can I watch the Kilauea eruption live?",
+        a: "On the USGS summit livestreams and webcams watching Halema'uma'u crater, gathered on WorldEye's volcano webcams page. The fountains are most dramatic after dark in Hawaii.",
+      },
+    ],
+    sources: [
+      {
+        name: "Hawaii Watch — Kilauea Is Erupting Now: Episode 57 Lava Fountains (live tracker reproducing the USGS HVO notice verbatim: episode 57 began 12:15 a.m. HST November 23, 2026, peak fountain height 650 feet at 1:30 a.m., plume 16,500 feet per the National Weather Service, light northeast winds carrying gas and tephra southwest, all vents and flows confined to Halema'uma'u crater)",
+        url: "https://hawaii-watch.com/volcano",
+      },
+      {
+        name: "USGS Hawaiian Volcano Observatory — Daily Update, Sunday, November 22, 2026, 10:06 a.m. HST (precursory overflows from both vents began 1:21 a.m. November 22; alert WATCH, aviation ORANGE; forecast window November 22-26 with November 23-25 most likely; about 15.6 microradians of inflation since episode 56; episode 56 summary: November 5, 12:10-6:01 p.m., fountains about 660 feet, plume 18,000 feet, about 6 million cubic metres of lava)",
+        url: "https://volcanoes.usgs.gov/hans-public/notice/DOI-USGS-HVO-2026-11-22T18:22:56+00:00",
+      },
+      {
+        name: "United States Tribune — USGS keeps Kilauea Watch, Orange as episode 57 continues, November 23, 2026 (episode 57 ongoing at 1:32 a.m. HST November 23; summit at 19.421°N, 155.287°W, elevation about 4,091 feet)",
+        url: "https://unitedstatestribune.com/science/usgs-keeps-kilauea-watch-orange-as-episode-57-continues/",
+      },
+    ],
+  },
+  {
+    slug: "magnitude-6-5-earthquake-vanuatu-region-november-23-deep",
+    title: "Magnitude 6.5 Earthquake Strikes Deep Below the Vanuatu Region",
+    seoTitle: "M6.5 Vanuatu Earthquake | WorldEye Blog",
+    date: "2026-11-23",
+    excerpt:
+      "A magnitude 6.5 earthquake struck the Vanuatu region at 02:40 UTC on Monday, November 23 — but at roughly 600 kilometres deep, inside the slab sinking beneath the southwest Pacific, it is a deep-focus event whose energy spreads widely and weakens long before it reaches the surface.",
+    seoDescription:
+      "A reviewed M6.5 earthquake struck the Vanuatu region at 02:40 UTC on Monday, November 23, 2026, about 600 km deep, the USGS catalogue records.",
+    tags: ["earthquake", "vanuatu", "usgs", "pacific"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "A strong earthquake struck far below the Vanuatu region in the early hours of Monday. The U.S. Geological Survey lists the event (us6000ucvm) as a magnitude 6.5 (Mww) at 02:40 UTC on November 23, 2026 — 1:40 p.m. Monday afternoon in Vanuatu — at a depth of about 600 kilometres, and marks the solution reviewed, meaning a seismologist has checked the magnitude, location and depth.",
+          "The depth is the story. At roughly 600 kilometres down, this is a deep-focus earthquake: it ruptured inside cold oceanic plate material that has sunk deep into the mantle beneath the southwest Pacific, hundreds of kilometres below the seafloor and the islands above it. The USGS catalogue gives the event a significance value of 650.",
+        ],
+      },
+      {
+        heading: "How deep was the Vanuatu earthquake?",
+        body: [
+          "About 600 kilometres. The reviewed solution reported in the first hours put the depth at 601.0 kilometres, and the catalogue snapshot later in the morning listed 598 kilometres — the same exceptionally deep event, with the small difference reflecting the catalogue's own figures as published. Either way it sits far below the intermediate-depth band of roughly 70 to 300 kilometres, and vastly deeper than the shallow crustal earthquakes that do the most damage.",
+          "Depth changes what a magnitude means at the surface. Energy from 600 kilometres down travels a very long path before it reaches anyone, spreading out as it goes, so deep earthquakes are generally felt over a much wider area than a shallow earthquake of the same size, but with less intense shaking at any one place.",
+        ],
+      },
+      {
+        heading: "Was there a tsunami warning or any damage reported?",
+        body: [
+          "No tsunami warning is reported in the sources for this event, and no casualty or damage figures appear in the USGS event data. The catalogue data lists a tsunami flag of 1 on the event — a field in the data, not a warning — and very deep earthquakes rupture far below the seafloor, which is why depth is a key part of reading any such flag. Official tsunami information, after any strong earthquake, comes from the responsible warning centres and local authorities.",
+          "The early USGS data also lists no PAGER alert level and no felt reports at the time the first reports were published. For a deep event that may be felt widely but gently, felt reports can take time to accumulate — and the honest first-hours summary is what the instruments recorded, not an estimate built from the magnitude.",
+        ],
+      },
+      {
+        heading: "Why does the Vanuatu region get deep earthquakes?",
+        body: [
+          "Because of the slab beneath it. Vanuatu's island arc stretches along the boundary where Australian Plate material pushes down beneath the southwest Pacific, descending through a deep trench east of the islands. The region's catalogue holds strong earthquakes at every depth the slab passes through — shallow events near the trench and islands, intermediate events partway down, and occasional very deep ones like Monday's, hundreds of kilometres down inside the same sinking slab.",
+          "It is the third strong Vanuatu-region earthquake in the recent catalogue run: Tremr's coverage notes two strong Vanuatu earthquakes in October 2026, at much shallower positions west of this epicentre. Strong earthquakes are a recurring part of this region's catalogue, not a novelty — what is unusual about Monday's is how far down it happened.",
+        ],
+      },
+      {
+        heading: "Where can I track this earthquake and what comes next?",
+        body: [
+          "On the instruments. The event is marked reviewed, so the first analyst-checked solution is in, but magnitudes, depths and locations can still be refined as more station data arrive. WorldEye's [earthquake tracker](/earthquake-tracker) follows the USGS feed as events like this one are located and revised, alongside the rest of the day's global seismicity.",
+          "Seismologists will also watch the following catalogue near this epicentre and at comparable depths. Strong earthquakes are commonly followed by further events in the same area over the following days, generally smaller than the mainshock — though deep-focus sequences do not always follow the familiar shallow pattern, and no specific sequence can be promised in advance.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When did the Vanuatu earthquake happen?",
+        a: "At 02:40 UTC on Monday, November 23, 2026 — 1:40 p.m. Monday in Vanuatu. The USGS lists it as a magnitude 6.5 (Mww), event us6000ucvm, marked reviewed.",
+      },
+      {
+        q: "How deep was the M6.5 Vanuatu earthquake?",
+        a: "About 600 kilometres — 601.0 km in the reviewed solution reported in the first hours, 598 km in a later catalogue snapshot. That makes it a deep-focus earthquake inside the slab sinking beneath the southwest Pacific.",
+      },
+      {
+        q: "Was there a tsunami from the Vanuatu earthquake?",
+        a: "No tsunami warning is reported for this event. The USGS event data lists a tsunami flag of 1, which is a data field, not a warning; official tsunami information comes from the warning centres and local authorities. The rupture was about 600 km below the surface.",
+      },
+      {
+        q: "Was anyone hurt in the Vanuatu earthquake?",
+        a: "No casualty or damage figures appear in the USGS event data, and none are reported in the first coverage. The early data also listed no felt reports and no PAGER alert level.",
+      },
+      {
+        q: "Where can I see the latest earthquakes?",
+        a: "On WorldEye's earthquake tracker, which follows the USGS feed as events are located and revised, and on the USGS event page for us6000ucvm.",
+      },
+    ],
+    sources: [
+      {
+        name: "Tremr — The 2026 Vanuatu Earthquake: M6.5 Deep Below the Vanuatu Region, November 23, 2026 (USGS Mww 6.5 at 02:40 UTC, depth 601.0 km, epicentre in the Vanuatu region, reviewed, significance 650, tsunami flag 1 in the event data, no alert level and no felt reports listed at publication; two strong shallower Vanuatu earthquakes in October 2026)",
+        url: "https://tremr.app/articles/2026-vanuatu-earthquake-m6-5",
+      },
+      {
+        name: "Truth Observatory — M6.5 Earthquake: Vanuatu region, November 23, 2026 (USGS event us6000ucvm, last updated by USGS November 23, 2026, 04:46 UTC: M6.5 mww at 02:40 UTC, depth 598 km, reviewed; USGS classes M6.5 as a strong earthquake)",
+        url: "https://observatory.tlid.io/quake/us6000ucvm",
+      },
+      {
+        name: "QuakeScout — Earthquakes Today, November 23, 2026 (USGS catalogue past 24 hours: strongest event M6.5, Vanuatu region, about 598 km deep, tsunami flag listed)",
+        url: "https://www.quakescout.com/",
+      },
+    ],
+  },
+  {
+    slug: "kirkwood-opening-day-november-23-2026",
+    title: "Kirkwood Opens Today, 12 Days Early: Top-to-Bottom Skiing After Four Feet of Snow",
+    seoTitle: "Kirkwood Opens Nov 23 Early | WorldEye Blog",
+    date: "2026-11-23",
+    excerpt:
+      "Kirkwood Mountain Resort opens for the 2026-27 season today, Monday, November 23 — 12 days ahead of its planned December 4 start — with top-to-bottom skiing, Chairs 5, 6 and 7 spinning 9 a.m. to 4 p.m. and 326 acres open after more than four feet of snow fell in the Sierra this week.",
+    seoDescription:
+      "Kirkwood opens today, Monday, November 23, 2026, 12 days early, with Chairs 5, 6 and 7, 326 acres and top-to-bottom skiing after the big storm.",
+    tags: ["kirkwood", "skiing", "tahoe", "opening-day", "california"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "Kirkwood's season starts today — nearly two weeks before it was supposed to. The resort opens for the 2026-27 ski and snowboard season on Monday, November 23, 2026, 12 days ahead of its original December 4 target, Vail Resorts announced, after a sizable storm slammed the Sierra Nevada this week and left Kirkwood with more than four feet of new snow.",
+          "It is not a token opening. Kirkwood starts with top-to-bottom skiing and riding, three lifts and 326 acres of terrain — a robust November offering built from the storm snow plus the resort's snowmaking, and the latest in a run of Tahoe-area resorts pulling their opening days forward after the same storm cycle.",
+        ],
+      },
+      {
+        heading: "What lifts and terrain are open at Kirkwood today?",
+        body: [
+          "Chairs 5, 6 and 7, spinning from 9 a.m. to 4 p.m. Chairs 5 and 6 provide access to intermediate through expert terrain, while Chair 7 in Timber Creek serves the beginner and learning slopes — so opening day covers first-timers and experts at once, which early-season openings often cannot.",
+          "In total, guests have 326 acres of skiable and rideable terrain on day one. The resort says it is now aiming to open the rest of the frontside and Timber Creek lifts and terrain as quickly as conditions allow.",
+        ],
+      },
+      {
+        heading: "Why is Kirkwood opening early?",
+        body: [
+          "The storm did it. A sizable system hit the Sierra Nevada this week, and Kirkwood ended up with more than four feet of snow, which combined with snowmaking to make a mid-November opening possible. Kirkwood's general manager, Ricky Newberry, said in the resort's release that opening this early is a huge win for guests and a credit both to the strong start to winter and to the work of the mountain teams.",
+          "Kirkwood is not alone in moving up. In opening early it joins Palisades Tahoe, which opened Saturday, November 21, and Sugar Bowl, which opened for passholders on Sunday, November 22 ahead of its public opening on Friday, November 27. Further south in Mono County, Mammoth Mountain received between 27 and 43 inches of snow during the latest cycle.",
+        ],
+      },
+      {
+        heading: "When was Kirkwood supposed to open?",
+        body: [
+          "December 4. The early opening moves the date up by 12 days, to Monday, November 23 — the Monday of Thanksgiving week, which puts Kirkwood's first turns in front of the holiday crowds rather than after them.",
+          "The announcement itself arrived tucked into a Vail Resorts press email this week about Heavenly and Northstar's openings, before the resort confirmed the November 23 date. Conditions permitting was the standing caveat on the announcement; the storm totals are what turned the plan into an opening day.",
+        ],
+      },
+      {
+        heading: "Where can I check Kirkwood's conditions before I go?",
+        body: [
+          "On the cameras and the snow reports. WorldEye's [ski webcams](/ski-webcams) gather the Tahoe-area resort cameras alongside the rest of the Sierra and the wider ski world, so the snow that fell this week — and the top-to-bottom cover it left — is visible before anyone drives up Highway 88.",
+          "Early-season openings expand fast and conditions change daily, so the lift list is the thing to re-check each morning: Kirkwood has said the rest of the frontside and Timber Creek are the next targets as conditions allow, and the same storm cycle is still reshaping opening plans at resorts across the Tahoe region this week.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When does Kirkwood open for the 2026-27 season?",
+        a: "Today — Monday, November 23, 2026. That is 12 days ahead of the resort's original December 4 target, after more than four feet of snow fell in the Sierra this week.",
+      },
+      {
+        q: "What lifts are open at Kirkwood on opening day?",
+        a: "Chairs 5, 6 and 7, from 9 a.m. to 4 p.m. Chairs 5 and 6 serve intermediate through expert terrain, Chair 7 in Timber Creek serves beginner and learning slopes, and 326 acres are open with top-to-bottom skiing and riding.",
+      },
+      {
+        q: "How much snow did Kirkwood get?",
+        a: "More than four feet during this week's Sierra storm, according to the resort's announcement reported by POWDER, supplemented by snowmaking.",
+      },
+      {
+        q: "Which other Tahoe resorts opened early?",
+        a: "Palisades Tahoe opened Saturday, November 21, and Sugar Bowl opened for passholders on Sunday, November 22 (public opening Friday, November 27) — both moved up after the same storm cycle. Mammoth Mountain, further south, received 27 to 43 inches in the cycle.",
+      },
+      {
+        q: "Where can I watch Kirkwood's ski conditions live?",
+        a: "On WorldEye's ski webcams page, which gathers Tahoe-area resort cameras, and on the resort's own snow report for the day's lift and terrain status.",
+      },
+    ],
+    sources: [
+      {
+        name: "POWDER — Kirkwood Ski Resort Opening Early for the 2026-27 Season, November 20, 2026 (Vail Resorts announcement: opening Monday, November 23, 2026, 12 days ahead of the December 4 plan; more than four feet of snow this week plus snowmaking; top-to-bottom skiing, Chairs 5, 6 and 7 from 9 a.m. to 4 p.m., 326 acres; general manager Ricky Newberry in the release; Palisades Tahoe November 21 and Sugar Bowl November 22 also moved up; Mammoth 27-43 inches in the cycle)",
+        url: "https://www.powder.com/news/kirkwood-resort-opening-early-2026",
+      },
+      {
+        name: "Skier Stash — Kirkwood Opens Nov 23, 2026 (Vail Resorts, November 20: opening moved up from December 4; Chairs 5, 6 and 7 planned 9 a.m.-4 p.m. with 326 acres, after 53 inches of snow in the past week; Kirkwood, CA, Epic Pass)",
+        url: "https://skierstash.com/resorts/kirkwood/",
+      },
+      {
+        name: "Tahoe Ski World — Tahoe ski resorts Kirkwood, Sierra opening early, November 2026 (Kirkwood begins running its lifts Monday, November 23, off Highway 88, 33 miles from South Lake Tahoe; jump-starting its planned opener by 12 days after 4 feet of snow in the past week; top-to-bottom skiing; Chairs 5, 6 and 7 from 9 a.m. to 4 p.m.)",
+        url: "https://www.tahoeskiworld.com/tahoe-kirkwood-sierra-opening-early/",
+      },
+    ],
+  },
 // Blog daily 2026-11-22 — three sourced event stories, news: true, date 2026-11-22.
 // SOURCE-ACCESS DISCLOSURE: browser.open failed this run (browser-service
 // code -1, two requests, not retried per instruction); facts verified from

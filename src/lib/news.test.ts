@@ -87,6 +87,9 @@ describe("the launch story (real data, real dates)", () => {
   it("is one of the flagged posts, and every flagged post has sources", () => {
     const flagged = POSTS.filter(isNewsPost);
     expect(flagged.map((p) => p.slug)).toEqual([
+      "kilauea-episode-57-erupts-650-foot-fountains-november-23",
+      "magnitude-6-5-earthquake-vanuatu-region-november-23-deep",
+      "kirkwood-opening-day-november-23-2026",
       "kilauea-episode-57-precursory-activity-november-22",
       "spacex-nrol-136-launch-record-turnaround-november-22",
       "sugar-bowl-opening-day-november-22-2026",
@@ -168,6 +171,15 @@ describe("the launch story (real data, real dates)", () => {
     for (const p of flagged) {
       expect(p.sources?.length).toBeGreaterThan(0);
     }
+  });
+
+  it("the Nov 23 event stories are inside the 48-hour window on their publication day", () => {
+    const pubDay = new Date("2026-11-23T15:00:00Z");
+    const fresh = getFreshNewsPosts(POSTS, pubDay).map((p) => p.slug);
+    expect(fresh).toContain("kilauea-episode-57-erupts-650-foot-fountains-november-23");
+    expect(fresh).toContain("magnitude-6-5-earthquake-vanuatu-region-november-23-deep");
+    expect(fresh).toContain("kirkwood-opening-day-november-23-2026");
+    expect(fresh).not.toContain(LAUNCH_SLUG);
   });
 
   it("the Nov 22 event stories are inside the 48-hour window on their publication day", () => {

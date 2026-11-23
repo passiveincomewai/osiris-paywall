@@ -103,7 +103,7 @@ describe("sitemap URL set", () => {
           !u.startsWith(`${BASE}/wildfires/`),
       )
       .sort();
-    expect(nonTransit.length).toBe(1181);
+    expect(nonTransit.length).toBe(1184);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     // Hash history: 6d75d0de… until the SEO audit fix #3 (2026-10-27)
     // normalised the es homepage entry from /es/ to its final /es
@@ -446,8 +446,15 @@ describe("sitemap URL set", () => {
     // by executing sitemap() on the merged tree (probe,
     // 2026-11-22): count exactly +3 over the 1,178 pin
     // and all 3 new /blog/ URLs present in the executed set.
+    // The blog daily batch of 2026-11-23 (Kilauea episode
+    // 57 eruption + M6.5 deep Vanuatu earthquake +
+    // Kirkwood opening day) then added its 3 post URLs
+    // → 1,184 (4854df88…). Delta verified by executing
+    // sitemap() on the merged tree (probe, 2026-11-23):
+    // count exactly +3 over the 1,181 pin and all 3 new
+    // /blog/ URLs present in the executed set.
     expect(hash).toBe(
-      "1d00d880507ad32dde90e4e2070744b91dc88bcdb635c022c76d7476c1541644",
+      "4854df88bf2bf3844cfb2fc9107d1af1a21eeeb5a39268aee1eb99194477b152",
     );
   });
 
