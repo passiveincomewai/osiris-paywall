@@ -31,7 +31,28 @@ export default async function AffiliateDetailPage({ params }: { params: Promise<
   if (!email || !adminEmails().includes(email)) {
     redirect(`/admin/login?callbackUrl=/admin/affiliates/${profileId}`);
   }
-  const detail = await getAffiliateAdminDetail(profileId);
+  let detail: Awaited<ReturnType<typeof getAffiliateAdminDetail>>;
+  try {
+    detail = await getAffiliateAdminDetail(profileId);
+  } catch (e) {
+    // Admin-only page: surface the real server error instead of letting it
+    // bubble to the generic boundary, where production masks it as the
+    // unhelpful "Minified React error #441" (Server Components render).
+    console.error("affiliate detail load failed", profileId, e);
+    const err = e as Error;
+    return (
+      <div className="docs-root min-h-screen p-4 md:p-8" style={{ background: "radial-gradient(1200px 600px at 50% -10%, #0a1a33 0%, #050810 55%, #03040a 100%)" }}>
+        <div className="max-w-3xl mx-auto">
+          <Link href="/admin/affiliates" className="text-sm text-slate-400 hover:text-white">← Affiliate Command</Link>
+          <div className="mt-6 rounded-2xl border border-red-400/30 bg-red-400/10 p-5">
+            <div className="text-white font-bold mb-2">This affiliate's detail failed to load</div>
+            <div className="text-sm font-mono text-red-200 break-words">{err?.name ?? "Error"}: {(err?.message ?? String(e)).slice(0, 800)}</div>
+            <div className="text-xs text-slate-400 mt-3">Profile id: {profileId}. The full error is also in the server log. Send this message to support to pinpoint the fix.</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
   if (!detail) notFound();
 
   const { profile, user, subscription, stats } = detail;

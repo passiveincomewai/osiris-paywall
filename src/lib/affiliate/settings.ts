@@ -40,7 +40,18 @@ export async function getSettings(): Promise<AffiliateProgramSettings> {
   try {
     const row = await db.affiliateSettings.findUnique({ where: { id: SETTINGS_ID } });
     if (row?.data && typeof row.data === "object") {
-      return { ...DEFAULT_SETTINGS, ...(row.data as Partial<AffiliateProgramSettings>) };
+      const merged = { ...DEFAULT_SETTINGS, ...(row.data as Partial<AffiliateProgramSettings>) };
+      // A stored ranks ladder that is empty or malformed would make
+      // rankFor() return undefined and crash every affiliate surface —
+      // fall back to the shipped ladder unless it is a non-empty array
+      // of rank-shaped entries.
+      const r = merged.ranks as unknown;
+      const ranksOk =
+        Array.isArray(r) &&
+        r.length > 0 &&
+        r.every((x) => x && typeof x === "object" && typeof (x as RankDef).minXp === "number" && typeof (x as RankDef).name === "string");
+      if (!ranksOk) merged.ranks = DEFAULT_SETTINGS.ranks;
+      return merged;
     }
   } catch {
     // table may not exist yet (migration pending) — use defaults
