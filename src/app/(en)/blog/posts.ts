@@ -40,6 +40,252 @@ export type BlogPost = {
 };
 
 export const POSTS: BlogPost[] = [
+// Blog daily 2026-11-24 — three sourced event stories, news: true, date 2026-11-24.
+// Sources OPENED this run: TremorsOnline (USGS event us6000ud6h) for the
+// Mauritius–Réunion M6.4; Ventura County Star + Spaceflight Now for the
+// USSF-266 launch day; Brighton Resort official operations page +
+// Carving Skills (Utah schedule) for Brighton's opening day.
+  {
+    slug: "magnitude-6-4-earthquake-mauritius-reunion-region-november-24",
+    title: "Magnitude 6.4 Earthquake Strikes the Mauritius–Réunion Region",
+    seoTitle: "M6.4 Mauritius–Réunion Quake | WorldEye Blog",
+    date: "2026-11-24",
+    excerpt:
+      "A magnitude 6.4 earthquake struck the remote Mauritius–Réunion region of the Indian Ocean at 11:06 UTC on Tuesday, November 24, 2026, the USGS reports — a shallow, strike-slip event so far from land that the agency estimates nobody was exposed to shaking at any level.",
+    seoDescription:
+      "A magnitude 6.4 earthquake struck the remote Mauritius–Réunion region at 11:06 UTC on November 24, 2026, at a shallow 10 km depth, USGS reports today.",
+    tags: ["earthquake", "mauritius", "reunion", "usgs", "indian-ocean"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "A strong earthquake struck one of the emptiest stretches of the Indian Ocean on Tuesday morning. The U.S. Geological Survey (USGS) locates a magnitude 6.4 event in the Mauritius–Réunion region at 11:06:14 UTC on Tuesday, November 24, 2026, at a shallow depth of 10 kilometres, and the solution is marked reviewed — an analyst has checked the location, depth and magnitude rather than the numbers coming straight off the automatic system.",
+          "The epicentre sits at 17.705°S, 65.700°E, in open ocean south-west of the Mascarene Islands. That remoteness is the story as much as the size: this was a genuinely strong release of energy, and yet, on the USGS exposure estimates, it happened far enough from every shoreline that essentially nobody felt it.",
+        ],
+      },
+      {
+        heading: "How strong was the Mauritius–Réunion earthquake?",
+        body: [
+          "Magnitude 6.4 on the moment-magnitude scale (the USGS type is listed as mww), at 10 kilometres deep. A magnitude 6.4 is a strong earthquake by any measure — the kind of event that, under a city, would be a serious emergency — and the shallow depth would normally raise the concern further, because shallow events put their energy closer to the surface.",
+          "What changes the picture here is distance. The USGS PAGER assessment for the event is green, the lowest alert level, and the agency's estimated population exposed to shaking is zero at every Modified Mercalli Intensity level from I upward. In plain terms, the modelled shaking did not reach populated ground at a level the system counts at all.",
+        ],
+      },
+      {
+        heading: "Why do the agencies report different magnitudes?",
+        body: [
+          "Because they are measuring the same earthquake with different networks and methods, and early solutions differ. The USGS reviewed solution is magnitude 6.4, while the European-Mediterranean Seismological Centre (EMSC) listed the event at magnitude 5.9 and Germany's GFZ at magnitude 6.39. A spread like that is normal for a remote oceanic event, where the nearest seismic stations are far away and each agency weights its data differently.",
+          "The USGS figure is the one to lead with here because it is the reviewed solution, but the honest position is that the size is 'about magnitude 6' with the agencies spanning 5.9 to 6.4. Revisions remain possible as more station data are incorporated, which is routine for events in this part of the ocean.",
+        ],
+      },
+      {
+        heading: "What kind of fault moved?",
+        body: [
+          "A strike-slip fault, predominantly. The USGS moment tensor for the event is dominated by strike-slip motion — rock sliding sideways past rock — with the first nodal plane listed at a rake of -17.55 degrees, close to pure horizontal slip. That fits the setting: the epicentre lies about a kilometre from the nearest mapped plate boundary, in the fractured oceanic crust of the south-west Indian Ocean.",
+          "Oceanic strike-slip events of this size are the plate boundary system adjusting sideways rather than thrusting the seafloor up or down. That geometry is also part of why an event like this, even shallow, is a poor tsunami generator compared with a subduction-zone thrust earthquake of the same magnitude — the seafloor is moving sideways, not being lifted.",
+        ],
+      },
+      {
+        heading: "Has this region produced earthquakes like this before?",
+        body: [
+          "Yes, and larger. The largest earthquake within 300 kilometres of Tuesday's epicentre since 1900, in the USGS catalogue, is a magnitude 6.7 in the same region on May 12, 2021. The Mascarene area is not aseismic — it produces moderate events regularly — but its distance from dense population keeps most of them as instrument stories rather than disasters.",
+          "The catalogue context matters for how seismologists will file this event: not as an outlier, but as the largest regional release in several years, in a zone where the instruments carry the whole story because there is no local population to report shaking, damage or even a rumble. Every parameter in the record — the depth, the tensor, the exposure model — comes from distant stations read by analysts, which is precisely why the reviewed flag on the USGS solution matters.",
+          "The nearer islands saw smaller activity earlier this month: magnitude 4.6 and magnitude 4.4 events east of Port Mathurin, on Rodrigues, were recorded on November 3. Those are the scale of event the region's residents occasionally notice; Tuesday's earthquake was far bigger and far further away.",
+        ],
+      },
+      {
+        heading: "Where can I track this earthquake?",
+        body: [
+          "On the instruments, as the solution is refined. Reviewed events can still be updated as agencies fold in more data, and any aftershocks in the sequence will appear in the same catalogues over the coming days. WorldEye's [earthquake tracker](/earthquake-tracker) follows the USGS feed as events like this one are located and revised, alongside the rest of the day's global seismicity, and the [live webcams](/live-webcams) network covers the wider region's coasts.",
+          "For now, the assessment is stable: a strong, shallow, sideways earthquake in empty ocean, a green PAGER, and an exposure estimate of zero. It is a reminder that the planet's biggest daily energy releases often happen where nobody is standing — and that the instruments, not eyewitnesses, are how we know about them.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "What time was the Mauritius–Réunion earthquake?",
+        a: "11:06:14 UTC on Tuesday, November 24, 2026, according to the reviewed USGS solution (event us6000ud6h), at a depth of 10 km.",
+      },
+      {
+        q: "Did anyone feel the magnitude 6.4 earthquake?",
+        a: "On the USGS estimates, no — the estimated population exposed to shaking is zero at every intensity level, because the epicentre is in remote open ocean, and the PAGER assessment is green.",
+      },
+      {
+        q: "Why do USGS, EMSC and GFZ give different magnitudes?",
+        a: "Each agency uses a different station network and method, so early solutions differ: USGS reviewed 6.4, EMSC 5.9 and GFZ 6.39 for this event. A spread of a few tenths is normal for remote oceanic earthquakes.",
+      },
+      {
+        q: "Was there a tsunami from the Mauritius–Réunion earthquake?",
+        a: "The event was predominantly strike-slip — sideways motion that displaces far less water than a thrust fault — and the USGS PAGER assessment is green with zero estimated exposure. No damaging impact was indicated in the reviewed data.",
+      },
+      {
+        q: "What is the largest earthquake recorded near Mauritius and Réunion?",
+        a: "In the USGS catalogue since 1900, the largest within 300 km of Tuesday's epicentre is a magnitude 6.7 in the same region on May 12, 2021.",
+      },
+    ],
+    sources: [
+      { name: "TremorsOnline — USGS event us6000ud6h, M6.4 Mauritius–Réunion region", url: "https://TREMORSONLINE.COM/quake/us6000ud6h/m6-4-mauritius-reunion-region-2026-11-24" },
+    ],
+  },
+  {
+    slug: "spacex-ussf-266-launch-day-vandenberg-november-24",
+    title: "SpaceX Targets a Morning USSF-266 Launch From Vandenberg Today",
+    seoTitle: "SpaceX USSF-266 Launch Day | WorldEye Blog",
+    date: "2026-11-24",
+    excerpt:
+      "SpaceX is targeting a morning liftoff from Vandenberg Space Force Base today, Tuesday, November 24, 2026, carrying the classified USSF-266 mission for the U.S. Space Force — the fifth SpaceX government mission of November, in a launch window that runs 7:55 to 11:55 a.m. Pacific.",
+    seoDescription:
+      "SpaceX targets 8:08 a.m. PT on November 24, 2026 for the classified USSF-266 Falcon 9 launch from Vandenberg, with a backup window November 25.",
+    tags: ["spacex", "falcon-9", "vandenberg", "ussf-266", "launch"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "It is launch day on the California coast. SpaceX is targeting a morning liftoff from Space Launch Complex 4E (SLC-4E) at Vandenberg Space Force Base today, Tuesday, November 24, 2026, carrying USSF-266, a classified mission for the U.S. Space Force. The launch window runs from 7:55 to 11:55 a.m. Pacific, and the targeted liftoff time is 8:08 a.m. PT — 16:08 UTC.",
+          "This is a preview of a launch that has not happened yet, and it will be reported that way: at the time of writing the Falcon 9 is on the pad and the window is ahead. What follows is the confirmed plan — the rocket, the booster, the trajectory and the recovery — as published ahead of liftoff.",
+        ],
+      },
+      {
+        heading: "When is the USSF-266 launch window?",
+        body: [
+          "Tuesday, November 24, from 7:55 to 11:55 a.m. Pacific, with liftoff targeted for 8:08 a.m. PT. If the morning does not work, there is a backup window on Wednesday, November 25, opening at 7:46 a.m. PT. The National Weather Service forecast for the morning is mostly cloudy over the base — cloud cover alone does not scrub a launch, but it is part of the picture the range watches on the day.",
+          "SpaceX's webcast is expected to begin about ten minutes before liftoff, which for a classified mission usually means coverage of the countdown and ascent's early phases rather than views of the payload itself.",
+        ],
+      },
+      {
+        heading: "What is USSF-266 carrying?",
+        body: [
+          "That is classified, and reporting on it should stay honest about the line between what is known and what is reported. The mission is a U.S. Space Force launch under the USSF designation, and it is the third mission to carry a 'TH' designation. It has been reported — not confirmed — that the payload may include a batch of military satellites bound for low Earth orbit, and the flight profile is consistent with that kind of mission without proving it.",
+          "What is confirmed is the shape of the flight: a southern, polar-leaning trajectory out of Vandenberg, the corridor California launches use to reach polar and sun-synchronous orbits that cannot be flown from Florida. USSF-266 is also the fifth SpaceX government mission this month — four for the Space Force and one for the National Reconnaissance Office.",
+        ],
+      },
+      {
+        heading: "Which booster is flying, and where does it land?",
+        body: [
+          "Booster B1081, on its 29th flight. Its previous missions include NASA's Crew-7 astronaut flight and the agency's PACE and TRACERS science missions, according to Spaceflight Now — a veteran airframe that has carried people and is now flying a classified national-security payload.",
+          "After stage separation the booster is planned to come back to the droneship Of Course I Still Love You, stationed in the Pacific, touching down less than eight and a half minutes after liftoff. If it succeeds, it would be that ship's 236th landing and the 681st booster landing overall for SpaceX — numbers that would have read as fiction a decade ago and now arrive as a Tuesday-morning routine.",
+        ],
+      },
+      {
+        heading: "How busy has Vandenberg been in 2026?",
+        body: [
+          "Historically busy. USSF-266 is the fifth November launch from California, and a successful liftoff would make it Vandenberg's 79th launch of 2026 — a record-setting year for the base, which has become the workhorse range for polar missions and for the Space Force's growing manifest.",
+          "Government missions are the minority of that manifest — most Vandenberg flights carry commercial satellites — which is what makes a run of five government missions in a single month, four of them for the Space Force itself, stand out in the 2026 record. The base, the range and the recovery fleet are being asked to sustain a pace that used to belong to a whole year, and days like today are now scheduled inside that pace rather than interrupting it.",
+          "That cadence is the context for a morning like this one: a classified payload, a 29th-flight booster, a droneship waiting offshore, and a base that now launches more often than at any point in its history.",
+        ],
+      },
+      {
+        heading: "Where can I follow the launch?",
+        body: [
+          "SpaceX's webcast, starting about ten minutes before the targeted 8:08 a.m. PT liftoff, is the primary feed for the countdown. WorldEye's [satellite tracker](/satellite-tracker) follows objects in orbit once they are catalogued, the [space station tracker](/space-station-tracker) keeps the crewed side of low Earth orbit in view, and the [live flight tracker](/live-flight-tracker) covers the airspace picture around launch mornings on the coast.",
+          "One caution for anyone watching from the coast: a classified mission means the broadcast and the information flow can be cut or limited without the usual commercial-mission commentary, and a hold can come at any point in the window without a detailed public explanation. None of that changes the plan stated above — it is simply the normal shape of a national-security launch morning.",
+          "If the launch slips, the next attempt is Wednesday's window from 7:46 a.m. PT — and if it flies, the outcome, the landing result and the confirmed numbers will be a new story, reported once they are known rather than assumed here.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "What time does USSF-266 launch today?",
+        a: "The window runs 7:55 to 11:55 a.m. PT on Tuesday, November 24, 2026, with liftoff targeted for 8:08 a.m. PT (16:08 UTC) from SLC-4E at Vandenberg.",
+      },
+      {
+        q: "What is the USSF-266 payload?",
+        a: "It is classified. It has been reported, but not confirmed, that the mission may carry a batch of military satellites to low Earth orbit; SpaceX and the Space Force have not confirmed the payload.",
+      },
+      {
+        q: "Where will the Falcon 9 booster land?",
+        a: "On the droneship Of Course I Still Love You in the Pacific, less than 8.5 minutes after liftoff — which would be the ship's 236th landing and SpaceX's 681st booster landing overall.",
+      },
+      {
+        q: "What happens if the USSF-266 launch is scrubbed?",
+        a: "There is a backup window on Wednesday, November 25, 2026, opening at 7:46 a.m. PT.",
+      },
+      {
+        q: "How many times has booster B1081 flown?",
+        a: "USSF-266 is its 29th flight; its earlier missions include NASA Crew-7, PACE and TRACERS, according to Spaceflight Now.",
+      },
+    ],
+    sources: [
+      { name: "Ventura County Star — SpaceX Falcon 9 launch today, California, Nov 24", url: "https://www.vcstar.com/story/news/local/california/2026/11/24/spacex-falcon-9-rocket-launch-today-california/92922435007/" },
+      { name: "Spaceflight Now — live coverage, classified U.S. Space Force launch", url: "https://spaceflightnow.com/2026/11/23/live-coverage-spacex-to-launch-classified-payload-for-the-u-s-space-force-3/" },
+    ],
+  },
+  {
+    slug: "brighton-opening-day-november-24-2026-utah",
+    title: "Brighton Opens Today: Utah's Thanksgiving-Week Rush Starts in Big Cottonwood",
+    seoTitle: "Brighton Opens Today in Utah | WorldEye Blog",
+    date: "2026-11-24",
+    excerpt:
+      "Brighton Resort opens its 90th winter season today, Tuesday, November 24, 2026, in Big Cottonwood Canyon — Majestic and Explorer turning 9 a.m. to 4 p.m. over seven runs — as the first of five Utah resorts opening in Thanksgiving week.",
+    seoDescription:
+      "Brighton Resort opens its 90th season on November 24, 2026, with Majestic and Explorer lifts and seven runs, starting Utah's Thanksgiving-week rush.",
+    tags: ["brighton", "utah", "ski-season", "opening-day", "big-cottonwood"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "Utah's Thanksgiving-week rush starts this morning in Big Cottonwood Canyon. Brighton Resort opens for the 2026-27 season today, Tuesday, November 24, 2026 — the resort's own winter operations page carries the line every Utah skier waits for each November: OPENING DAY, November 24, 2026. It is Brighton's 90th winter season.",
+          "Brighton is the first of five Utah resorts opening this week, ahead of Alta and Snowbird and Park City on Wednesday and Snowbasin on Friday. Two Utah resorts are already turning — Brian Head opened November 17 and Solitude, Brighton's Big Cottonwood neighbour, opened November 19 — but today is when the Salt Lake canyons' season properly gets under way.",
+        ],
+      },
+      {
+        heading: "What lifts and runs are open at Brighton today?",
+        body: [
+          "Two lifts to start: Majestic and Explorer, running 9 a.m. to 4 p.m., serving seven runs. The Majestic Terrain Park is open for lift-served laps, and the BoneZone Hike Park is open for anyone willing to walk for their early-season features — the classic Brighton opening-day mix of a small, honest footprint and a park scene that shows up from day one.",
+          "Brighton’s place at the top of Big Cottonwood Canyon — the end of the road, the highest base of the canyon’s resorts — is why it so often leads the Utah season: the snow that the Wasatch collects first tends to collect deepest there, and a November 24 opening in a week when four neighbouring resorts follow within three days says the canyon’s early season has arrived as a system, not as one resort’s gamble.",
+          "Daily tickets are $89, per Unofficial Networks' report of the resort's announcement. Hours stay on the 9-to-4 daily pattern until night skiing begins later in the season: Brighton is famous for it, running lit terrain until 9 p.m., Wednesday through Monday, from mid-December to early April — but that is a December story, not an opening-day one.",
+        ],
+      },
+      {
+        heading: "Which Utah resorts open this week?",
+        body: [
+          "Four more after today. Alta and Snowbird and Park City all open Wednesday, November 25. Snowbird is opening two days early after a storm cycle that delivered 35 inches in seven days, 17 of them in 48 hours; Alta begins its 89th season, postponed from its original November 20 target. Snowbasin follows on Friday, November 27, reporting 29 inches in seven days.",
+          "That is five openings in four days across the Wasatch, on top of Brian Head (November 17) and Solitude (November 19) already open — a Thanksgiving week that goes from two Utah resorts to seven, which is why this morning at Brighton matters beyond one canyon: it is the start of the state's holiday ski season in earnest.",
+        ],
+      },
+      {
+        heading: "What else opens today? Eldora, in Colorado",
+        body: [
+          "Brighton is not the only opening day on the map this morning. In Colorado, Eldora opens today as well — a delayed start, after a planned November 13 opening slipped. The opening footprint is the Alpenglow side only: about 1,000 vertical feet, with the Hornblower and International runs carrying the first turns of Eldora's season.",
+          "For Utah, the Eldora comparison cuts the other way: Brighton is opening on its announced day, on storm-supported natural snow cycles across the Wasatch, while Eldora needed eleven extra days to get its first pod of terrain ready. Opening dates are promises a resort makes to the weather, and this week the Wasatch resorts are keeping theirs.",
+          "Two states, two opening days, one Tuesday: the Front Range and the Wasatch both adding resorts on the same morning is the shape of late November in a year when the snow has arrived on schedule in some ranges and made others wait.",
+        ],
+      },
+      {
+        heading: "Where can I check Brighton's conditions before I go?",
+        body: [
+          "On the cameras and the resort's own operations page before you commit to the canyon drive. WorldEye's [ski webcams](/ski-webcams) gather the Utah resort cameras — Big Cottonwood included — alongside the rest of the Wasatch and the wider ski world, so the seven opening-day runs and the canyon weather are visible before anyone leaves the valley. The [live webcams](/live-webcams) network carries the wider mountain picture.",
+          "Practical notes for the morning itself are the usual Big Cottonwood ones: the canyon road and the parking lots carry the whole valley’s opening-day enthusiasm through one two-lane route, the 9 a.m. lift start concentrates arrivals, and early-season cover on seven runs rewards patience over ambition. None of that has ever stopped this crowd — opening day at Brighton is as much a reunion as a ski day, and the first chair of a 90th season will be treated accordingly.",
+          "Ninety seasons in, Brighton still does opening day the same way: a couple of lifts, a handful of runs, a terrain park from the first morning, and a canyon full of people who have been waiting since spring. Season 90 starts at 9 a.m.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When does Brighton Resort open for the 2026-27 season?",
+        a: "Opening day is today, Tuesday, November 24, 2026 — the start of Brighton's 90th winter season, per the resort's official winter operations page.",
+      },
+      {
+        q: "What lifts are open at Brighton on opening day?",
+        a: "Majestic and Explorer, 9 a.m. to 4 p.m., serving seven runs, plus the Majestic Terrain Park and the BoneZone Hike Park.",
+      },
+      {
+        q: "How much are Brighton lift tickets on opening day?",
+        a: "$89 for a daily lift ticket, per Unofficial Networks' report of the resort's opening announcement.",
+      },
+      {
+        q: "Which other Utah resorts open Thanksgiving week?",
+        a: "Alta, Snowbird and Park City open Wednesday, November 25, and Snowbasin on Friday, November 27; Brian Head (Nov 17) and Solitude (Nov 19) are already open.",
+      },
+      {
+        q: "When does Brighton night skiing start?",
+        a: "Later in the season — night riding runs from mid-December to early April, until 9 p.m., Wednesday through Monday. Opening-day hours are 9 a.m. to 4 p.m.",
+      },
+    ],
+    sources: [
+      { name: "Brighton Resort — winter operations (official)", url: "https://www.brightonresort.com/winter-operations" },
+      { name: "Carving Skills — Brighton, Alta, Snowbird and more open this week: Utah's skiing schedule", url: "https://carvingskills.com/2026/11/23/brighton-alta-snowbird-and-more-open-this-week-heres-utahs-skiing-schedule/" },
+    ],
+  },
 // Blog daily 2026-11-23 — three sourced event stories, news: true, date 2026-11-23.
 // Sources OPENED this run: USGS HVO daily update Nov 22 (official notice),
 // Hawaii Watch reproducing the USGS Ep 57 VAN verbatim, Tremr (USGS event
